@@ -17,12 +17,8 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="bg-red-50 p-4 rounded text-red-600 text-sm">
-          {error.message}
-        </div>
-      )}
-      
+      {error && <div className="bg-red-50 p-4 rounded text-red-600 text-sm">{error.message}</div>}
+
       <div className="space-y-4">
         <input
           type="email"

@@ -66,13 +66,13 @@ export const useAuth = () => {
 
   const isLogged = () => Boolean(localStorage.getItem('token'))
 
-  return { 
-    login, 
-    logout, 
+  return {
+    login,
+    logout,
     register,
     isLogged,
     isLoading: loginMutation.isPending || registerMutation.isPending,
-    error: loginMutation.error || registerMutation.error
+    error: loginMutation.error || registerMutation.error,
   }
 }
 

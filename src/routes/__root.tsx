@@ -1,13 +1,13 @@
-import { Link, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
-import type { AuthContext } from "../hooks/useAuth";
+import { Link, Outlet, createRootRouteWithContext } from '@tanstack/react-router'
+import type { AuthContext } from '../hooks/useAuth'
 
 interface RouterContext {
-  authentication: AuthContext;
+  authentication: AuthContext
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
-});
+})
 
 function RootLayout() {
   const { authentication: auth } = Route.useRouteContext()
@@ -60,5 +60,5 @@ function RootLayout() {
         <Outlet />
       </main>
     </div>
-  );
+  )
 }

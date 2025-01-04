@@ -116,12 +116,7 @@ export interface FileRouteTypes {
   fullPaths: '' | '/login' | '/register' | '/'
   fileRoutesByTo: FileRoutesByTo
   to: '/login' | '/register' | '/'
-  id:
-    | '__root__'
-    | '/_authenticated'
-    | '/login'
-    | '/register'
-    | '/_authenticated/'
+  id: '__root__' | '/_authenticated' | '/login' | '/register' | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 

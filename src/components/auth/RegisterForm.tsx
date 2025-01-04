@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
 interface RegisterFormProps {
-  onSubmit: (credentials: { 
+  onSubmit: (credentials: {
     email: string
     password: string
     firstName: string
-    lastName: string 
+    lastName: string
   }) => void
   error?: Error | null
   isLoading?: boolean
@@ -24,12 +24,8 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="bg-red-50 p-4 rounded text-red-600 text-sm">
-          {error.message}
-        </div>
-      )}
-      
+      {error && <div className="bg-red-50 p-4 rounded text-red-600 text-sm">{error.message}</div>}
+
       <div className="space-y-4">
         <input
           type="text"
