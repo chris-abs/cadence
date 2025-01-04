@@ -1,7 +1,7 @@
-import { RegisterForm } from '@/components/auth'
-import { useRegister } from '@/lib/auth'
-import { RegisterCredentials } from '@/type/auth'
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
+import { useRegister } from '@/lib/auth'
+import { RegisterForm } from '@/components/auth'
+import type { RegisterCredentials } from '@/types/auth'
 
 export const Route = createLazyFileRoute('/register')({
   component: RegisterPage,

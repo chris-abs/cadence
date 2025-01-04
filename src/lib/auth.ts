@@ -1,45 +1,11 @@
-import { UseMutationResult, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
+import type { LoginCredentials, RegisterCredentials, AuthResponse } from '@/types/auth'
 
-interface LoginCredentials {
-  email: string
-  password: string
-}
-
-interface RegisterCredentials {
-  email: string
-  password: string
-  name: string
-}
-
-interface AuthResponse {
-  token: string
-  user: {
-    id: number
-    email: string
-    name: string
-  }
-}
+const BASE_URL = 'http://localhost:3000'
 
 export const authApi = {
-  login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const response = await fetch('http://localhost:8080/users/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Login failed')
-    }
-
-    return response.json()
-  },
-
   register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
-    const response = await fetch('http://localhost:8080/users/register', {
+    const response = await fetch(`${BASE_URL}/users/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -55,27 +21,34 @@ export const authApi = {
     return response.json()
   },
 
-  logout: () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+  login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    const response = await fetch(`${BASE_URL}/users/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || 'Login failed')
+    }
+
+    const data = await response.json()
+    localStorage.setItem('token', data.token)
+    return data
   },
 }
 
-export function useLogin(): UseMutationResult<AuthResponse, Error, LoginCredentials> {
-  const queryClient = useQueryClient()
-
+export function useRegister() {
   return useMutation({
-    mutationFn: authApi.login,
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
-      queryClient.invalidateQueries({ queryKey: ['user'] })
-    },
+    mutationFn: authApi.register,
   })
 }
 
-export function useRegister(): UseMutationResult<AuthResponse, Error, RegisterCredentials> {
+export function useLogin() {
   return useMutation({
-    mutationFn: authApi.register,
+    mutationFn: authApi.login,
   })
 }

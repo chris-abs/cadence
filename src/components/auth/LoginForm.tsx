@@ -1,4 +1,4 @@
-import { LoginCredentials } from "@/type/auth"
+import { LoginCredentials } from "@/types/auth"
 import { useState } from "react"
 
 interface LoginFormProps {

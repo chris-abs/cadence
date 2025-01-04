@@ -1,7 +1,7 @@
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
-import { useLogin } from '../lib/auth'
-import { LoginCredentials } from '@/type/auth'
-import { LoginForm } from '@components/auth'
+import { useLogin } from '@/lib/auth'
+import { LoginForm } from '@/components/auth'
+import type { LoginCredentials } from '@/types/auth'
 
 export const Route = createLazyFileRoute('/login')({
   component: LoginPage,
