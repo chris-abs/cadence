@@ -5,7 +5,6 @@ import { useAuth } from "./hooks/useAuth";
 import { routeTree } from "./routeTree.gen";
 
 const queryClient = new QueryClient()
-
 const router = createRouter({
   routeTree,
   context: { authentication: undefined! },
@@ -17,11 +16,15 @@ declare module "@tanstack/react-router" {
   }
 }
 
-function App() {
+function InnerApp() {
   const authentication = useAuth();
+  return <RouterProvider router={router} context={{ authentication }} />;
+}
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} context={{ authentication }} />
+      <InnerApp />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

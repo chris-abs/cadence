@@ -1,20 +1,25 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
-import { LoginForm } from "@/components/auth/LoginForm"
+import { RegisterForm } from "@/components/auth/RegisterForm"
 
-export const Route = createFileRoute("/login")({
-  component: LoginPage,
+export const Route = createFileRoute("/register")({
+  component: RegisterPage,
 })
 
-function LoginPage() {
+function RegisterPage() {
   const router = useRouter()
   const { authentication: auth } = Route.useRouteContext()
 
-  const handleLogin = async (credentials: { email: string; password: string }) => {
+  const handleRegister = async (credentials: { 
+    email: string
+    password: string
+    firstName: string
+    lastName: string 
+  }) => {
     try {
-      await auth.login(credentials)
-      router.navigate({ to: "/" })
+      await auth.register(credentials)
+      router.navigate({ to: "/login" })
     } catch (error) {
-      console.error('Login failed:', error)
+      console.error('Registration failed:', error)
     }
   }
 
@@ -22,20 +27,20 @@ function LoginPage() {
     <div className="max-w-md mx-auto">
       <div className="bg-white p-8 rounded-lg shadow-sm">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Sign in to your account
+          Create your account
         </h2>
-        <LoginForm 
-          onSubmit={handleLogin}
+        <RegisterForm 
+          onSubmit={handleRegister}
           error={auth.error}
           isLoading={auth.isLoading}
         />
         <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
+          Already have an account?{' '}
           <Link
-            to="/register"
+            to="/login"
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            Register here
+            Sign in here
           </Link>
         </p>
       </div>

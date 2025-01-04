@@ -1,92 +1,77 @@
 import { useState } from 'react'
-import { Input } from '@components/ui'
-import { Button } from '@components/ui'
-import type { RegisterCredentials } from '@/types/auth'
 
 interface RegisterFormProps {
-  onSubmit: (credentials: RegisterCredentials) => void
-  error?: string
+  onSubmit: (credentials: { 
+    email: string
+    password: string
+    firstName: string
+    lastName: string 
+  }) => void
+  error?: Error | null
   isLoading?: boolean
 }
 
 export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit({ 
-      email, 
-      password, 
-      firstName,
-      lastName,
-      imageUrl: '' 
-    })
+    onSubmit({ email, password, firstName, lastName })
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <div className="bg-red-50 p-4 rounded text-red-600 text-sm">
-          {error}
+          {error.message}
         </div>
       )}
       
       <div className="space-y-4">
-        <Input
-          id="firstName"
-          name="firstName"
+        <input
           type="text"
-          label="First name"
-          placeholder="First name"
+          placeholder="First Name"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          disabled={isLoading}
+          className="w-full p-2 border rounded"
           required
         />
-        
-        <Input
-          id="lastName"
-          name="lastName"
+        <input
           type="text"
-          label="Last name"
-          placeholder="Last name"
+          placeholder="Last Name"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          disabled={isLoading}
+          className="w-full p-2 border rounded"
           required
         />
-        
-        <Input
-          id="email"
-          name="email"
+        <input
           type="email"
-          label="Email address"
-          placeholder="Email address"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          disabled={isLoading}
+          className="w-full p-2 border rounded"
           required
         />
-        
-        <Input
-          id="password"
-          name="password"
+        <input
           type="password"
-          label="Password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
+          className="w-full p-2 border rounded"
           required
         />
       </div>
 
-      <Button type="submit" isLoading={isLoading}>
-        Create account
-      </Button>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:opacity-50"
+      >
+        {isLoading ? 'Loading...' : 'Create Account'}
+      </button>
     </form>
   )
 }
