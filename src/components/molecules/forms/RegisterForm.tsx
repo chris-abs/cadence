@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { registerSchema } from '@/lib/schemas/auth'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/atoms/button'
 import {
   Form,
   FormControl,
@@ -10,9 +10,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+} from '@/components/molecules/forms/form'
+import { Input } from '@/components/atoms/input'
+import { Alert, AlertDescription } from '@/components/atoms/alert'
 
 type FormData = z.infer<typeof registerSchema>
 

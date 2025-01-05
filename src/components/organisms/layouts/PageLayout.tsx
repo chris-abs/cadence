@@ -9,8 +9,8 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui'
-import { AppSidebar } from '@/components/app-sidebar'
+  AppSidebar,
+} from '@/components'
 import { Separator } from '@radix-ui/react-dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
 

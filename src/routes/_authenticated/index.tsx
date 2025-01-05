@@ -1,5 +1,5 @@
+import { PageLayout } from '@/components'
 import { createFileRoute } from '@tanstack/react-router'
-import { PageLayout } from '@/components/layouts/PageLayout'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Homepage,
