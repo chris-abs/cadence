@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { LoginForm } from '@/components/auth/LoginForm'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -13,23 +14,30 @@ function LoginPage() {
     try {
       await auth.login(credentials)
       router.navigate({ to: '/' })
-    } catch (error) {
-      console.error('Login failed:', error)
+    } catch (err) {
+      console.error('Login failed:', err)
     }
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="bg-white p-8 rounded-lg shadow-sm">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Sign in to your account</h2>
-        <LoginForm onSubmit={handleLogin} error={auth.error} isLoading={auth.isLoading} />
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
-            Register here
-          </Link>
-        </p>
-      </div>
+    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+      <Card className="w-[400px]">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
+          <CardDescription>
+            Enter your email and password to sign in to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LoginForm onSubmit={handleLogin} error={auth.error} isLoading={auth.isLoading} />
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-primary underline-offset-4 hover:underline">
+              Register here
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
