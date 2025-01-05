@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/organisms/layouts/sidebar'
+} from '@/components/layouts/sidebar'
 
 export function NavProjects({
   projects,

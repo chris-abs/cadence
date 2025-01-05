@@ -12,7 +12,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@/components/organisms/layouts/sidebar'
+} from '@/components/layouts/sidebar'
 
 export function NavMain({
   items,

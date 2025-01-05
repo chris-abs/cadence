@@ -12,25 +12,20 @@ import {
   SquareTerminal,
 } from 'lucide-react'
 
-import { NavMain } from '@/components/organisms/layouts/nav/nav-main'
-import { NavProjects } from '@/components/organisms/layouts/nav/nav-projects'
-import { NavUser } from '@/components/organisms/layouts/nav/nav-user'
-import { TeamSwitcher } from '@/components/organisms/layouts/nav/team-switcher'
+import { NavMain } from '@/components/layouts/nav/nav-main'
+import { NavProjects } from '@/components/layouts/nav/nav-projects'
+import { NavUser } from '@/components/layouts/nav/nav-user'
+import { TeamSwitcher } from '@/components/layouts/nav/team-switcher'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from '@/components/organisms/layouts/sidebar'
+} from '@/components/layouts/sidebar'
 
-// This is sample data.
+// TODO: update sample data with correct domain links
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   teams: [
     {
       name: 'Acme Inc',
@@ -165,7 +160,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

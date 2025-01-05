@@ -6,13 +6,11 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-  AppSidebar,
-} from '@/components'
+} from '@/components/molecules'
 import { Separator } from '@radix-ui/react-dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar'
+import { AppSidebar } from './app-sidebar'
 
 interface PageLayoutProps {
   children: React.ReactNode

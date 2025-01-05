@@ -1,7 +1,4 @@
-'use client'
-
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react'
-
+import { useUser } from '@/queries/users'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
 import {
   DropdownMenu,
@@ -17,18 +14,25 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/organisms/layouts/sidebar'
+} from '@/components/layouts/sidebar'
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { useRouter } from '@tanstack/react-router'
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
+export function NavUser() {
+  const { data: user, isLoading } = useUser()
   const { isMobile } = useSidebar()
+  const { logout } = useAuth()
+  const router = useRouter()
+
+  if (isLoading || !user) return null
+
+  const userInitials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+
+  const handleLogout = () => {
+    logout()
+    router.navigate({ to: '/login' })
+  }
 
   return (
     <SidebarMenu>
@@ -40,11 +44,14 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                {user.imageUrl ? (
+                  <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
+                ) : (
+                  <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
+                )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
+                <span className="truncate capitalize font-semibold">{`${user.firstName} ${user.lastName}`}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -59,11 +66,14 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  {user.imageUrl ? (
+                    <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
+                  ) : (
+                    <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
+                  )}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
+                  <span className="truncate capitalize font-semibold">{`${user.firstName} ${user.lastName}`}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
@@ -71,28 +81,17 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
+                <BadgeCheck className="mr-2 h-4 w-4" />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
+                <Bell className="mr-2 h-4 w-4" />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
