@@ -55,17 +55,6 @@ export function PageLayout({ children }: PageLayoutProps) {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <div className="ml-auto">
-            <button
-              onClick={() => {
-                auth.logout()
-                window.location.href = '/login'
-              }}
-              className="text-sm font-medium text-gray-900 hover:text-gray-700"
-            >
-              Logout
-            </button>
-          </div>
         </div>
         <main>{children}</main>
       </SidebarInset>
