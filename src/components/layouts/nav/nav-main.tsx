@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRight, type LucideIcon } from 'lucide-react'
+import { ChevronRight, Link, type LucideIcon } from 'lucide-react'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/atoms/collapsible'
 import {
@@ -13,6 +13,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/layouts/sidebar'
+import { SearchableType } from '@/types/search'
+import { Popover, PopoverTrigger } from '@/components/atoms'
+import { QuickSearch } from './nav-search-popover'
 
 export function NavMain({
   items,
@@ -25,6 +28,7 @@ export function NavMain({
     items?: {
       title: string
       url: string
+      type?: SearchableType
     }[]
   }[]
 }) {
@@ -51,11 +55,22 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
+                      {subItem.type ? (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <SidebarMenuSubButton>
+                              <span>{subItem.title}</span>
+                            </SidebarMenuSubButton>
+                          </PopoverTrigger>
+                          <QuickSearch type={subItem.type} />
+                        </Popover>
+                      ) : (
+                        <SidebarMenuSubButton asChild>
+                          <Link to={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      )}
                     </SidebarMenuSubItem>
                   ))}
                 </SidebarMenuSub>

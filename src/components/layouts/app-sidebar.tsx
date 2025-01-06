@@ -1,9 +1,7 @@
 import * as React from 'react'
 import { AudioWaveform, Command, GalleryVerticalEnd, Settings2, Search } from 'lucide-react'
 
-import { NavMain } from '@/components/layouts/nav/nav-main'
-import { NavUser } from '@/components/layouts/nav/nav-user'
-import { TeamSwitcher } from '@/components/layouts/nav/team-switcher'
+import { NavMain, NavUser, TeamSwitcher } from '@/components/layouts/nav'
 import {
   Sidebar,
   SidebarContent,
@@ -15,19 +13,19 @@ import {
 const data = {
   teams: [
     {
-      name: 'Storage',
+      name: 'Line',
       logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
+      plan: 'Specialised',
       disabled: true,
     },
     {
-      name: 'Acme Corp.',
+      name: 'Core',
       logo: AudioWaveform,
       plan: 'Startup',
       disabled: true,
     },
     {
-      name: 'Evil Corp.',
+      name: 'Corporate',
       logo: Command,
       plan: 'Free',
       disabled: true,
@@ -43,18 +41,22 @@ const data = {
         {
           title: 'Workspaces',
           url: '#',
+          type: 'workspace',
         },
         {
           title: 'Containers',
           url: '#',
+          type: 'container',
         },
         {
           title: 'Items',
           url: '#',
+          type: 'item',
         },
         {
           title: 'Tags',
           url: '#',
+          type: 'tag',
         },
       ],
     },
