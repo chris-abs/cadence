@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { AudioWaveform, Command, GalleryVerticalEnd, Settings2, Search } from 'lucide-react'
 
-import { NavMain, NavUser, TeamSwitcher } from '@/components/layouts/nav'
 import {
   Sidebar,
   SidebarContent,
@@ -9,6 +8,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/layouts/sidebar'
+import { NavMain, NavUser, TeamSwitcher } from '@/components/layouts/nav'
 
 const data = {
   teams: [

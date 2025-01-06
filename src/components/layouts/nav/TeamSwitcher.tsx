@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/components/atoms/dropdown-menu'
+} from '@/components/atoms/DropDownMenu'
 import {
   SidebarMenu,
   SidebarMenuButton,

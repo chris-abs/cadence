@@ -2,7 +2,7 @@
 
 import { ChevronRight, Link, type LucideIcon } from 'lucide-react'
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/atoms/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/atoms/Collapsible'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,7 +15,7 @@ import {
 } from '@/components/layouts/sidebar'
 import { SearchableType } from '@/types/search'
 import { Popover, PopoverTrigger } from '@/components/atoms'
-import { QuickSearch } from './nav-search-popover'
+import { QuickSearch } from './SearchPopover'
 
 export function NavMain({
   items,

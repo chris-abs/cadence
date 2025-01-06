@@ -1,5 +1,5 @@
 import { useUser } from '@/queries/users'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/atoms/dropdown-menu'
+} from '@/components/atoms/DropDownMenu'
 import {
   SidebarMenu,
   SidebarMenuButton,

@@ -10,7 +10,7 @@ import {
 import { Separator } from '@radix-ui/react-dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar'
-import { AppSidebar } from './app-sidebar'
+import { AppSidebar } from './AppSidebar'
 
 interface PageLayoutProps {
   children: React.ReactNode

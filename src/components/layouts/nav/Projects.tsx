@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/atoms/dropdown-menu'
+} from '@/components/atoms/DropDownMenu'
 import {
   SidebarGroup,
   SidebarGroupLabel,

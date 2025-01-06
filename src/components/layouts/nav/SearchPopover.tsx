@@ -1,4 +1,4 @@
-import { Popover, PopoverContent, PopoverTrigger, Input } from '@/components/atoms'
+import { PopoverContent, Input } from '@/components/atoms'
 import { useSearch } from '@/queries/search'
 import { SearchableType, SearchResult } from '@/types/search'
 import { Link } from 'lucide-react'
@@ -9,7 +9,7 @@ interface QuickSearchProps {
   onSelect?: (result: SearchResult) => void
 }
 
-export function QuickSearch({ type, onSelect }: QuickSearchProps) {
+export function QuickSearch({ type }: QuickSearchProps) {
   const [search, setSearch] = useState('')
   const { data, isLoading } = useSearch(search)
 
