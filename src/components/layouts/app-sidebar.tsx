@@ -18,16 +18,19 @@ const data = {
       name: 'Storage',
       logo: GalleryVerticalEnd,
       plan: 'Enterprise',
+      disabled: true,
     },
     {
       name: 'Acme Corp.',
       logo: AudioWaveform,
       plan: 'Startup',
+      disabled: true,
     },
     {
       name: 'Evil Corp.',
       logo: Command,
       plan: 'Free',
+      disabled: true,
     },
   ],
   navMain: [

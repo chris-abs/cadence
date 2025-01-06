@@ -16,6 +16,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/layouts/sidebar'
+import { Tooltip, TooltipContent, TooltipProvider } from '@/components/atoms'
+import { TooltipTrigger } from '@radix-ui/react-tooltip'
 
 export function TeamSwitcher({
   teams,
@@ -24,6 +26,7 @@ export function TeamSwitcher({
     name: string
     logo: React.ElementType
     plan: string
+    disabled: boolean
   }[]
 }) {
   const { isMobile } = useSidebar()
@@ -54,27 +57,40 @@ export function TeamSwitcher({
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">Teams</DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                <Plus className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
-            </DropdownMenuItem>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <DropdownMenuLabel className="text-xs text-muted-foreground">
+                    Teams
+                  </DropdownMenuLabel>
+                  {teams.map((team, index) => (
+                    <DropdownMenuItem
+                      key={team.name}
+                      onClick={() => setActiveTeam(team)}
+                      className="gap-2 p-2"
+                      disabled={team.disabled}
+                    >
+                      <div className="flex size-6 items-center justify-center rounded-sm border">
+                        <team.logo className="size-4 shrink-0" />
+                      </div>
+                      {team.name}
+                      <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="gap-2 p-2" disabled={true}>
+                    <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                      <Plus className="size-4" />
+                    </div>
+                    <div className="font-medium text-muted-foreground">Add team</div>
+                  </DropdownMenuItem>
+                </TooltipTrigger>
+
+                <TooltipContent align="start" alignOffset={10}>
+                  Ability to create a collection of users under a team coming soon
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
