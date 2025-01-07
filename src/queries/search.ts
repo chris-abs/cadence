@@ -28,7 +28,6 @@ export function useSearch(query: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['search', query],
     queryFn: () => fetchSearchResults(query),
-    enabled: options?.enabled && query.length > 0,
-    staleTime: 1000 * 60,
+    enabled: options?.enabled && !!query,
   })
 }
