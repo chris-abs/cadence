@@ -1,12 +1,11 @@
-export type SearchableType = 'workspace' | 'container' | 'item' | 'tag'
+export type SearchType = 'workspaces' | 'containers' | 'items' | 'tags'
 
 export interface SearchResult {
   id: number
-  type: SearchableType
+  type: SearchType
   name: string
   description: string
   rank: number
-  path?: string
 }
 
 export interface SearchResponse {
