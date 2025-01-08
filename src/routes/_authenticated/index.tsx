@@ -1,3 +1,6 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { Plus, Box, FolderOpen, Package, Tags } from 'lucide-react'
+import { PageLayout } from '@/components/layouts'
 import {
   Button,
   DropdownMenu,
@@ -5,16 +8,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/atoms'
-import { PageLayout } from '@/components/layouts'
-import { createFileRoute } from '@tanstack/react-router'
-
-import { Plus, Box, FolderOpen, Package, Tags } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/')({
-  component: Homepage,
+  component: Dashboard,
 })
 
-function Homepage() {
+function Dashboard() {
   const handleCreate = (type: 'workspace' | 'container' | 'item' | 'tag') => {
     console.log(`Creating new ${type}`)
   }
