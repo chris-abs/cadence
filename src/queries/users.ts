@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { User } from '@/types/users'
+import type { User } from '@/types/user'
 
 async function fetchUser(): Promise<User> {
   const token = localStorage.getItem('token')

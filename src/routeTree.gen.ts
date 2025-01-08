@@ -15,6 +15,9 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedTagsTagIdImport } from './routes/_authenticated/tags.$tagId'
+import { Route as AuthenticatedItemsItemIdImport } from './routes/_authenticated/items.$itemId'
+import { Route as AuthenticatedContainersContainerIdImport } from './routes/_authenticated/containers.$containerId'
 
 // Create/Update Routes
 
@@ -40,6 +43,25 @@ const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedTagsTagIdRoute = AuthenticatedTagsTagIdImport.update({
+  id: '/tags/$tagId',
+  path: '/tags/$tagId',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedItemsItemIdRoute = AuthenticatedItemsItemIdImport.update({
+  id: '/items/$itemId',
+  path: '/items/$itemId',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedContainersContainerIdRoute =
+  AuthenticatedContainersContainerIdImport.update({
+    id: '/containers/$containerId',
+    path: '/containers/$containerId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -73,6 +95,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/containers/$containerId': {
+      id: '/_authenticated/containers/$containerId'
+      path: '/containers/$containerId'
+      fullPath: '/containers/$containerId'
+      preLoaderRoute: typeof AuthenticatedContainersContainerIdImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/items/$itemId': {
+      id: '/_authenticated/items/$itemId'
+      path: '/items/$itemId'
+      fullPath: '/items/$itemId'
+      preLoaderRoute: typeof AuthenticatedItemsItemIdImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/tags/$tagId': {
+      id: '/_authenticated/tags/$tagId'
+      path: '/tags/$tagId'
+      fullPath: '/tags/$tagId'
+      preLoaderRoute: typeof AuthenticatedTagsTagIdImport
+      parentRoute: typeof AuthenticatedImport
+    }
   }
 }
 
@@ -80,10 +123,17 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedContainersContainerIdRoute: typeof AuthenticatedContainersContainerIdRoute
+  AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
+  AuthenticatedTagsTagIdRoute: typeof AuthenticatedTagsTagIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedContainersContainerIdRoute:
+    AuthenticatedContainersContainerIdRoute,
+  AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
+  AuthenticatedTagsTagIdRoute: AuthenticatedTagsTagIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -95,12 +145,18 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/': typeof AuthenticatedIndexRoute
+  '/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
+  '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
+  '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
 }
 
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/': typeof AuthenticatedIndexRoute
+  '/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
+  '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
+  '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
 }
 
 export interface FileRoutesById {
@@ -109,14 +165,38 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
+  '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
+  '/_authenticated/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/register' | '/'
+  fullPaths:
+    | ''
+    | '/login'
+    | '/register'
+    | '/'
+    | '/containers/$containerId'
+    | '/items/$itemId'
+    | '/tags/$tagId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/register' | '/'
-  id: '__root__' | '/_authenticated' | '/login' | '/register' | '/_authenticated/'
+  to:
+    | '/login'
+    | '/register'
+    | '/'
+    | '/containers/$containerId'
+    | '/items/$itemId'
+    | '/tags/$tagId'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/login'
+    | '/register'
+    | '/_authenticated/'
+    | '/_authenticated/containers/$containerId'
+    | '/_authenticated/items/$itemId'
+    | '/_authenticated/tags/$tagId'
   fileRoutesById: FileRoutesById
 }
 
@@ -150,7 +230,10 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/"
+        "/_authenticated/",
+        "/_authenticated/containers/$containerId",
+        "/_authenticated/items/$itemId",
+        "/_authenticated/tags/$tagId"
       ]
     },
     "/login": {
@@ -161,6 +244,18 @@ export const routeTree = rootRoute
     },
     "/_authenticated/": {
       "filePath": "_authenticated/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/containers/$containerId": {
+      "filePath": "_authenticated/containers.$containerId.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/items/$itemId": {
+      "filePath": "_authenticated/items.$itemId.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/tags/$tagId": {
+      "filePath": "_authenticated/tags.$tagId.tsx",
       "parent": "/_authenticated"
     }
   }
