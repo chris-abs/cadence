@@ -6,8 +6,6 @@ async function fetchSearchResults(query: string): Promise<SearchResponse> {
   if (!token) throw new Error('No token found')
   if (!query) throw new Error('Query is required')
 
-  console.log('Fetching search:', query)
-
   const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(query)}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -20,7 +18,6 @@ async function fetchSearchResults(query: string): Promise<SearchResponse> {
   }
 
   const data = await response.json()
-  console.log('Search response:', data)
   return data
 }
 
