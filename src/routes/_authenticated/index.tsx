@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Box, FolderOpen, Package, Tags } from 'lucide-react'
 import { PageLayout } from '@/components/layouts'
+import { CreateModal } from '@/components/organisms/modals/Create'
+import type { EntityType } from '@/types/collection'
 import {
   Button,
   DropdownMenu,
@@ -14,8 +17,12 @@ export const Route = createFileRoute('/_authenticated/')({
 })
 
 function Dashboard() {
-  const handleCreate = (type: 'workspace' | 'container' | 'item' | 'tag') => {
-    console.log(`Creating new ${type}`)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [selectedType, setSelectedType] = useState<EntityType>('container')
+
+  const handleCreate = (type: EntityType) => {
+    setSelectedType(type)
+    setIsCreateModalOpen(true)
   }
 
   return (
@@ -28,7 +35,7 @@ function Dashboard() {
               <DropdownMenuTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add
+                  Create
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -57,6 +64,13 @@ function Dashboard() {
           <div className="aspect-video rounded-xl bg-muted/50" />
         </div>
       </div>
+
+      <CreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        selectedType={selectedType}
+        onTypeChange={setSelectedType}
+      />
     </PageLayout>
   )
 }
