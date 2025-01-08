@@ -1,4 +1,3 @@
-// src/components/layouts/nav/SearchPopover.tsx
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useDebounce } from '@/hooks/useDebounce'
@@ -9,17 +8,17 @@ import { PopoverContent } from '@/components/atoms/Popover'
 import { Box, Tags, FolderOpen, Package } from 'lucide-react'
 
 const typeToIcon = {
-  workspaces: Box,
-  containers: FolderOpen,
-  items: Package,
-  tags: Tags,
+  workspace: Box,
+  container: FolderOpen,
+  item: Package,
+  tag: Tags,
 } as const
 
 const typeToRoute = {
-  workspaces: (id: number) => `/workspaces/${id}`,
-  containers: (id: number) => `/containers/${id}`,
-  items: (id: number) => `/items/${id}`,
-  tags: (id: number) => `/tags/${id}`,
+  workspace: (id: number) => `/workspaces/${id}`,
+  container: (id: number) => `/containers/${id}`,
+  item: (id: number) => `/items/${id}`,
+  tag: (id: number) => `/tags/${id}`,
 } as const
 
 export function QuickSearch({ type }: { type: SearchType }) {
@@ -30,7 +29,7 @@ export function QuickSearch({ type }: { type: SearchType }) {
     enabled: debouncedSearch.length > 0,
   })
 
-  const results = data?.[type] ?? []
+  const results = data?.[`${type}s`] ?? []
   const Icon = typeToIcon[type]
 
   return (

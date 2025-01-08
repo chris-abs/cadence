@@ -1,8 +1,8 @@
-export type SearchType = 'containers' | 'items' | 'tags' | 'workspaces'
+export type SearchType = 'container' | 'item' | 'tag' | 'workspace'
 
 export interface SearchResult {
   id: number
-  type: 'container' | 'item' | 'tag' | 'workspace'
+  type: SearchType
   name: string
   description: string
   rank: number

@@ -13,9 +13,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/layouts/sidebar'
-import { SearchableType } from '@/types/search'
 import { Popover, PopoverTrigger } from '@/components/atoms'
 import { QuickSearch } from './SearchPopover'
+import { SearchType } from '@/types/search'
 
 export function NavMain({
   items,
@@ -28,7 +28,7 @@ export function NavMain({
     items?: {
       title: string
       url: string
-      type?: SearchableType
+      type?: SearchType
     }[]
   }[]
 }) {
