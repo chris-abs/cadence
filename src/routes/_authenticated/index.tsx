@@ -10,7 +10,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Input,
 } from '@/components/atoms'
+import { EntityCard } from '@/components/molecules'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Dashboard,
@@ -19,6 +21,10 @@ export const Route = createFileRoute('/_authenticated/')({
 function Dashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedType, setSelectedType] = useState<EntityType>('container')
+  const [searchQuery, setSearchQuery] = useState('')
+
+  // const { data: statistics } = useEntityStatistics()
+  // const { data: recentItems } = useRecentItems()
 
   const handleCreate = (type: EntityType) => {
     setSelectedType(type)
@@ -58,10 +64,42 @@ function Dashboard() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          <div className="relative">
+            <Input
+              placeholder="Search across all collections..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-12"
+              // leftIcon={<Search className="h-5 w-5 text-muted-foreground" />}
+            />
+            {/* {searchQuery && <SearchResults query={searchQuery} />} */}
+          </div>
         </div>
-        <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
+        <div className="grid gap-6 md:grid-cols-2">
+          <EntityCard
+            type="workspace"
+            icon={Box}
+            // count={statistics?.workspaces.total}
+            // recentItems={recentItems?.workspaces}
+          />
+          <EntityCard
+            type="container"
+            icon={FolderOpen}
+            // count={statistics?.containers.total}
+            // recentItems={recentItems?.containers}
+          />
+          <EntityCard
+            type="item"
+            icon={Package}
+            // count={statistics?.items.total}
+            // recentItems={recentItems?.items}
+          />
+          <EntityCard
+            type="tag"
+            icon={Tags}
+            // count={statistics?.tags.total}
+            // recentItems={recentItems?.tags}
+          />
         </div>
       </div>
 
