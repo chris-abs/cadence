@@ -55,7 +55,13 @@ export function CreateModal({ isOpen, onClose, selectedType, onTypeChange }: Cre
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={onClose}
+      onOpenAutoFocus={(e) => {
+        e.preventDefault()
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New {selectedType}</DialogTitle>

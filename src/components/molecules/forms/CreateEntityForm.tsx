@@ -102,7 +102,7 @@ export function CreateEntityForm({
               <FormControl>
                 <div className="flex items-center gap-2">
                   <Icon className="h-4 w-4" />
-                  <Input placeholder={namePlaceholder} {...field} />
+                  <Input placeholder={namePlaceholder} {...field} autoFocus />
                 </div>
               </FormControl>
               <FormMessage />
