@@ -13,9 +13,9 @@ import { NavMain, NavUser, TeamSwitcher } from '@/components/layouts/nav'
 const data = {
   teams: [
     {
-      name: 'Line',
+      name: 'Storage',
       logo: GalleryVerticalEnd,
-      plan: 'Specialised',
+      plan: 'Collections',
       disabled: true,
     },
     {

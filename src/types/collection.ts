@@ -10,3 +10,28 @@ export interface CollectionEntity {
 export interface CreateEntityResponse {
   id: number
 }
+
+interface RecentEntityPreview {
+  id: number
+  name: string
+  created_at: string
+}
+
+export interface RecentResponse {
+  workspaces: {
+    recent: RecentEntityPreview[]
+    total: number
+  }
+  containers: {
+    recent: RecentEntityPreview[]
+    total: number
+  }
+  items: {
+    recent: RecentEntityPreview[]
+    total: number
+  }
+  tags: {
+    recent: RecentEntityPreview[]
+    total: number
+  }
+}

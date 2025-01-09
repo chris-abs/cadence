@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { EntityType } from '@/types/collection'
 import { CreateEntityForm } from '@/components/molecules/forms/CreateEntityForm'
@@ -17,6 +18,7 @@ export function CreateModal({ isOpen, onClose, selectedType, onTypeChange }: Cre
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const handleSubmit = async (data: { name: string }) => {
     setIsLoading(true)
@@ -25,6 +27,8 @@ export function CreateModal({ isOpen, onClose, selectedType, onTypeChange }: Cre
     try {
       const response = await createCollectionEntity(selectedType, data)
       onClose()
+
+      queryClient.invalidateQueries({ queryKey: ['recent'] })
 
       toast(`New ${selectedType} created`, {
         description: (

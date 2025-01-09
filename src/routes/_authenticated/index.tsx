@@ -13,6 +13,7 @@ import {
   Input,
 } from '@/components/atoms'
 import { EntityCard } from '@/components/molecules'
+import { useRecentEntities } from '@/queries/recent'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Dashboard,
@@ -22,9 +23,9 @@ function Dashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedType, setSelectedType] = useState<EntityType>('container')
   const [searchQuery, setSearchQuery] = useState('')
+  const { data: recentEntities } = useRecentEntities()
 
   // const { data: statistics } = useEntityStatistics()
-  // const { data: recentItems } = useRecentItems()
 
   const handleCreate = (type: EntityType) => {
     setSelectedType(type)
@@ -79,26 +80,26 @@ function Dashboard() {
           <EntityCard
             type="workspace"
             icon={Box}
-            // count={statistics?.workspaces.total}
-            // recentItems={recentItems?.workspaces}
+            count={recentEntities?.workspaces.total}
+            recentItems={recentEntities?.workspaces.recent}
           />
           <EntityCard
             type="container"
             icon={FolderOpen}
-            // count={statistics?.containers.total}
-            // recentItems={recentItems?.containers}
+            count={recentEntities?.containers.total}
+            recentItems={recentEntities?.containers.recent}
           />
           <EntityCard
             type="item"
             icon={Package}
-            // count={statistics?.items.total}
-            // recentItems={recentItems?.items}
+            count={recentEntities?.items.total}
+            recentItems={recentEntities?.items.recent}
           />
           <EntityCard
             type="tag"
             icon={Tags}
-            // count={statistics?.tags.total}
-            // recentItems={recentItems?.tags}
+            count={recentEntities?.tags.total}
+            recentItems={recentEntities?.tags.recent}
           />
         </div>
       </div>
