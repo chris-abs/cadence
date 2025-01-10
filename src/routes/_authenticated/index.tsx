@@ -34,7 +34,7 @@ function Dashboard() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
+        <div className=" border flex-1 rounded-xl bg-muted/50 md:min-h-min">
           <div className="flex shrink-0 items-center justify-between p-4">
             <h1 className="text-xl font-semibold">Collections Overview</h1>
             <DropdownMenu>
@@ -66,16 +66,22 @@ function Dashboard() {
           </div>
           <div className="relative w-3/4 mx-auto">
             <div className="relative pb-4 pt-4">
-              <div
-                onClick={() => !searchQuery && setSearchQuery(' ')}
-                className="relative cursor-text"
-              >
+              <div className="relative cursor-text">
                 <Input
+                  type="search"
                   placeholder="Search across all collections..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-12 pl-4 pr-12 radius-xl"
+                  className="h-12 pl-4 pr-16 radius-xl [&::-webkit-search-cancel-button]:hover:cursor-pointer [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:h-4 [&::-webkit-search-cancel-button]:w-4 [&::-webkit-search-cancel-button]:bg-no-repeat [&::-webkit-search-cancel-button]:mr-2 [&::-webkit-search-cancel-button]:bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg width=\'24\' height=\'24\' fill=\'%23111827\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'m12 10.586 4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z\'/%3E%3C/svg%3E')]"
                 />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-14 top-0 h-12 px-2 hover:text-foreground text-muted-foreground"
+                  >
+                    ✕
+                  </button>
+                )}
                 <Button
                   variant="default"
                   size="icon"
@@ -85,7 +91,7 @@ function Dashboard() {
                 </Button>
               </div>
             </div>
-            {searchQuery && (
+            {searchQuery.trim() && (
               <SearchResults query={searchQuery} onClose={() => setSearchQuery('')} />
             )}
           </div>

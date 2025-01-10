@@ -2,9 +2,9 @@ import { Box, Tags, FolderOpen, Package } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useSearch } from '@/queries/search'
-import { SearchType } from '@/types/search'
-import { useState } from 'react'
-import { ToggleGroup, ToggleGroupItem } from '../atoms'
+import { SearchResult, SearchType } from '@/types/search'
+import { useEffect, useState } from 'react'
+import { ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from '../atoms'
 import { getSearchResultsByEntityType } from '@/utils/search'
 
 const searchTypes: { type: SearchType; icon: typeof Box; label: string }[] = [
@@ -20,6 +20,58 @@ const typeToRoute = {
   item: (id: number) => `/items/${id}`,
   tag: (id: number) => `/tags/${id}`,
 } as const
+
+interface ResultsListProps {
+  results: SearchResult[]
+  type: string
+  Icon: typeof Box
+  onClose?: () => void
+}
+
+interface ResultsSectionProps extends ResultsListProps {
+  query: string
+}
+
+const ResultsList = ({ results, type, Icon, onClose }: ResultsListProps) => (
+  <div className="grid grid-cols-1 gap-2">
+    {results.map((result) => (
+      <div key={result.id} className="bg-muted/50 border rounded-md">
+        {' '}
+        <Link
+          to={typeToRoute[type as SearchType](result.id)}
+          className="flex items-center gap-2 p-3 hover:bg-accent"
+          onClick={onClose}
+        >
+          <Icon className="h-4 w-4" />
+          <span className="flex-1">{result.name}</span>
+          {result.description && (
+            <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+              {result.description}
+            </span>
+          )}
+        </Link>
+      </div>
+    ))}
+  </div>
+)
+
+const NoResults = ({ type, query }: { type: string; query: string }) => (
+  <div className="flex items-center gap-2 p-4">
+    <span className="text-sm text-muted-foreground italic">
+      No {type}s matching "{query}"
+    </span>
+  </div>
+)
+
+const ResultsSection = ({ type, results, query, Icon, onClose }: ResultsSectionProps) => {
+  if (!query.trim()) return null
+
+  return results.length > 0 ? (
+    <ResultsList results={results} type={type} Icon={Icon} onClose={onClose} />
+  ) : (
+    <NoResults type={type} query={query} />
+  )
+}
 
 interface SearchResultsProps {
   query: string
@@ -40,6 +92,16 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
     }
   }
 
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose?.()
+      }
+    }
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [onClose])
+
   if (!query) return null
 
   return (
@@ -56,10 +118,20 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
               key={type}
               value={type}
               aria-label={`Toggle ${label}`}
-              className="flex-1 px-3"
+              className="flex-1 px-3 data-[state=on]:bg-slate-900 data-[state=on]:text-white bg-accent/50 hover:bg-accent"
             >
-              <Icon className="h-4 w-4 lg:mr-0.5 xl:mr-2" />
-              <span className="hidden lg:inline">{label}</span>
+              <div className="xl:hidden">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Icon className="h-4 w-4" />
+                  </TooltipTrigger>
+                  <TooltipContent>{label}</TooltipContent>
+                </Tooltip>
+              </div>
+              <div className="hidden xl:flex items-center gap-2">
+                <Icon className="h-4 w-4" />
+                <span>{label}</span>
+              </div>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
@@ -72,32 +144,17 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
             return (
               <div key={type} className="space-y-2">
                 <h3 className="font-medium capitalize">{type}s</h3>
-                <div className="rounded-md border">
+                <div className="rounded-md">
                   {isLoading ? (
                     <div className="p-4 text-sm text-muted-foreground">Loading...</div>
-                  ) : results.length > 0 ? (
-                    <div className="divide-y">
-                      {results.map((result) => (
-                        <Link
-                          key={result.id}
-                          to={typeToRoute[type as SearchType](result.id)}
-                          className="flex items-center gap-2 p-3 hover:bg-accent"
-                          onClick={onClose}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span className="flex-1">{result.name}</span>
-                          {result.description && (
-                            <span className="text-xs text-muted-foreground truncate max-w-[200px]">
-                              {result.description}
-                            </span>
-                          )}
-                        </Link>
-                      ))}
-                    </div>
                   ) : (
-                    <div className="p-4 text-sm text-muted-foreground italic">
-                      No {type}s matching "{query}"
-                    </div>
+                    <ResultsSection
+                      type={type}
+                      results={results}
+                      query={query}
+                      Icon={Icon}
+                      onClose={onClose}
+                    />
                   )}
                 </div>
               </div>
