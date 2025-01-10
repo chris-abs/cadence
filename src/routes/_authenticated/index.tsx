@@ -66,19 +66,24 @@ function Dashboard() {
           </div>
           <div className="relative w-3/4 mx-auto">
             <div className="relative pb-4 pt-4">
-              <Input
-                placeholder="Search across all collections..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-12 pl-4 pr-12 radius-xl"
-              />
-              <Button
-                variant="default"
-                size="icon"
-                className="absolute right-0 top-4 radius-xl rounded-l-none h-12 w-12"
+              <div
+                onClick={() => !searchQuery && setSearchQuery(' ')}
+                className="relative cursor-text"
               >
-                <Search className="h-4 w-4" />
-              </Button>
+                <Input
+                  placeholder="Search across all collections..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-12 pl-4 pr-12 radius-xl"
+                />
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="absolute right-0 top-0 radius-xl rounded-l-none h-12 w-12"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             {searchQuery && (
               <SearchResults query={searchQuery} onClose={() => setSearchQuery('')} />
