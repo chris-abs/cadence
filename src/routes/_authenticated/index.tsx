@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Plus, Box, FolderOpen, Package, Tags } from 'lucide-react'
+import { Plus, Box, FolderOpen, Package, Tags, Search } from 'lucide-react'
 import { PageLayout } from '@/components/layouts'
 import { CreateModal } from '@/components/organisms/modals/Create'
 import type { EntityType } from '@/types/collection'
@@ -64,13 +64,22 @@ function Dashboard() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="relative">
-            <Input
-              placeholder="Search across all collections..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-12"
-            />
+          <div className="relative w-3/4 mx-auto">
+            <div className="relative pb-4 pt-4">
+              <Input
+                placeholder="Search across all collections..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-12 pl-4 pr-12 radius-xl"
+              />
+              <Button
+                variant="default"
+                size="icon"
+                className="absolute right-0 top-4 radius-xl rounded-l-none h-12 w-12"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
             {searchQuery && (
               <SearchResults query={searchQuery} onClose={() => setSearchQuery('')} />
             )}

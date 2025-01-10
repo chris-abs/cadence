@@ -43,28 +43,28 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
   if (!query) return null
 
   return (
-    <div className="absolute top-full left-0 right-0 z-50 mt-2 rounded-lg border bg-background shadow-lg">
+    <div className="absolute left-[12.5%] right-[12.5%] top-full z-50 mt-2 rounded-lg border bg-background shadow-lg">
       <div className="p-4 space-y-4">
         <ToggleGroup
           type="multiple"
           value={selectedTypes}
           onValueChange={handleValueChange}
-          className="justify-start"
+          className="w-full grid grid-cols-4 sm:flex sm:justify-start gap-2"
         >
           {searchTypes.map(({ type, icon: Icon, label }) => (
             <ToggleGroupItem
               key={type}
               value={type}
               aria-label={`Toggle ${label}`}
-              className="px-3"
+              className="flex-1 sm:flex-initial px-3"
             >
-              <Icon className="h-4 w-4" />
-              <span className="ml-2">{label}</span>
+              <Icon className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{label}</span>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
 
-        <div className="grid grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
           {selectedTypes.map((type) => {
             const results = getSearchResultsByEntityType(data, type as SearchType)
             const Icon = searchTypes.find((t) => t.type === type)?.icon || Box
@@ -95,7 +95,9 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
                       ))}
                     </div>
                   ) : (
-                    <div className="p-4 text-sm text-muted-foreground">No {type}s found</div>
+                    <div className="p-4 text-sm text-muted-foreground italic">
+                      No {type}s matching "{query}"
+                    </div>
                   )}
                 </div>
               </div>
