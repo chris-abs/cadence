@@ -56,15 +56,15 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
               key={type}
               value={type}
               aria-label={`Toggle ${label}`}
-              className="flex-1 sm:flex-initial px-3"
+              className="flex-1 px-3"
             >
-              <Icon className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">{label}</span>
+              <Icon className="h-4 w-4 lg:mr-0.5 xl:mr-2" />
+              <span className="hidden lg:inline">{label}</span>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
           {selectedTypes.map((type) => {
             const results = getSearchResultsByEntityType(data, type as SearchType)
             const Icon = searchTypes.find((t) => t.type === type)?.icon || Box
