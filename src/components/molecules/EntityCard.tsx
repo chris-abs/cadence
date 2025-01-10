@@ -17,9 +17,16 @@ interface EntityCardProps {
   recentItems?: Array<{ id: number; name: string; image?: string }>
 }
 
+const typeToRoute = {
+  workspace: (id: number) => `/workspaces/${id}`,
+  container: (id: number) => `/containers/${id}`,
+  item: (id: number) => `/items/${id}`,
+  tag: (id: number) => `/tags/${id}`,
+} as const
+
 export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardProps) {
   return (
-    <Card>
+    <Card className="flex flex-col min-h-[420px]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -31,12 +38,11 @@ export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardP
           </CardDescription>
         </div>
       </CardHeader>
-
-      <CardContent className="space-y-2">
+      <CardContent className="flex-grow space-y-2">
         {recentItems?.slice(0, 5).map((item) => (
           <Link
             key={item.id}
-            // to={`/${type}s/${item.id}`}
+            to={typeToRoute[type](item.id)}
             className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted"
           >
             {item.image ? (
@@ -48,8 +54,7 @@ export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardP
           </Link>
         ))}
       </CardContent>
-
-      <CardFooter className="justify-end">
+      <CardFooter className="justify-end mt-auto">
         <Link
           to={`/${type}s`}
           className="text-sm font-medium text-muted-foreground hover:text-foreground"

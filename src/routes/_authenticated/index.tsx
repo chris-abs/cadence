@@ -72,7 +72,7 @@ function Dashboard() {
                   placeholder="Search across all collections..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-12 pl-4 pr-16 radius-xl [&::-webkit-search-cancel-button]:hover:cursor-pointer [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:h-4 [&::-webkit-search-cancel-button]:w-4 [&::-webkit-search-cancel-button]:bg-no-repeat [&::-webkit-search-cancel-button]:mr-2 [&::-webkit-search-cancel-button]:bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg width=\'24\' height=\'24\' fill=\'%23111827\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'m12 10.586 4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z\'/%3E%3C/svg%3E')]"
+                  className="h-12 pl-4 pr-16 radius-xl [&::-webkit-search-cancel-button]:hidden"
                 />
                 {searchQuery && (
                   <button
