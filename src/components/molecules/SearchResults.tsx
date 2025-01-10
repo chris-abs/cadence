@@ -2,9 +2,10 @@ import { Box, Tags, FolderOpen, Package } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useSearch } from '@/queries/search'
-import { SearchType, SearchResult, SearchResponse } from '@/types/search'
+import { SearchType } from '@/types/search'
 import { useState } from 'react'
 import { ToggleGroup, ToggleGroupItem } from '../atoms'
+import { getSearchResultsByEntityType } from '@/utils/search'
 
 const searchTypes: { type: SearchType; icon: typeof Box; label: string }[] = [
   { type: 'workspace', icon: Box, label: 'Workspaces' },
@@ -29,12 +30,9 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>(searchTypes.map((t) => t.type))
   const debouncedSearch = useDebounce(query, 300)
 
-  const { data, isLoading }: { data: SearchResponse | undefined; isLoading: boolean } = useSearch(
-    debouncedSearch,
-    {
-      enabled: debouncedSearch.length > 0,
-    },
-  )
+  const { data, isLoading } = useSearch(debouncedSearch, {
+    enabled: debouncedSearch.length > 0,
+  })
 
   const handleValueChange = (value: string[]) => {
     if (value.length > 0) {
@@ -68,7 +66,7 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
 
         <div className="grid grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
           {selectedTypes.map((type) => {
-            const results = data ? (data[type as keyof SearchResponse] ?? []) : []
+            const results = getSearchResultsByEntityType(data, type as SearchType)
             const Icon = searchTypes.find((t) => t.type === type)?.icon || Box
 
             return (
@@ -79,10 +77,10 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
                     <div className="p-4 text-sm text-muted-foreground">Loading...</div>
                   ) : results.length > 0 ? (
                     <div className="divide-y">
-                      {results.map((result: SearchResult) => (
+                      {results.map((result) => (
                         <Link
                           key={result.id}
-                          to={typeToRoute[type as keyof typeof typeToRoute](result.id)}
+                          to={typeToRoute[type as SearchType](result.id)}
                           className="flex items-center gap-2 p-3 hover:bg-accent"
                           onClick={onClose}
                         >
