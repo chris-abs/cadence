@@ -14,6 +14,7 @@ import {
 } from '@/components/atoms'
 import { EntityCard } from '@/components/molecules'
 import { useRecentEntities } from '@/queries/recent'
+import { SearchResults } from '@/components/molecules/SearchResults'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Dashboard,
@@ -24,8 +25,6 @@ function Dashboard() {
   const [selectedType, setSelectedType] = useState<EntityType>('container')
   const [searchQuery, setSearchQuery] = useState('')
   const { data: recentEntities } = useRecentEntities()
-
-  // const { data: statistics } = useEntityStatistics()
 
   const handleCreate = (type: EntityType) => {
     setSelectedType(type)
@@ -71,9 +70,10 @@ function Dashboard() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-12"
-              // leftIcon={<Search className="h-5 w-5 text-muted-foreground" />}
             />
-            {/* {searchQuery && <SearchResults query={searchQuery} />} */}
+            {searchQuery && (
+              <SearchResults query={searchQuery} onClose={() => setSearchQuery('')} />
+            )}
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
