@@ -14,6 +14,7 @@ interface ApiResponse<T> {
 export async function fetchWithAuth<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('token')
   if (!token) {
+    window.location.href = '/login'
     throw createApiError(401, 'No token found')
   }
 
@@ -31,6 +32,8 @@ export async function fetchWithAuth<T>(endpoint: string, options: RequestInit = 
 
     if (!response.ok) {
       if (response.status === 401) {
+        localStorage.removeItem('token')
+        window.location.href = '/login'
         throw createApiError(401, 'Unauthorized')
       }
       throw createApiError(
