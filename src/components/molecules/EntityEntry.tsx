@@ -27,10 +27,10 @@ export function EntityEntry({
   onClick,
 }: EntityEntryProps) {
   return (
-    <div className="bg-muted/50 border rounded-md">
+    <div className="bg-contrast-accent border rounded-md">
       <Link
         to={typeToRoute[type](id)}
-        className="flex items-center gap-2 p-3 hover:bg-accent"
+        className="flex items-center gap-2 p-3 hover:bg-contrast-accent-hover"
         onClick={onClick}
       >
         <Icon className="h-4 w-4" />

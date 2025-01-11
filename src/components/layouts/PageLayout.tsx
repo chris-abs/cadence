@@ -56,7 +56,7 @@ export function PageLayout({ children }: PageLayoutProps) {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <main className="flex-1 bg-sidebar-accent min-h-[calc(100vh-4rem)]">{children}</main>
+        <main className="flex-1 bg-contrast-accent min-h-[calc(100vh-4rem)]">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   )

@@ -41,13 +41,15 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-contrast-accent data-[state=open]:text-contrast-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 {user.imageUrl ? (
                   <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
                 ) : (
-                  <AvatarFallback className="rounded-lg bg-sidebar-accent">{userInitials}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg bg-contrast-accent">
+                    {userInitials}
+                  </AvatarFallback>
                 )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -69,7 +71,9 @@ export function NavUser() {
                   {user.imageUrl ? (
                     <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
                   ) : (
-                    <AvatarFallback className="rounded-lg bg-sidebar-accent">{userInitials}</AvatarFallback>
+                    <AvatarFallback className="rounded-lg bg-contrast-accent">
+                      {userInitials}
+                    </AvatarFallback>
                   )}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
