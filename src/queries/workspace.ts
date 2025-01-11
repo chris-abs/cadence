@@ -11,6 +11,13 @@ export function useWorkspace(id: number) {
   })
 }
 
+export function useWorkspaces() {
+  return useQuery({
+    queryKey: ['workspaces'],
+    queryFn: () => api.get<Workspace[]>('/workspaces'),
+  })
+}
+
 export function useCreateWorkspace() {
   const queryClient = useQueryClient()
 

@@ -11,6 +11,13 @@ export function useContainer(id: number) {
   })
 }
 
+export function useContainers() {
+  return useQuery({
+    queryKey: ['containers'],
+    queryFn: () => api.get<Container[]>('/containers'),
+  })
+}
+
 export function useCreateContainer() {
   const queryClient = useQueryClient()
 
