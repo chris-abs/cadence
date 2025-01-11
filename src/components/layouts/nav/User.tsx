@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/layouts/sidebar'
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-react'
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Settings2 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from '@tanstack/react-router'
 
@@ -87,6 +87,10 @@ export function NavUser() {
               <DropdownMenuItem>
                 <Bell className="mr-2 h-4 w-4" />
                 Notifications
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings2 className="mr-2 h-4 w-4" />
+                Settings
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

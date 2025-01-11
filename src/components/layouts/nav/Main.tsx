@@ -1,82 +1,36 @@
-'use client'
-
-import { ChevronRight, Link, type LucideIcon } from 'lucide-react'
-
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/atoms/Collapsible'
+import { type LucideIcon } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from '@/components/layouts/sidebar'
-import { Popover, PopoverTrigger } from '@/components/atoms'
-import { QuickSearch } from './SearchPopover'
-import { SearchType } from '@/types/search'
 
 export function NavMain({
-  items,
+  config,
 }: {
-  items: {
+  config: {
     title: string
     url: string
     icon?: LucideIcon
     isActive?: boolean
-    items?: {
-      title: string
-      url: string
-      type?: SearchType
-    }[]
   }[]
 }) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
+        {config.map((entry) => (
+          <Link key={entry.title} to={entry.url}>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      {subItem.type ? (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <SidebarMenuSubButton>
-                              <span>{subItem.title}</span>
-                            </SidebarMenuSubButton>
-                          </PopoverTrigger>
-                          <QuickSearch type={subItem.type} />
-                        </Popover>
-                      ) : (
-                        <SidebarMenuSubButton asChild>
-                          <Link to={subItem.url}>
-                            <span>{subItem.title}</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      )}
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
+              <SidebarMenuButton tooltip={entry.title}>
+                {entry.icon && <entry.icon />}
+                <span>{entry.title}</span>
+              </SidebarMenuButton>
             </SidebarMenuItem>
-          </Collapsible>
+          </Link>
         ))}
       </SidebarMenu>
     </SidebarGroup>

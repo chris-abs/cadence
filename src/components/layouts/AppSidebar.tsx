@@ -1,5 +1,13 @@
 import * as React from 'react'
-import { AudioWaveform, Command, GalleryVerticalEnd, Settings2, Search } from 'lucide-react'
+import {
+  AudioWaveform,
+  Command,
+  GalleryVerticalEnd,
+  Box,
+  FolderOpen,
+  Package,
+  Tags,
+} from 'lucide-react'
 
 import {
   Sidebar,
@@ -31,55 +39,30 @@ const data = {
       disabled: true,
     },
   ],
-  navMain: [
-    {
-      title: 'Collections',
-      url: '#',
-      icon: Search,
-      isActive: true,
-      items: [
-        {
-          title: 'Workspaces',
-          url: '#',
-          type: 'workspace',
-        },
-        {
-          title: 'Containers',
-          url: '#',
-          type: 'container',
-        },
-        {
-          title: 'Items',
-          url: '#',
-          type: 'item',
-        },
-        {
-          title: 'Tags',
-          url: '#',
-          type: 'tag',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Alerts',
-          url: '#',
-        },
-      ],
-    },
-  ],
+  navMain: {
+    entities: [
+      {
+        title: 'Workspaces',
+        url: '/workspaces',
+        icon: Box,
+      },
+      {
+        title: 'Containers',
+        url: '/containers',
+        icon: FolderOpen,
+      },
+      {
+        title: 'Items',
+        url: '/items',
+        icon: Package,
+      },
+      {
+        title: 'Tags',
+        url: '/tags',
+        icon: Tags,
+      },
+    ],
+  },
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -89,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain config={data.navMain.entities} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

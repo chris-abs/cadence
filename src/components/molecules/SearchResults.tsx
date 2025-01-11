@@ -36,7 +36,6 @@ const ResultsList = ({ results, type, Icon, onClose }: ResultsListProps) => (
   <div className="grid grid-cols-1 gap-2">
     {results.map((result) => (
       <div key={result.id} className="bg-muted/50 border rounded-md">
-        {' '}
         <Link
           to={typeToRoute[type as SearchType](result.id)}
           className="flex items-center gap-2 p-3 hover:bg-accent"

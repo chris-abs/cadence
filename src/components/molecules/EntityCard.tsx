@@ -1,59 +1,44 @@
-import { Link } from '@tanstack/react-router'
 import { LucideIcon } from 'lucide-react'
 import type { EntityType } from '@/types/collection'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from '@/components/atoms'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/atoms'
+import { Link } from '@tanstack/react-router'
+import { EntityEntry } from './EntityEntry'
 
 interface EntityCardProps {
   type: EntityType
   icon: LucideIcon
   count?: number
-  recentItems?: Array<{ id: number; name: string; image?: string }>
+  recentItems?: Array<{ id: number; name: string; description?: string }>
 }
-
-const typeToRoute = {
-  workspace: (id: number) => `/workspaces/${id}`,
-  container: (id: number) => `/containers/${id}`,
-  item: (id: number) => `/items/${id}`,
-  tag: (id: number) => `/tags/${id}`,
-} as const
 
 export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardProps) {
   return (
-    <Card className="flex flex-col min-h-[420px]">
+    <Card className="flex flex-col min-h-[320px]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Icon className="h-5 w-5" />
             <CardTitle className="capitalize">{type}s</CardTitle>
           </div>
-          <CardDescription className="text-xl font-semibold text-foreground">
-            {count || 0}
-          </CardDescription>
+          <span className="text-xl font-semibold">{count || 0}</span>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow space-y-2">
-        {recentItems?.slice(0, 5).map((item) => (
-          <Link
-            key={item.id}
-            to={typeToRoute[type](item.id)}
-            className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted"
-          >
-            {item.image ? (
-              <img src={item.image} alt={item.name} className="h-8 w-8 rounded-full object-cover" />
-            ) : (
-              <Icon className="h-8 w-8 p-1.5 text-muted-foreground" />
-            )}
-            <span className="flex-1 truncate text-sm">{item.name}</span>
-          </Link>
-        ))}
+
+      <CardContent className="flex-grow space-y-1">
+        <div className="grid grid-cols-1 gap-2">
+          {recentItems?.map((item) => (
+            <EntityEntry
+              key={item.id}
+              id={item.id}
+              name={item.name}
+              type={type}
+              icon={Icon}
+              description={item.description}
+            />
+          ))}
+        </div>
       </CardContent>
+
       <CardFooter className="justify-end mt-auto">
         <Link
           to={`/${type}s`}
