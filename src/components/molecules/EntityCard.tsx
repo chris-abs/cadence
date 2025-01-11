@@ -13,7 +13,7 @@ interface EntityCardProps {
 
 export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardProps) {
   return (
-    <Card className="flex flex-col min-h-[320px]">
+    <Card className="flex flex-col min-h-[420px]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
