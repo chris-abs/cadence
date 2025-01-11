@@ -50,7 +50,7 @@ export function CreateContainerModal({ isOpen, onClose }: CreateContainerModalPr
         <DialogHeader>
           <DialogTitle>Create Container</DialogTitle>
           <DialogDescription>
-            Add a new container to organize your items. Only the name is required.
+            Add a new container to organise your items. Only the name is required.
           </DialogDescription>
         </DialogHeader>
         <ContainerForm

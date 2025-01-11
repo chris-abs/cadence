@@ -50,7 +50,7 @@ export function CreateWorkspaceModal({ isOpen, onClose }: CreateWorkspaceModalPr
         <DialogHeader>
           <DialogTitle>Create Workspace</DialogTitle>
           <DialogDescription>
-            Create a new workspace to organize your containers and items. Only the name is required.
+            Create a new workspace to organise your containers and items. Only the name is required.
           </DialogDescription>
         </DialogHeader>
         <WorkspaceForm
