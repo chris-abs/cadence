@@ -20,9 +20,15 @@ function ItemsPage() {
 
   return (
     <PageLayout>
-      <EntityPageHeader title="Items" entityType="item" onAdd={handleAdd} />
-      <div className="p-4">
-        <ItemList items={items ?? []} isLoading={isLoading} />
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="bg-background border flex-1 rounded-xl">
+          <EntityPageHeader title="Items" entityType="item" onAdd={handleAdd} />
+        </div>
+        <div className="bg-background border flex-1 rounded-xl">
+          <div className="p-4">
+            <ItemList items={items ?? []} isLoading={isLoading} />
+          </div>
+        </div>
       </div>
       <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>

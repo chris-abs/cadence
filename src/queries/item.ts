@@ -24,8 +24,8 @@ export function useCreateItem() {
   return useMutation({
     mutationFn: (data: CreateItemData) => api.post<Item>('/items', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['items'] })
       queryClient.invalidateQueries({ queryKey: ['recent'] })
+      queryClient.invalidateQueries({ queryKey: ['items'] })
     },
   })
 }

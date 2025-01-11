@@ -24,8 +24,8 @@ export function useCreateTag() {
   return useMutation({
     mutationFn: (data: CreateTagData) => api.post<Tag>('/tags', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tags'] })
       queryClient.invalidateQueries({ queryKey: ['recent'] })
+      queryClient.invalidateQueries({ queryKey: ['tags'] })
     },
   })
 }

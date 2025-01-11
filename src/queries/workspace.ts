@@ -25,6 +25,7 @@ export function useCreateWorkspace() {
     mutationFn: (data: CreateWorkspaceData) => api.post<Workspace>('/workspaces', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recent'] })
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] })
     },
   })
 }

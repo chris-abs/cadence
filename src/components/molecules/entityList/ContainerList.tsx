@@ -34,7 +34,7 @@ export function ContainerList({ containers, isLoading }: ContainerListProps) {
           key={container.id}
           to="/containers/$containerId"
           params={{ containerId: container.id.toString() }}
-          className="flex items-center justify-between rounded-md border p-4 hover:bg-muted"
+          className="flex items-center justify-between rounded-md border p-4 bg-contrast-accent hover:bg-contrast-accent-hover"
         >
           <div className="space-y-1">
             <h3 className="font-medium">{container.name}</h3>

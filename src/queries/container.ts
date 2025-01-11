@@ -25,6 +25,7 @@ export function useCreateContainer() {
     mutationFn: (data: CreateContainerData) => api.post<Container>('/containers', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recent'] })
+      queryClient.invalidateQueries({ queryKey: ['containers'] })
     },
   })
 }

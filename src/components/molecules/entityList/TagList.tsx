@@ -32,7 +32,7 @@ export function TagList({ tags, isLoading }: TagListProps) {
           key={tag.id}
           to="/tags/$tagId"
           params={{ tagId: tag.id.toString() }}
-          className="flex items-center justify-between rounded-md border p-4 hover:bg-muted"
+          className="flex items-center justify-between rounded-md border p-4 bg-contrast-accent hover:bg-contrast-accent-hover"
         >
           <div className="flex items-center gap-3">
             <div className="h-4 w-4 rounded-full" style={{ backgroundColor: tag.colour }} />

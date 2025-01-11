@@ -32,7 +32,7 @@ export function ItemList({ items, isLoading }: ItemListProps) {
           key={item.id}
           to="/items/$itemId"
           params={{ itemId: item.id.toString() }}
-          className="flex items-center justify-between rounded-md border p-4 hover:bg-muted"
+          className="flex items-center justify-between rounded-md border p-4 bg-contrast-accent hover:bg-contrast-accent-hover"
         >
           <div className="space-y-1">
             <h3 className="font-medium">{item.name}</h3>
