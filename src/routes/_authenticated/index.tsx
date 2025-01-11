@@ -34,7 +34,7 @@ function Dashboard() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className=" border flex-1 rounded-xl md:min-h-min">
+        <div className="bg-background border flex-1 rounded-xl md:min-h-min">
           <div className="flex shrink-0 items-center justify-between p-4">
             <h1 className="text-xl font-semibold">Collections Overview</h1>
             <DropdownMenu>

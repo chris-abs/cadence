@@ -47,7 +47,7 @@ export function NavUser() {
                 {user.imageUrl ? (
                   <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
                 ) : (
-                  <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg bg-sidebar-accent">{userInitials}</AvatarFallback>
                 )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -69,7 +69,7 @@ export function NavUser() {
                   {user.imageUrl ? (
                     <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
                   ) : (
-                    <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
+                    <AvatarFallback className="rounded-lg bg-sidebar-accent">{userInitials}</AvatarFallback>
                   )}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
