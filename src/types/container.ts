@@ -1,7 +1,11 @@
+import { Item } from './item'
+
 export interface Container {
   id: number
   name: string
+  location: string
+  items: Item[]
   description: string
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }

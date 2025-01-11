@@ -1,5 +1,5 @@
 import { PageLayout } from '@/components/layouts'
-import { useItem } from '@/queries/items'
+import { useItem } from '@/queries/item'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/items/$itemId')({

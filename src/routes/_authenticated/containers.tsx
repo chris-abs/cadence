@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader, EntityList } from '@/components/molecules'
-import { useState } from 'react'
+import { EntityPageHeader } from '@/components/molecules'
 import { useContainers } from '@/queries/container'
 import { CreateContainerModal } from '@/components/organisms/modals/entity/detailed/ContainerModal'
+import { ContainerList } from '@/components/molecules/entityList/ContainerList'
 
 export const Route = createFileRoute('/_authenticated/containers')({
   component: ContainersPage,
@@ -21,7 +22,7 @@ function ContainersPage() {
     <PageLayout>
       <EntityPageHeader title="Containers" entityType="container" onAdd={handleAdd} />
       <div className="p-4">
-        <EntityList items={containers ?? []} type="container" isLoading={isLoading} />
+        <ContainerList containers={containers ?? []} isLoading={isLoading} />
       </div>
       <CreateContainerModal
         isOpen={isCreateModalOpen}

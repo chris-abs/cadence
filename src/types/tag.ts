@@ -1,7 +1,11 @@
+import { Item } from './item'
+
 export interface Tag {
   id: number
   name: string
+  items: Item[]
+  colour: string
   description: string
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }

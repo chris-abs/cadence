@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { EntityType } from '@/types/collection'
 import { CreateEntityForm } from '@/components/molecules/forms/entity/CreateEntityForm'
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms'
-import { createCollectionEntity } from '@/queries/colletion'
+import { createCollectionEntity } from '@/queries/collection'
 
 interface CreateModalProps {
   isOpen: boolean
