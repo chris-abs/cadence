@@ -1,16 +1,28 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
+import { EntityPageHeader } from '@/components/molecules'
+import { useState } from 'react'
+import { CreateModal } from '@/components/organisms/modals/entity/CreateModal'
 
 export const Route = createFileRoute('/_authenticated/containers')({
   component: ContainersPage,
 })
 
 function ContainersPage() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+
+  const handleAdd = () => {
+    setIsCreateModalOpen(true)
+  }
+
   return (
     <PageLayout>
-      <div className="p-4">
-        <h1 className="text-xl font-semibold">Containers</h1>
-      </div>
+      <EntityPageHeader title="Containers" entityType="container" onAdd={handleAdd} />
+      <CreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        selectedType="container"
+      />
     </PageLayout>
   )
 }

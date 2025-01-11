@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { EntityType } from '@/types/collection'
-import { CreateEntityForm } from '@/components/molecules/forms/CreateEntityForm'
+import { CreateEntityForm } from '@/components/molecules/forms/entity/CreateEntityForm'
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms'
 import { createCollectionEntity } from '@/queries/colletion'
 

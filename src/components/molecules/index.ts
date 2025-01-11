@@ -1,4 +1,6 @@
 export * from './Breadcrumb'
 export * from './EntityCard'
+export * from './EntityEntry'
+export * from './EntityPageHeader'
 export * from './SearchResults'
 export * from './forms'

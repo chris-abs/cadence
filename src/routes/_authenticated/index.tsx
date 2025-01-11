@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Box, FolderOpen, Package, Tags, Search } from 'lucide-react'
 import { PageLayout } from '@/components/layouts'
-import { CreateModal } from '@/components/organisms/modals/Create'
+import { CreateModal } from '@/components/organisms/modals/entity/CreateModal'
 import type { EntityType } from '@/types/collection'
 import {
   Button,
