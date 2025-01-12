@@ -6,7 +6,7 @@ import { useItems } from '@/queries/item'
 import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
 import { ItemList } from '@/components/molecules/entityList/ItemList'
 
-export const Route = createFileRoute('/_authenticated/items')({
+export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,
 })
 
@@ -30,7 +30,10 @@ function ItemsPage() {
           </div>
         </div>
       </div>
-      <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateItemModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </PageLayout>
   )
 }

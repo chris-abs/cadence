@@ -13,9 +13,13 @@ export function useRecentEntities() {
 }
 
 export function useContainer(id: number) {
+  console.log('useContainer called with id:', id)
   return useQuery({
     queryKey: queryKeys.containers.detail(id),
-    queryFn: () => api.get<Container>(`/containers/${id}`),
+    queryFn: () => {
+      console.log('Query function executing for container:', id)
+      return api.get<Container>(`/containers/${id}`)
+    },
     enabled: !!id,
   })
 }

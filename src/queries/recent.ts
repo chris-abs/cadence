@@ -8,6 +8,5 @@ export function useRecentEntities() {
     queryKey: queryKeys.recent,
     queryFn: () => api.get<RecentResponse>('/recent'),
     staleTime: Infinity,
-    gcTime: Infinity,
   })
 }

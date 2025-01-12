@@ -18,14 +18,7 @@ const typeToRoute = {
   tag: (id: number) => `/tags/${id}`,
 } as const
 
-export function EntityEntry({
-  id,
-  name,
-  type,
-  icon: Icon,
-  description,
-  onClick,
-}: EntityEntryProps) {
+export function EntityEntry({ id, name, type, icon: Icon, onClick }: EntityEntryProps) {
   return (
     <div className="bg-contrast-accent border rounded-md">
       <Link
@@ -35,11 +28,6 @@ export function EntityEntry({
       >
         <Icon className="h-4 w-4" />
         <span className="flex-1">{name}</span>
-        {description && (
-          <span className="text-xs text-muted-foreground truncate max-w-[200px]">
-            {description}
-          </span>
-        )}
       </Link>
     </div>
   )

@@ -6,7 +6,7 @@ import { useTags } from '@/queries/tags'
 import { TagList } from '@/components/molecules/entityList/TagList'
 import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
 
-export const Route = createFileRoute('/_authenticated/tags')({
+export const Route = createFileRoute('/_authenticated/tags/')({
   component: TagsPage,
 })
 
@@ -31,7 +31,10 @@ function TagsPage() {
         </div>
       </div>
 
-      <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateTagModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </PageLayout>
   )
 }

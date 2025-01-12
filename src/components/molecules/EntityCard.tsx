@@ -25,16 +25,9 @@ export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardP
       </CardHeader>
 
       <CardContent className="flex-grow space-y-1">
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 gap-2 xl:grid-cols-2">
           {recentItems?.map((item) => (
-            <EntityEntry
-              key={item.id}
-              id={item.id}
-              name={item.name}
-              type={type}
-              icon={Icon}
-              description={item.description}
-            />
+            <EntityEntry key={item.id} id={item.id} name={item.name} type={type} icon={Icon} />
           ))}
         </div>
       </CardContent>
