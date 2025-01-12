@@ -5,7 +5,7 @@ import { EntityPageHeader } from '@/components/molecules'
 import { useWorkspace } from '@/queries/workspace'
 import { CreateContainerModal } from '@/components/organisms/modals/entity/detailed/ContainerModal'
 import { WorkspaceSection } from '@/components/molecules/entitySections/detailed'
-import { NotAssignedSection } from '@/components/molecules/entitySections/detailed/NotAssigned'
+import { NotAssignedSection } from '@/components/molecules/entitySections/NotAssigned'
 import { ContainersListSection } from '@/components/molecules/entitySections/list'
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({

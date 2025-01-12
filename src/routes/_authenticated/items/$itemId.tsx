@@ -2,14 +2,11 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
-import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
 import { useItem } from '@/queries/item'
-import {
-  ContainerSection,
-  ItemSection,
-  TagsSection,
-} from '@/components/molecules/entitySections/detailed'
-import { NotAssignedSection } from '@/components/molecules/entitySections/detailed/NotAssigned'
+import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
+import { ContainerSection, ItemSection } from '@/components/molecules/entitySections/detailed'
+import { NotAssignedSection } from '@/components/molecules/entitySections/NotAssigned'
+import { TagsListSection } from '@/components/molecules/entitySections/list'
 
 export const Route = createFileRoute('/_authenticated/items/$itemId')({
   component: ItemPage,
@@ -65,7 +62,7 @@ function ItemPage() {
         />
 
         <ContainerSection
-          container={item.container ?? null}
+          container={item.container || null}
           emptyStateComponent={
             <NotAssignedSection
               title="Container"
@@ -74,7 +71,7 @@ function ItemPage() {
           }
         />
 
-        <TagsSection
+        <TagsListSection
           tags={item.tags}
           emptyStateComponent={
             <NotAssignedSection title="Tags" message="No tags assigned to this item yet." />

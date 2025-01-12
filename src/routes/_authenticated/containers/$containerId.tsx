@@ -4,7 +4,9 @@ import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useContainer } from '@/queries/container'
 import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
-import { ItemList } from '@/components/molecules/entityList/ItemList'
+import { NotAssignedSection } from '@/components/molecules/entitySections/NotAssigned'
+import { ContainerSection } from '@/components/molecules/entitySections/detailed'
+import { ItemsListSection } from '@/components/molecules/entitySections/list'
 
 export const Route = createFileRoute('/_authenticated/containers/$containerId')({
   component: ContainerPage,
@@ -20,7 +22,10 @@ function ContainerPage() {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4">Loading...</div>
+          <div className="bg-background border flex-1 rounded-xl p-4" role="status">
+            <span className="sr-only">Loading...</span>
+            Loading...
+          </div>
         </div>
       </PageLayout>
     )
@@ -30,7 +35,9 @@ function ContainerPage() {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4">Container not found</div>
+          <div className="bg-background border flex-1 rounded-xl p-4" role="alert">
+            Container not found
+          </div>
         </div>
       </PageLayout>
     )
@@ -47,29 +54,22 @@ function ContainerPage() {
           <EntityPageHeader title={container.name} entityType="item" onAdd={handleAdd} />
         </div>
 
-        <div className="bg-background border rounded-xl p-4">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-medium">Container Details</h2>
-            </div>
-            {container.description && (
-              <p className="text-sm text-muted-foreground">{container.description}</p>
-            )}
-            {container.location && (
-              <div className="text-sm text-muted-foreground">Location: {container.location}</div>
-            )}
-            <div className="text-sm text-muted-foreground">
-              Created: {new Date(container.createdAt).toLocaleDateString()}
-            </div>
-          </div>
-        </div>
+        <ContainerSection
+          container={container || null}
+          emptyStateComponent={
+            <NotAssignedSection title="Container" message="No container details available." />
+          }
+        />
 
-        <div className="bg-background border rounded-xl p-4">
-          <div className="space-y-4">
-            <h2 className="text-lg font-medium">Items in Container</h2>
-            <ItemList items={container.items || []} isLoading={false} />
-          </div>
-        </div>
+        <ItemsListSection
+          items={container.items || []}
+          emptyStateComponent={
+            <NotAssignedSection
+              title="Items"
+              message="No items in this container yet. Add items to get started."
+            />
+          }
+        />
       </div>
 
       <CreateItemModal
