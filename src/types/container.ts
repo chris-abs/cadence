@@ -4,8 +4,10 @@ export interface Container {
   id: number
   name: string
   location: string
+  number: number
+  qrCode: string
+  qrCodeImage: string
   items: Item[]
-  description: string
   createdAt: string
   updatedAt: string
 }

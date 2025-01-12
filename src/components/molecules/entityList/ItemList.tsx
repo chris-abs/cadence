@@ -41,6 +41,11 @@ export function ItemList({ items, isLoading }: ItemListProps) {
             )}
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">Quantity: {item.quantity}</span>
+              {item.container && (
+                <span className="text-sm text-muted-foreground">
+                  Container: {item.container.name}
+                </span>
+              )}
               {item.tags && item.tags.length > 0 && (
                 <div className="flex gap-1">
                   {item.tags.map((tag) => (
