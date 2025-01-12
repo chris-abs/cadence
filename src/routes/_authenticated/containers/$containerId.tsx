@@ -3,64 +3,79 @@ import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useContainer } from '@/queries/container'
 import { useState } from 'react'
-import { CreateModal } from '@/components/organisms/modals/entity/CreateModal'
+import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
+import { ItemList } from '@/components/molecules/entityList/ItemList'
 
-export const Route = createFileRoute('/_authenticated/containers/$containerId')(
-  {
-    component: ContainerPage,
-    loader: ({ params: { containerId } }) => {
-      console.log('Route loader called with containerId:', containerId)
-      if (!/^\d+$/.test(containerId)) throw new Error('Invalid container ID')
-      return { containerId: parseInt(containerId) }
-    },
-  },
-)
+export const Route = createFileRoute('/_authenticated/containers/$containerId')({
+  component: ContainerPage,
+})
 
 function ContainerPage() {
-  console.log('ContainerPage component rendered')
   const { containerId } = Route.useParams()
-  console.log('ContainerId from params:', containerId)
-
-  const { data: container, isLoading } = useContainer(parseInt(containerId))
-  console.log('Container data:', container, 'isLoading:', isLoading)
-
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const parsedContainerId = parseInt(containerId)
+  const { data: container, isLoading } = useContainer(parsedContainerId)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   if (isLoading) {
-    console.log('Showing loading state')
-    return <div>Loading...</div>
+    return (
+      <PageLayout>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="bg-background border flex-1 rounded-xl p-4">Loading...</div>
+        </div>
+      </PageLayout>
+    )
   }
 
   if (!container) {
-    console.log('No container data found')
-    return <div>Container not found</div>
+    return (
+      <PageLayout>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="bg-background border flex-1 rounded-xl p-4">Container not found</div>
+        </div>
+      </PageLayout>
+    )
   }
 
   const handleAdd = () => {
-    setIsAddModalOpen(true)
+    setIsCreateModalOpen(true)
   }
 
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="bg-background border flex-1 rounded-xl">
-          <EntityPageHeader
-            title={container.name}
-            entityType="container"
-            onAdd={handleAdd}
-          />
+        <div className="bg-background border rounded-xl">
+          <EntityPageHeader title={container.name} entityType="item" onAdd={handleAdd} />
         </div>
-        <div className="bg-background border flex-1 rounded-xl">
-          <div className="p-4">
-            <pre>{JSON.stringify(container, null, 2)}</pre>
+
+        <div className="bg-background border rounded-xl p-4">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-medium">Container Details</h2>
+            </div>
+            {container.description && (
+              <p className="text-sm text-muted-foreground">{container.description}</p>
+            )}
+            {container.location && (
+              <div className="text-sm text-muted-foreground">Location: {container.location}</div>
+            )}
+            <div className="text-sm text-muted-foreground">
+              Created: {new Date(container.createdAt).toLocaleDateString()}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-background border rounded-xl p-4">
+          <div className="space-y-4">
+            <h2 className="text-lg font-medium">Items in Container</h2>
+            <ItemList items={container.items || []} isLoading={false} />
           </div>
         </div>
       </div>
-      <CreateModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        selectedType="item"
-        parentId={containerId}
+
+      <CreateItemModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        containerId={parsedContainerId}
       />
     </PageLayout>
   )
