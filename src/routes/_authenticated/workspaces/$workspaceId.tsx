@@ -4,7 +4,9 @@ import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useWorkspace } from '@/queries/workspace'
 import { CreateContainerModal } from '@/components/organisms/modals/entity/detailed/ContainerModal'
-import { ContainerList } from '@/components/molecules/entityList/ContainerList'
+import { WorkspaceSection } from '@/components/molecules/entitySections/detailed'
+import { NotAssignedSection } from '@/components/molecules/entitySections/detailed/NotAssigned'
+import { ContainersListSection } from '@/components/molecules/entitySections/list'
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({
   component: WorkspacePage,
@@ -20,7 +22,10 @@ function WorkspacePage() {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4">Loading...</div>
+          <div className="bg-background border flex-1 rounded-xl p-4" role="status">
+            <span className="sr-only">Loading...</span>
+            Loading...
+          </div>
         </div>
       </PageLayout>
     )
@@ -30,7 +35,9 @@ function WorkspacePage() {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4">Workspace not found</div>
+          <div className="bg-background border flex-1 rounded-xl p-4" role="alert">
+            Workspace not found
+          </div>
         </div>
       </PageLayout>
     )
@@ -47,34 +54,22 @@ function WorkspacePage() {
           <EntityPageHeader title={workspace.name} entityType="container" onAdd={handleAdd} />
         </div>
 
-        <div className="bg-background border rounded-xl p-4">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-medium">Workspace Details</h2>
-            </div>
-            {workspace.description && (
-              <p className="text-sm text-muted-foreground">{workspace.description}</p>
-            )}
-            <div className="text-sm text-muted-foreground">
-              Created: {new Date(workspace.createdAt).toLocaleDateString()}
-            </div>
-          </div>
-        </div>
+        <WorkspaceSection
+          workspace={workspace}
+          emptyStateComponent={
+            <NotAssignedSection title="Workspace" message="No workspace details available." />
+          }
+        />
 
-        <div className="bg-background border rounded-xl p-4">
-          <div className="space-y-4">
-            <h2 className="text-lg font-medium">Containers in Workspace</h2>
-            {workspace.containers && workspace.containers.length > 0 ? (
-              <ContainerList containers={workspace.containers} isLoading={false} />
-            ) : (
-              <div className="flex h-32 items-center justify-center rounded-md border border-dashed">
-                <p className="text-sm text-muted-foreground">
-                  No containers in this workspace yet. Create one to get started.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <ContainersListSection
+          containers={workspace.containers}
+          emptyStateComponent={
+            <NotAssignedSection
+              title="Containers"
+              message="No containers in this workspace yet. Create one to get started."
+            />
+          }
+        />
       </div>
 
       <CreateContainerModal

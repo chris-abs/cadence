@@ -4,8 +4,12 @@ import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
 import { useItem } from '@/queries/item'
-import { ContainerSection, ItemSection, TagsSection } from '@/components/molecules/entitySections'
-import { NotAssignedSection } from '@/components/molecules/entitySections/NotAssigned'
+import {
+  ContainerSection,
+  ItemSection,
+  TagsSection,
+} from '@/components/molecules/entitySections/detailed'
+import { NotAssignedSection } from '@/components/molecules/entitySections/detailed/NotAssigned'
 
 export const Route = createFileRoute('/_authenticated/items/$itemId')({
   component: ItemPage,
