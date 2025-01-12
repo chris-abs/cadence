@@ -1,3 +1,4 @@
+import React from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   Breadcrumb,
@@ -11,6 +12,7 @@ import { Separator } from '@radix-ui/react-dropdown-menu'
 import { useAuth } from '@/hooks/useAuth'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar'
 import { AppSidebar } from './AppSidebar'
+import { useBreadcrumbs } from '@/lib/breadcrumbs'
 
 interface PageLayoutProps {
   children: React.ReactNode
@@ -18,6 +20,7 @@ interface PageLayoutProps {
 
 export function PageLayout({ children }: PageLayoutProps) {
   const auth = useAuth()
+  const breadcrumbs = useBreadcrumbs()
 
   if (!auth.isLogged()) {
     return (
@@ -46,13 +49,20 @@ export function PageLayout({ children }: PageLayoutProps) {
           <Separator className="mx-2 h-4" />
           <Breadcrumb>
             <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Dashboard</BreadcrumbPage>
-              </BreadcrumbItem>
+              {breadcrumbs.map((crumb, index) => (
+                <React.Fragment key={crumb.label}>
+                  <BreadcrumbItem className="hidden md:block">
+                    {index === breadcrumbs.length - 1 ? (
+                      <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink href={crumb.href || ''}>{crumb.label}</BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                  {index < breadcrumbs.length - 1 && (
+                    <BreadcrumbSeparator className="hidden md:block" />
+                  )}
+                </React.Fragment>
+              ))}
             </BreadcrumbList>
           </Breadcrumb>
         </div>
