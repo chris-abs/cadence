@@ -26,14 +26,14 @@ export function useBreadcrumbs() {
   const pathname = router.state.location.pathname
 
   if (pathname === '/') {
-    return [{ label: 'Home', href: '/' }, { label: 'Dashboard' }]
+    return [{ label: 'Dashboard', href: '/' }]
   }
 
   const listMatch = pathname.match(/^\/(workspaces|containers|items|tags)$/)
   if (listMatch) {
     const entityType = listMatch[1] as EntityType
     return [
-      { label: 'Home', href: '/' },
+      { label: 'Dashboard', href: '/' },
       { label: entityType.charAt(0).toUpperCase() + entityType.slice(1) },
     ]
   }
@@ -47,7 +47,7 @@ export function useBreadcrumbs() {
     const cachedData = queryClient.getQueryData<EntityData>(queryKey)
 
     return [
-      { label: 'Home', href: '/' },
+      { label: 'Dashboard', href: '/' },
       {
         label: entityTypePlural.charAt(0).toUpperCase() + entityTypePlural.slice(1),
         href: `/${entityTypePlural}`,

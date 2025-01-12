@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { registerSchema } from '@/lib/schemas/auth'
+import { registerSchema } from '@/schemas/auth'
 import { Button } from '@/components/atoms/Button'
 import {
   Form,
