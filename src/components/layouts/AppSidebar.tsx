@@ -42,6 +42,11 @@ const data = {
   navMain: {
     entities: [
       {
+        title: 'Dashboard',
+        url: '/',
+        icon: GalleryVerticalEnd,
+      },
+      {
         title: 'Workspaces',
         url: '/workspaces',
         icon: Box,
