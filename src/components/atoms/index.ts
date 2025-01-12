@@ -1,6 +1,7 @@
 export * from './Alert'
 export * from './Avatar'
 export * from './Button'
+export * from './Carousel'
 export * from './Card'
 export * from './Collapsible'
 export * from './Dialog'

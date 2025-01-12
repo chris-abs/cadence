@@ -2,17 +2,14 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { Button, Input, Label } from '@/components/atoms'
 import { Container } from '@/types'
-import { NotAssignedSection } from './NotAssigned'
-
 interface ContainerSectionProps {
-  container: Container
+  container: Container | null
+  emptyStateComponent?: React.ReactNode
 }
 
-export function ContainerSection({ container }: ContainerSectionProps) {
+export function ContainerSection({ container, emptyStateComponent }: ContainerSectionProps) {
   if (!container?.name) {
-    return (
-      <NotAssignedSection title="Container" message="No Item assigned to this Container yet. " />
-    )
+    return emptyStateComponent || null
   }
 
   return (
