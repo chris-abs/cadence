@@ -24,16 +24,13 @@ function ItemsPage() {
         <div className="bg-background border flex-1 rounded-xl">
           <EntityPageHeader title="Items" entityType="item" onAdd={handleAdd} />
         </div>
-        <div className="bg-background border flex-1 rounded-xl">
-          <div className="p-4">
+        <div className="bg-background border flex-1 rounded-xl flex flex-col">
+          <div className="p-4 flex-1 overflow-hidden">
             <ItemList items={items ?? []} isLoading={isLoading} />
           </div>
         </div>
       </div>
-      <CreateItemModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
+      <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>
   )
 }

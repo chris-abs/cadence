@@ -33,7 +33,7 @@ export function WorkspaceList({ workspaces, isLoading }: WorkspaceListProps) {
   }
 
   return (
-    <ScrollArea className="h-[400px] pr-4" role="region" aria-label="Workspaces list">
+    <ScrollArea className="h-full pr-4" role="region" aria-label="Workspaces list">
       <ul className="space-y-2">
         {workspaces.map((workspace) => (
           <li key={workspace.id}>
