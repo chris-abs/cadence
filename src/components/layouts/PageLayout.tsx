@@ -66,7 +66,7 @@ export function PageLayout({ children }: PageLayoutProps) {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <main className="flex-1 bg-contrast-accent overflow-hidden">{children}</main>
+        <main className="flex-1 bg-contrast-accent overflow-y-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   )
