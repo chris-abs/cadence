@@ -33,48 +33,51 @@ export function WorkspaceList({ workspaces, isLoading }: WorkspaceListProps) {
   }
 
   return (
-    <ScrollArea className="h-full pr-4" role="region" aria-label="Workspaces list">
-      <ul className="space-y-2">
-        {workspaces.map((workspace) => (
-          <li key={workspace.id}>
-            <Link
-              to="/workspaces/$workspaceId"
-              params={{ workspaceId: workspace.id.toString() }}
-              className="flex items-center justify-between rounded-md border p-4 bg-contrast-accent hover:bg-contrast-accent-hover"
-              aria-labelledby={`workspace-${workspace.id}-name`}
-            >
-              <div className="space-y-1">
-                <h3 id={`workspace-${workspace.id}-name`} className="font-medium">
-                  {workspace.name}
-                </h3>
-                {workspace.description && (
-                  <p
+    <div className="flex flex-col flex-1 min-h-0">
+      <ScrollArea className="flex-1" role="region" aria-label="Workspaces list">
+        {' '}
+        <ul className="space-y-2">
+          {workspaces.map((workspace) => (
+            <li key={workspace.id}>
+              <Link
+                to="/workspaces/$workspaceId"
+                params={{ workspaceId: workspace.id.toString() }}
+                className="flex items-center justify-between rounded-md border p-4 bg-contrast-accent hover:bg-contrast-accent-hover"
+                aria-labelledby={`workspace-${workspace.id}-name`}
+              >
+                <div className="space-y-1">
+                  <h3 id={`workspace-${workspace.id}-name`} className="font-medium">
+                    {workspace.name}
+                  </h3>
+                  {workspace.description && (
+                    <p
+                      className="text-sm text-muted-foreground"
+                      aria-label={`Description: ${workspace.description}`}
+                    >
+                      {workspace.description}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-4" aria-label="Workspace stats">
+                  <span
                     className="text-sm text-muted-foreground"
-                    aria-label={`Description: ${workspace.description}`}
+                    aria-label={`${workspace.containers?.length || 0} containers in workspace`}
                   >
-                    {workspace.description}
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center gap-4" aria-label="Workspace stats">
-                <span
-                  className="text-sm text-muted-foreground"
-                  aria-label={`${workspace.containers?.length || 0} containers in workspace`}
-                >
-                  {workspace.containers?.length || 0} containers
-                </span>
-                <time
-                  className="text-sm text-muted-foreground"
-                  dateTime={workspace.createdAt}
-                  aria-label={`Created on ${new Date(workspace.createdAt).toLocaleDateString()}`}
-                >
-                  Created {new Date(workspace.createdAt).toLocaleDateString()}
-                </time>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </ScrollArea>
+                    {workspace.containers?.length || 0} containers
+                  </span>
+                  <time
+                    className="text-sm text-muted-foreground"
+                    dateTime={workspace.createdAt}
+                    aria-label={`Created on ${new Date(workspace.createdAt).toLocaleDateString()}`}
+                  >
+                    Created {new Date(workspace.createdAt).toLocaleDateString()}
+                  </time>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </ScrollArea>
+    </div>
   )
 }

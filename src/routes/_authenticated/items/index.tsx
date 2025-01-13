@@ -20,13 +20,15 @@ function ItemsPage() {
 
   return (
     <PageLayout>
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="bg-background border flex-1 rounded-xl">
-          <EntityPageHeader title="Items" entityType="item" onAdd={handleAdd} />
-        </div>
-        <div className="bg-background border flex-1 rounded-xl flex flex-col">
-          <div className="p-4 flex-1 overflow-hidden">
-            <ItemList items={items ?? []} isLoading={isLoading} />
+      <div className="flex flex-1 flex-col h-full">
+        <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
+          <div className="bg-background border rounded-xl">
+            <EntityPageHeader title="Items" entityType="item" onAdd={handleAdd} />
+          </div>
+          <div className="bg-background border rounded-xl flex flex-1 flex-col min-h-0">
+            <div className="p-4 flex-1 flex flex-col min-h-0">
+              <ItemList items={items ?? []} isLoading={isLoading} />
+            </div>
           </div>
         </div>
       </div>

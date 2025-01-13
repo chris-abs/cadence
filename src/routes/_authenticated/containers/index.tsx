@@ -20,27 +20,22 @@ function ContainersPage() {
 
   return (
     <PageLayout>
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="bg-background border flex-1 rounded-xl">
-          <EntityPageHeader
-            title="Containers"
-            entityType="container"
-            onAdd={handleAdd}
-          />
-        </div>
-        <div className="bg-background border flex-1 rounded-xl">
-          <div className="p-4">
-            <ContainerList
-              containers={containers ?? []}
-              isLoading={isLoading}
-            />
+      <div className="flex flex-1 flex-col h-full">
+        <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
+          <div className="bg-background border rounded-xl">
+            <EntityPageHeader title="Containers" entityType="container" onAdd={handleAdd} />
+          </div>
+          <div className="bg-background border flex-1 rounded-xl">
+            <div className="p-4">
+              <ContainerList containers={containers ?? []} isLoading={isLoading} />
+            </div>
           </div>
         </div>
+        <CreateContainerModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
       </div>
-      <CreateContainerModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
     </PageLayout>
   )
 }

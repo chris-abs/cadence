@@ -43,8 +43,8 @@ export function PageLayout({ children }: PageLayoutProps) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <div className="flex items-center gap-2 px-4 h-16 border-b">
+      <SidebarInset className="flex flex-col h-screen">
+        <div className="flex items-center gap-2 px-4 h-16 border-b shrink-0">
           <SidebarTrigger className="-ml-1" />
           <Separator className="mx-2 h-4" />
           <Breadcrumb>
@@ -66,7 +66,7 @@ export function PageLayout({ children }: PageLayoutProps) {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <main className="flex-1 bg-contrast-accent min-h-[calc(100vh-4rem)]">{children}</main>
+        <main className="flex-1 bg-contrast-accent overflow-hidden">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   )
