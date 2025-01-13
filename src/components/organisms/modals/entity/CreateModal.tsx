@@ -4,8 +4,9 @@ import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { EntityType } from '@/types/collection'
 import { CreateEntityForm } from '@/components/molecules/forms/entity/CreateEntityForm'
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms'
 import { createCollectionEntity } from '@/queries/collection'
+import { showEntityActionToast } from '@/components/molecules/EntityActionToast'
 
 interface CreateModalProps {
   isOpen: boolean
@@ -27,21 +28,14 @@ export function CreateModal({ isOpen, onClose, selectedType, onTypeChange }: Cre
     try {
       const response = await createCollectionEntity(selectedType, data)
       onClose()
-
       queryClient.invalidateQueries({ queryKey: ['recent'] })
 
-      toast(`New ${selectedType} created`, {
-        description: (
-          <div className="flex justify-between items-center">
-            <span>{data.name} has been added to your collection</span>
-            <Button
-              variant="link"
-              onClick={() => navigate({ to: `/${selectedType}s/${response.id}` })}
-            >
-              Edit
-            </Button>
-          </div>
-        ),
+      showEntityActionToast({
+        actionType: 'create',
+        entityType: selectedType,
+        entityName: data.name,
+        entityId: response.id,
+        navigate,
       })
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to create entity'))
