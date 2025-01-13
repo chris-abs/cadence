@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { toast } from 'sonner'
+import { FolderOpen } from 'lucide-react'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
-import { useContainer } from '@/queries/container'
+import { useContainer, useUpdateContainer } from '@/queries/container'
 import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
 import {
   NotAssignedSection,
@@ -10,7 +12,7 @@ import {
   ItemsListSection,
 } from '@/components/molecules/entitySections'
 import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
-import { FolderOpen } from 'lucide-react'
+import { UpdateContainerData } from '@/schemas/container'
 
 export const Route = createFileRoute('/_authenticated/containers/$containerId')({
   component: ContainerPage,
@@ -20,7 +22,23 @@ function ContainerPage() {
   const { containerId } = Route.useParams()
   const parsedContainerId = parseInt(containerId)
   const { data: container } = useContainer(parsedContainerId)
+  const updateContainer = useUpdateContainer()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+
+  const handleUpdateContainer = async (data: UpdateContainerData) => {
+    try {
+      await updateContainer.mutateAsync(data)
+      toast('Container updated', {
+        description: `${data.name || container?.name} has been updated successfully`,
+      })
+    } catch (err) {
+      toast('Error', {
+        description: 'Failed to update container',
+        duration: 3000,
+      })
+      throw err
+    }
+  }
 
   if (!container) {
     return (
@@ -55,6 +73,8 @@ function ContainerPage() {
 
         <ContainerSection
           container={container || null}
+          onUpdate={handleUpdateContainer}
+          isUpdating={updateContainer.isPending}
           emptyStateComponent={
             <NotAssignedSection title="Container" message="No container details available." />
           }
