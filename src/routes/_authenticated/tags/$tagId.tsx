@@ -1,12 +1,16 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useTag } from '@/queries/tags'
 import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
-import { NotAssignedSection } from '@/components/molecules/entitySections/NotAssigned'
-import { TagSection } from '@/components/molecules/entitySections/detailed'
-import { ItemsListSection } from '@/components/molecules/entitySections/list'
+import {
+  TagSection,
+  ItemsListSection,
+  NotAssignedSection,
+} from '@/components/molecules/entitySections'
+import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
+import { Tags } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/tags/$tagId')({
   component: TagPage,
@@ -15,29 +19,24 @@ export const Route = createFileRoute('/_authenticated/tags/$tagId')({
 function TagPage() {
   const { tagId } = Route.useParams()
   const parsedTagId = parseInt(tagId)
-  const { data: tag, isLoading } = useTag(parsedTagId)
+  const { data: tag } = useTag(parsedTagId)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-
-  if (isLoading) {
-    return (
-      <PageLayout>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4" role="status">
-            <span className="sr-only">Loading...</span>
-            Loading...
-          </div>
-        </div>
-      </PageLayout>
-    )
-  }
 
   if (!tag) {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4" role="alert">
-            Tag not found
-          </div>
+          <Alert>
+            <Tags className="h-4 w-4" />
+            <AlertTitle>No Tags have been found...</AlertTitle>
+            <AlertDescription>
+              You can create tags in the{' '}
+              <Link className="underline" to="/">
+                Dashboard
+              </Link>{' '}
+              and add them to Items for better organising!
+            </AlertDescription>
+          </Alert>
         </div>
       </PageLayout>
     )

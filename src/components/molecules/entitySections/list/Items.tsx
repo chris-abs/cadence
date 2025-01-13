@@ -16,7 +16,7 @@ export function ItemsListSection({ items, emptyStateComponent }: ItemsListSectio
       <div className="space-y-4">
         <header className="flex justify-between items-center">
           <h2 id="items-section-title" className="text-lg font-medium">
-            Items List
+            Stored Items
           </h2>
         </header>
         <ItemList items={items} isLoading={false} />

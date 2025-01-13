@@ -1,12 +1,16 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useWorkspace } from '@/queries/workspace'
 import { CreateContainerModal } from '@/components/organisms/modals/entity/detailed/ContainerModal'
-import { WorkspaceSection } from '@/components/molecules/entitySections/detailed'
-import { NotAssignedSection } from '@/components/molecules/entitySections/NotAssigned'
-import { ContainersListSection } from '@/components/molecules/entitySections/list'
+import {
+  WorkspaceSection,
+  ContainersListSection,
+  NotAssignedSection,
+} from '@/components/molecules/entitySections'
+import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
+import { Box } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({
   component: WorkspacePage,
@@ -15,29 +19,24 @@ export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')(
 function WorkspacePage() {
   const { workspaceId } = Route.useParams()
   const parsedWorkspaceId = parseInt(workspaceId)
-  const { data: workspace, isLoading } = useWorkspace(parsedWorkspaceId)
+  const { data: workspace } = useWorkspace(parsedWorkspaceId)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-
-  if (isLoading) {
-    return (
-      <PageLayout>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4" role="status">
-            <span className="sr-only">Loading...</span>
-            Loading...
-          </div>
-        </div>
-      </PageLayout>
-    )
-  }
 
   if (!workspace) {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4" role="alert">
-            Workspace not found
-          </div>
+          <Alert>
+            <Box className="h-4 w-4" />
+            <AlertTitle>No Workspaces have been found...</AlertTitle>
+            <AlertDescription>
+              You can create Workspaces in the{' '}
+              <Link className="underline" to="/">
+                Dashboard
+              </Link>{' '}
+              and use them to store Containers for better organising!
+            </AlertDescription>
+          </Alert>
         </div>
       </PageLayout>
     )

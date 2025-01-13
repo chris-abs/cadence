@@ -1,12 +1,17 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useItem } from '@/queries/item'
 import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
-import { ContainerSection, ItemSection } from '@/components/molecules/entitySections/detailed'
-import { NotAssignedSection } from '@/components/molecules/entitySections/NotAssigned'
-import { TagsListSection } from '@/components/molecules/entitySections/list'
+import {
+  ContainerSection,
+  ItemSection,
+  TagsListSection,
+  NotAssignedSection,
+} from '@/components/molecules/entitySections'
+import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
+import { Package } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/items/$itemId')({
   component: ItemPage,
@@ -15,29 +20,24 @@ export const Route = createFileRoute('/_authenticated/items/$itemId')({
 function ItemPage() {
   const { itemId } = Route.useParams()
   const parsedItemId = parseInt(itemId)
-  const { data: item, isLoading } = useItem(parsedItemId)
+  const { data: item } = useItem(parsedItemId)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-
-  if (isLoading) {
-    return (
-      <PageLayout>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4" role="status">
-            <span className="sr-only">Loading...</span>
-            Loading...
-          </div>
-        </div>
-      </PageLayout>
-    )
-  }
 
   if (!item) {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-background border flex-1 rounded-xl p-4" role="alert">
-            Item not found
-          </div>
+          <Alert>
+            <Package className="h-4 w-4" />
+            <AlertTitle>No Items have been found...</AlertTitle>
+            <AlertDescription>
+              You can create Items in the{' '}
+              <Link className="underline" to="/">
+                Dashboard
+              </Link>{' '}
+              and store them in Containers for better organising!
+            </AlertDescription>
+          </Alert>
         </div>
       </PageLayout>
     )
