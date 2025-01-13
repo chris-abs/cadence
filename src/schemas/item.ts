@@ -7,4 +7,10 @@ export const createItemSchema = z.object({
   containerId: z.number().optional(),
 })
 
+export const updateItemSchema = createItemSchema.partial().extend({
+  id: z.number(),
+  imgUrl: z.string().optional(),
+})
+
 export type CreateItemData = z.infer<typeof createItemSchema>
+export type UpdateItemData = z.infer<typeof updateItemSchema>

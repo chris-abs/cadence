@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Item } from '@/types/item'
+import type { CreateItemData, UpdateItemData } from '@/schemas/item'
 import { api } from '@/utils/api'
-import type { CreateItemData } from '@/schemas/item'
 import { queryKeys } from '@/lib/queryKeys'
 import { Container } from '@/types'
 
@@ -41,6 +41,19 @@ export function useCreateItem() {
           },
         )
       }
+      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+    },
+  })
+}
+
+export function useUpdateItem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: UpdateItemData) => api.put<Item>(`/items/${data.id}`, data),
+    onSuccess: (updatedItem) => {
+      queryClient.setQueryData(queryKeys.items.detail(updatedItem.id), updatedItem)
+      queryClient.invalidateQueries({ queryKey: queryKeys.items.list })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
     },
   })

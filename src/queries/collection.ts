@@ -13,3 +13,11 @@ export async function createCollectionEntity(
   queryClient.invalidateQueries({ queryKey: queryKeys.recent })
   return response
 }
+
+export async function deleteCollectionEntity(type: EntityType, id: number): Promise<void> {
+  await api.delete(`/${type}s/${id}`)
+  const queryClient = new QueryClient()
+  queryClient.invalidateQueries({ queryKey: [type + 's'] })
+  queryClient.invalidateQueries({ queryKey: [type + 's', id] })
+  queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+}
