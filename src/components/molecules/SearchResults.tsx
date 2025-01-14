@@ -2,7 +2,14 @@ import { Box, Tags, FolderOpen, Package } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useSearch } from '@/queries/search'
-import { SearchResult, SearchType } from '@/types/search'
+import {
+  ContainerSearchResult,
+  ItemSearchResult,
+  SearchResult,
+  SearchType,
+  TagSearchResult,
+  WorkspaceSearchResult,
+} from '@/types/search'
 import { useEffect, useState } from 'react'
 import { ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from '../atoms'
 import { getSearchResultsByEntityType } from '@/utils/search'
@@ -38,16 +45,44 @@ const ResultsList = ({ results, type, Icon, onClose }: ResultsListProps) => (
       <div key={result.id} className="bg-muted/50 border rounded-md">
         <Link
           to={typeToRoute[type as SearchType](result.id)}
-          className="flex items-center gap-2 p-3 hover:bg-accent"
+          className="flex items-center gap-3 p-3 hover:bg-accent"
           onClick={onClose}
         >
-          <Icon className="h-4 w-4" />
-          <span className="flex-1">{result.name}</span>
-          {result.description && (
-            <span className="text-xs text-muted-foreground truncate max-w-[200px]">
-              {result.description}
-            </span>
-          )}
+          <div className="shrink-0">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm font-medium truncate">{result.name}</span>
+            {type === 'item' && (
+              <span className="text-xs text-muted-foreground truncate">
+                Container:{' '}
+                {(result as ItemSearchResult).containerName
+                  ? `${(result as ItemSearchResult).containerName}${
+                      (result as ItemSearchResult).containerLocation
+                        ? `, ${(result as ItemSearchResult).containerLocation}`
+                        : ''
+                    }`
+                  : 'unassigned'}
+              </span>
+            )}
+            {type === 'container' && (
+              <span className="text-xs text-muted-foreground truncate">
+                Workspace: {(result as ContainerSearchResult).workspaceName || 'unassigned'}
+                {(result as ContainerSearchResult).location &&
+                  ` • ${(result as ContainerSearchResult).location}`}
+              </span>
+            )}
+            {type === 'tag' && (
+              <span className="text-xs text-muted-foreground truncate">
+                {(result as TagSearchResult).itemCount || 0} items
+              </span>
+            )}
+            {type === 'workspace' && (
+              <span className="text-xs text-muted-foreground truncate">
+                {(result as WorkspaceSearchResult).containerCount || 0} containers
+              </span>
+            )}
+          </div>
         </Link>
       </div>
     ))}

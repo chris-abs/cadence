@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
-import { ArrowRight, Pencil, Trash2, MoreVertical } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import {
   Button,
   Input,

@@ -1,4 +1,3 @@
-// components/molecules/entitySections/list/Tags.tsx
 import { Link } from '@tanstack/react-router'
 import { Tag } from '@/types'
 
