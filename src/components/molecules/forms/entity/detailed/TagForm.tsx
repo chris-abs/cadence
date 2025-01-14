@@ -12,18 +12,7 @@ import {
 } from '@/components/molecules/forms/form'
 import { Alert, AlertDescription, Button, Input } from '@/components/atoms'
 import { createTagSchema, type CreateTagData } from '@/schemas/tag'
-
-const COLOURS = [
-  '#ef4444', // red
-  '#f97316', // orange
-  '#f59e0b', // amber
-  '#84cc16', // lime
-  '#22c55e', // green
-  '#06b6d4', // cyan
-  '#3b82f6', // blue
-  '#8b5cf6', // violet
-  '#d946ef', // fuchsia
-]
+import { COLOURS } from '@/types/colours'
 
 interface TagFormProps {
   onSubmit: (data: CreateTagData) => Promise<void>

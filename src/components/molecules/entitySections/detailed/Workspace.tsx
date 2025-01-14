@@ -1,4 +1,3 @@
-// components/molecules/entitySections/detailed/Workspace.tsx
 import { useState } from 'react'
 import {
   Input,

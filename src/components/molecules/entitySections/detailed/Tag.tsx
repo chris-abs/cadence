@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import {
   Input,
   Label,
   Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -11,8 +13,10 @@ import {
 } from '@/components/atoms'
 import { Tag } from '@/types'
 import { UpdateTagData } from '@/schemas/tag'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DeleteModal } from '@/components/organisms/modals/entity/DeleteModal'
+import { COLOURS, Colour } from '@/types/colours'
 
 interface TagSectionProps {
   tag: Tag | null
@@ -35,7 +39,7 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
       id: tag.id,
       name: tag.name,
       description: tag.description,
-      colour: tag.colour,
+      colour: tag.colour as Colour,
     })
     setIsEditing(true)
   }
@@ -50,6 +54,13 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }))
+  }
+
+  const handleColorSelect = (colour: Colour) => {
+    setFormData((prev) => ({
+      ...prev,
+      colour,
     }))
   }
 
@@ -136,18 +147,40 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
           <div className="space-y-2">
             <Label htmlFor="tag-color">Color</Label>
             {isEditing ? (
-              <Input
-                id="tag-color"
-                name="colour"
-                type="color"
-                value={formData?.colour || tag.colour}
-                onChange={handleInputChange}
-                className="h-9"
-                aria-label="Tag color"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm cursor-pointer">
+                    <div className="flex-1 flex items-center justify-between">
+                      <span>{formData?.colour}</span>
+                      <div
+                        className="w-4 h-4 rounded-full border"
+                        style={{ backgroundColor: formData?.colour }}
+                      />
+                    </div>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-3">
+                  <div className="flex flex-wrap gap-2">
+                    {COLOURS.map((colour) => (
+                      <button
+                        key={colour}
+                        type="button"
+                        className={cn(
+                          'w-8 h-8 rounded-full border-2 transition-all',
+                          formData?.colour === colour
+                            ? 'border-primary scale-110'
+                            : 'border-transparent hover:scale-105',
+                        )}
+                        style={{ backgroundColor: colour }}
+                        onClick={() => handleColorSelect(colour)}
+                      />
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             ) : (
               <div
-                className="h-9 px-3 rounded-md border flex items-center"
+                className="h-9 px-3 rounded-md border flex items-center justify-between"
                 style={{
                   backgroundColor: tag.colour + '20',
                   color: tag.colour,
@@ -155,6 +188,10 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                 }}
               >
                 <span className="text-sm font-medium">{tag.colour}</span>
+                <div
+                  className="w-4 h-4 rounded-full border"
+                  style={{ backgroundColor: tag.colour }}
+                />
               </div>
             )}
           </div>
