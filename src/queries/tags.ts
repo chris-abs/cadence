@@ -1,4 +1,3 @@
-// queries/tag.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Tag } from '@/types'
 import { api } from '@/utils/api'
