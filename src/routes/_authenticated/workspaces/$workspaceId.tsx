@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Box } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
-import { useWorkspace } from '@/queries/workspace'
+import { useWorkspace, useUpdateWorkspace } from '@/queries/workspace'
 import { CreateContainerModal } from '@/components/organisms/modals/entity/detailed/ContainerModal'
 import {
   WorkspaceSection,
@@ -10,7 +12,7 @@ import {
   NotAssignedSection,
 } from '@/components/molecules/entitySections'
 import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
-import { Box } from 'lucide-react'
+import type { UpdateWorkspaceData } from '@/schemas/workspace'
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({
   component: WorkspacePage,
@@ -20,6 +22,7 @@ function WorkspacePage() {
   const { workspaceId } = Route.useParams()
   const parsedWorkspaceId = parseInt(workspaceId)
   const { data: workspace } = useWorkspace(parsedWorkspaceId)
+  const updateWorkspace = useUpdateWorkspace()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   if (!workspace) {
@@ -46,6 +49,21 @@ function WorkspacePage() {
     setIsCreateModalOpen(true)
   }
 
+  const handleUpdateWorkspace = async (data: UpdateWorkspaceData) => {
+    try {
+      await updateWorkspace.mutateAsync(data)
+      toast('Workspace updated', {
+        description: `${data.name || workspace.name} has been updated successfully`,
+      })
+    } catch (err) {
+      toast('Error', {
+        description: 'Failed to update workspace',
+        duration: 3000,
+      })
+      throw err
+    }
+  }
+
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
@@ -55,6 +73,8 @@ function WorkspacePage() {
 
         <WorkspaceSection
           workspace={workspace}
+          onUpdate={handleUpdateWorkspace}
+          isUpdating={updateWorkspace.isPending}
           emptyStateComponent={
             <NotAssignedSection title="Workspace" message="No workspace details available." />
           }
