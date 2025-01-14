@@ -18,15 +18,23 @@ import { UpdateItemData } from '@/schemas/item'
 import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DeleteModal } from '@/components/organisms/modals/entity/DeleteModal'
+import { TagManagement } from './TagManagement'
 
 interface ItemSectionProps {
   item: Item | null
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateItemData) => Promise<void>
+  onUpdateTags?: (itemId: number, tagIds: number[]) => Promise<void>
   isUpdating?: boolean
 }
 
-export function ItemSection({ item, emptyStateComponent, onUpdate, isUpdating }: ItemSectionProps) {
+export function ItemSection({
+  item,
+  emptyStateComponent,
+  onUpdate,
+  onUpdateTags,
+  isUpdating,
+}: ItemSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateItemData> | null>(null)
@@ -56,6 +64,11 @@ export function ItemSection({ item, emptyStateComponent, onUpdate, isUpdating }:
       ...prev,
       [name]: name === 'quantity' ? parseInt(value) || 0 : value,
     }))
+  }
+
+  const handleTagsChange = async (tagIds: number[]) => {
+    if (!onUpdateTags) return
+    await onUpdateTags(item.id, tagIds)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -179,6 +192,11 @@ export function ItemSection({ item, emptyStateComponent, onUpdate, isUpdating }:
                 className={cn(!isEditing && 'cursor-default focus:outline-none')}
                 aria-label="Item quantity"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="item-tags">Tags</Label>
+              <TagManagement tags={item.tags} onChange={handleTagsChange} readOnly={!isEditing} />
             </div>
 
             <div className="space-y-2">

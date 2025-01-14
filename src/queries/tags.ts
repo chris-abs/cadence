@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Tag } from '@/types'
+import type { Item, Tag } from '@/types'
 import { api } from '@/utils/api'
-import { CreateTagData, UpdateTagData } from '@/schemas/tag'
+import { CreateTagData, UpdateItemTagsData, UpdateTagData } from '@/schemas/tag'
 import { queryKeys } from '@/lib/queryKeys'
 
 export function useTag(id: number) {
@@ -43,6 +43,20 @@ export function useUpdateTag() {
       queryClient.setQueryData(queryKeys.tags.list, (old: Tag[] = []) => {
         return old.map((tag) => (tag.id === variables.id ? updatedTag : tag))
       })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+    },
+  })
+}
+
+export function useUpdateItemTags() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ itemId, tagIds }: UpdateItemTagsData) =>
+      api.put<Item>(`/items/${itemId}/tags`, { tagIds }),
+    onSuccess: (updatedItem) => {
+      queryClient.setQueryData(queryKeys.items.detail(updatedItem.id), updatedItem)
+      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
     },
   })
