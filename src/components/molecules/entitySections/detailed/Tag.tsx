@@ -179,15 +179,8 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                 </PopoverContent>
               </Popover>
             ) : (
-              <div
-                className="h-9 px-3 rounded-md border flex items-center justify-between"
-                style={{
-                  backgroundColor: tag.colour + '20',
-                  color: tag.colour,
-                  borderColor: tag.colour,
-                }}
-              >
-                <span className="text-sm font-medium">{tag.colour}</span>
+              <div className="h-9 px-3 rounded-md border flex items-center justify-between">
+                <span className="text-sm">{tag.colour}</span>
                 <div
                   className="w-4 h-4 rounded-full border"
                   style={{ backgroundColor: tag.colour }}
