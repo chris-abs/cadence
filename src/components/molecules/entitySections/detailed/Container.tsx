@@ -121,7 +121,7 @@ export function ContainerSection({
               QR Code
             </Label>
             <div
-              className="w-44 h-44 border rounded-lg p-3 bg-white flex items-center justify-center"
+              className="w-64 h-64 border rounded-lg p-3 bg-white flex items-center justify-center"
               id="qr-code"
               role="img"
               aria-label={`QR Code for container ${container.name}`}
@@ -201,22 +201,6 @@ export function ContainerSection({
             </div>
           </form>
         </div>
-
-        {!isEditing && (
-          <div className="flex justify-end" aria-label="Container actions">
-            <Button
-              variant="secondary"
-              asChild
-              className="gap-2"
-              aria-label={`View details for container ${container.name}`}
-            >
-              <Link to="/containers/$containerId" params={{ containerId: container.id.toString() }}>
-                View Container Details
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </Button>
-          </div>
-        )}
       </div>
 
       <DeleteModal
