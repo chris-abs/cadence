@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Tags } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
-import { useTag } from '@/queries/tags'
+import { useTag, useUpdateTag } from '@/queries/tags'
 import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
 import {
   TagSection,
@@ -10,7 +12,7 @@ import {
   NotAssignedSection,
 } from '@/components/molecules/entitySections'
 import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
-import { Tags } from 'lucide-react'
+import type { UpdateTagData } from '@/schemas/tag'
 
 export const Route = createFileRoute('/_authenticated/tags/$tagId')({
   component: TagPage,
@@ -20,6 +22,7 @@ function TagPage() {
   const { tagId } = Route.useParams()
   const parsedTagId = parseInt(tagId)
   const { data: tag } = useTag(parsedTagId)
+  const updateTag = useUpdateTag()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   if (!tag) {
@@ -46,6 +49,21 @@ function TagPage() {
     setIsCreateModalOpen(true)
   }
 
+  const handleUpdateTag = async (data: UpdateTagData) => {
+    try {
+      await updateTag.mutateAsync(data)
+      toast('Tag updated', {
+        description: `${data.name || tag.name} has been updated successfully`,
+      })
+    } catch (err) {
+      toast('Error', {
+        description: 'Failed to update tag',
+        duration: 3000,
+      })
+      throw err
+    }
+  }
+
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
@@ -55,6 +73,8 @@ function TagPage() {
 
         <TagSection
           tag={tag}
+          onUpdate={handleUpdateTag}
+          isUpdating={updateTag.isPending}
           emptyStateComponent={
             <NotAssignedSection title="Tag" message="No tag details available." />
           }
