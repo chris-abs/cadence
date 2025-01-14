@@ -5,4 +5,9 @@ export const createWorkspaceSchema = z.object({
   description: z.string().optional(),
 })
 
+export const updateWorkspaceSchema = createWorkspaceSchema.partial().extend({
+  id: z.number(),
+})
+
 export type CreateWorkspaceData = z.infer<typeof createWorkspaceSchema>
+export type UpdateWorkspaceData = z.infer<typeof updateWorkspaceSchema>
