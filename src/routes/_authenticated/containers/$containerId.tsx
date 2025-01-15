@@ -5,13 +5,13 @@ import { FolderOpen } from 'lucide-react'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useContainer, useUpdateContainer } from '@/queries/container'
-import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
+import { CreateItemModal } from '@/entity/Item/components/organisms/ItemModal'
 import {
   NotAssignedSection,
   ContainerSection,
   ItemsListSection,
 } from '@/components/molecules/entitySections'
-import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
+import { Alert, AlertDescription, AlertTitle } from '@/entity/Global/components/atoms'
 import { UpdateContainerData } from '@/schemas/container'
 
 export const Route = createFileRoute('/_authenticated/containers/$containerId')({

@@ -3,14 +3,14 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useItem, useUpdateItem } from '@/queries/item'
-import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
+import { CreateTagModal } from '@/entity/Tag/components/organisms/TagModal'
 import {
   ContainerSection,
   ItemSection,
   TagsListSection,
   NotAssignedSection,
 } from '@/components/molecules/entitySections'
-import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
+import { Alert, AlertDescription, AlertTitle } from '@/entity/Global/components/atoms'
 import { Package } from 'lucide-react'
 import { toast } from 'sonner'
 import type { UpdateItemData } from '@/schemas/item'

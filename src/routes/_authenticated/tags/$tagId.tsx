@@ -5,13 +5,13 @@ import { toast } from 'sonner'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useTag, useUpdateTag } from '@/queries/tags'
-import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
+import { CreateItemModal } from '@/entity/Item/components/organisms/ItemModal'
 import {
   TagSection,
   ItemsListSection,
   NotAssignedSection,
 } from '@/components/molecules/entitySections'
-import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
+import { Alert, AlertDescription, AlertTitle } from '@/entity/Global/components/atoms'
 import type { UpdateTagData } from '@/schemas/tag'
 
 export const Route = createFileRoute('/_authenticated/tags/$tagId')({

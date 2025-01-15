@@ -1,6 +1,6 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
-import type { AuthContext } from '../hooks/useAuth'
-import { Toast } from '@/components/atoms'
+import type { AuthContext } from '../entity/Global/hooks/useAuth'
+import { Toast } from '@/entity/Global/components/atoms'
 
 interface RouterContext {
   authentication: AuthContext

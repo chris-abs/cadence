@@ -3,8 +3,8 @@ import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useState } from 'react'
 import { useTags } from '@/queries/tags'
-import { TagList } from '@/components/molecules/entityList/TagList'
-import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
+import { TagList } from '@/entity/Tag/components/molecules/catalogue/TagCatalogue'
+import { CreateTagModal } from '@/entity/Tag/components/organisms/TagModal'
 
 export const Route = createFileRoute('/_authenticated/tags/')({
   component: TagsPage,

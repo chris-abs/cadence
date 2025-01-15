@@ -3,8 +3,8 @@ import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useState } from 'react'
 import { useItems } from '@/queries/item'
-import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
-import { ItemList } from '@/components/molecules/entityList/ItemList'
+import { CreateItemModal } from '@/entity/Item/components/organisms/ItemModal'
+import { ItemList } from '@/entity/Item/components/molecules/catalogue/ItemCatalogue'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,

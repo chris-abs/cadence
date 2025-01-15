@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
-} from '@/components/atoms'
+} from '@/entity/Global/components/atoms'
 import { EntityCard } from '@/components/molecules'
 import { useRecentEntities } from '@/queries/recent'
 import { SearchResults } from '@/components/molecules/SearchResults'
