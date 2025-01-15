@@ -1,8 +1,9 @@
 import { Button } from '@/Global/components/atoms'
-import { EntityType } from '@/types/collection'
 import { toast } from 'sonner'
 import type { NavigateOptions } from '@tanstack/react-router'
+
 import { capitalise } from '@/Global/utils/capitalise'
+import { EntityType } from '@/Global/types'
 
 interface EntityActionToastProps {
   actionType: 'create' | 'delete'

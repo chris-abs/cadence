@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
+
 import {
   Input,
   Label,
@@ -13,14 +15,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { Item } from '@/types'
-import { UpdateItemData } from '@/schemas/item'
-import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import { cn } from '@/Global/lib/utils'
-import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
+import { DeleteModal } from '@/Global/components/organisms/modals'
+import { Item } from '@/Item/types'
+import { UpdateItemData } from '@/Item/schemas'
 import { TagManagement } from './TagManagement'
 
-interface ItemSectionProps {
+interface ItemEntryProps {
   item: Item | null
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateItemData) => Promise<void>
@@ -28,13 +29,13 @@ interface ItemSectionProps {
   isUpdating?: boolean
 }
 
-export function ItemSection({
+export function ItemEntry({
   item,
   emptyStateComponent,
   onUpdate,
   onUpdateTags,
   isUpdating,
-}: ItemSectionProps) {
+}: ItemEntryProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateItemData> | null>(null)

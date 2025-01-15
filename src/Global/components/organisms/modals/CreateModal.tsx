@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { EntityType } from '@/types/collection'
+
 import { CreateEntityForm } from '@/Global/components/molecules/forms/CreateEntityForm'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
-import { createCollectionEntity } from '@/queries/collection'
 import { showEntityActionToast } from '@/Global/components/molecules/EntityActionToast'
+import { EntityType } from '@/Global/types'
+import { createCollectionEntity } from '@/Global/queries/collection'
 
 interface CreateModalProps {
   isOpen: boolean

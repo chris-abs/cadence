@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { Tag } from '@/types'
+
+import { Tag } from '@/Tag/types'
 
 interface TagsListSectionProps {
   tags: Tag[]

@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { FolderOpen } from 'lucide-react'
+
 import {
   Form,
   FormControl,
@@ -11,7 +12,7 @@ import {
   FormDescription,
 } from '@/Global/components/atoms/Form'
 import { Alert, AlertDescription, Button, Input } from '@/Global/components/atoms'
-import { createContainerSchema, type CreateContainerData } from '@/schemas/container'
+import { CreateContainerData, createContainerSchema } from '@/Container/schemas'
 
 interface ContainerFormProps {
   onSubmit: (data: CreateContainerData) => Promise<void>

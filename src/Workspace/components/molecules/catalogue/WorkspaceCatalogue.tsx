@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
+
 import { ScrollArea } from '@/Global/components/atoms'
-import type { Workspace } from '@/types'
+import { Workspace } from '@/Workspace/types'
 
 interface WorkspaceListProps {
   workspaces: Workspace[]

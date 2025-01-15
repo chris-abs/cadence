@@ -1,10 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
 import { useState } from 'react'
-import { useWorkspaces } from '@/queries/workspace'
-import { CreateWorkspaceModal } from '@/components/organisms/modals/entity/detailed/WorkspaceModal'
+
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { EntityPageHeader } from '@/Global/components/molecules'
 import { WorkspaceList } from '@/Workspace/components/molecules/catalogue/WorkspaceCatalogue'
+import { CreateWorkspaceModal } from '@/Workspace/components/organisms/WorkspaceModal'
+import { useWorkspaces } from '@/Workspace/queries'
 
 export const Route = createFileRoute('/_authenticated/workspaces/')({
   component: WorkspacesPage,

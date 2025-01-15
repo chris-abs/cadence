@@ -1,3 +1,5 @@
+import { Check, Plus, Loader2 } from 'lucide-react'
+
 import {
   Button,
   Popover,
@@ -10,9 +12,8 @@ import {
   CommandGroup,
   CommandItem,
 } from '@/Global/components/atoms'
-import { Tag } from '@/types'
-import { Check, Plus, Loader2 } from 'lucide-react'
-import { useTags } from '@/queries/tags'
+import { Tag } from '@/Tag/types'
+import { useTags } from '@/Tag/queries'
 
 interface TagSelectorProps {
   selectedTags: Tag[]

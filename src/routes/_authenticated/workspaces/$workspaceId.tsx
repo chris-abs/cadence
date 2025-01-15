@@ -2,17 +2,15 @@ import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Box } from 'lucide-react'
 import { toast } from 'sonner'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
-import { useWorkspace, useUpdateWorkspace } from '@/queries/workspace'
-import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
-import {
-  WorkspaceSection,
-  ContainersListSection,
-  NotAssignedSection,
-} from '@/components/molecules/entitySections'
+
+import { PageLayout } from '@/Global/layout/PageLayout'
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
-import type { UpdateWorkspaceData } from '@/schemas/workspace'
+import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { ContainersListSection } from '@/Container/components/molecules/sections/list/Container'
+import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
+import { WorkspaceSection } from '@/Workspace/components/molecules/sections/detailed/Workspace'
+import { useUpdateWorkspace, useWorkspace } from '@/Workspace/queries'
+import { UpdateWorkspaceData } from '@/Workspace/schemas'
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({
   component: WorkspacePage,

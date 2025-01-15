@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { ChevronsUpDown, Plus } from 'lucide-react'
+import { TooltipTrigger } from '@radix-ui/react-tooltip'
 
 import {
   DropdownMenu,
@@ -9,15 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/Global/components/atoms/DropDownMenu'
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+} from '@/Global/components/atoms'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
-import { Tooltip, TooltipContent, TooltipProvider } from '@/Global/components/atoms'
-import { TooltipTrigger } from '@radix-ui/react-tooltip'
 
 export function TeamSwitcher({
   teams,

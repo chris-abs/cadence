@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Container } from '@/types/container'
+
 import { api } from '@/Global/utils/api'
-import type { CreateContainerData, UpdateContainerData } from '@/schemas/container'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { RecentResponse } from '@/types'
+import { RecentResponse } from '@/Global/types'
+import { Container } from '../types'
+import { CreateContainerData, UpdateContainerData } from '../schemas'
 
 export function useRecentEntities() {
   return useQuery({

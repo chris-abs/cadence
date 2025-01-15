@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { EntityType } from '@/types/collection'
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
-import { deleteCollectionEntity } from '@/queries/collection'
 import { AlertTriangle } from 'lucide-react'
+
+import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
 import { showEntityActionToast } from '@/Global/components/molecules/EntityActionToast'
+import { EntityType } from '@/Global/types'
+import { deleteCollectionEntity } from '@/Global/queries/collection'
 
 interface DeleteModalProps {
   isOpen: boolean

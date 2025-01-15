@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import type { RecentResponse } from '@/types/collection'
+
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
+import { RecentResponse } from '../types'
 
 export function useRecentEntities() {
   return useQuery({

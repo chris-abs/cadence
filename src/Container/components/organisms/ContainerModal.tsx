@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
+
 import {
   Dialog,
   DialogContent,
@@ -9,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { useCreateContainer } from '@/queries/container'
-import type { CreateContainerData } from '@/schemas/container'
 import { ContainerForm } from '@/Container/components/molecules/forms/ContainerForm'
+import { useCreateContainer } from '@/Container/queries'
+import { CreateContainerData } from '@/Container/schemas'
 
 interface CreateContainerModalProps {
   isOpen: boolean

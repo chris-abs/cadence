@@ -1,5 +1,5 @@
-import { Container } from './container'
-import { Tag } from './tag'
+import { Container } from '@/Container/types'
+import { Tag } from '@/Tag/types'
 
 // TODO: add array of images for items
 export interface ItemImage {

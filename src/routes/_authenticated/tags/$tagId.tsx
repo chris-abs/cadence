@@ -2,17 +2,15 @@ import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Tags } from 'lucide-react'
 import { toast } from 'sonner'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
-import { useTag, useUpdateTag } from '@/queries/tags'
-import { CreateItemModal } from '@/entity/Item/components/organisms/ItemModal'
-import {
-  TagSection,
-  ItemsListSection,
-  NotAssignedSection,
-} from '@/components/molecules/entitySections'
+
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
-import type { UpdateTagData } from '@/schemas/tag'
+import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { TagSection } from '@/Tag/components/molecules/sections/detailed/Tag'
+import { useTag, useUpdateTag } from '@/Tag/queries'
+import { UpdateTagData } from '@/Tag/schemas'
+import { ItemsListSection } from '@/Item/components/molecules/sections/list'
+import { CreateItemModal } from '@/Item/components/organisms/ItemModal'
 
 export const Route = createFileRoute('/_authenticated/tags/$tagId')({
   component: TagPage,

@@ -1,19 +1,17 @@
 import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
-import { useItem, useUpdateItem } from '@/queries/item'
-import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
-import {
-  ContainerSection,
-  ItemSection,
-  TagsListSection,
-  NotAssignedSection,
-} from '@/components/molecules/entitySections'
-import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { Package } from 'lucide-react'
 import { toast } from 'sonner'
-import type { UpdateItemData } from '@/schemas/item'
+
+import { useItem, useUpdateItem } from '@/Item/queries'
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
+import { UpdateItemData } from '@/Item/schemas'
+import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { ItemsListSection } from '@/Item/components/molecules/sections/list'
+import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
+import { TagsListSection } from '@/Tag/components/molecules/sections/list/Tag'
+import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
 
 export const Route = createFileRoute('/_authenticated/items/$itemId')({
   component: ItemPage,
@@ -72,7 +70,7 @@ function ItemPage() {
           <EntityPageHeader title={item.name} entityType="tag" onAdd={handleAdd} />
         </div>
 
-        <ItemSection
+        <ItemsListSection
           item={item}
           onUpdate={handleUpdateItem}
           isUpdating={updateItem.isPending}

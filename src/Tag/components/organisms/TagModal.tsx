@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
+
 import {
   Dialog,
   DialogContent,
@@ -9,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import type { CreateTagData } from '@/schemas/tag'
-import { useCreateTag } from '@/queries/tags'
 import { TagForm } from '@/Tag/components/molecules/forms/TagForm'
+import { useCreateTag } from '@/Tag/queries'
+import { CreateTagData } from '@/Tag/schemas'
 
 interface CreateTagModalProps {
   isOpen: boolean

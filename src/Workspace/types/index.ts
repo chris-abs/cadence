@@ -1,4 +1,4 @@
-import { Container } from './container'
+import { Container } from '@/Container/types'
 
 export interface Workspace {
   id: number

@@ -1,5 +1,6 @@
-import { Tag } from '@/types'
 import { X } from 'lucide-react'
+
+import { Tag } from '@/Tag/types'
 
 interface TagBadgeProps {
   tag: Tag

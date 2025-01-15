@@ -1,5 +1,5 @@
-import { ItemList } from '@/entity/Item/components/molecules/catalogue/ItemCatalogue'
-import { Item } from '@/types'
+import { Item } from '@/Item/types'
+import { ItemList } from '../../catalogue/ItemCatalogue'
 
 interface ItemsListSectionProps {
   items: Item[]

@@ -1,5 +1,11 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
+
+import { useAuth } from '@/Global/hooks/useAuth'
+import { useBreadcrumbs } from '@/Global/lib/breadcrumbs'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar/sections'
+import { AppSidebar } from './sidebar/AppSidebar'
+import { Separator } from '../components/atoms'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,12 +13,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/molecules'
-import { Separator } from '@radix-ui/react-dropdown-menu'
-import { useAuth } from '@/Global/hooks/useAuth'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar'
-import { AppSidebar } from '../../layout/sidebar/AppSidebar'
-import { useBreadcrumbs } from '@/Global/lib/breadcrumbs'
+} from '../components/molecules'
 
 interface PageLayoutProps {
   children: React.ReactNode

@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Tag } from '@/types'
+
 import { TagBadge } from './TagBadge'
 import { TagSelector } from './TagSelector'
+import { Tag } from '@/Tag/types'
 
 interface TagManagementProps {
   tags: Tag[]

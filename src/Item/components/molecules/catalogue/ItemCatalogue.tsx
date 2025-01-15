@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
+
 import { ScrollArea } from '@/Global/components/atoms'
-import type { Item } from '@/types'
+import { Item } from '@/Item/types'
 
 interface ItemListProps {
   items: Item[]

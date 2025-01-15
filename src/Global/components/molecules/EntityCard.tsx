@@ -1,8 +1,9 @@
 import { LucideIcon } from 'lucide-react'
-import type { EntityType } from '@/types/collection'
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/Global/components/atoms'
 import { Link } from '@tanstack/react-router'
+
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/Global/components/atoms'
 import { EntityEntry } from './EntityEntry'
+import { EntityType } from '@/Global/types'
 
 interface EntityCardProps {
   type: EntityType

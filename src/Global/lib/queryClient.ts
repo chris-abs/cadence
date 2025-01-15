@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
-import type { ApiError } from '@/types/api'
+
+import { ApiError } from '../types'
 
 function handleAuthError(error: unknown) {
   if ((error as ApiError)?.statusCode === 401) {

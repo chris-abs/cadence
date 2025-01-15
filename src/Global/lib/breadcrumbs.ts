@@ -1,7 +1,8 @@
 import { useRouter } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
+
 import { queryKeys } from './queryKeys'
-import type { EntityType } from '@/types/collection'
+import { EntityType } from '../types'
 
 function getQueryKeyForEntity(type: 'workspace' | 'container' | 'item' | 'tag', id: number) {
   switch (type) {

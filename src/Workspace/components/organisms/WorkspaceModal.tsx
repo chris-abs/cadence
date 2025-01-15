@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
+
 import {
   Dialog,
   DialogContent,
@@ -10,8 +11,8 @@ import {
   Button,
 } from '@/Global/components/atoms'
 import { WorkspaceForm } from '@/Workspace/components/molecules/forms/WorkspaceForm'
-import { useCreateWorkspace } from '@/queries/workspace'
-import type { CreateWorkspaceData } from '@/schemas/workspace'
+import { useCreateWorkspace } from '@/Workspace/queries'
+import { CreateWorkspaceData } from '@/Workspace/schemas'
 
 interface CreateWorkspaceModalProps {
   isOpen: boolean

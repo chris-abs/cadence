@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
+
 import {
   Input,
   Label,
@@ -8,11 +10,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { Workspace } from '@/types'
-import { UpdateWorkspaceData } from '@/schemas/workspace'
-import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
+import { Workspace } from '@/Workspace/types'
+import { UpdateWorkspaceData } from '@/Workspace/schemas'
 
 interface WorkspaceSectionProps {
   workspace: Workspace | null

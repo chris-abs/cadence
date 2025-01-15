@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Tags } from 'lucide-react'
+
 import {
   Form,
   FormControl,
@@ -9,10 +10,13 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from '@/Global/components/atoms/Form'
-import { Alert, AlertDescription, Button, Input } from '@/Global/components/atoms'
-import { createTagSchema, type CreateTagData } from '@/schemas/tag'
-import { COLOURS } from '@/types/colours'
+  Alert,
+  AlertDescription,
+  Button,
+  Input,
+} from '@/Global/components/atoms'
+import { CreateTagData, createTagSchema } from '@/Tag/schemas'
+import { COLOURS } from '@/Global/types/colours'
 
 interface TagFormProps {
   onSubmit: (data: CreateTagData) => Promise<void>

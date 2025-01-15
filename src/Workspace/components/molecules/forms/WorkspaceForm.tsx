@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Box } from 'lucide-react'
+
 import {
   Form,
   FormControl,
@@ -11,7 +12,7 @@ import {
   FormDescription,
 } from '@/Global/components/atoms/Form'
 import { Alert, AlertDescription, Button, Input, Textarea } from '@/Global/components/atoms'
-import { createWorkspaceSchema, type CreateWorkspaceData } from '@/schemas/workspace'
+import { CreateWorkspaceData, createWorkspaceSchema } from '@/Workspace/schemas'
 
 interface WorkspaceFormProps {
   onSubmit: (data: CreateWorkspaceData) => Promise<void>

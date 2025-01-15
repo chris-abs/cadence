@@ -1,18 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { registerSchema } from '@/schemas/auth'
-import { Button } from '@/Global/components/atoms/Button'
+
 import {
+  Alert,
+  AlertDescription,
+  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/Global/components/atoms/Form'
-import { Input } from '@/Global/components/atoms/Input'
-import { Alert, AlertDescription } from '@/Global/components/atoms/Alert'
+  Input,
+} from '@/Global/components/atoms'
+import { registerSchema } from '@/Global/schemas/auth'
 
 type FormData = z.infer<typeof registerSchema>
 

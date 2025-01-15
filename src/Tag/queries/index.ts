@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Item, Tag } from '@/types'
+
 import { api } from '@/Global/utils/api'
-import { CreateTagData, UpdateItemTagsData, UpdateTagData } from '@/schemas/tag'
 import { queryKeys } from '@/Global/lib/queryKeys'
+import { Item } from '@/Item/types'
+import { CreateTagData, UpdateItemTagsData, UpdateTagData } from '../schemas'
+import { Tag } from '../types'
 
 export function useTag(id: number) {
   return useQuery({

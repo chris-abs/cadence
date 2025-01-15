@@ -1,5 +1,5 @@
 import { ContainerList } from '@/Container/components/molecules/catalogue/ContainerCatalogue'
-import { Container } from '@/types'
+import { Container } from '@/Container/types'
 
 interface ContainersListSectionProps {
   containers: Container[]

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
-import { useContainers } from '@/queries/container'
+
 import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
 import { ContainerList } from '@/Container/components/molecules/catalogue/ContainerCatalogue'
+import { useContainers } from '@/Container/queries'
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { EntityPageHeader } from '@/Global/components/molecules'
 
 export const Route = createFileRoute('/_authenticated/containers/')({
   component: ContainersPage,

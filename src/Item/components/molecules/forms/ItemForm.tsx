@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Package } from 'lucide-react'
+
 import {
   Form,
   FormControl,
@@ -11,7 +12,7 @@ import {
   FormDescription,
 } from '@/Global/components/atoms/Form'
 import { Alert, AlertDescription, Button, Input, Textarea } from '@/Global/components/atoms'
-import { createItemSchema, type CreateItemData } from '@/schemas/item'
+import { CreateItemData, createItemSchema } from '@/Item/schemas'
 
 interface ItemFormProps {
   onSubmit: (data: CreateItemData) => Promise<void>

@@ -1,4 +1,4 @@
-import { SearchType, SearchResponse, SearchResult } from '@/types/search'
+import { SearchResponse, SearchResult, SearchType } from '../types'
 
 export function getSearchResultsByEntityType(
   data: SearchResponse | undefined,

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Pencil, Trash2, MoreVertical } from 'lucide-react'
+
 import {
   Button,
   Input,
@@ -9,10 +10,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { Container } from '@/types'
-import { UpdateContainerData } from '@/schemas/container'
 import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
+import { Container } from '@/Container/types'
+import { UpdateContainerData } from '@/Container/schemas'
 
 interface ContainerSectionProps {
   container: Container | null

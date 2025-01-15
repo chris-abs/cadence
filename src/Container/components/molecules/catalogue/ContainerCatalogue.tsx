@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
+
 import { ScrollArea } from '@/Global/components/atoms'
-import type { Container } from '@/types'
+import { Container } from '@/Container/types'
 
 interface ContainerListProps {
   containers: Container[]

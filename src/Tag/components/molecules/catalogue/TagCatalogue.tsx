@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
+
 import { ScrollArea } from '@/Global/components/atoms'
-import type { Tag } from '@/types'
+import { Tag } from '@/Tag/types'
 
 interface TagListProps {
   tags: Tag[]

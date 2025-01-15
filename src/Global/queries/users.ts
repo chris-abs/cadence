@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import type { User } from '@/types/user'
+
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
+import { User } from '../types'
 
 export function useUser() {
   return useQuery({

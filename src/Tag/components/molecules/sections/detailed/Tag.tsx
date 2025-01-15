@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
+
 import {
   Input,
   Label,
@@ -11,12 +13,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { Tag } from '@/types'
-import { UpdateTagData } from '@/schemas/tag'
-import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
-import { COLOURS, Colour } from '@/types/colours'
+import { Colour, COLOURS } from '@/Global/types/colours'
+import { Tag } from '@/Tag/types'
+import { UpdateTagData } from '@/Tag/schemas'
 
 interface TagSectionProps {
   tag: Tag | null

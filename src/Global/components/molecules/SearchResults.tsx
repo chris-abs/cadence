@@ -1,7 +1,9 @@
 import { Box, Tags, FolderOpen, Package } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+
 import { useDebounce } from '@/Global/hooks/useDebounce'
-import { useSearch } from '@/queries/search'
+import { getSearchResultsByEntityType } from '@/Global/utils/search'
 import {
   ContainerSearchResult,
   ItemSearchResult,
@@ -9,16 +11,9 @@ import {
   SearchType,
   TagSearchResult,
   WorkspaceSearchResult,
-} from '@/types/search'
-import { useEffect, useState } from 'react'
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '../../entity/Global/components/atoms'
-import { getSearchResultsByEntityType } from '@/Global/utils/search'
+} from '@/Global/types'
+import { useSearch } from '@/Global/queries/search'
+import { ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from '../atoms'
 
 const searchTypes: { type: SearchType; icon: typeof Box; label: string }[] = [
   { type: 'workspace', icon: Box, label: 'Workspaces' },

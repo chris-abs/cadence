@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Item } from '@/types/item'
-import type { CreateItemData, UpdateItemData } from '@/schemas/item'
+
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { Container } from '@/types'
+import { Container } from '@/Container/types'
+import { CreateItemData, UpdateItemData } from '../schemas'
+import { Item } from '../types'
 
 export function useItem(id: number) {
   return useQuery({

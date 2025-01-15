@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+
 import {
   Card,
   CardContent,
@@ -6,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/Global/components/atoms'
-import { RegisterForm } from '@/components/molecules'
+import { RegisterForm } from '@/Global/components/molecules'
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage,

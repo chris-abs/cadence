@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Box, FolderOpen, Package, Tags, Search } from 'lucide-react'
-import { PageLayout } from '@/components/layouts'
-import { CreateModal } from '@/Global/components/organisms/modals/CreateModal'
-import type { EntityType } from '@/types/collection'
+
 import {
   Button,
   DropdownMenu,
@@ -12,9 +10,11 @@ import {
   DropdownMenuTrigger,
   Input,
 } from '@/Global/components/atoms'
-import { EntityCard } from '@/components/molecules'
-import { useRecentEntities } from '@/queries/recent'
-import { SearchResults } from '@/components/molecules/SearchResults'
+import { EntityCard, SearchResults } from '@/Global/components/molecules'
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { CreateModal } from '@/Global/components/organisms/modals'
+import { EntityType } from '@/Global/types'
+import { useRecentEntities } from '@/Container/queries'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Dashboard,

@@ -1,7 +1,10 @@
 import { useRouter } from '@tanstack/react-router'
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Settings2 } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/Global/components/atoms/Avatar'
+
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -9,7 +12,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/Global/components/atoms/DropDownMenu'
+} from '@/Global/components/atoms'
+import {} from '@/Global/components/atoms/DropDownMenu'
 import {
   SidebarMenu,
   SidebarMenuButton,
