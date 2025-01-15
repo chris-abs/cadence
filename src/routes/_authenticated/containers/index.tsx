@@ -3,8 +3,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useContainers } from '@/queries/container'
-import { CreateContainerModal } from '@/entity/Container/components/organisms/ContainerModal'
-import { ContainerList } from '@/entity/Container/components/molecules/catalogue/ContainerCatalog'
+import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
+import { ContainerList } from '@/Container/components/molecules/catalogue/ContainerCatalogue'
 
 export const Route = createFileRoute('/_authenticated/containers/')({
   component: ContainersPage,

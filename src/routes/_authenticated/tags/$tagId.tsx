@@ -11,7 +11,7 @@ import {
   ItemsListSection,
   NotAssignedSection,
 } from '@/components/molecules/entitySections'
-import { Alert, AlertDescription, AlertTitle } from '@/entity/Global/components/atoms'
+import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import type { UpdateTagData } from '@/schemas/tag'
 
 export const Route = createFileRoute('/_authenticated/tags/$tagId')({

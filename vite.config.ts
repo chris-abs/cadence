@@ -7,9 +7,11 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@', replacement: '/src' },
-      { find: '@components', replacement: '/src/components' },
-      { find: '@lib', replacement: '/src/lib' },
-      { find: '@types', replacement: '/src/types' }
-    ]
+      { find: '@container', replacement: '/src/Container' },
+      { find: '@global', replacement: '/src/Global' },
+      { find: '@item', replacement: '/src/Item' },
+      { find: '@tag', replacement: '/src/Tag' },
+      { find: '@workspace', replacement: '/src/Workspace' },
+    ],
   },
 })

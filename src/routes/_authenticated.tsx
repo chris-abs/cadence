@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import { queryClient } from '@/entity/Global/lib/queryClient'
-import { queryKeys } from '@/entity/Global/lib/queryKeys'
-import { api } from '@/entity/Global/utils/api'
+import { queryClient } from '@/Global/lib/queryClient'
+import { queryKeys } from '@/Global/lib/queryKeys'
+import { api } from '@/Global/utils/api'
 import { useUser } from '@/queries/user'
 
 export const Route = createFileRoute('/_authenticated')({

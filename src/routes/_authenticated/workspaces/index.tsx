@@ -4,7 +4,7 @@ import { EntityPageHeader } from '@/components/molecules'
 import { useState } from 'react'
 import { useWorkspaces } from '@/queries/workspace'
 import { CreateWorkspaceModal } from '@/components/organisms/modals/entity/detailed/WorkspaceModal'
-import { WorkspaceList } from '@/entity/Workspace/components/molecules/sections/list/WorkspaceCatalogue'
+import { WorkspaceList } from '@/Workspace/components/molecules/catalogue/WorkspaceCatalogue'
 
 export const Route = createFileRoute('/_authenticated/workspaces/')({
   component: WorkspacesPage,

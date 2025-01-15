@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/entity/Global/components/atoms'
+} from '@/Global/components/atoms'
 import { RegisterForm } from '@/components/molecules'
 
 export const Route = createFileRoute('/register')({

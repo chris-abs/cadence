@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Box, FolderOpen, Package, Tags, Search } from 'lucide-react'
 import { PageLayout } from '@/components/layouts'
-import { CreateModal } from '@/components/organisms/modals/entity/CreateModal'
+import { CreateModal } from '@/Global/components/organisms/modals/CreateModal'
 import type { EntityType } from '@/types/collection'
 import {
   Button,
@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
-} from '@/entity/Global/components/atoms'
+} from '@/Global/components/atoms'
 import { EntityCard } from '@/components/molecules'
 import { useRecentEntities } from '@/queries/recent'
 import { SearchResults } from '@/components/molecules/SearchResults'

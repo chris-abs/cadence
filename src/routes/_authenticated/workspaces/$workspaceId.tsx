@@ -5,13 +5,13 @@ import { toast } from 'sonner'
 import { PageLayout } from '@/components/layouts'
 import { EntityPageHeader } from '@/components/molecules'
 import { useWorkspace, useUpdateWorkspace } from '@/queries/workspace'
-import { CreateContainerModal } from '@/entity/Container/components/organisms/ContainerModal'
+import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
 import {
   WorkspaceSection,
   ContainersListSection,
   NotAssignedSection,
 } from '@/components/molecules/entitySections'
-import { Alert, AlertDescription, AlertTitle } from '@/entity/Global/components/atoms'
+import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import type { UpdateWorkspaceData } from '@/schemas/workspace'
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({
