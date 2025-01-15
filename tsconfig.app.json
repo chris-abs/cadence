@@ -26,9 +26,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@types/*": ["./src/types/*"]
+      "@container/*": ["./src/Container/*"],
+      "@global/*": ["src/Global/*"],
+      "@item/*": ["./src/Item/*"],
+      "@tag/*": ["./src/Tag/*"],
+      "@workspace/*": ["./src/Workspace/*"]
     }
   },
   "include": ["src", "src/routes/_authenticated/containers/$containerId.tsx"]

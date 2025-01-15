@@ -1,10 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
 import { useState } from 'react'
-import { useItems } from '@/queries/item'
-import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
-import { ItemList } from '@/components/molecules/entityList/ItemList'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { EntityPageHeader } from '@/Global/components/molecules'
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { ItemList } from '@/Item/components/molecules/catalogue/ItemCatalogue'
+import { CreateItemModal } from '@/Item/components/organisms/ItemModal'
+import { useItems } from '@/Item/queries'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,

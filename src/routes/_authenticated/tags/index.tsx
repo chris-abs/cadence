@@ -1,10 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
 import { useState } from 'react'
-import { useTags } from '@/queries/tags'
-import { TagList } from '@/components/molecules/entityList/TagList'
-import { CreateTagModal } from '@/components/organisms/modals/entity/detailed/TagModal'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { EntityPageHeader } from '@/Global/components/molecules'
+import { TagList } from '@/Tag/components/molecules/catalogue/TagCatalogue'
+import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
+import { useTags } from '@/Tag/queries'
 
 export const Route = createFileRoute('/_authenticated/tags/')({
   component: TagsPage,

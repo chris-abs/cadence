@@ -2,17 +2,15 @@ import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { FolderOpen } from 'lucide-react'
-import { PageLayout } from '@/components/layouts'
-import { EntityPageHeader } from '@/components/molecules'
-import { useContainer, useUpdateContainer } from '@/queries/container'
-import { CreateItemModal } from '@/components/organisms/modals/entity/detailed/ItemModal'
-import {
-  NotAssignedSection,
-  ContainerSection,
-  ItemsListSection,
-} from '@/components/molecules/entitySections'
-import { Alert, AlertDescription, AlertTitle } from '@/components/atoms'
-import { UpdateContainerData } from '@/schemas/container'
+
+import { useContainer, useUpdateContainer } from '@/Container/queries'
+import { UpdateContainerData } from '@/Container/schemas'
+import { PageLayout } from '@/Global/layout/PageLayout'
+import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
+import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
+import { ItemsListSection } from '@/Item/components/molecules/sections/list'
+import { CreateItemModal } from '@/Item/components/organisms/ItemModal'
 
 export const Route = createFileRoute('/_authenticated/containers/$containerId')({
   component: ContainerPage,
