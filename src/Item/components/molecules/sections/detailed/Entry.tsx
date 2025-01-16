@@ -20,25 +20,22 @@ import { DeleteModal } from '@/Global/components/organisms/modals'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
 import { TagManagement } from './TagManagement'
+import { Tag } from '@/Tag/types'
+import { useTags } from '@/Tag/queries'
 
 interface ItemEntryProps {
   item: Item | null
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateItemData) => Promise<void>
-  onUpdateTags?: (itemId: number, tagIds: number[]) => Promise<void>
   isUpdating?: boolean
 }
 
-export function ItemEntry({
-  item,
-  emptyStateComponent,
-  onUpdate,
-  onUpdateTags,
-  isUpdating,
-}: ItemEntryProps) {
+export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: ItemEntryProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateItemData> | null>(null)
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+  const { data: allTags } = useTags()
 
   if (!item?.name) {
     return emptyStateComponent || null
@@ -50,12 +47,15 @@ export function ItemEntry({
       name: item.name,
       description: item.description,
       quantity: item.quantity,
+      tags: item.tags.map((tag) => tag.id),
     })
+    setSelectedTags(item.tags)
     setIsEditing(true)
   }
 
   const handleCancel = () => {
     setFormData(null)
+    setSelectedTags([])
     setIsEditing(false)
   }
 
@@ -67,22 +67,39 @@ export function ItemEntry({
     }))
   }
 
-  const handleTagsChange = async (tagIds: number[]) => {
-    if (!onUpdateTags) return
-    await onUpdateTags(item.id, tagIds)
+  const handleTagsChange = (tagIds: number[]) => {
+    const updatedTags = tagIds
+      .map((id) => {
+        const existingTag = item.tags.find((tag) => tag.id === id)
+        if (existingTag) return existingTag
+        return allTags?.find((tag) => tag.id === id)
+      })
+      .filter((tag): tag is Tag => tag !== undefined)
+
+    setSelectedTags(updatedTags)
+    setFormData((prev) => ({
+      ...prev,
+      tags: tagIds,
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData || !onUpdate) return
 
-    await onUpdate({
-      id: item.id,
-      ...formData,
-    })
+    try {
+      await onUpdate({
+        ...formData,
+        id: item.id,
+        tags: selectedTags.map((tag) => tag.id),
+      })
 
-    setIsEditing(false)
-    setFormData(null)
+      setIsEditing(false)
+      setFormData(null)
+      setSelectedTags([])
+    } catch (error) {
+      console.error('Failed to update item:', error)
+    }
   }
 
   return (
@@ -197,7 +214,11 @@ export function ItemEntry({
 
             <div className="space-y-2">
               <Label htmlFor="item-tags">Tags</Label>
-              <TagManagement tags={item.tags} onChange={handleTagsChange} readOnly={!isEditing} />
+              <TagManagement
+                tags={isEditing ? selectedTags : item.tags}
+                onChange={handleTagsChange}
+                readOnly={!isEditing}
+              />
             </div>
 
             <div className="space-y-2">

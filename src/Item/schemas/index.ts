@@ -5,11 +5,13 @@ export const createItemSchema = z.object({
   description: z.string().optional(),
   quantity: z.number().int().min(1, 'Quantity must be at least 1').default(1),
   containerId: z.number().optional(),
+  tagNames: z.array(z.string()).optional(),
 })
 
 export const updateItemSchema = createItemSchema.partial().extend({
   id: z.number(),
   imgUrl: z.string().optional(),
+  tags: z.array(z.number()).optional(),
 })
 
 export type CreateItemData = z.infer<typeof createItemSchema>

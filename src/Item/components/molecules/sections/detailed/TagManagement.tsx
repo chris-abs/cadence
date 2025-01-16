@@ -25,7 +25,7 @@ export function TagManagement({ tags, onChange, readOnly }: TagManagementProps) 
     )
   }
 
-  const handleChange = (newTags: Tag[]) => {
+  const handleTagChange = (newTags: Tag[]) => {
     onChange(newTags.map((tag) => tag.id))
   }
 
@@ -37,7 +37,7 @@ export function TagManagement({ tags, onChange, readOnly }: TagManagementProps) 
             <TagBadge
               key={tag.id}
               tag={tag}
-              onRemove={() => handleChange(tags.filter((t) => t.id !== tag.id))}
+              onRemove={() => handleTagChange(tags.filter((t) => t.id !== tag.id))}
             />
           ))
         ) : (
@@ -46,7 +46,7 @@ export function TagManagement({ tags, onChange, readOnly }: TagManagementProps) 
       </div>
       <TagSelector
         selectedTags={tags}
-        onChange={handleChange}
+        onChange={handleTagChange}
         isOpen={isOpen}
         onOpenChange={setIsOpen}
       />

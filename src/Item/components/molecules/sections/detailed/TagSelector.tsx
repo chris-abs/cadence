@@ -25,6 +25,18 @@ interface TagSelectorProps {
 export function TagSelector({ selectedTags, onChange, isOpen, onOpenChange }: TagSelectorProps) {
   const { data: allTags, isLoading } = useTags()
 
+  const handleSelect = (value: string) => {
+    const selectedTag = allTags?.find((tag) => tag.name === value)
+    if (!selectedTag) return
+
+    const isSelected = selectedTags.some((tag) => tag.id === selectedTag.id)
+    if (isSelected) {
+      onChange(selectedTags.filter((tag) => tag.id !== selectedTag.id))
+    } else {
+      onChange([...selectedTags, selectedTag])
+    }
+  }
+
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
@@ -45,29 +57,23 @@ export function TagSelector({ selectedTags, onChange, isOpen, onOpenChange }: Ta
                 </div>
               )}
               {!isLoading &&
-                allTags?.map((tag) => {
-                  const isSelected = selectedTags.some((t) => t.id === tag.id)
-                  return (
-                    <CommandItem
-                      key={tag.id}
-                      value={tag.name}
-                      onSelect={() => {
-                        if (isSelected) {
-                          onChange(selectedTags.filter((t) => t.id !== tag.id))
-                        } else {
-                          onChange([...selectedTags, tag])
-                        }
-                      }}
-                    >
-                      <div
-                        className="h-3 w-3 rounded-full mr-2"
-                        style={{ backgroundColor: tag.colour }}
-                      />
-                      <span className="flex-1">{tag.name}</span>
-                      {isSelected && <Check className="h-4 w-4 ml-2" />}
-                    </CommandItem>
-                  )
-                })}
+                allTags?.map((tag) => (
+                  <CommandItem
+                    key={tag.id}
+                    value={tag.name}
+                    onSelect={handleSelect}
+                    className="cursor-pointer"
+                  >
+                    <div
+                      className="h-3 w-3 rounded-full mr-2"
+                      style={{ backgroundColor: tag.colour }}
+                    />
+                    <span className="flex-1">{tag.name}</span>
+                    {selectedTags.some((t) => t.id === tag.id) && (
+                      <Check className="h-4 w-4 ml-2" />
+                    )}
+                  </CommandItem>
+                ))}
             </CommandGroup>
           </CommandList>
         </Command>
