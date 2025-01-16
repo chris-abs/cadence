@@ -68,12 +68,12 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
   }
 
   const handleTagsChange = (tagIds: number[]) => {
+    const itemTagEntries: [number, Tag][] = item.tags.map((tag) => [tag.id, tag])
+    const allTagEntries: [number, Tag][] = allTags?.map((tag) => [tag.id, tag]) ?? []
+    const tagMap = new Map<number, Tag>([...itemTagEntries, ...allTagEntries])
+
     const updatedTags = tagIds
-      .map((id) => {
-        const existingTag = item.tags.find((tag) => tag.id === id)
-        if (existingTag) return existingTag
-        return allTags?.find((tag) => tag.id === id)
-      })
+      .map((id) => tagMap.get(id))
       .filter((tag): tag is Tag => tag !== undefined)
 
     setSelectedTags(updatedTags)
@@ -87,13 +87,18 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
     e.preventDefault()
     if (!formData || !onUpdate) return
 
-    try {
-      await onUpdate({
-        ...formData,
-        id: item.id,
-        tags: selectedTags.map((tag) => tag.id),
-      })
+    const updateData: UpdateItemData = {
+      id: item.id,
+      name: formData.name,
+      description: formData.description,
+      quantity: formData.quantity,
+      tags: selectedTags.map((tag) => tag.id),
+    }
 
+    console.log('Update payload:', updateData)
+
+    try {
+      await onUpdate(updateData)
       setIsEditing(false)
       setFormData(null)
       setSelectedTags([])

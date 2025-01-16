@@ -51,8 +51,12 @@ export function useUpdateItem() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: UpdateItemData) => api.put<Item>(`/items/${data.id}`, data),
+    mutationFn: (data: UpdateItemData) => {
+      console.log('Mutation payload:', data)
+      return api.put<Item>(`/items/${data.id}`, data)
+    },
     onSuccess: (updatedItem) => {
+      console.log('Updated item response:', updatedItem)
       queryClient.setQueryData(queryKeys.items.detail(updatedItem.id), updatedItem)
       queryClient.invalidateQueries({ queryKey: queryKeys.items.list })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })

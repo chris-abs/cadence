@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Check, Plus, Loader2 } from 'lucide-react'
 
 import {
@@ -22,13 +23,22 @@ interface TagSelectorProps {
   onOpenChange: (open: boolean) => void
 }
 
+const TagItem = memo(
+  ({ tag, isSelected, onSelect }: { tag: Tag; isSelected: boolean; onSelect: () => void }) => (
+    <CommandItem value={tag.name} onSelect={onSelect} className="cursor-pointer">
+      <div className="h-3 w-3 rounded-full mr-2" style={{ backgroundColor: tag.colour }} />
+      <span className="flex-1">{tag.name}</span>
+      {isSelected && <Check className="h-4 w-4 ml-2" />}
+    </CommandItem>
+  ),
+)
+
+TagItem.displayName = 'TagItem'
+
 export function TagSelector({ selectedTags, onChange, isOpen, onOpenChange }: TagSelectorProps) {
   const { data: allTags, isLoading } = useTags()
 
-  const handleSelect = (value: string) => {
-    const selectedTag = allTags?.find((tag) => tag.name === value)
-    if (!selectedTag) return
-
+  const handleTagSelect = (selectedTag: Tag) => {
     const isSelected = selectedTags.some((tag) => tag.id === selectedTag.id)
     if (isSelected) {
       onChange(selectedTags.filter((tag) => tag.id !== selectedTag.id))
@@ -58,21 +68,12 @@ export function TagSelector({ selectedTags, onChange, isOpen, onOpenChange }: Ta
               )}
               {!isLoading &&
                 allTags?.map((tag) => (
-                  <CommandItem
+                  <TagItem
                     key={tag.id}
-                    value={tag.name}
-                    onSelect={handleSelect}
-                    className="cursor-pointer"
-                  >
-                    <div
-                      className="h-3 w-3 rounded-full mr-2"
-                      style={{ backgroundColor: tag.colour }}
-                    />
-                    <span className="flex-1">{tag.name}</span>
-                    {selectedTags.some((t) => t.id === tag.id) && (
-                      <Check className="h-4 w-4 ml-2" />
-                    )}
-                  </CommandItem>
+                    tag={tag}
+                    isSelected={selectedTags.some((t) => t.id === tag.id)}
+                    onSelect={() => handleTagSelect(tag)}
+                  />
                 ))}
             </CommandGroup>
           </CommandList>
