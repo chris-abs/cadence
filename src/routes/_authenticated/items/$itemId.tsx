@@ -6,9 +6,9 @@ import { toast } from 'sonner'
 import { useItem, useUpdateItem } from '@/Item/queries'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
-import { UpdateItemData } from '@/Item/schemas'
 import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
-import { ItemsListSection } from '@/Item/components/molecules/sections/list'
+import { UpdateItemData } from '@/Item/schemas'
+import { ItemEntry } from '@/Item/components/molecules/sections/detailed'
 import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
 import { TagsListSection } from '@/Tag/components/molecules/sections/list/Tag'
 import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
@@ -70,7 +70,7 @@ function ItemPage() {
           <EntityPageHeader title={item.name} entityType="tag" onAdd={handleAdd} />
         </div>
 
-        <ItemsListSection
+        <ItemEntry
           item={item}
           onUpdate={handleUpdateItem}
           isUpdating={updateItem.isPending}
