@@ -9,7 +9,13 @@ import { Item } from '../types'
 export function useItem(id: number) {
   return useQuery({
     queryKey: queryKeys.items.detail(id),
-    queryFn: () => api.get<Item>(`/items/${id}`),
+    queryFn: async () => {
+      const item = await api.get<Item>(`/items/${id}`)
+      return {
+        ...item,
+        queryKey: [queryKeys.items.detail(id), item.container?.id],
+      }
+    },
     enabled: !!id,
   })
 }

@@ -4,10 +4,12 @@ import { Package } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useItem, useUpdateItem } from '@/Item/queries'
+import { useUpdateContainer } from '@/Container/queries'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
 import { UpdateItemData } from '@/Item/schemas'
+import { UpdateContainerData } from '@/Container/schemas'
 import { ItemEntry } from '@/Item/components/molecules/sections/detailed'
 import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
 import { TagsListSection } from '@/Tag/components/molecules/sections/list/Tag'
@@ -23,6 +25,7 @@ function ItemPage() {
   const parsedItemId = parseInt(itemId)
   const { data: item, isLoading } = useItem(parsedItemId)
   const updateItem = useUpdateItem()
+  const updateContainer = useUpdateContainer()
   const [isCreateTagModalOpen, setIsCreateTagModalOpen] = useState(false)
   const [isContainerModalOpen, setIsContainerModalOpen] = useState(false)
 
@@ -58,7 +61,7 @@ function ItemPage() {
     try {
       await updateItem.mutateAsync(data)
       toast('Item updated', {
-        description: `${data.name || item.name} has been updated successfully`,
+        description: `${data.name || item?.name} has been updated successfully`,
       })
     } catch (err) {
       toast('Error', {
@@ -69,15 +72,26 @@ function ItemPage() {
     }
   }
 
-  const handleAssignContainer = () => {
+  const handleUpdateContainer = async (data: UpdateContainerData) => {
+    try {
+      await updateContainer.mutateAsync(data)
+      toast('Container updated', {
+        description: `Container ${data.name} has been updated successfully`,
+      })
+    } catch (err) {
+      toast('Error', {
+        description: 'Failed to update container',
+        duration: 3000,
+      })
+      throw err
+    }
+  }
+
+  const handleAssignOrReassignContainer = () => {
     setIsContainerModalOpen(true)
   }
 
-  const handleReassignContainer = () => {
-    setIsContainerModalOpen(true)
-  }
-
-  const handleContainerSelection = async (containerId: number | null) => {
+  const handleContainerSelection = async (containerId: number | undefined) => {
     try {
       if (!item) return
 
@@ -88,7 +102,7 @@ function ItemPage() {
         quantity: item.quantity,
         containerId: containerId,
         tags: item.tags.map((tag) => tag.id),
-        imgUrl: item.imageUrl,
+        imgUrl: item.imgUrl,
       }
 
       await updateItem.mutateAsync(updatedItemData)
@@ -98,7 +112,7 @@ function ItemPage() {
           : `Item has been removed from its container`,
       })
       setIsContainerModalOpen(false)
-    } catch (err) {
+    } catch {
       toast('Error', {
         description: 'Failed to update container',
         duration: 3000,
@@ -123,11 +137,10 @@ function ItemPage() {
         />
 
         <ContainerSection
-          container={item.container}
-          onUpdate={handleUpdateItem}
-          isUpdating={updateItem.isPending}
-          onAssign={handleAssignContainer}
-          onReassign={handleReassignContainer}
+          container={item?.container}
+          onUpdateContainer={handleUpdateContainer}
+          isUpdating={updateContainer.isPending}
+          onAssignOrReassign={handleAssignOrReassignContainer}
           emptyStateComponent={
             <NotAssignedSection
               title="Container"
@@ -153,7 +166,7 @@ function ItemPage() {
         isOpen={isContainerModalOpen}
         onClose={() => setIsContainerModalOpen(false)}
         onSelect={handleContainerSelection}
-        currentContainerId={item.container?.id}
+        currentContainerId={item?.container?.id}
       />
     </PageLayout>
   )

@@ -5,6 +5,19 @@ import { queryKeys } from '@/Global/lib/queryKeys'
 import { RecentResponse } from '@/Global/types'
 import { Container } from '../types'
 import { CreateContainerData, UpdateContainerData } from '../schemas'
+import { Item } from '@/Item/types'
+
+function isItemWithContainer(data: unknown): data is Item & { container: { id: number } } {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'container' in data &&
+    data.container !== null &&
+    typeof data.container === 'object' &&
+    'id' in data.container &&
+    typeof data.container.id === 'number'
+  )
+}
 
 export function useRecentEntities() {
   return useQuery({
@@ -53,11 +66,19 @@ export function useUpdateContainer() {
     mutationFn: (data: UpdateContainerData) => api.put<Container>(`/containers/${data.id}`, data),
     onSuccess: (updatedContainer, variables) => {
       queryClient.setQueryData(queryKeys.containers.detail(variables.id), updatedContainer)
-      queryClient.setQueryData(queryKeys.containers.list, (old: Container[] = []) => {
-        return old.map((container) =>
-          container.id === variables.id ? updatedContainer : container,
-        )
+      queryClient.setQueryData(queryKeys.containers.list, (old: Container[] = []) =>
+        old.map((container) => (container.id === variables.id ? updatedContainer : container)),
+      )
+      queryClient.invalidateQueries({ queryKey: queryKeys.containers.detail(variables.id) })
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.items.list,
+        predicate: (query) => {
+          const data = query.state.data
+          return isItemWithContainer(data) && data.container.id === variables.id
+        },
       })
+
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
     },
   })
