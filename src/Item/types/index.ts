@@ -14,7 +14,7 @@ export interface Item {
   description: string
   quantity: number
   imgUrl: string
-  container_id: number
+  containerId: number
   container?: Container
   tags: Tag[]
   createdAt: string

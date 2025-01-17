@@ -12,7 +12,7 @@ export const updateItemSchema = createItemSchema.partial().extend({
   id: z.number(),
   imgUrl: z.string().optional(),
   tags: z.array(z.number()).optional(),
-  container_id: z.number().optional(),
+  containerId: z.number().optional(),
 })
 
 export type CreateItemData = z.infer<typeof createItemSchema>

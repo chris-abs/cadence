@@ -59,12 +59,14 @@ function ItemPage() {
 
   const handleUpdateItem = async (data: UpdateItemData) => {
     try {
+      console.log('Update item data:', data)
       const updatedItemData: UpdateItemData = {
         ...item,
         ...data,
         tags: data.tags || item.tags.map((tag) => tag.id),
-        containerId: data.containerId ?? item.container_id,
+        containerId: data.containerId,
       }
+      console.log('Final update item data:', updatedItemData)
       await updateItem.mutateAsync(updatedItemData)
       toast('Item updated', {
         description: `${data.name || item.name} has been updated successfully`,

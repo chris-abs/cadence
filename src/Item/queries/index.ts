@@ -36,9 +36,9 @@ export function useCreateItem() {
       queryClient.setQueryData(queryKeys.items.list, (old: Item[] = []) => {
         return [...old, newItem]
       })
-      if (newItem.container_id) {
+      if (newItem.containerId) {
         queryClient.setQueryData(
-          queryKeys.containers.detail(newItem.container_id),
+          queryKeys.containers.detail(newItem.containerId),
           (oldContainer: Container | undefined) => {
             if (!oldContainer) return oldContainer
             return {
@@ -67,9 +67,9 @@ export function useUpdateItem() {
       queryClient.invalidateQueries({ queryKey: queryKeys.items.list })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
 
-      if (updatedItem.container_id) {
+      if (updatedItem.containerId) {
         queryClient.invalidateQueries({
-          queryKey: queryKeys.containers.detail(updatedItem.container_id),
+          queryKey: queryKeys.containers.detail(updatedItem.containerId),
         })
       }
     },
