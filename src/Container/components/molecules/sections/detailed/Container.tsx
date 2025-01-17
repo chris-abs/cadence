@@ -20,6 +20,8 @@ interface ContainerSectionProps {
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateContainerData) => Promise<void>
   isUpdating?: boolean
+  onAssign: () => void
+  onReassign: () => void
 }
 
 export function ContainerSection({
@@ -27,13 +29,23 @@ export function ContainerSection({
   emptyStateComponent,
   onUpdate,
   isUpdating,
+  onAssign,
+  onReassign,
 }: ContainerSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateContainerData> | null>(null)
 
   if (!container?.name) {
-    return emptyStateComponent || null
+    return (
+      <div className="bg-background border rounded-xl p-4">
+        <h2 className="text-lg font-medium mb-4">Container</h2>
+        {emptyStateComponent}
+        <Button onClick={onAssign} className="mt-4">
+          Assign Container
+        </Button>
+      </div>
+    )
   }
 
   const handleEdit = () => {
@@ -82,37 +94,42 @@ export function ContainerSection({
           <h2 id="container-section-title" className="text-lg font-medium">
             Container Details
           </h2>
-          {onUpdate && !isEditing ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="sm">
-                  <MoreVertical className="h-4 w-4" />
+          <div className="flex gap-2">
+            <Button onClick={onReassign} variant="outline">
+              Reassign Container
+            </Button>
+            {onUpdate && !isEditing ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" size="sm">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleEdit}>
+                    <Pencil className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : isEditing ? (
+              <>
+                <Button variant="ghost" onClick={handleCancel} disabled={isUpdating}>
+                  Cancel
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleEdit}>
-                  <Pencil className="h-4 w-4 mr-2" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setIsDeleteModalOpen(true)}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : isEditing ? (
-            <div className="flex gap-2">
-              <Button variant="ghost" onClick={handleCancel} disabled={isUpdating}>
-                Cancel
-              </Button>
-              <Button onClick={handleSubmit} disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save Changes'}
-              </Button>
-            </div>
-          ) : null}
+                <Button onClick={handleSubmit} disabled={isUpdating}>
+                  {isUpdating ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </>
+            ) : null}
+          </div>
         </header>
 
         <div className="grid grid-cols-2 gap-4" role="group" aria-label="Container information">

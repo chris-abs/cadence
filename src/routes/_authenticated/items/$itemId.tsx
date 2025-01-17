@@ -12,6 +12,7 @@ import { ItemEntry } from '@/Item/components/molecules/sections/detailed'
 import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
 import { TagsListSection } from '@/Tag/components/molecules/sections/list/Tag'
 import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
+import { ContainerSelectionModal } from '@/Container/components/organisms/ContainerSelectionModal'
 
 export const Route = createFileRoute('/_authenticated/items/$itemId')({
   component: ItemPage,
@@ -20,9 +21,14 @@ export const Route = createFileRoute('/_authenticated/items/$itemId')({
 function ItemPage() {
   const { itemId } = Route.useParams()
   const parsedItemId = parseInt(itemId)
-  const { data: item } = useItem(parsedItemId)
+  const { data: item, isLoading } = useItem(parsedItemId)
   const updateItem = useUpdateItem()
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isCreateTagModalOpen, setIsCreateTagModalOpen] = useState(false)
+  const [isContainerModalOpen, setIsContainerModalOpen] = useState(false)
+
+  if (isLoading) {
+    return <PageLayout>Loading...</PageLayout>
+  }
 
   if (!item) {
     return (
@@ -44,8 +50,8 @@ function ItemPage() {
     )
   }
 
-  const handleAdd = () => {
-    setIsCreateModalOpen(true)
+  const handleAddTag = () => {
+    setIsCreateTagModalOpen(true)
   }
 
   const handleUpdateItem = async (data: UpdateItemData) => {
@@ -63,11 +69,48 @@ function ItemPage() {
     }
   }
 
+  const handleAssignContainer = () => {
+    setIsContainerModalOpen(true)
+  }
+
+  const handleReassignContainer = () => {
+    setIsContainerModalOpen(true)
+  }
+
+  const handleContainerSelection = async (containerId: number | null) => {
+    try {
+      if (!item) return
+
+      const updatedItemData: UpdateItemData = {
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        quantity: item.quantity,
+        containerId: containerId,
+        tags: item.tags.map((tag) => tag.id),
+        imgUrl: item.imageUrl,
+      }
+
+      await updateItem.mutateAsync(updatedItemData)
+      toast('Container updated', {
+        description: containerId
+          ? `Item has been assigned to a new container`
+          : `Item has been removed from its container`,
+      })
+      setIsContainerModalOpen(false)
+    } catch (err) {
+      toast('Error', {
+        description: 'Failed to update container',
+        duration: 3000,
+      })
+    }
+  }
+
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="bg-background border rounded-xl">
-          <EntityPageHeader title={item.name} entityType="tag" onAdd={handleAdd} />
+          <EntityPageHeader title={item.name} entityType="item" onAdd={handleAddTag} />
         </div>
 
         <ItemEntry
@@ -80,7 +123,11 @@ function ItemPage() {
         />
 
         <ContainerSection
-          container={item.container || null}
+          container={item.container}
+          onUpdate={handleUpdateItem}
+          isUpdating={updateItem.isPending}
+          onAssign={handleAssignContainer}
+          onReassign={handleReassignContainer}
           emptyStateComponent={
             <NotAssignedSection
               title="Container"
@@ -97,7 +144,17 @@ function ItemPage() {
         />
       </div>
 
-      <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateTagModal
+        isOpen={isCreateTagModalOpen}
+        onClose={() => setIsCreateTagModalOpen(false)}
+      />
+
+      <ContainerSelectionModal
+        isOpen={isContainerModalOpen}
+        onClose={() => setIsContainerModalOpen(false)}
+        onSelect={handleContainerSelection}
+        currentContainerId={item.container?.id}
+      />
     </PageLayout>
   )
 }
