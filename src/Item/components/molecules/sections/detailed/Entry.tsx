@@ -93,7 +93,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
       description: formData.description,
       quantity: formData.quantity,
       tags: selectedTags.map((tag) => tag.id),
-      containerId: item.container_id,
+      container_id: item.container_id,
       imgUrl: item.imgUrl,
     }
 

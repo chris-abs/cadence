@@ -151,6 +151,8 @@ function ItemPage() {
             <NotAssignedSection
               title="Container"
               message="No container assigned to this item yet."
+              actionLabel="Assign Container"
+              onAction={handleAssignOrReassignContainer}
             />
           }
         />

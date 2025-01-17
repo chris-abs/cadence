@@ -14,6 +14,7 @@ import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
 import { Container } from '@/Container/types'
 import { UpdateContainerData } from '@/Container/schemas'
+import { NotAssignedSection } from '@/Global/components/molecules'
 
 interface ContainerSectionProps {
   container: Container | undefined
@@ -34,15 +35,16 @@ export function ContainerSection({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateContainerData> | null>(null)
 
-  if (!container) {
+  if (container?.name === '' || !container) {
     return (
-      <div className="bg-background border rounded-xl p-4">
-        <h2 className="text-lg font-medium mb-4">Container</h2>
-        {emptyStateComponent}
-        <Button onClick={onAssignOrReassign} className="mt-4">
-          Assign Container
-        </Button>
-      </div>
+      emptyStateComponent || (
+        <NotAssignedSection
+          title="Container"
+          message="No container assigned to this item yet."
+          actionLabel="Assign Container"
+          onAction={onAssignOrReassign}
+        />
+      )
     )
   }
 
