@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
+import { Badge } from '@/Global/components/atoms'
 import { Tag } from '@/Tag/types'
-import { TagBadge } from './TagBadge'
 import { TagSelector } from './TagSelector'
 
 interface TagManagementProps {
@@ -22,7 +22,7 @@ export function TagManagement({ tags, onChange, readOnly }: TagManagementProps) 
       <div className="flex flex-wrap items-center gap-2">
         {tags.map((tag) => (
           <div key={tag.id} className="tag-enter">
-            <TagBadge
+            <Badge
               tag={tag}
               onRemove={
                 readOnly

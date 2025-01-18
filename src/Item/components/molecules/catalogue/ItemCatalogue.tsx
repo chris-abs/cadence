@@ -1,103 +1,76 @@
 import { Link } from '@tanstack/react-router'
-
-import { ScrollArea } from '@/Global/components/atoms'
+import { Badge, ScrollArea } from '@/Global/components/atoms'
 import { Item } from '@/Item/types'
+import { formatRelativeTime } from '@/Global/utils/dateFormat'
+import { Clock } from 'lucide-react'
 
 interface ItemListProps {
   items: Item[]
-  isLoading?: boolean
 }
 
-export function ItemList({ items, isLoading }: ItemListProps) {
-  if (isLoading) {
-    return (
-      <div className="space-y-2" role="status" aria-label="Loading items">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-16 rounded-md bg-muted animate-pulse" aria-hidden="true" />
-        ))}
-      </div>
-    )
-  }
-
+export function ItemList({ items }: ItemListProps) {
   if (items.length === 0) {
     return (
-      <div
-        className="flex h-32 items-center justify-center rounded-md border border-dashed"
-        role="status"
-        aria-label="No items found"
-      >
+      <div className="h-32 flex items-center justify-center rounded-lg border border-dashed">
         <p className="text-sm text-muted-foreground">No items found. Create one to get started.</p>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
-      <ScrollArea className="flex-1" role="region" aria-label="Items list">
-        <ul className="space-y-2 pr-4">
-          {items.map((item) => (
-            <li key={item.id}>
-              <Link
-                to="/items/$itemId"
-                params={{ itemId: item.id.toString() }}
-                className="flex items-center justify-between rounded-md border p-4 bg-contrast-accent hover:bg-contrast-accent-hover"
-                aria-labelledby={`item-${item.id}-name`}
-              >
-                <div className="space-y-1">
-                  <h3 id={`item-${item.id}-name`} className="font-medium">
+    <ScrollArea className="h-[calc(100vh-200px)]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pr-4">
+        {items.map((item) => (
+          <Link
+            key={item.id}
+            to="/items/$itemId"
+            params={{ itemId: item.id.toString() }}
+            className="block max-w-md"
+          >
+            <article className="rounded-lg border bg-white overflow-hidden h-[320px] flex flex-col hover:border-primary/50 transition-colors">
+              <div className="w-full h-40 relative bg-gray-100">
+                <img
+                  src={item.imgUrl || '/placeholder-item.jpg'}
+                  alt={item.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-md text-xs">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>{formatRelativeTime(item.updatedAt || item.createdAt)}</span>
+                </div>
+              </div>
+
+              <div className="p-4 flex flex-col flex-1">
+                <div className="mb-3">
+                  <h3 className="font-semibold truncate" id={`item-${item.id}-name`}>
                     {item.name}
                   </h3>
-                  {item.description && (
-                    <p
-                      className="text-sm text-muted-foreground"
-                      aria-label={`Description: ${item.description}`}
-                    >
-                      {item.description}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-4">
-                    <span
-                      className="text-sm text-muted-foreground"
-                      aria-label={`Quantity: ${item.quantity}`}
-                    >
-                      Quantity: {item.quantity}
-                    </span>
-                    {item.container && (
-                      <span
-                        className="text-sm text-muted-foreground"
-                        aria-label={`Container: ${item.container.name}`}
-                      >
-                        Container: {item.container.name}
-                      </span>
-                    )}
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex gap-1" role="list" aria-label="Item tags">
-                        {item.tags.map((tag) => (
-                          <span
-                            key={tag.id}
-                            className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                            style={{ backgroundColor: tag.colour + '20', color: tag.colour }}
-                            role="listitem"
-                          >
-                            {tag.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>Quantity: {item.quantity}</span>
+                    {item.container && <span>{item.container.name}</span>}
                   </div>
                 </div>
-                <time
-                  className="text-sm text-muted-foreground"
-                  dateTime={item.createdAt}
-                  aria-label={`Created on ${new Date(item.createdAt).toLocaleDateString()}`}
-                >
-                  Created {new Date(item.createdAt).toLocaleDateString()}
-                </time>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </ScrollArea>
-    </div>
+
+                <div className="flex-1 min-h-0">
+                  {item.tags && item.tags.length > 0 && (
+                    <ScrollArea className="h-[4.5rem]">
+                      <div className="space-y-1.5 pr-4" role="list" aria-label="Item tags">
+                        {item.tags.map((tag) => (
+                          <div key={tag.id} className="w-full">
+                            <Badge tag={tag} className="w-full text-xs truncate" />
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </div>
+              </div>
+            </article>
+          </Link>
+        ))}
+      </div>
+    </ScrollArea>
   )
 }
+
+export default ItemList

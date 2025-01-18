@@ -2,12 +2,13 @@ import { X } from 'lucide-react'
 import { Tag } from '@/Tag/types'
 import { cn } from '@/Global/lib/utils'
 
-interface TagBadgeProps {
+interface BadgeProps {
   tag: Tag
   onRemove?: () => void
+  className?: string
 }
 
-export function TagBadge({ tag, onRemove }: TagBadgeProps) {
+export function Badge({ tag, onRemove, className }: BadgeProps) {
   const baseColor = tag.colour.slice(0, 7)
 
   return (
@@ -16,6 +17,7 @@ export function TagBadge({ tag, onRemove }: TagBadgeProps) {
         'inline-flex items-center px-2 py-1 me-2 text-sm font-medium rounded',
         'transition-all duration-200 ease-in-out',
         onRemove ? 'pr-1' : 'pr-2',
+        className,
       )}
       style={{
         backgroundColor: `${baseColor}20`,
