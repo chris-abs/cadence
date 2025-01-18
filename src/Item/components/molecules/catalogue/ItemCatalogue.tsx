@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
-import { Badge, ScrollArea } from '@/Global/components/atoms'
-import { Item } from '@/Item/types'
-import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { Clock } from 'lucide-react'
+
+import { Badge, ScrollArea } from '@/Global/components/atoms'
+import { formatRelativeTime } from '@/Global/utils/dateFormat'
+import { Item } from '@/Item/types'
 
 interface ItemListProps {
   items: Item[]
@@ -40,7 +41,7 @@ export function ItemList({ items }: ItemListProps) {
                 </div>
               </div>
 
-              <div className="p-4 flex flex-col flex-1">
+              <div className="px-4 pt-4 flex flex-col flex-1">
                 <div className="mb-3">
                   <h3 className="font-semibold truncate" id={`item-${item.id}-name`}>
                     {item.name}
@@ -53,8 +54,8 @@ export function ItemList({ items }: ItemListProps) {
 
                 <div className="flex-1 min-h-0">
                   {item.tags && item.tags.length > 0 && (
-                    <ScrollArea className="h-[4.5rem]">
-                      <div className="space-y-1.5 pr-4" role="list" aria-label="Item tags">
+                    <ScrollArea className="h-[4.5rem] -mr-3 pr-3">
+                      <div className="space-y-1.5" role="list" aria-label="Item tags">
                         {item.tags.map((tag) => (
                           <div key={tag.id} className="w-full">
                             <Badge tag={tag} className="w-full text-xs truncate" />
