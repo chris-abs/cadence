@@ -19,7 +19,7 @@ export function ItemsListSection({ items, emptyStateComponent }: ItemsListSectio
             Stored Items
           </h2>
         </header>
-        <ItemList items={items} isLoading={false} />
+        <ItemList items={items} />
       </div>
     </section>
   )

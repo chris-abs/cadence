@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_authenticated/items/')({
 
 function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const { data: items, isLoading } = useItems()
+  const { data: items } = useItems()
 
   const handleAdd = () => {
     setIsCreateModalOpen(true)
@@ -28,7 +28,7 @@ function ItemsPage() {
           </div>
           <div className="bg-background border rounded-xl flex flex-1 flex-col min-h-0">
             <div className="p-4 flex-1 flex flex-col min-h-0">
-              <ItemList items={items ?? []} isLoading={isLoading} />
+              <ItemList items={items ?? []} />
             </div>
           </div>
         </div>
