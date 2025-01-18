@@ -26,7 +26,7 @@ interface TagSelectorProps {
 const TagItem = memo(
   ({ tag, isSelected, onSelect }: { tag: Tag; isSelected: boolean; onSelect: () => void }) => (
     <CommandItem value={tag.name} onSelect={onSelect} className="cursor-pointer">
-      <div className="h-3 w-3 rounded-full mr-2" style={{ backgroundColor: tag.colour }} />
+      <div className="h-2 w-2 rounded-full mr-2" style={{ backgroundColor: tag.colour }} />
       <span className="flex-1">{tag.name}</span>
       {isSelected && <Check className="h-4 w-4 ml-2" />}
     </CommandItem>
@@ -50,7 +50,11 @@ export function TagSelector({ selectedTags, onChange, isOpen, onOpenChange }: Ta
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 px-3 py-1 text-sm border-input bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Tag
         </Button>

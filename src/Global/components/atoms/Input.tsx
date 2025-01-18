@@ -9,7 +9,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, readOnly, ...props }, ref) => {
     const inputClassName = cn(
-      'flex h-9 w-full rounded-md border px-3 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+      'flex h-10 w-full rounded-md border px-3 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
       readOnly
         ? 'border-transparent bg-contrast-accent text-foreground cursor-default items-center justify-start'
         : 'border-input bg-transparent text-foreground focus-visible:ring-ring',

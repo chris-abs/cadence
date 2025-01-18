@@ -12,7 +12,6 @@ import { UpdateItemData } from '@/Item/schemas'
 import { UpdateContainerData } from '@/Container/schemas'
 import { ItemEntry } from '@/Item/components/molecules/sections/detailed'
 import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
-import { TagsListSection } from '@/Tag/components/molecules/sections/list/Tag'
 import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
 import { ContainerSelectionModal } from '@/Container/components/organisms/ContainerSelectionModal'
 
@@ -156,13 +155,6 @@ function ItemPage() {
               actionLabel="Assign Container"
               onAction={handleAssignOrReassignContainer}
             />
-          }
-        />
-
-        <TagsListSection
-          tags={item.tags}
-          emptyStateComponent={
-            <NotAssignedSection title="Tags" message="No tags assigned to this item yet." />
           }
         />
       </div>
