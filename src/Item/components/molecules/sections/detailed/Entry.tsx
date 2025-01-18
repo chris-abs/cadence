@@ -17,11 +17,11 @@ import {
 } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Global/components/organisms/modals'
+import { Tag } from '@/Tag/types'
+import { useTags } from '@/Tag/queries'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
 import { TagManagement } from './TagManagement'
-import { Tag } from '@/Tag/types'
-import { useTags } from '@/Tag/queries'
 
 interface ItemEntryProps {
   item: Item | null
