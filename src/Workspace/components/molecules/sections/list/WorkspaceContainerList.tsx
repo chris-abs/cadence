@@ -32,8 +32,8 @@ export function WorkspaceListSection({
   setVisibleWorkspaceIds,
 }: WorkspaceListSectionProps) {
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <H2>Workspaces</H2>
         <Popover>
           <PopoverTrigger asChild>
@@ -67,20 +67,22 @@ export function WorkspaceListSection({
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="space-y-4">
+        <div className="space-y-4 pr-4">
           {unassignedContainers.length > 0 && (
             <Collapsible>
               <CollapsibleTrigger className="w-full text-left py-2 px-4 hover:bg-accent">
                 <H3>Unassigned Containers</H3>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                {unassignedContainers.map((container) => (
-                  <ContainerRow
-                    key={container.id}
-                    container={container}
-                    items={items.filter((item) => item.containerId === container.id)}
-                  />
-                ))}
+                <div className="max-h-[60vh] overflow-y-auto">
+                  {unassignedContainers.map((container) => (
+                    <ContainerRow
+                      key={container.id}
+                      container={container}
+                      items={items.filter((item) => item.containerId === container.id)}
+                    />
+                  ))}
+                </div>
               </CollapsibleContent>
             </Collapsible>
           )}
@@ -93,13 +95,15 @@ export function WorkspaceListSection({
                   <H3>{workspace.name}</H3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  {workspace.containers?.map((container) => (
-                    <ContainerRow
-                      key={container.id}
-                      container={container}
-                      items={items.filter((item) => item.containerId === container.id)}
-                    />
-                  ))}
+                  <div className="max-h-[60vh] overflow-y-auto">
+                    {workspace.containers?.map((container) => (
+                      <ContainerRow
+                        key={container.id}
+                        container={container}
+                        items={items.filter((item) => item.containerId === container.id)}
+                      />
+                    ))}
+                  </div>
                 </CollapsibleContent>
               </Collapsible>
             ))}

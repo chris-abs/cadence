@@ -74,17 +74,17 @@ function ItemsPage() {
 
   return (
     <PageLayout>
-      <div className="flex flex-1 flex-col h-full">
-        <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
+      <div className="flex flex-col h-full">
+        <div className="flex flex-col gap-4 p-4 h-full">
           <EntityPageHeader
             title="Items"
             entityType="item"
             onAdd={() => setIsCreateModalOpen(true)}
           />
           <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
-              <div className="min-h-0 overflow-hidden">
-                <Section>
+            <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
+              <div className="flex-grow min-h-0">
+                <Section className="h-full">
                   <WorkspaceListSection
                     workspaces={workspaces ?? []}
                     items={items ?? []}
@@ -94,9 +94,11 @@ function ItemsPage() {
                   />
                 </Section>
               </div>
-              <Section>
-                <UnsortedItemsSection items={items?.filter((item) => !item.containerId) ?? []} />
-              </Section>
+              <div className="h-[30%] min-h-[200px]">
+                <Section className="h-full">
+                  <UnsortedItemsSection items={items?.filter((item) => !item.containerId) ?? []} />
+                </Section>
+              </div>
             </div>
             <DragOverlay>
               {activeId ? (
