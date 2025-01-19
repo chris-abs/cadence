@@ -22,6 +22,7 @@ interface WorkspaceListSectionProps {
   unassignedContainers: Container[]
   visibleWorkspaceIds: Set<number>
   setVisibleWorkspaceIds: (ids: Set<number>) => void
+  isCompactView: boolean
 }
 
 export function WorkspaceListSection({
@@ -30,6 +31,7 @@ export function WorkspaceListSection({
   unassignedContainers,
   visibleWorkspaceIds,
   setVisibleWorkspaceIds,
+  isCompactView,
 }: WorkspaceListSectionProps) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -80,6 +82,7 @@ export function WorkspaceListSection({
                       key={container.id}
                       container={container}
                       items={items.filter((item) => item.containerId === container.id)}
+                      isCompactView={isCompactView}
                     />
                   ))}
                 </div>
@@ -101,6 +104,7 @@ export function WorkspaceListSection({
                         key={container.id}
                         container={container}
                         items={items.filter((item) => item.containerId === container.id)}
+                        isCompactView={isCompactView}
                       />
                     ))}
                   </div>

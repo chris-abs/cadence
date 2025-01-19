@@ -6,13 +6,15 @@ import { cn } from '@/Global/lib'
 import { Container } from '@/Container/types'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { Item } from '@/Item/types'
+import { CompactItemCard } from '@/Item/components/atoms/card/CompactItemCard'
 
 interface ContainerRowProps {
   container: Container
   items: Item[]
+  isCompactView: boolean
 }
 
-export function ContainerRow({ container, items }: ContainerRowProps) {
+export function ContainerRow({ container, items, isCompactView }: ContainerRowProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: `container-${container.id}`,
     data: {
@@ -20,6 +22,10 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
       containerId: container.id,
     },
   })
+
+  const ItemComponent = isCompactView ? CompactItemCard : SortableItemCard
+  const cardWidth = isCompactView ? '200px' : '280px'
+  const cardHeight = isCompactView ? '100px' : '200px'
 
   return (
     <div
@@ -45,24 +51,29 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
 
       <div className="flex">
         <ScrollArea type="always" className="w-1 flex-1">
-          {items.length > 0 ? (
-            <div className="flex gap-4 pb-4 min-w-max">
-              {items.map((item) => (
-                <SortableItemCard key={item.id} item={item} />
-              ))}
-            </div>
-          ) : (
+          <div className="relative">
+            {isOver && (
+              <div
+                className="absolute left-0 top-0 border-2 border-dashed border-primary/30 rounded-lg flex items-center justify-center"
+                style={{
+                  width: cardWidth,
+                  height: cardHeight,
+                }}
+              >
+                <p className="text-sm text-muted-foreground">Drop here</p>
+              </div>
+            )}
             <div
               className={cn(
-                'flex items-center justify-center h-[200px] border rounded-md bg-muted/50 w-full',
-                isOver && 'border-primary bg-primary/5',
+                'flex gap-4 pb-4 transition-transform duration-200',
+                isOver && 'translate-x-[calc(100%+1rem)]',
               )}
             >
-              <p className="text-sm text-muted-foreground">
-                {isOver ? 'Drop item here' : 'No items in this container'}
-              </p>
+              {items.map((item) => (
+                <ItemComponent key={item.id} item={item} />
+              ))}
             </div>
-          )}
+          </div>
           <ScrollBar orientation="horizontal" className="w-full" />
         </ScrollArea>
       </div>
