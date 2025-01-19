@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   DndContext,
@@ -18,6 +18,7 @@ import { CreateItemModal } from '@/Item/components/organisms/ItemModal'
 import { useItems, useUpdateItem } from '@/Item/queries'
 import { useWorkspaces } from '@/Workspace/queries'
 import { WorkspaceListSection } from '@/Workspace/components/molecules/sections/list/WorkspaceContainerList'
+import { useContainers } from '@/Container/queries'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,
@@ -27,16 +28,20 @@ function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const { data: items } = useItems()
   const { data: workspaces } = useWorkspaces()
+  const { data: containers } = useContainers()
   const updateItem = useUpdateItem()
-
-  const [deselectedWorkspaces, setDeselectedWorkspaces] = useState<number[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [visibleWorkspaceIds, setVisibleWorkspaceIds] = useState<Set<number>>(new Set())
+
+  useEffect(() => {
+    if (workspaces) {
+      setVisibleWorkspaceIds(new Set(workspaces.map((w) => w.id)))
+    }
+  }, [workspaces])
+
+  const unassignedContainers = containers?.filter((container) => !container.workspaceId) ?? []
 
   const sensors = useSensors(useSensor(PointerSensor))
-
-  const handleAdd = () => {
-    setIsCreateModalOpen(true)
-  }
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
@@ -46,17 +51,12 @@ function ItemsPage() {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      const itemId = typeof active.id === 'string' ? parseInt(active.id.split('-')[1]) : active.id
+      const itemId = parseInt(active.id.toString().split('-')[1])
       const newContainerId =
-        over.id === 'unsorted'
-          ? null
-          : typeof over.id === 'string'
-            ? parseInt(over.id.split('-')[1])
-            : over.id
+        over.id === 'unsorted' ? null : parseInt(over.id.toString().split('-')[1])
 
       updateItem.mutate({ id: itemId, containerId: newContainerId })
     }
-
     setActiveId(null)
   }
 
@@ -64,7 +64,11 @@ function ItemsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <EntityPageHeader title="Items" entityType="item" onAdd={handleAdd} />
+          <EntityPageHeader
+            title="Items"
+            entityType="item"
+            onAdd={() => setIsCreateModalOpen(true)}
+          />
           <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
               <div className="min-h-0 overflow-hidden">
@@ -72,8 +76,9 @@ function ItemsPage() {
                   <WorkspaceListSection
                     workspaces={workspaces ?? []}
                     items={items ?? []}
-                    deselectedWorkspaces={deselectedWorkspaces}
-                    setDeselectedWorkspaces={setDeselectedWorkspaces}
+                    unassignedContainers={unassignedContainers}
+                    visibleWorkspaceIds={visibleWorkspaceIds}
+                    setVisibleWorkspaceIds={setVisibleWorkspaceIds}
                   />
                 </Section>
               </div>
