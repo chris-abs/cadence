@@ -2,10 +2,23 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { EntityPageHeader } from '@/Global/components/molecules'
+import { EntityPageHeader, Section } from '@/Global/components/molecules'
 import { TagList } from '@/Tag/components/molecules/catalogue/TagCatalogue'
 import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
 import { useTags } from '@/Tag/queries'
+import {
+  H1,
+  H2,
+  H3,
+  H4,
+  H5,
+  H6,
+  Large,
+  Lead,
+  Muted,
+  P,
+  Small,
+} from '@/Global/components/molecules/Typography'
 
 export const Route = createFileRoute('/_authenticated/tags/')({
   component: TagsPage,
@@ -23,15 +36,25 @@ function TagsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <div className="bg-background border rounded-xl">
-            <EntityPageHeader title="Tags" entityType="tag" onAdd={handleAdd} />
-          </div>
-          <div className="bg-background border flex-1 rounded-xl">
-            <div className="p-4">
-              <TagList tags={tags ?? []} isLoading={isLoading} />
-            </div>
-          </div>
+          <EntityPageHeader title="Tags" entityType="tag" onAdd={handleAdd} />
+          <Section className="flex-1">
+            <TagList tags={tags ?? []} isLoading={isLoading} />
+          </Section>
         </div>
+      </div>
+      {/* TODO: Remove post refactor */}
+      <div className="flex flex-1 flex-col gap-3">
+        <H1>H1</H1>
+        <H2>H2</H2>
+        <H3>H3</H3>
+        <H4>H4</H4>
+        <H5>H5</H5>
+        <H6>H6</H6>
+        <P>P</P>
+        <Muted>Muted</Muted>
+        <Lead>Lead</Lead>
+        <Large>Large</Large>
+        <Small>Small</Small>
       </div>
       <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>

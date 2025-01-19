@@ -15,8 +15,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { cn } from '@/Global/lib/utils'
+import { Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Global/components/organisms/modals'
+import { cn } from '@/Global/lib/utils'
 import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
 import { Item } from '@/Item/types'
@@ -108,7 +109,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
   }
 
   return (
-    <section className="bg-background border rounded-xl p-4" aria-labelledby="item-section-title">
+    <Section>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
           <h2 id="item-section-title" className="text-lg font-medium">
@@ -258,6 +259,6 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
         entityId={item.id}
         entityName={item.name}
       />
-    </section>
+    </Section>
   )
 }

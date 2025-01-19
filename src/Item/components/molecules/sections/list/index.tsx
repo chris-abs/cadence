@@ -1,5 +1,7 @@
+import { Section } from '@/Global/components/molecules'
 import { Item } from '@/Item/types'
 import { ItemList } from '../../catalogue/ItemCatalogue'
+import { H3 } from '@/Global/components/molecules/Typography'
 
 interface ItemsListSectionProps {
   items: Item[]
@@ -12,15 +14,13 @@ export function ItemsListSection({ items, emptyStateComponent }: ItemsListSectio
   }
 
   return (
-    <section className="bg-background border rounded-xl p-4" aria-labelledby="items-section-title">
+    <Section>
       <div className="space-y-4">
         <header className="flex justify-between items-center">
-          <h2 id="items-section-title" className="text-lg font-medium">
-            Stored Items
-          </h2>
+          <H3 id="items-section-title">Stored Items</H3>
         </header>
         <ItemList items={items} />
       </div>
-    </section>
+    </Section>
   )
 }

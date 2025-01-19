@@ -10,11 +10,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { cn } from '@/Global/lib/utils'
+import { H3 } from '@/Global/components/molecules/Typography'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
+import { cn } from '@/Global/lib/utils'
 import { Container } from '@/Container/types'
 import { UpdateContainerData } from '@/Container/schemas'
-import { NotAssignedSection } from '@/Global/components/molecules'
+import { NotAssignedSection, Section } from '@/Global/components/molecules'
 
 interface ContainerSectionProps {
   container: Container | undefined
@@ -85,15 +86,10 @@ export function ContainerSection({
   }
 
   return (
-    <section
-      className="bg-background border rounded-xl p-4"
-      aria-labelledby="container-section-title"
-    >
+    <Section>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <h2 id="container-section-title" className="text-lg font-medium">
-            Container Details
-          </h2>
+          <H3>Container Details</H3>
           {!isEditing && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -227,6 +223,6 @@ export function ContainerSection({
         entityId={container.id}
         entityName={container.name}
       />
-    </section>
+    </Section>
   )
 }

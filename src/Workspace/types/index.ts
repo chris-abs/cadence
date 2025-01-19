@@ -4,7 +4,7 @@ export interface Workspace {
   id: number
   name: string
   description: string
-  containers: Container[]
+  containers?: Container[]
   createdAt: string
   updatedAt: string
 }

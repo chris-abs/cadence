@@ -4,6 +4,8 @@ import { Clock } from 'lucide-react'
 import { Badge, ScrollArea } from '@/Global/components/atoms'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { Item } from '@/Item/types'
+import { Section } from '@/Global/components/molecules'
+import { H3 } from '@/Global/components/molecules/Typography'
 
 interface ItemListProps {
   items: Item[]
@@ -42,7 +44,7 @@ export function ItemList({ items }: ItemListProps) {
 
 function ItemGrid({ items }: { items: Item[] }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pr-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
       {items.map((item) => (
         <Link
           key={item.id}
@@ -50,7 +52,7 @@ function ItemGrid({ items }: { items: Item[] }) {
           params={{ itemId: item.id.toString() }}
           className="block max-w-md"
         >
-          <article className="rounded-lg border bg-white overflow-hidden h-[320px] flex flex-col hover:border-primary/50 transition-colors">
+          <Section className="overflow-hidden h-[320px] flex flex-col hover:border-primary/50 transition-colors">
             <div className="w-full h-40 relative bg-gray-100">
               <img
                 src={item.imgUrl || '/placeholder-item.jpg'}
@@ -65,9 +67,9 @@ function ItemGrid({ items }: { items: Item[] }) {
 
             <div className="px-4 pt-4 flex flex-col flex-1">
               <div className="mb-3">
-                <h3 className="font-semibold truncate" id={`item-${item.id}-name`}>
+                <H3 className="font-semibold truncate" id={`item-${item.id}-name`}>
                   {item.name}
-                </h3>
+                </H3>
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>Quantity: {item.quantity}</span>
                   {item.container && <span>{item.container.name}</span>}
@@ -88,7 +90,7 @@ function ItemGrid({ items }: { items: Item[] }) {
                 )}
               </div>
             </div>
-          </article>
+          </Section>
         </Link>
       ))}
     </div>

@@ -36,7 +36,7 @@ export function ContainerList({ containers, isLoading }: ContainerListProps) {
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <ScrollArea className="flex-1" role="region" aria-label="Containers list">
-        <ul className="space-y-2 p-2">
+        <ul className="space-y-2">
           {containers.map((container) => (
             <li key={container.id}>
               <Link

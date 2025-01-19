@@ -10,8 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { cn } from '@/Global/lib/utils'
+import { Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
+import { cn } from '@/Global/lib/utils'
 import { Workspace } from '@/Workspace/types'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 
@@ -72,10 +73,7 @@ export function WorkspaceSection({
   }
 
   return (
-    <section
-      className="bg-background border rounded-xl p-4"
-      aria-labelledby="workspace-section-title"
-    >
+    <Section>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
           <h2 id="workspace-section-title" className="text-lg font-medium">
@@ -172,6 +170,6 @@ export function WorkspaceSection({
         entityId={workspace.id}
         entityName={workspace.name}
       />
-    </section>
+    </Section>
   )
 }
