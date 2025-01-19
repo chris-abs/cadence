@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useDroppable } from '@dnd-kit/core'
 
-import { ScrollArea } from '@/Global/components/atoms'
+import { ScrollArea, ScrollBar } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib'
 import { Container } from '@/Container/types'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
@@ -43,27 +43,29 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
         </Link>
       </div>
 
-      {items.length > 0 ? (
-        <ScrollArea className="w-full" type="scroll">
-          <div className="flex gap-4 pb-4">
-            {items.map((item) => (
-              <SortableItemCard key={item.id} item={item} />
-            ))}
-          </div>
-          <div className="h-[1px] min-w-[40px]" />
-        </ScrollArea>
-      ) : (
-        <div
-          className={cn(
-            'flex items-center justify-center h-[200px] border rounded-md bg-muted/50',
-            isOver && 'border-primary bg-primary/5',
+      <div className="flex">
+        <ScrollArea type="always" className="w-1 flex-1">
+          {items.length > 0 ? (
+            <div className="flex gap-4 pb-4 min-w-max">
+              {items.map((item) => (
+                <SortableItemCard key={item.id} item={item} />
+              ))}
+            </div>
+          ) : (
+            <div
+              className={cn(
+                'flex items-center justify-center h-[200px] border rounded-md bg-muted/50 w-full',
+                isOver && 'border-primary bg-primary/5',
+              )}
+            >
+              <p className="text-sm text-muted-foreground">
+                {isOver ? 'Drop item here' : 'No items in this container'}
+              </p>
+            </div>
           )}
-        >
-          <p className="text-sm text-muted-foreground">
-            {isOver ? 'Drop item here' : 'No items in this container'}
-          </p>
-        </div>
-      )}
+          <ScrollBar orientation="horizontal" className="w-full" />
+        </ScrollArea>
+      </div>
     </div>
   )
 }
