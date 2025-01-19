@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router'
 import { useDroppable } from '@dnd-kit/core'
-import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 
 import { ScrollArea } from '@/Global/components/atoms'
 import { Container } from '@/Container/types'
@@ -14,23 +14,41 @@ interface ContainerRowProps {
 export function ContainerRow({ container, items }: ContainerRowProps) {
   const { setNodeRef } = useDroppable({
     id: `container-${container.id}`,
+    data: {
+      type: 'container',
+      containerId: container.id,
+    },
   })
 
   return (
-    <div ref={setNodeRef} className="mb-4">
-      <h4 className="text-md font-medium mb-2">{container.name}</h4>
-      <ScrollArea className="h-[340px]">
-        <SortableContext
-          items={items.map((item) => `item-${item.id}`)}
-          strategy={horizontalListSortingStrategy}
+    <div ref={setNodeRef} className="px-4 py-3 border-t first:border-t-0">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">{container.name}</span>
+          <span className="text-xs text-muted-foreground">({items.length} items)</span>
+        </div>
+        <Link
+          to="/containers/$containerId"
+          params={{ containerId: container.id.toString() }}
+          className="text-xs text-muted-foreground hover:text-primary"
         >
-          <div className="flex space-x-4 p-4">
+          View Details
+        </Link>
+      </div>
+
+      {items.length > 0 ? (
+        <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+          <div className="flex p-4 gap-4">
             {items.map((item) => (
               <SortableItemCard key={item.id} item={item} />
             ))}
           </div>
-        </SortableContext>
-      </ScrollArea>
+        </ScrollArea>
+      ) : (
+        <div className="flex items-center justify-center h-24 border rounded-md bg-muted/50">
+          <p className="text-sm text-muted-foreground">No items in this container</p>
+        </div>
+      )}
     </div>
   )
 }

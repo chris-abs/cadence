@@ -52,8 +52,11 @@ function ItemsPage() {
 
     if (over && active.id !== over.id) {
       const itemId = parseInt(active.id.toString().split('-')[1])
-      const newContainerId =
-        over.id === 'unsorted' ? null : parseInt(over.id.toString().split('-')[1])
+      let newContainerId = null
+
+      if (over.id.toString().startsWith('container-')) {
+        newContainerId = parseInt(over.id.toString().split('-')[1])
+      }
 
       updateItem.mutate({ id: itemId, containerId: newContainerId })
     }
