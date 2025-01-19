@@ -51,14 +51,23 @@ function ItemsPage() {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      const itemId = parseInt(active.id.toString().split('-')[1])
-      let newContainerId = null
+      const item = items?.find((item) => `item-${item.id}` === active.id)
+      if (!item) return
 
+      let newContainerId = null
       if (over.id.toString().startsWith('container-')) {
         newContainerId = parseInt(over.id.toString().split('-')[1])
       }
 
-      updateItem.mutate({ id: itemId, containerId: newContainerId })
+      updateItem.mutate({
+        id: item.id,
+        containerId: newContainerId,
+        name: item.name,
+        description: item.description,
+        quantity: item.quantity,
+        imgUrl: item.imgUrl,
+        tags: item.tags.map((tag) => tag.id),
+      })
     }
     setActiveId(null)
   }

@@ -32,7 +32,7 @@ export function WorkspaceListSection({
   setVisibleWorkspaceIds,
 }: WorkspaceListSectionProps) {
   return (
-    <div className="space-y-4 overflow-y-auto h-full">
+    <div className="flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
         <H2>Workspaces</H2>
         <Popover>
@@ -66,33 +66,15 @@ export function WorkspaceListSection({
         </Popover>
       </div>
 
-      <div className="space-y-4">
-        {unassignedContainers.length > 0 && (
-          <Collapsible>
-            <CollapsibleTrigger className="w-full text-left py-2 px-4 hover:bg-accent">
-              <H3>Unassigned Containers</H3>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              {unassignedContainers.map((container) => (
-                <ContainerRow
-                  key={container.id}
-                  container={container}
-                  items={items.filter((item) => item.containerId === container.id)}
-                />
-              ))}
-            </CollapsibleContent>
-          </Collapsible>
-        )}
-
-        {workspaces
-          .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
-          .map((workspace) => (
-            <Collapsible key={workspace.id}>
+      <ScrollArea className="flex-1">
+        <div className="space-y-4">
+          {unassignedContainers.length > 0 && (
+            <Collapsible>
               <CollapsibleTrigger className="w-full text-left py-2 px-4 hover:bg-accent">
-                <H3>{workspace.name}</H3>
+                <H3>Unassigned Containers</H3>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                {workspace.containers?.map((container) => (
+                {unassignedContainers.map((container) => (
                   <ContainerRow
                     key={container.id}
                     container={container}
@@ -101,8 +83,28 @@ export function WorkspaceListSection({
                 ))}
               </CollapsibleContent>
             </Collapsible>
-          ))}
-      </div>
+          )}
+
+          {workspaces
+            .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
+            .map((workspace) => (
+              <Collapsible key={workspace.id}>
+                <CollapsibleTrigger className="w-full text-left py-2 px-4 hover:bg-accent">
+                  <H3>{workspace.name}</H3>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  {workspace.containers?.map((container) => (
+                    <ContainerRow
+                      key={container.id}
+                      container={container}
+                      items={items.filter((item) => item.containerId === container.id)}
+                    />
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
+        </div>
+      </ScrollArea>
     </div>
   )
 }
