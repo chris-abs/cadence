@@ -24,8 +24,7 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
   })
 
   const ItemComponent = isCompactView ? CompactItemCard : SortableItemCard
-  const cardWidth = isCompactView ? '200px' : '280px'
-  const cardHeight = isCompactView ? '100px' : '200px'
+  const cardWidth = isCompactView ? 200 : 280
 
   return (
     <div
@@ -51,26 +50,30 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
 
       <div className="flex">
         <ScrollArea type="always" className="w-1 flex-1">
-          <div className="relative">
-            {isOver && (
-              <div
-                className="absolute left-0 top-0 border-2 border-dashed border-primary/30 rounded-lg flex items-center justify-center"
-                style={{
-                  width: cardWidth,
-                  height: cardHeight,
-                }}
-              >
-                <p className="text-sm text-muted-foreground">Drop here</p>
-              </div>
-            )}
+          <div className="min-w-max">
             <div
               className={cn(
-                'flex gap-4 pb-4 transition-transform duration-200',
-                isOver && 'translate-x-[calc(100%+1rem)]',
+                'flex gap-4 pb-4 relative',
+                isOver && 'translate-x-[296px] transition-transform duration-300',
               )}
             >
               {items.map((item) => (
-                <ItemComponent key={item.id} item={item} />
+                <div key={item.id}>
+                  {isOver && items[0]?.id === item.id && (
+                    <div
+                      className="absolute left-0 top-0 border-2 border-dashed 
+                               border-primary/30 rounded-lg flex items-center 
+                               justify-center -translate-x-[296px]"
+                      style={{
+                        width: cardWidth,
+                        height: isCompactView ? '100px' : '200px',
+                      }}
+                    >
+                      <p className="text-sm text-muted-foreground">Drop here</p>
+                    </div>
+                  )}
+                  <ItemComponent item={item} />
+                </div>
               ))}
             </div>
           </div>
