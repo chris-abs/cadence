@@ -27,7 +27,6 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
       className={cn(
         'px-4 py-3 border-t first:border-t-0 transition-colors',
         isOver && 'bg-primary/10 border-primary/20',
-        'hover:bg-accent/5',
       )}
     >
       <div className="flex items-center justify-between mb-3">
@@ -45,21 +44,19 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
       </div>
 
       {items.length > 0 ? (
-        <ScrollArea
-          className={cn('w-full whitespace-nowrap rounded-md border', isOver && 'border-primary')}
-        >
-          <div className="flex p-4 gap-4">
+        <ScrollArea className="w-full" type="scroll">
+          <div className="flex gap-4 pb-4">
             {items.map((item) => (
               <SortableItemCard key={item.id} item={item} />
             ))}
           </div>
+          <div className="h-[1px] min-w-[40px]" />
         </ScrollArea>
       ) : (
         <div
           className={cn(
-            'flex items-center justify-center h-24 border rounded-md bg-muted/50 transition-colors',
+            'flex items-center justify-center h-[200px] border rounded-md bg-muted/50',
             isOver && 'border-primary bg-primary/5',
-            'hover:border-primary/50',
           )}
         >
           <p className="text-sm text-muted-foreground">
