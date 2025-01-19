@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
+import { Section } from '@/Global/components/molecules'
 import { Tag } from '@/Tag/types'
 
 interface TagsListSectionProps {
@@ -13,7 +14,7 @@ export function TagsListSection({ tags, emptyStateComponent }: TagsListSectionPr
   }
 
   return (
-    <section className="bg-background border rounded-xl p-4" aria-labelledby="tags-section-title">
+    <Section>
       <div className="space-y-4">
         <header className="flex justify-between items-center">
           <h2 id="tags-section-title" className="text-lg font-medium">
@@ -37,6 +38,6 @@ export function TagsListSection({ tags, emptyStateComponent }: TagsListSectionPr
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

@@ -7,7 +7,7 @@ import { useContainer, useUpdateContainer } from '@/Container/queries'
 import { UpdateContainerData } from '@/Container/schemas'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
-import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { EntityPageHeader, NotAssignedSection, Section } from '@/Global/components/molecules'
 import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
 import { ItemsListSection } from '@/Item/components/molecules/sections/list'
 import { CreateItemModal } from '@/Item/components/organisms/ItemModal'
@@ -65,9 +65,9 @@ function ContainerPage() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="bg-background border rounded-xl">
+        <Section>
           <EntityPageHeader title={container.name} entityType="item" onAdd={handleAdd} />
-        </div>
+        </Section>
 
         <ContainerSection
           container={container || null}

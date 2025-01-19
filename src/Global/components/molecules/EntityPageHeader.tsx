@@ -3,6 +3,8 @@ import { useRouter } from '@tanstack/react-router'
 
 import { Button } from '@/Global/components/atoms'
 import { EntityType } from '@/Global/types'
+import { H1 } from './Typography'
+import { Section } from './sections'
 
 interface EntityPageHeaderProps {
   title: string
@@ -31,14 +33,16 @@ export function EntityPageHeader({ title, entityType, onAdd }: EntityPageHeaderP
   }
 
   return (
-    <div className="flex shrink-0 items-center justify-between p-4">
-      <h1 className="text-xl font-semibold">{title}</h1>
-      {onAdd && (
-        <Button onClick={onAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          {getButtonText()}
-        </Button>
-      )}
-    </div>
+    <Section>
+      <div className="flex shrink-0 items-center justify-between">
+        <H1>{title}</H1>
+        {onAdd && (
+          <Button onClick={onAdd}>
+            <Plus className="mr-2 h-4 w-4" />
+            {getButtonText()}
+          </Button>
+        )}
+      </div>
+    </Section>
   )
 }

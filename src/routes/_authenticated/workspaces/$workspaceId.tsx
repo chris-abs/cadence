@@ -65,9 +65,7 @@ function WorkspacePage() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="bg-background border rounded-xl">
-          <EntityPageHeader title={workspace.name} entityType="container" onAdd={handleAdd} />
-        </div>
+        <EntityPageHeader title={workspace.name} entityType="container" onAdd={handleAdd} />
 
         <WorkspaceSection
           workspace={workspace}
@@ -79,7 +77,7 @@ function WorkspacePage() {
         />
 
         <ContainersListSection
-          containers={workspace.containers}
+          containers={workspace.containers ?? []}
           emptyStateComponent={
             <NotAssignedSection
               title="Containers"

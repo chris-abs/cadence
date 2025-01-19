@@ -16,7 +16,7 @@ export function useWorkspace(id: number) {
 export function useWorkspaces() {
   return useQuery({
     queryKey: queryKeys.workspaces.list,
-    queryFn: () => api.get<Workspace[]>('/workspaces'),
+    queryFn: () => api.get<Workspace[]>('/workspaces?include=containers'),
   })
 }
 

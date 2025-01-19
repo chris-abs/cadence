@@ -1,3 +1,4 @@
+import { Section } from '@/Global/components/molecules'
 import { ContainerList } from '@/Container/components/molecules/catalogue/ContainerCatalogue'
 import { Container } from '@/Container/types'
 
@@ -15,10 +16,7 @@ export function ContainersListSection({
   }
 
   return (
-    <section
-      className="bg-background border rounded-xl p-4"
-      aria-labelledby="containers-list-section-title"
-    >
+    <Section>
       <div className="space-y-4">
         <header className="flex justify-between items-center">
           <h2 id="containers-list-section-title" className="text-lg font-medium">
@@ -27,6 +25,6 @@ export function ContainersListSection({
         </header>
         <ContainerList containers={containers} isLoading={false} />
       </div>
-    </section>
+    </Section>
   )
 }

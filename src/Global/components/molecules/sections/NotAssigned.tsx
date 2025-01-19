@@ -1,4 +1,5 @@
 import { Button } from '@/Global/components/atoms'
+import { Section } from './SectionWrapper'
 
 interface NotAssignedSectionProps {
   title: string
@@ -16,7 +17,7 @@ export function NotAssignedSection({
   const headingId = `${title.toLowerCase()}-section-heading`
 
   return (
-    <section className="bg-background border rounded-xl p-4" aria-labelledby={headingId}>
+    <Section>
       <div className="space-y-4">
         <header className="flex justify-between items-center">
           <h2 id={headingId} className="text-lg font-medium">
@@ -36,6 +37,6 @@ export function NotAssignedSection({
           )}
         </div>
       </div>
-    </section>
+    </Section>
   )
 }
