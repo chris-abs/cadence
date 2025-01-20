@@ -89,13 +89,13 @@ export function WorkspaceListSection({
         >
           {unassignedContainers.length > 0 && (
             <AccordionItem value="unassigned">
-              <AccordionTrigger>
+              <AccordionTrigger parent>
                 <H3>Unassigned Containers</H3>
               </AccordionTrigger>
               <AccordionContent>
                 <Accordion type="multiple" defaultValue={getContainerIds(unassignedContainers)}>
                   {unassignedContainers.map((container) => (
-                    <AccordionItem key={container.id} value={`container-${container.id}`}>
+                    <AccordionItem border key={container.id} value={`container-${container.id}`}>
                       <ContainerRow
                         container={container}
                         items={items.filter((item) => item.containerId === container.id)}
@@ -112,7 +112,7 @@ export function WorkspaceListSection({
             .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
             .map((workspace) => (
               <AccordionItem key={workspace.id} value={`workspace-${workspace.id}`}>
-                <AccordionTrigger>
+                <AccordionTrigger parent>
                   <H3>{workspace.name}</H3>
                 </AccordionTrigger>
                 <AccordionContent>

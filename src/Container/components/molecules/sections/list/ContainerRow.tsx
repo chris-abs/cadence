@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useDroppable } from '@dnd-kit/core'
 
@@ -31,6 +32,8 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
     },
   })
 
+  const [open, setOpen] = useState(true)
+
   const ItemComponent = isCompactView ? CompactItemCard : SortableItemCard
   const cardWidth = isCompactView ? 200 : 280
 
@@ -42,10 +45,10 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
         isOver && 'bg-primary/10 border-primary/20',
       )}
     >
-      <Accordion type="single" defaultValue="container">
+      <Accordion type="single" value={open ? 'container' : ''}>
         <AccordionItem value="container">
-          <AccordionTrigger>
-            <div className="flex items-center justify-between mb-3">
+          <AccordionTrigger onClick={() => setOpen(!open)}>
+            <div className="flex items-center justify-between w-full h-10">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">{container.name}</span>
                 <span className="text-xs text-muted-foreground">({items.length} items)</span>
@@ -59,40 +62,43 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
               </Link>
             </div>
           </AccordionTrigger>
-          <AccordionContent>
-            <div className="flex">
-              <ScrollArea type="always" className="w-1 flex-1">
-                <div className="min-w-max">
-                  <div
-                    className={cn(
-                      'flex gap-4 pb-4 relative',
-                      isOver && 'translate-x-[296px] transition-transform duration-300',
-                    )}
-                  >
-                    {items.map((item) => (
-                      <div key={item.id}>
-                        {isOver && items[0]?.id === item.id && (
-                          <div
-                            className="absolute left-0 top-0 border-2 border-dashed 
-                                     border-primary/30 rounded-lg flex items-center 
-                                     justify-center -translate-x-[296px]"
-                            style={{
-                              width: cardWidth,
-                              height: isCompactView ? '100px' : '200px',
-                            }}
-                          >
-                            <p className="text-sm text-muted-foreground">Drop here</p>
-                          </div>
-                        )}
-                        <ItemComponent item={item} />
-                      </div>
-                    ))}
+
+          {open && (
+            <AccordionContent>
+              <div className="flex">
+                <ScrollArea type="always" className="w-1 flex-1">
+                  <div className="min-w-max">
+                    <div
+                      className={cn(
+                        'flex gap-4 pb-4 relative',
+                        isOver && 'translate-x-[296px] transition-transform duration-300',
+                      )}
+                    >
+                      {items.map((item) => (
+                        <div key={item.id}>
+                          {isOver && items[0]?.id === item.id && (
+                            <div
+                              className="absolute left-0 top-0 border-2 border-dashed 
+                                       border-primary/30 rounded-lg flex items-center 
+                                       justify-center -translate-x-[296px]"
+                              style={{
+                                width: cardWidth,
+                                height: isCompactView ? '100px' : '200px',
+                              }}
+                            >
+                              <p className="text-sm text-muted-foreground">Drop here</p>
+                            </div>
+                          )}
+                          <ItemComponent item={item} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <ScrollBar orientation="horizontal" className="w-full" />
-              </ScrollArea>
-            </div>
-          </AccordionContent>
+                  <ScrollBar orientation="horizontal" className="w-full" />
+                </ScrollArea>
+              </div>
+            </AccordionContent>
+          )}
         </AccordionItem>
       </Accordion>
     </div>
