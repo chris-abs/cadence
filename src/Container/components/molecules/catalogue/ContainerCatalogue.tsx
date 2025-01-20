@@ -1,7 +1,9 @@
 import { Link } from '@tanstack/react-router'
+import { FolderOpen } from 'lucide-react'
 
 import { ScrollArea } from '@/Global/components/atoms'
 import { Container } from '@/Container/types'
+import { NoContent } from '@/Global/components/molecules'
 
 interface ContainerListProps {
   containers: Container[]
@@ -20,17 +22,7 @@ export function ContainerList({ containers, isLoading }: ContainerListProps) {
   }
 
   if (containers.length === 0) {
-    return (
-      <div
-        className="flex h-32 items-center justify-center rounded-md border border-dashed"
-        role="status"
-        aria-label="No containers found"
-      >
-        <p className="text-sm text-muted-foreground">
-          No containers found. Create one to get started.
-        </p>
-      </div>
-    )
+    return <NoContent icon={FolderOpen} message="No containers found. Create one to get started." />
   }
 
   return (

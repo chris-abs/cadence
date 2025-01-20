@@ -1,11 +1,10 @@
 import { Link } from '@tanstack/react-router'
-import { Clock } from 'lucide-react'
+import { Clock, Package } from 'lucide-react'
 
 import { Badge, ScrollArea } from '@/Global/components/atoms'
+import { NoContent, Section, H3 } from '@/Global/components/molecules'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { Item } from '@/Item/types'
-import { Section } from '@/Global/components/molecules'
-import { H3 } from '@/Global/components/molecules/Typography'
 
 interface ItemListProps {
   items: Item[]
@@ -16,11 +15,7 @@ export function ItemList({ items }: ItemListProps) {
   const unsortedItems = items.filter((item) => !item.container?.name)
 
   if (items.length === 0) {
-    return (
-      <div className="h-32 flex items-center justify-center rounded-lg border border-dashed">
-        <p className="text-sm text-muted-foreground">No items found. Create one to get started.</p>
-      </div>
-    )
+    return <NoContent icon={Package} message="No items found. Create one to get started." />
   }
 
   return (

@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router'
+import { Tags } from 'lucide-react'
 
 import { ScrollArea } from '@/Global/components/atoms'
+import { NoContent } from '@/Global/components/molecules'
 import { Tag } from '@/Tag/types'
 
 interface TagListProps {
@@ -20,15 +22,7 @@ export function TagList({ tags, isLoading }: TagListProps) {
   }
 
   if (tags.length === 0) {
-    return (
-      <div
-        className="flex h-32 items-center justify-center rounded-md border border-dashed"
-        role="status"
-        aria-label="No tags found"
-      >
-        <p className="text-sm text-muted-foreground">No tags found. Create one to get started.</p>
-      </div>
-    )
+    return <NoContent icon={Tags} message="No tags found. Create one to get started." />
   }
 
   return (

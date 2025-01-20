@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useDroppable } from '@dnd-kit/core'
+import { Package } from 'lucide-react'
 
 import {
   ScrollArea,
@@ -16,6 +17,7 @@ import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { Item } from '@/Item/types'
 import { CompactItemCard } from '@/Item/components/atoms/card/CompactItemCard'
 import { Muted } from '@/Global/components/molecules/Typography'
+import { NoContent } from '@/Global/components/molecules'
 
 interface ContainerRowProps {
   container: Container
@@ -74,24 +76,33 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
                         isOver && 'translate-x-[296px] transition-transform duration-300',
                       )}
                     >
-                      {items.map((item) => (
-                        <div key={item.id}>
-                          {isOver && items[0]?.id === item.id && (
-                            <div
-                              className="absolute left-0 top-0 border-2 border-dashed 
-                                       border-primary/30 rounded-lg flex items-center 
-                                       justify-center -translate-x-[296px]"
-                              style={{
-                                width: cardWidth,
-                                height: isCompactView ? '100px' : '200px',
-                              }}
-                            >
-                              <p className="text-sm text-muted-foreground">Drop here</p>
-                            </div>
-                          )}
-                          <ItemComponent item={item} />
+                      {items.length === 0 ? (
+                        <div className="w-full">
+                          <NoContent
+                            icon={Package}
+                            message={`No items found for ${container.name}. Add one to get started`}
+                          />
                         </div>
-                      ))}
+                      ) : (
+                        items.map((item) => (
+                          <div key={item.id}>
+                            {isOver && items[0]?.id === item.id && (
+                              <div
+                                className="absolute left-0 top-0 border-2 border-dashed 
+                                         border-primary/30 rounded-lg flex items-center 
+                                         justify-center -translate-x-[296px]"
+                                style={{
+                                  width: cardWidth,
+                                  height: isCompactView ? '100px' : '200px',
+                                }}
+                              >
+                                <p className="text-sm text-muted-foreground">Drop here</p>
+                              </div>
+                            )}
+                            <ItemComponent item={item} />
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                   <ScrollBar orientation="horizontal" className="w-full" />

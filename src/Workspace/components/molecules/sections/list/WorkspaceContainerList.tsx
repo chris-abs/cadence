@@ -19,6 +19,7 @@ import { Workspace } from '@/Workspace/types'
 import { ContainerRow } from '@/Container/components/molecules/sections/list/ContainerRow'
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
+import { NoContent } from '@/Global/components/molecules'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]
@@ -116,23 +117,29 @@ export function WorkspaceListSection({
                   <H3>{workspace.name}</H3>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <Accordion
-                    type="multiple"
-                    defaultValue={getContainerIds(workspace.containers || [])}
-                  >
-                    {workspace.containers?.map((container) => (
-                      <AccordionItem key={container.id} value={`container-${container.id}`}>
-                        <AccordionTrigger>{container.name}</AccordionTrigger>
-                        <AccordionContent>
-                          <ContainerRow
-                            container={container}
-                            items={items.filter((item) => item.containerId === container.id)}
-                            isCompactView={isCompactView}
-                          />
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
+                  {workspace.containers?.length === 0 ? (
+                    <NoContent
+                      message={`No containers found for ${workspace.name}. Assign one to get started`}
+                    />
+                  ) : (
+                    <Accordion
+                      type="multiple"
+                      defaultValue={getContainerIds(workspace.containers || [])}
+                    >
+                      {workspace.containers?.map((container) => (
+                        <AccordionItem key={container.id} value={`container-${container.id}`}>
+                          <AccordionTrigger>{container.name}</AccordionTrigger>
+                          <AccordionContent>
+                            <ContainerRow
+                              container={container}
+                              items={items.filter((item) => item.containerId === container.id)}
+                              isCompactView={isCompactView}
+                            />
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  )}
                 </AccordionContent>
               </AccordionItem>
             ))}
