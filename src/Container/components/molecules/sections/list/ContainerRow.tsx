@@ -11,13 +11,12 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/Global/components/atoms'
+import { Muted, NoContent } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib'
 import { Container } from '@/Container/types'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { Item } from '@/Item/types'
 import { CompactItemCard } from '@/Item/components/atoms/card/CompactItemCard'
-import { Muted } from '@/Global/components/molecules/Typography'
-import { NoContent } from '@/Global/components/molecules'
 
 interface ContainerRowProps {
   container: Container
@@ -35,7 +34,6 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
   })
 
   const [open, setOpen] = useState(true)
-
   const ItemComponent = isCompactView ? CompactItemCard : SortableItemCard
   const cardWidth = isCompactView ? 200 : 280
 

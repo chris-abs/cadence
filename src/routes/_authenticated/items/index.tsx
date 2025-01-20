@@ -8,6 +8,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  pointerWithin,
+  CollisionDetection,
 } from '@dnd-kit/core'
 
 import { Switch } from '@/Global/components/atoms'
@@ -78,19 +80,20 @@ function ItemsPage() {
     setActiveId(null)
   }
 
-  const viewToggleButton = (
-    <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">Compact View</span>
-      <Switch
-        checked={isCompactView}
-        onCheckedChange={setIsCompactView}
-        aria-label="Toggle compact view"
-      />
-    </div>
-  )
-
-  // todo: view toggle button needs implementing properly
-  console.log(viewToggleButton)
+  const collisionDetectionStrategy: CollisionDetection = (args) => {
+    const pointerIntersections = pointerWithin(args)
+    return pointerIntersections.map((intersection) => ({
+      ...intersection,
+      data: {
+        ...intersection.data,
+        droppableContainer: args.droppableContainers.find(
+          (container) =>
+            container.id ===
+            (intersection.id.toString().startsWith('container-') ? intersection.id : 'unsorted'),
+        ),
+      },
+    }))
+  }
 
   const ItemComponent = isCompactView ? CompactItemCard : SortableItemCard
 
@@ -98,14 +101,24 @@ function ItemsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
+          {/* <div className="flex justify-between items-center"> */}
           <EntityPageHeader
             title="Items"
             entityType="item"
             onAdd={() => setIsCreateModalOpen(true)}
           />
-          {/* {viewToggleButton} */}
+          {/* <div className="flex items-center gap-2"> */}
+          {/* <span className="text-sm text-muted-foreground">Compact View</span> */}
+          {/* <Switch checked={isCompactView} onCheckedChange={setIsCompactView} /> */}
+          {/* </div> */}
+          {/* </div> */}
 
-          <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            collisionDetection={collisionDetectionStrategy}
+          >
             <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
               <div className="flex-grow min-h-0">
                 <Section className="h-full">

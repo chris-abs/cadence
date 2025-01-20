@@ -4,6 +4,7 @@ const containerBaseSchema = {
   name: z.string().min(1, 'Name is required'),
   location: z.string().optional(),
   workspaceId: z.number().optional(),
+  number: z.number().optional(),
 }
 
 export const createContainerSchema = z.object(containerBaseSchema)
