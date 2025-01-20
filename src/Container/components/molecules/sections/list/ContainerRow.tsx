@@ -1,7 +1,14 @@
 import { Link } from '@tanstack/react-router'
 import { useDroppable } from '@dnd-kit/core'
 
-import { ScrollArea, ScrollBar } from '@/Global/components/atoms'
+import {
+  ScrollArea,
+  ScrollBar,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/Global/components/atoms'
 import { cn } from '@/Global/lib'
 import { Container } from '@/Container/types'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
@@ -35,52 +42,59 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
         isOver && 'bg-primary/10 border-primary/20',
       )}
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{container.name}</span>
-          <span className="text-xs text-muted-foreground">({items.length} items)</span>
-        </div>
-        <Link
-          to="/containers/$containerId"
-          params={{ containerId: container.id.toString() }}
-          className="hover:text-primary"
-        >
-          <Muted className="hover:text-foreground">Container Details →</Muted>
-        </Link>
-      </div>
-
-      <div className="flex">
-        <ScrollArea type="always" className="w-1 flex-1">
-          <div className="min-w-max">
-            <div
-              className={cn(
-                'flex gap-4 pb-4 relative',
-                isOver && 'translate-x-[296px] transition-transform duration-300',
-              )}
-            >
-              {items.map((item) => (
-                <div key={item.id}>
-                  {isOver && items[0]?.id === item.id && (
-                    <div
-                      className="absolute left-0 top-0 border-2 border-dashed 
-                               border-primary/30 rounded-lg flex items-center 
-                               justify-center -translate-x-[296px]"
-                      style={{
-                        width: cardWidth,
-                        height: isCompactView ? '100px' : '200px',
-                      }}
-                    >
-                      <p className="text-sm text-muted-foreground">Drop here</p>
-                    </div>
-                  )}
-                  <ItemComponent item={item} />
-                </div>
-              ))}
+      <Accordion type="single" defaultValue="container">
+        <AccordionItem value="container">
+          <AccordionTrigger>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">{container.name}</span>
+                <span className="text-xs text-muted-foreground">({items.length} items)</span>
+              </div>
+              <Link
+                to="/containers/$containerId"
+                params={{ containerId: container.id.toString() }}
+                className="hover:text-primary"
+              >
+                <Muted className="hover:text-foreground">Container Details →</Muted>
+              </Link>
             </div>
-          </div>
-          <ScrollBar orientation="horizontal" className="w-full" />
-        </ScrollArea>
-      </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex">
+              <ScrollArea type="always" className="w-1 flex-1">
+                <div className="min-w-max">
+                  <div
+                    className={cn(
+                      'flex gap-4 pb-4 relative',
+                      isOver && 'translate-x-[296px] transition-transform duration-300',
+                    )}
+                  >
+                    {items.map((item) => (
+                      <div key={item.id}>
+                        {isOver && items[0]?.id === item.id && (
+                          <div
+                            className="absolute left-0 top-0 border-2 border-dashed 
+                                     border-primary/30 rounded-lg flex items-center 
+                                     justify-center -translate-x-[296px]"
+                            style={{
+                              width: cardWidth,
+                              height: isCompactView ? '100px' : '200px',
+                            }}
+                          >
+                            <p className="text-sm text-muted-foreground">Drop here</p>
+                          </div>
+                        )}
+                        <ItemComponent item={item} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <ScrollBar orientation="horizontal" className="w-full" />
+              </ScrollArea>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   )
 }

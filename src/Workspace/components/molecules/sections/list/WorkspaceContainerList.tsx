@@ -1,21 +1,24 @@
+import { useState } from 'react'
+import { Box } from 'lucide-react'
+
 import {
   ScrollArea,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
   Button,
   Popover,
   PopoverTrigger,
   PopoverContent,
   ToggleGroup,
   ToggleGroupItem,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
 } from '@/Global/components/atoms'
 import { H2, H3 } from '@/Global/components/molecules/Typography'
 import { Workspace } from '@/Workspace/types'
 import { ContainerRow } from '@/Container/components/molecules/sections/list/ContainerRow'
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
-import { Box } from 'lucide-react'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]
@@ -34,9 +37,14 @@ export function WorkspaceListSection({
   setVisibleWorkspaceIds,
   isCompactView,
 }: WorkspaceListSectionProps) {
+  const [openWorkspaces, setOpenWorkspaces] = useState<string[]>([])
+
   const handleValueChange = (value: string[]) => {
     setVisibleWorkspaceIds(new Set(value.map(Number)))
   }
+
+  const getContainerIds = (containers: Container[]) =>
+    containers.map((container) => `container-${container.id}`)
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -62,7 +70,7 @@ export function WorkspaceListSection({
                     value={String(workspace.id)}
                     className="w-full justify-start px-3 py-2 data-[state=on]:bg-slate-900 data-[state=on]:text-white bg-accent/50 hover:bg-pink-100"
                   >
-                    <Box className="h-4 w-4 shrink-0" />
+                    <Box className="h-4 w-4 shrink-0 mr-2" />
                     <span className="truncate">{workspace.name}</span>
                   </ToggleGroupItem>
                 ))}
@@ -73,49 +81,62 @@ export function WorkspaceListSection({
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="space-y-4 pr-4">
+        <Accordion
+          type="multiple"
+          value={openWorkspaces}
+          onValueChange={setOpenWorkspaces}
+          className="space-y-4 pr-4"
+        >
           {unassignedContainers.length > 0 && (
-            <Collapsible>
-              <CollapsibleTrigger className="w-full text-left py-2 px-4 hover:bg-accent">
+            <AccordionItem value="unassigned">
+              <AccordionTrigger>
                 <H3>Unassigned Containers</H3>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <div className="max-h-[60vh] overflow-y-auto">
+              </AccordionTrigger>
+              <AccordionContent>
+                <Accordion type="multiple" defaultValue={getContainerIds(unassignedContainers)}>
                   {unassignedContainers.map((container) => (
-                    <ContainerRow
-                      key={container.id}
-                      container={container}
-                      items={items.filter((item) => item.containerId === container.id)}
-                      isCompactView={isCompactView}
-                    />
+                    <AccordionItem key={container.id} value={`container-${container.id}`}>
+                      <ContainerRow
+                        container={container}
+                        items={items.filter((item) => item.containerId === container.id)}
+                        isCompactView={isCompactView}
+                      />
+                    </AccordionItem>
                   ))}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
+                </Accordion>
+              </AccordionContent>
+            </AccordionItem>
           )}
 
           {workspaces
             .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
             .map((workspace) => (
-              <Collapsible key={workspace.id}>
-                <CollapsibleTrigger className="w-full text-left py-2 px-4 hover:bg-accent">
+              <AccordionItem key={workspace.id} value={`workspace-${workspace.id}`}>
+                <AccordionTrigger>
                   <H3>{workspace.name}</H3>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="max-h-[60vh] overflow-y-auto">
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Accordion
+                    type="multiple"
+                    defaultValue={getContainerIds(workspace.containers || [])}
+                  >
                     {workspace.containers?.map((container) => (
-                      <ContainerRow
-                        key={container.id}
-                        container={container}
-                        items={items.filter((item) => item.containerId === container.id)}
-                        isCompactView={isCompactView}
-                      />
+                      <AccordionItem key={container.id} value={`container-${container.id}`}>
+                        <AccordionTrigger>{container.name}</AccordionTrigger>
+                        <AccordionContent>
+                          <ContainerRow
+                            container={container}
+                            items={items.filter((item) => item.containerId === container.id)}
+                            isCompactView={isCompactView}
+                          />
+                        </AccordionContent>
+                      </AccordionItem>
                     ))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
+                  </Accordion>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-        </div>
+        </Accordion>
       </ScrollArea>
     </div>
   )
