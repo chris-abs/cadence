@@ -89,20 +89,21 @@ function ItemsPage() {
     </div>
   )
 
+  // todo: view toggle button needs implementing properly
+  console.log(viewToggleButton)
+
   const ItemComponent = isCompactView ? CompactItemCard : SortableItemCard
 
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <div className="flex justify-between items-center">
-            <EntityPageHeader
-              title="Items"
-              entityType="item"
-              onAdd={() => setIsCreateModalOpen(true)}
-            />
-            {viewToggleButton}
-          </div>
+          <EntityPageHeader
+            title="Items"
+            entityType="item"
+            onAdd={() => setIsCreateModalOpen(true)}
+          />
+          {/* {viewToggleButton} */}
 
           <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">

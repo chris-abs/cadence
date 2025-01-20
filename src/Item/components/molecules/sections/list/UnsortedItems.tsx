@@ -1,5 +1,4 @@
 import { useDroppable } from '@dnd-kit/core'
-
 import { ScrollArea } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
@@ -34,7 +33,14 @@ export function UnsortedItemsSection({ items, isCompactView }: UnsortedItemsSect
           isOver && 'border-2 border-primary/20',
         )}
       >
-        <div className={cn('grid gap-4 pr-4 pb-4', isCompactView ? 'grid-cols-4' : 'grid-cols-3')}>
+        <div
+          className={cn(
+            'grid gap-2 pb-4',
+            isCompactView
+              ? 'grid-cols-[repeat(auto-fill,minmax(200px,1fr))]'
+              : 'grid-cols-[repeat(auto-fill,minmax(280px,1fr))]',
+          )}
+        >
           {items.map((item) => (
             <ItemComponent key={item.id} item={item} />
           ))}

@@ -7,6 +7,7 @@ import { Container } from '@/Container/types'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { Item } from '@/Item/types'
 import { CompactItemCard } from '@/Item/components/atoms/card/CompactItemCard'
+import { Muted } from '@/Global/components/molecules/Typography'
 
 interface ContainerRowProps {
   container: Container
@@ -42,9 +43,9 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
         <Link
           to="/containers/$containerId"
           params={{ containerId: container.id.toString() }}
-          className="text-xs text-muted-foreground hover:text-primary"
+          className="hover:text-primary"
         >
-          View Details
+          <Muted className="hover:text-foreground">Container Details →</Muted>
         </Link>
       </div>
 

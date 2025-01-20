@@ -15,6 +15,7 @@ import { Workspace } from '@/Workspace/types'
 import { ContainerRow } from '@/Container/components/molecules/sections/list/ContainerRow'
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
+import { Box } from 'lucide-react'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]
@@ -33,6 +34,10 @@ export function WorkspaceListSection({
   setVisibleWorkspaceIds,
   isCompactView,
 }: WorkspaceListSectionProps) {
+  const handleValueChange = (value: string[]) => {
+    setVisibleWorkspaceIds(new Set(value.map(Number)))
+  }
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
@@ -43,23 +48,22 @@ export function WorkspaceListSection({
               Filter Workspaces
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-56">
+          <PopoverContent className="w-64">
             <ScrollArea className="h-[300px]">
               <ToggleGroup
                 type="multiple"
                 value={Array.from(visibleWorkspaceIds).map(String)}
-                onValueChange={(values) => {
-                  setVisibleWorkspaceIds(new Set(values.map(Number)))
-                }}
+                onValueChange={handleValueChange}
                 className="flex flex-col space-y-2"
               >
                 {workspaces.map((workspace) => (
                   <ToggleGroupItem
                     key={workspace.id}
                     value={String(workspace.id)}
-                    className="w-full justify-start"
+                    className="w-full justify-start px-3 py-2 data-[state=on]:bg-slate-900 data-[state=on]:text-white bg-accent/50 hover:bg-pink-100"
                   >
-                    {workspace.name}
+                    <Box className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{workspace.name}</span>
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>

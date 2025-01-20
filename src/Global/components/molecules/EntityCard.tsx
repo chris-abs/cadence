@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/Global/components/atoms'
 import { EntityEntry } from './EntityEntry'
 import { EntityType } from '@/Global/types'
+import { Muted } from './Typography'
 
 interface EntityCardProps {
   type: EntityType
@@ -34,11 +35,8 @@ export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardP
       </CardContent>
 
       <CardFooter className="justify-end mt-auto">
-        <Link
-          to={`/${type}s`}
-          className="text-sm font-medium text-muted-foreground hover:text-foreground"
-        >
-          View all {type}s →
+        <Link to={`/${type}s`}>
+          <Muted className="hover:text-foreground">View all {type}s →</Muted>
         </Link>
       </CardFooter>
     </Card>
