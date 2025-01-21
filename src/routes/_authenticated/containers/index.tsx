@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
-import { useContainers } from '@/Container/queries'
-import { useWorkspaces } from '@/Workspace/queries'
+import { EntityPageHeader } from '@/Global/components/molecules'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { EntityPageHeader, Section } from '@/Global/components/molecules'
+import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
+import { useContainers, useUpdateContainer } from '@/Container/queries'
 import { ContainerOrganiser } from '@/Item/components/molecules/organiser/ContainerOrganiser'
+import { useWorkspaces } from '@/Workspace/queries'
 
 export const Route = createFileRoute('/_authenticated/containers/')({
   component: ContainersPage,
@@ -14,32 +14,44 @@ export const Route = createFileRoute('/_authenticated/containers/')({
 
 function ContainersPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const { data: containers, isLoading: containersLoading } = useContainers()
-  const { data: workspaces, isLoading: workspacesLoading } = useWorkspaces()
+  const { data: containers } = useContainers()
+  const { data: workspaces } = useWorkspaces()
+  const updateContainer = useUpdateContainer()
 
-  const isLoading = containersLoading || workspacesLoading
-
-  const handleAdd = () => {
-    setIsCreateModalOpen(true)
+  const handleUpdateContainer = (containerId: number, workspaceId: number | null) => {
+    const container = containers?.find((container) => container.id === containerId)
+    if (container) {
+      updateContainer.mutate({
+        id: containerId,
+        workspaceId,
+        name: container.name,
+        location: container.location,
+        number: container.number,
+      })
+    }
   }
 
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <EntityPageHeader title="Organize Containers" entityType="container" onAdd={handleAdd} />
-          <Section className="flex-1">
-            {!isLoading && (
-              <ContainerOrganiser containers={containers ?? []} workspaces={workspaces ?? []} />
-            )}
-          </Section>
-        </div>
+          <EntityPageHeader
+            title="Containers"
+            entityType="container"
+            onAdd={() => setIsCreateModalOpen(true)}
+          />
 
-        <CreateContainerModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-        />
+          <ContainerOrganiser
+            containers={containers ?? []}
+            workspaces={workspaces ?? []}
+            onUpdateContainer={handleUpdateContainer}
+          />
+        </div>
       </div>
+      <CreateContainerModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </PageLayout>
   )
 }

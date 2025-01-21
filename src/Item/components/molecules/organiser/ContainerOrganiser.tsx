@@ -1,32 +1,45 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   DndContext,
-  DragOverlay,
   DragEndEvent,
+  DragOverlay,
   DragStartEvent,
+  PointerSensor,
   pointerWithin,
-  CollisionDetection,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core'
 
 import { Section } from '@/Global/components/molecules'
-import { WorkspaceDropZone } from '@/Workspace/components/molecules/sections/list/WorkspaceDropzoneList'
-import { Workspace } from '@/Workspace/types'
-import { DraggableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { UnsortedContainersSection } from '@/Container/components/molecules/sections/list/UnsortedContainers'
-import { useUpdateContainer } from '@/Container/queries'
 import { Container } from '@/Container/types'
+import { Workspace } from '@/Workspace/types'
+import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
+import { WorkspaceDropzoneList } from '@/Workspace/components/molecules/sections/list/WorkspaceDropzoneList'
 
 interface ContainerOrganiserProps {
   containers: Container[]
   workspaces: Workspace[]
+  onUpdateContainer: (containerId: number, workspaceId: number | null) => void
 }
 
-export function ContainerOrganiser({ containers, workspaces }: ContainerOrganiserProps) {
+export function ContainerOrganiser({
+  containers,
+  workspaces,
+  onUpdateContainer,
+}: ContainerOrganiserProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [activeDropZoneId, setActiveDropZoneId] = useState<string | null>(null)
-  const updateContainer = useUpdateContainer()
+  const [visibleWorkspaceIds, setVisibleWorkspaceIds] = useState<Set<number>>(new Set())
 
-  const unassignedContainers = containers.filter((c) => !c.workspaceId)
+  const unassignedContainers = containers?.filter((container) => !container.workspaceId) ?? []
+
+  useEffect(() => {
+    if (workspaces) {
+      setVisibleWorkspaceIds(new Set(workspaces.map((w) => w.id)))
+    }
+  }, [workspaces])
+
+  const sensors = useSensors(useSensor(PointerSensor))
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
@@ -35,88 +48,67 @@ export function ContainerOrganiser({ containers, workspaces }: ContainerOrganise
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
-    if (!active) return
+    if (over && active.id !== over.id) {
+      const containerId = parseInt(active.id.toString().split('-')[1])
+      let newWorkspaceId = null
 
-    const containerId = parseInt(active.id.toString().split('-')[1])
-    const container = containers.find((c) => c.id === containerId)
+      if (over.id.toString().startsWith('workspace-')) {
+        newWorkspaceId = parseInt(over.id.toString().split('-')[1])
+      }
 
-    if (!container) return
-
-    // If dropped on a workspace
-    if (over && over.id.toString().startsWith('workspace-')) {
-      const workspaceId = parseInt(over.id.toString().split('-')[1])
-      updateContainer.mutate({
-        id: containerId,
-        name: container.name,
-        location: container.location || '',
-        number: container.number || 0,
-        workspaceId,
-      })
+      onUpdateContainer(containerId, newWorkspaceId)
     }
-    // If dropped in unsorted section
-    else if (over && over.id === 'unsorted') {
-      updateContainer.mutate({
-        id: containerId,
-        name: container.name,
-        location: container.location || '',
-        number: container.number || 0,
-        workspaceId: undefined, // Remove workspace assignment
-      })
-    }
-
     setActiveId(null)
-    setActiveDropZoneId(null)
   }
 
-  const handleDragOver = (event: DragEndEvent) => {
-    const { over } = event
-    setActiveDropZoneId((over?.id as string) ?? null)
-  }
-
-  const collisionDetection: CollisionDetection = (args) => {
-    return pointerWithin(args)
+  const collisionDetectionStrategy = (args) => {
+    const pointerIntersections = pointerWithin(args)
+    return pointerIntersections.map((intersection) => ({
+      ...intersection,
+      data: {
+        ...intersection.data,
+        droppableContainer: args.droppableContainers.find(
+          (container) =>
+            container.id ===
+            (intersection.id.toString().startsWith('workspace-') ? intersection.id : 'unsorted'),
+        ),
+      },
+    }))
   }
 
   return (
     <DndContext
+      sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onDragOver={handleDragOver}
-      collisionDetection={collisionDetection}
+      collisionDetection={collisionDetectionStrategy}
     >
       <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
         <div className="flex-grow min-h-0">
           <Section className="h-full">
-            <div className="space-y-4 h-full">
-              {workspaces.map((workspace) => (
-                <WorkspaceDropZone
-                  key={workspace.id}
-                  workspace={workspace}
-                  containers={containers}
-                  isOver={activeDropZoneId === `workspace-${workspace.id}`}
-                />
-              ))}
-            </div>
+            <WorkspaceDropzoneList
+              workspaces={workspaces}
+              containers={containers}
+              visibleWorkspaceIds={visibleWorkspaceIds}
+              setVisibleWorkspaceIds={setVisibleWorkspaceIds}
+            />
           </Section>
         </div>
-
         <div className="h-[30%] min-h-[200px]">
           <Section className="h-full">
-            <UnsortedContainersSection
-              containers={unassignedContainers}
-              isOver={activeDropZoneId === 'unsorted'}
-            />
+            <UnsortedContainersSection containers={unassignedContainers} />
           </Section>
         </div>
-
-        <DragOverlay>
-          {activeId && containers && (
-            <DraggableContainerCard
-              container={containers.find((c) => `container-${c.id}` === activeId) as Container}
-            />
-          )}
-        </DragOverlay>
       </div>
+      <DragOverlay>
+        {activeId && containers && (
+          <SortableContainerCard
+            container={
+              containers.find((container) => `container-${container.id}` === activeId) || null
+            }
+          />
+        )}
+      </DragOverlay>
     </DndContext>
   )
 }

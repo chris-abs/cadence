@@ -69,8 +69,25 @@ export function useUpdateContainer() {
       queryClient.setQueryData(queryKeys.containers.list, (old: Container[] = []) =>
         old.map((container) => (container.id === variables.id ? updatedContainer : container)),
       )
-      queryClient.invalidateQueries({ queryKey: queryKeys.containers.detail(variables.id) })
 
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaces.list })
+
+      if (updatedContainer.workspaceId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.workspaces.detail(updatedContainer.workspaceId),
+        })
+      }
+
+      const oldContainer = queryClient.getQueryData<Container>(
+        queryKeys.containers.detail(variables.id),
+      )
+      if (oldContainer?.workspaceId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.workspaces.detail(oldContainer.workspaceId),
+        })
+      }
+
+      queryClient.invalidateQueries({ queryKey: queryKeys.containers.detail(variables.id) })
       queryClient.invalidateQueries({
         queryKey: queryKeys.items.list,
         predicate: (query) => {
@@ -78,7 +95,6 @@ export function useUpdateContainer() {
           return isItemWithContainer(data) && data.container.id === variables.id
         },
       })
-
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
     },
   })
