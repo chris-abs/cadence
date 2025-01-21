@@ -8,6 +8,8 @@ import {
   pointerWithin,
   useSensor,
   useSensors,
+  CollisionDetection,
+  DroppableContainer,
 } from '@dnd-kit/core'
 
 import { Section } from '@/Global/components/molecules'
@@ -20,7 +22,7 @@ import { WorkspaceDropzoneList } from '@/Workspace/components/molecules/sections
 interface ContainerOrganiserProps {
   containers: Container[]
   workspaces: Workspace[]
-  onUpdateContainer: (containerId: number, workspaceId: number | null) => void
+  onUpdateContainer: (containerId: number, workspaceId: number | undefined) => void
 }
 
 export function ContainerOrganiser({
@@ -50,7 +52,7 @@ export function ContainerOrganiser({
 
     if (over && active.id !== over.id) {
       const containerId = parseInt(active.id.toString().split('-')[1])
-      let newWorkspaceId = null
+      let newWorkspaceId: number | undefined = undefined
 
       if (over.id.toString().startsWith('workspace-')) {
         newWorkspaceId = parseInt(over.id.toString().split('-')[1])
@@ -61,14 +63,14 @@ export function ContainerOrganiser({
     setActiveId(null)
   }
 
-  const collisionDetectionStrategy = (args) => {
+  const collisionDetectionStrategy: CollisionDetection = (args) => {
     const pointerIntersections = pointerWithin(args)
     return pointerIntersections.map((intersection) => ({
       ...intersection,
       data: {
         ...intersection.data,
         droppableContainer: args.droppableContainers.find(
-          (container) =>
+          (container: DroppableContainer) =>
             container.id ===
             (intersection.id.toString().startsWith('workspace-') ? intersection.id : 'unsorted'),
         ),
