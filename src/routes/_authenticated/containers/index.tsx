@@ -18,7 +18,7 @@ function ContainersPage() {
   const { data: workspaces } = useWorkspaces()
   const updateContainer = useUpdateContainer()
 
-  const handleUpdateContainer = (containerId: number, workspaceId: number | null) => {
+  const handleUpdateContainer = (containerId: number, workspaceId: number | undefined) => {
     const container = containers?.find((container) => container.id === containerId)
     if (container) {
       updateContainer.mutate({
