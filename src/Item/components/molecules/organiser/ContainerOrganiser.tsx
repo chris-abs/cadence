@@ -8,7 +8,7 @@ import {
   CollisionDetection,
 } from '@dnd-kit/core'
 
-import { ScrollArea } from '@/Global/components/atoms'
+import { Section } from '@/Global/components/molecules'
 import { WorkspaceDropZone } from '@/Workspace/components/molecules/sections/list/WorkspaceDropzoneList'
 import { Workspace } from '@/Workspace/types'
 import { DraggableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
@@ -35,19 +35,32 @@ export function ContainerOrganiser({ containers, workspaces }: ContainerOrganise
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
-    if (over) {
-      const containerId = parseInt(active.id.toString().split('-')[1])
+    if (!active) return
+
+    const containerId = parseInt(active.id.toString().split('-')[1])
+    const container = containers.find((c) => c.id === containerId)
+
+    if (!container) return
+
+    // If dropped on a workspace
+    if (over && over.id.toString().startsWith('workspace-')) {
       const workspaceId = parseInt(over.id.toString().split('-')[1])
-
-      const container = containers.find((c) => c.id === containerId)
-      if (!container) return
-
       updateContainer.mutate({
         id: containerId,
         name: container.name,
         location: container.location || '',
         number: container.number || 0,
         workspaceId,
+      })
+    }
+    // If dropped in unsorted section
+    else if (over && over.id === 'unsorted') {
+      updateContainer.mutate({
+        id: containerId,
+        name: container.name,
+        location: container.location || '',
+        number: container.number || 0,
+        workspaceId: undefined, // Remove workspace assignment
       })
     }
 
@@ -71,21 +84,30 @@ export function ContainerOrganiser({ containers, workspaces }: ContainerOrganise
       onDragOver={handleDragOver}
       collisionDetection={collisionDetection}
     >
-      <div className="flex flex-col gap-6">
-        <UnsortedContainersSection containers={unassignedContainers} />
+      <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
+        <div className="flex-grow min-h-0">
+          <Section className="h-full">
+            <div className="space-y-4 h-full">
+              {workspaces.map((workspace) => (
+                <WorkspaceDropZone
+                  key={workspace.id}
+                  workspace={workspace}
+                  containers={containers}
+                  isOver={activeDropZoneId === `workspace-${workspace.id}`}
+                />
+              ))}
+            </div>
+          </Section>
+        </div>
 
-        <ScrollArea className="flex-1">
-          <div className="space-y-4 p-2">
-            {workspaces.map((workspace) => (
-              <WorkspaceDropZone
-                key={workspace.id}
-                workspace={workspace}
-                containers={containers}
-                isOver={activeDropZoneId === `workspace-${workspace.id}`}
-              />
-            ))}
-          </div>
-        </ScrollArea>
+        <div className="h-[30%] min-h-[200px]">
+          <Section className="h-full">
+            <UnsortedContainersSection
+              containers={unassignedContainers}
+              isOver={activeDropZoneId === 'unsorted'}
+            />
+          </Section>
+        </div>
 
         <DragOverlay>
           {activeId && containers && (
