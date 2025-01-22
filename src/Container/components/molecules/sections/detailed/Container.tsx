@@ -21,7 +21,7 @@ interface ContainerSectionProps {
   container: Container | undefined
   emptyStateComponent?: React.ReactNode
   onUpdateContainer?: (data: UpdateContainerData) => Promise<void>
-  onAssignOrReassign: () => void
+  onAssignOrReassign?: () => void
   isUpdating?: boolean
 }
 

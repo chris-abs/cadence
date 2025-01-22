@@ -7,7 +7,7 @@ import { useContainer, useUpdateContainer } from '@/Container/queries'
 import { UpdateContainerData } from '@/Container/schemas'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
-import { EntityPageHeader, NotAssignedSection, Section } from '@/Global/components/molecules'
+import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
 import { ContainerSection } from '@/Container/components/molecules/sections/detailed/Container'
 import { ItemsListSection } from '@/Item/components/molecules/sections/list'
 import { CreateItemModal } from '@/Item/components/organisms/ItemModal'
@@ -65,13 +65,11 @@ function ContainerPage() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <Section>
-          <EntityPageHeader title={container.name} entityType="item" onAdd={handleAdd} />
-        </Section>
+        <EntityPageHeader title={container.name} entityType="item" onAdd={handleAdd} />
 
         <ContainerSection
           container={container || null}
-          onUpdate={handleUpdateContainer}
+          onUpdateContainer={handleUpdateContainer}
           isUpdating={updateContainer.isPending}
           emptyStateComponent={
             <NotAssignedSection title="Container" message="No container details available." />
