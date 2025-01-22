@@ -128,14 +128,11 @@ export function WorkspaceListSection({
                     >
                       {workspace.containers?.map((container) => (
                         <AccordionItem key={container.id} value={`container-${container.id}`}>
-                          <AccordionTrigger>{container.name}</AccordionTrigger>
-                          <AccordionContent>
-                            <ContainerRow
-                              container={container}
-                              items={items.filter((item) => item.containerId === container.id)}
-                              isCompactView={isCompactView}
-                            />
-                          </AccordionContent>
+                          <ContainerRow
+                            container={container}
+                            items={items.filter((item) => item.containerId === container.id)}
+                            isCompactView={isCompactView}
+                          />
                         </AccordionItem>
                       ))}
                     </Accordion>

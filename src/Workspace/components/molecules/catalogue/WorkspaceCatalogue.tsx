@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 
 import { ScrollArea } from '@/Global/components/atoms'
 import { Workspace } from '@/Workspace/types'
+import { H3, Muted } from '@/Global/components/molecules'
 
 interface WorkspaceListProps {
   workspaces: Workspace[]
@@ -26,9 +27,7 @@ export function WorkspaceList({ workspaces, isLoading }: WorkspaceListProps) {
         role="status"
         aria-label="No workspaces found"
       >
-        <p className="text-sm text-muted-foreground">
-          No workspaces found. Create one to get started.
-        </p>
+        <Muted>No workspaces found. Create one to get started.</Muted>
       </div>
     )
   }
@@ -36,7 +35,6 @@ export function WorkspaceList({ workspaces, isLoading }: WorkspaceListProps) {
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <ScrollArea className="flex-1" role="region" aria-label="Workspaces list">
-        {' '}
         <ul className="space-y-2">
           {workspaces.map((workspace) => (
             <li key={workspace.id}>
@@ -47,24 +45,19 @@ export function WorkspaceList({ workspaces, isLoading }: WorkspaceListProps) {
                 aria-labelledby={`workspace-${workspace.id}-name`}
               >
                 <div className="space-y-1">
-                  <h3 id={`workspace-${workspace.id}-name`} className="font-medium">
-                    {workspace.name}
-                  </h3>
+                  <H3 id={`workspace-${workspace.id}-name`}>{workspace.name}</H3>
                   {workspace.description && (
-                    <p
-                      className="text-sm text-muted-foreground"
-                      aria-label={`Description: ${workspace.description}`}
-                    >
+                    <Muted aria-label={`Description: ${workspace.description}`}>
                       {workspace.description}
-                    </p>
+                    </Muted>
                   )}
                 </div>
                 <div className="flex items-center gap-4" aria-label="Workspace stats">
-                  <span
-                    className="text-sm text-muted-foreground"
-                    aria-label={`${workspace.containers?.length || 0} containers in workspace`}
-                  >
-                    {workspace.containers?.length || 0} containers
+                  <span>
+                    <Muted>
+                      aria-label={`${workspace.containers?.length || 0} containers in workspace`}
+                      {workspace.containers?.length || 0} containers
+                    </Muted>
                   </span>
                   <time
                     className="text-sm text-muted-foreground"

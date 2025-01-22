@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
-import { ContainersListSection } from '@/Container/components/molecules/sections/list/Container'
 import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
 import { WorkspaceSection } from '@/Workspace/components/molecules/sections/detailed/Workspace'
 import { useUpdateWorkspace, useWorkspace } from '@/Workspace/queries'
@@ -73,16 +72,6 @@ function WorkspacePage() {
           isUpdating={updateWorkspace.isPending}
           emptyStateComponent={
             <NotAssignedSection title="Workspace" message="No workspace details available." />
-          }
-        />
-
-        <ContainersListSection
-          containers={workspace.containers ?? []}
-          emptyStateComponent={
-            <NotAssignedSection
-              title="Containers"
-              message="No containers in this workspace yet. Create one to get started."
-            />
           }
         />
       </div>

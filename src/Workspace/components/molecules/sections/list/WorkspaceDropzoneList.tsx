@@ -14,11 +14,12 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@/Global/components/atoms'
-import { H2, H3 } from '@/Global/components/molecules/Typography'
+import { H2, H3, Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
 import { Workspace } from '@/Workspace/types'
 import { Container } from '@/Container/types'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
+import { Link } from '@tanstack/react-router'
 
 interface WorkspaceDropzoneListProps {
   workspaces: Workspace[]
@@ -114,6 +115,13 @@ function WorkspaceSection({ workspace, containers }: WorkspaceSectionProps) {
                   ({containers.length} containers)
                 </span>
               </div>
+              <Link
+                to="/workspaces/$workspaceId"
+                params={{ workspaceId: workspace.id.toString() }}
+                className="hover:text-primary"
+              >
+                <Muted className="hover:text-foreground">Workspace Details →</Muted>
+              </Link>
             </div>
           </AccordionTrigger>
           <AccordionContent>
