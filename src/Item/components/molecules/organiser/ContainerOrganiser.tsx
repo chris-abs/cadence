@@ -13,11 +13,11 @@ import {
 } from '@dnd-kit/core'
 
 import { Section } from '@/Global/components/molecules'
+import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { UnsortedContainersSection } from '@/Container/components/molecules/sections/list/UnsortedContainers'
 import { Container } from '@/Container/types'
-import { Workspace } from '@/Workspace/types'
-import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { WorkspaceDropzoneList } from '@/Workspace/components/molecules/sections/list/WorkspaceDropzoneList'
+import { Workspace } from '@/Workspace/types'
 
 interface ContainerOrganiserProps {
   containers: Container[]
@@ -56,6 +56,8 @@ export function ContainerOrganiser({
 
       if (over.id.toString().startsWith('workspace-')) {
         newWorkspaceId = parseInt(over.id.toString().split('-')[1])
+      } else if (over.id === 'unsorted') {
+        newWorkspaceId = undefined
       }
 
       onUpdateContainer(containerId, newWorkspaceId)
@@ -69,11 +71,15 @@ export function ContainerOrganiser({
       ...intersection,
       data: {
         ...intersection.data,
-        droppableContainer: args.droppableContainers.find(
-          (container: DroppableContainer) =>
-            container.id ===
-            (intersection.id.toString().startsWith('workspace-') ? intersection.id : 'unsorted'),
-        ),
+        droppableContainer: args.droppableContainers.find((container: DroppableContainer) => {
+          if (intersection.id === 'unsorted') {
+            return container.id === 'unsorted'
+          }
+          if (intersection.id.toString().startsWith('workspace-')) {
+            return container.id === intersection.id
+          }
+          return false
+        }),
       },
     }))
   }
@@ -102,13 +108,20 @@ export function ContainerOrganiser({
           </Section>
         </div>
       </div>
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {activeId && containers && (
-          <SortableContainerCard
-            container={
-              containers.find((container) => `container-${container.id}` === activeId) || null
-            }
-          />
+          <div
+            style={{
+              transform: 'none',
+              cursor: 'grabbing',
+            }}
+          >
+            <SortableContainerCard
+              container={
+                containers.find((container) => `container-${container.id}` === activeId) || null
+              }
+            />
+          </div>
         )}
       </DragOverlay>
     </DndContext>

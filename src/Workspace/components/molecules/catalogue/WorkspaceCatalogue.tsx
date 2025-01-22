@@ -54,10 +54,7 @@ export function WorkspaceList({ workspaces, isLoading }: WorkspaceListProps) {
                 </div>
                 <div className="flex items-center gap-4" aria-label="Workspace stats">
                   <span>
-                    <Muted>
-                      aria-label={`${workspace.containers?.length || 0} containers in workspace`}
-                      {workspace.containers?.length || 0} containers
-                    </Muted>
+                    <Muted>{workspace.containers?.length || 0} containers</Muted>
                   </span>
                   <time
                     className="text-sm text-muted-foreground"

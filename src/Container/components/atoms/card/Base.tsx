@@ -3,7 +3,7 @@ import { Clock, FolderOpen } from 'lucide-react'
 
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { Container } from '@/Container/types'
-import { H4 } from '@/Global/components/molecules/Typography'
+import { H4, Muted } from '@/Global/components/molecules/Typography'
 
 interface ContainerCardProps {
   container: Container
@@ -24,9 +24,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
               <H4 className="truncate text-sm" id={`container-${container.id}-name`}>
                 {container.name}
               </H4>
-              {container.location && (
-                <p className="text-xs text-muted-foreground truncate">{container.location}</p>
-              )}
+              {container.location && <Muted className="truncate">{container.location}</Muted>}
             </div>
           </div>
 

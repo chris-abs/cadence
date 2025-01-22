@@ -1,6 +1,7 @@
 import { useDroppable } from '@dnd-kit/core'
 
 import { ScrollArea } from '@/Global/components/atoms'
+import { H3 } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { Container } from '@/Container/types'
@@ -12,6 +13,10 @@ interface UnsortedContainersSectionProps {
 export function UnsortedContainersSection({ containers }: UnsortedContainersSectionProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'unsorted',
+    data: {
+      type: 'unsorted',
+      workspaceId: undefined,
+    },
   })
 
   return (
@@ -20,7 +25,7 @@ export function UnsortedContainersSection({ containers }: UnsortedContainersSect
       ref={setNodeRef}
     >
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Unassigned Containers</h2>
+        <H3>Unassigned Containers</H3>
         <span className="text-sm text-muted-foreground">({containers.length} containers)</span>
       </div>
 
