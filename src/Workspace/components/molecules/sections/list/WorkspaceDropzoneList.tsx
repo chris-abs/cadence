@@ -106,7 +106,7 @@ function WorkspaceSection({ workspace, containers }: WorkspaceSectionProps) {
     >
       <Accordion type="single">
         <AccordionItem value="workspace">
-          <AccordionTrigger>
+          <AccordionTrigger parent>
             <div className="flex items-center justify-between w-full h-10">
               <div className="flex items-center gap-2">
                 <H3>{workspace.name}</H3>
