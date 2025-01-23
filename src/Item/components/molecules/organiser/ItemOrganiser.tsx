@@ -78,7 +78,7 @@ export function ItemOrganiser({ items, workspaces, containers, onUpdateItem }: I
             />
           </Section>
         </div>
-        <div className="h-[30%] min-h-[200px]">
+        <div className="h-[32.5%] min-h-[250px]">
           <Section className="h-full">
             <UnsortedItemsSection items={items.filter((item) => !item.containerId)} />
           </Section>

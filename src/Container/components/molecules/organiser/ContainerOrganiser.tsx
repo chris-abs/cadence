@@ -86,7 +86,7 @@ export function ContainerOrganiser({
             </ScrollArea>
           </Section>
         </div>
-        <div className="h-[30%] min-h-[200px]">
+        <div className="h-[32.5%] min-h-[220px]">
           <Section className="h-full">
             <UnsortedContainersSection containers={unassignedContainers} />
           </Section>
