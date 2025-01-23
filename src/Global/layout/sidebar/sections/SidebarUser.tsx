@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Settings2 } from 'lucide-react'
 
 import {
@@ -96,10 +96,12 @@ export function SidebarUser() {
                 <Bell className="mr-2 h-4 w-4" />
                 Notifications
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings2 className="mr-2 h-4 w-4" />
-                Settings
-              </DropdownMenuItem>
+              <Link to="/settings">
+                <DropdownMenuItem>
+                  <Settings2 className="mr-2 h-4 w-4" />
+                  Settings
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>

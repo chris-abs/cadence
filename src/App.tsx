@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/Global/lib/queryClient'
 import { useAuth } from './Global/hooks/useAuth'
+import { ThemeProvider } from '@/Global/providers/ThemeProvider'
 import { routeTree } from './routeTree.gen'
 
 const router = createRouter({
@@ -18,7 +19,13 @@ declare module '@tanstack/react-router' {
 
 function InnerApp() {
   const authentication = useAuth()
-  return <RouterProvider router={router} context={{ authentication }} />
+
+  return (
+    <>
+      <ThemeProvider />
+      <RouterProvider router={router} context={{ authentication }} />
+    </>
+  )
 }
 
 function App() {
