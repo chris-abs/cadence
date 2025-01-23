@@ -31,10 +31,10 @@ export const Route = createFileRoute('/_authenticated/items/')({
 function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const { data: items } = useItems()
+  const { isCompact, setCompact } = useSettingsStore()
   const { data: workspaces } = useWorkspaces()
   const { data: containers } = useContainers()
   const updateItem = useUpdateItem()
-  const { isCompactView, setCompactView } = useSettingsStore()
 
   const [activeId, setActiveId] = useState<string | null>(null)
   const [visibleWorkspaceIds, setVisibleWorkspaceIds] = useState<Set<number>>(new Set())
@@ -107,7 +107,7 @@ function ItemsPage() {
             />
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Compact View</span>
-              <Switch checked={isCompactView} onCheckedChange={setCompactView} />
+              <Switch checked={isCompact} onCheckedChange={setCompact} />
             </div>
           </div>
 

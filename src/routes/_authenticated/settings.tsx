@@ -27,15 +27,15 @@ export const Route = createFileRoute('/_authenticated/settings')({
 function SettingsPage() {
   const {
     theme,
-    isCompactView,
     emailNotifications,
     pushNotifications,
     dateFormat,
+    isCompact,
     applyTheme,
-    setCompactView,
     setEmailNotifications,
     setPushNotifications,
     setDateFormat,
+    setCompact,
   } = useSettingsStore()
 
   return (
@@ -82,7 +82,7 @@ function SettingsPage() {
                       Use a condensed layout for items and containers
                     </p>
                   </div>
-                  <Switch checked={isCompactView} onCheckedChange={setCompactView} />
+                  <Switch checked={isCompact} onCheckedChange={setCompact} />{' '}
                 </div>
               </CardContent>
             </Card>

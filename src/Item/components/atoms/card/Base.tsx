@@ -11,13 +11,13 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ item }: ItemCardProps) {
-  const { isCompactView } = useSettingsStore()
+  const { isCompact } = useSettingsStore()
 
   if (!item) {
     return null
   }
 
-  if (isCompactView) {
+  if (isCompact) {
     return (
       <Link to="/items/$itemId" params={{ itemId: item.id.toString() }} className="block w-[200px]">
         <article className="rounded-lg border bg-white p-2 hover:border-primary/50 transition-colors h-[100px]">

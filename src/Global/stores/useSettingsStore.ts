@@ -6,13 +6,13 @@ type DateFormat = 'relative' | 'absolute'
 
 interface SettingsState {
   theme: Theme
-  isCompactView: boolean
+  isCompact: boolean
   emailNotifications: boolean
   pushNotifications: boolean
   dateFormat: DateFormat
 
   applyTheme: (newTheme: Theme) => void
-  setCompactView: (isCompact: boolean) => void
+  setCompact: (isCompact: boolean) => void
   setEmailNotifications: (enabled: boolean) => void
   setPushNotifications: (enabled: boolean) => void
   setDateFormat: (format: DateFormat) => void
@@ -27,11 +27,16 @@ const applyThemeToDOM = (theme: Theme) => {
   root.classList.add(effectiveTheme)
 }
 
+const applyCompactView = (isCompact: boolean) => {
+  const root = document.documentElement
+  root.classList.toggle('compact-view', isCompact)
+}
+
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
       theme: 'system',
-      isCompactView: false,
+      isCompact: false,
       emailNotifications: true,
       pushNotifications: true,
       dateFormat: 'relative',
@@ -41,7 +46,10 @@ export const useSettingsStore = create<SettingsState>()(
         applyThemeToDOM(newTheme)
       },
 
-      setCompactView: (isCompact) => set({ isCompactView }),
+      setCompact: (isCompact) => {
+        set({ isCompact })
+      },
+
       setEmailNotifications: (enabled) => set({ emailNotifications: enabled }),
       setPushNotifications: (enabled) => set({ pushNotifications: enabled }),
       setDateFormat: (format) => set({ dateFormat: format }),
@@ -51,7 +59,7 @@ export const useSettingsStore = create<SettingsState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         theme: state.theme,
-        isCompactView: state.isCompactView,
+        isCompact: state.isCompact,
         emailNotifications: state.emailNotifications,
         pushNotifications: state.pushNotifications,
         dateFormat: state.dateFormat,
@@ -59,6 +67,7 @@ export const useSettingsStore = create<SettingsState>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           applyThemeToDOM(state.theme)
+          applyCompactView(state.isCompact)
         }
       },
     },
