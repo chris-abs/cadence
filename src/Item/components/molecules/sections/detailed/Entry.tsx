@@ -14,6 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  PlaceholderImage,
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Global/components/organisms/modals'
@@ -155,11 +156,15 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                   <CarouselItem>
                     <div className="p-1">
                       <div className="overflow-hidden rounded-lg border">
-                        <img
-                          src={item.imgUrl || '/placeholder-item.jpg'}
-                          alt={item.name}
-                          className="aspect-square w-full object-cover"
-                        />
+                        {item.imgUrl ? (
+                          <img
+                            src={item.imgUrl}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <PlaceholderImage />
+                        )}
                       </div>
                     </div>
                   </CarouselItem>

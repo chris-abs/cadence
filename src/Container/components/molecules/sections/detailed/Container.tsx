@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { H3 } from '@/Global/components/molecules/Typography'
+import { H3, Muted } from '@/Global/components/molecules/Typography'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
 import { cn } from '@/Global/lib/utils'
 import { Container } from '@/Container/types'
@@ -86,10 +86,10 @@ export function ContainerSection({
   }
 
   return (
-    <Section>
+    <Section className="bg-background transition-colors duration-200">
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <H3 className="text-foreground">Container Details</H3>
+          <H3>Container Details</H3>
           {!isEditing && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -100,18 +100,18 @@ export function ContainerSection({
               <DropdownMenuContent align="end" className="bg-background border-border">
                 <DropdownMenuItem onClick={onAssignOrReassign}>
                   <ArrowRight className="h-4 w-4 mr-2" />
-                  Reassign Container
+                  <span>Reassign Container</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleEdit}>
                   <Pencil className="h-4 w-4 mr-2" />
-                  Edit
+                  <span>Edit</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setIsDeleteModalOpen(true)}
                   className="text-destructive focus:text-destructive"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
+                  <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -135,12 +135,13 @@ export function ContainerSection({
 
         <div className="grid grid-cols-2 gap-4" role="group" aria-label="Container information">
           <div className="row-span-4 flex flex-col items-center justify-center">
-            <Label className="text-center mb-1.5 text-foreground" htmlFor="qr-code">
+            <Label className="text-center mb-1.5" htmlFor="qr-code">
               QR Code
             </Label>
             <div
               className={cn(
-                'w-64 h-64 border rounded-lg p-3',
+                'w-64 h-64 rounded-lg p-3',
+                'border border-border',
                 'bg-background',
                 'transition-colors duration-200',
               )}
@@ -154,12 +155,9 @@ export function ContainerSection({
                 className="w-full h-full"
               />
             </div>
-            <span
-              className="text-xs text-muted-foreground mt-2 font-mono"
-              aria-label="QR Code value"
-            >
+            <Muted className="mt-2 font-mono" aria-label="QR Code value">
               {container.qrCode}
-            </span>
+            </Muted>
           </div>
 
           <form className="space-y-2" onSubmit={handleSubmit}>
@@ -196,9 +194,7 @@ export function ContainerSection({
               },
             ].map((field) => (
               <div key={field.id} className="space-y-2">
-                <Label htmlFor={field.id} className="text-foreground">
-                  {field.label}
-                </Label>
+                <Label htmlFor={field.id}>{field.label}</Label>
                 <Input
                   id={field.id}
                   name={field.name}
