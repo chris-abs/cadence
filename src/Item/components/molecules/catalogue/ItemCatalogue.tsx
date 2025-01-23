@@ -1,7 +1,15 @@
 import { Link } from '@tanstack/react-router'
 import { Clock, Package } from 'lucide-react'
 
-import { Badge, PlaceholderImage, ScrollArea } from '@/Global/components/atoms'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Badge,
+  PlaceholderImage,
+  ScrollArea,
+} from '@/Global/components/atoms'
 import { NoContent, Section, H3, H5, Muted } from '@/Global/components/molecules'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { cn } from '@/Global/lib'
@@ -21,19 +29,29 @@ export function ItemList({ items }: ItemListProps) {
 
   return (
     <ScrollArea className="h-[calc(100vh-200px)]">
-      {sortedItems.length > 0 && (
-        <>
-          <H3>Sorted</H3>
-          <ItemGrid items={sortedItems} />
-        </>
-      )}
+      <Accordion type="multiple" defaultValue={['sorted', 'unsorted']} className="space-y-4">
+        {sortedItems.length > 0 && (
+          <AccordionItem border value="sorted">
+            <AccordionTrigger parent>
+              <H3>Sorted ({sortedItems.length})</H3>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ItemGrid items={sortedItems} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
 
-      {unsortedItems.length > 0 && (
-        <>
-          <H3>Unsorted</H3>
-          <ItemGrid items={unsortedItems} />
-        </>
-      )}
+        {unsortedItems.length > 0 && (
+          <AccordionItem border value="unsorted">
+            <AccordionTrigger parent>
+              <H3>Unsorted ({unsortedItems.length})</H3>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ItemGrid items={unsortedItems} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
+      </Accordion>
     </ScrollArea>
   )
 }

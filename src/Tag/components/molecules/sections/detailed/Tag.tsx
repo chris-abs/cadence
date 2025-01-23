@@ -15,10 +15,10 @@ import {
 } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
-import { Colour, COLOURS } from '@/Global/types/colours'
+import { ColourOption, Colour, COLOURS } from '@/Global/types/colours'
 import { Tag } from '@/Tag/types'
 import { UpdateTagData } from '@/Tag/schemas'
-import { H3 } from '@/Global/components/molecules'
+import { H3, Muted } from '@/Global/components/molecules'
 
 interface TagSectionProps {
   tag: Tag | null
@@ -59,10 +59,10 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
     }))
   }
 
-  const handleColorSelect = (colour: Colour) => {
+  const handleColorSelect = (colour: ColourOption) => {
     setFormData((prev) => ({
       ...prev,
-      colour,
+      colour: colour.value,
     }))
   }
 
@@ -90,10 +90,8 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
     >
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <H3 id="tag-section-title" className="text-foreground">
-            Tag Details
-          </H3>
-          {onUpdate && !isEditing ? (
+          <H3 id="tag-section-title">Tag Details</H3>
+          {onUpdate && !isEditing && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="sm">
@@ -114,7 +112,8 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : isEditing ? (
+          )}
+          {isEditing && (
             <div className="flex gap-2">
               <Button
                 variant="ghost"
@@ -128,14 +127,12 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                 {isUpdating ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
-          ) : null}
+          )}
         </header>
 
         <form className="space-y-2" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="tag-name" className="text-foreground">
-              Name
-            </Label>
+            <Label htmlFor="tag-name">Name</Label>
             <Input
               id="tag-name"
               name="name"
@@ -153,9 +150,7 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tag-description" className="text-foreground">
-              Description
-            </Label>
+            <Label htmlFor="tag-description">Description</Label>
             <Input
               id="tag-description"
               name="description"
@@ -173,9 +168,7 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tag-color" className="text-foreground">
-              Colour
-            </Label>
+            <Label htmlFor="tag-color">Colour</Label>
             {isEditing ? (
               <Popover>
                 <PopoverTrigger asChild>
@@ -188,7 +181,9 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                     )}
                   >
                     <div className="flex-1 flex items-center justify-between">
-                      <span>{formData?.colour}</span>
+                      <Muted className="!text-foreground">
+                        {COLOURS.find((c) => c.value === formData?.colour)?.name}
+                      </Muted>
                       <div
                         className="w-4 h-4 rounded-full border border-border"
                         style={{ backgroundColor: formData?.colour }}
@@ -200,17 +195,23 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                   <div className="flex flex-wrap gap-2">
                     {COLOURS.map((colour) => (
                       <button
-                        key={colour}
+                        key={colour.value}
                         type="button"
                         className={cn(
                           'w-8 h-8 rounded-full border-2 transition-all',
-                          formData?.colour === colour
+                          'group relative',
+                          formData?.colour === colour.value
                             ? 'border-primary scale-110'
                             : 'border-transparent hover:scale-105',
                         )}
-                        style={{ backgroundColor: colour }}
+                        style={{ backgroundColor: colour.value }}
                         onClick={() => handleColorSelect(colour)}
-                      />
+                      >
+                        <span className="sr-only">{colour.name}</span>
+                        <span className="absolute -top-8 scale-0 group-hover:scale-100 transition-transform bg-background text-foreground text-xs py-1 px-2 rounded border border-border whitespace-nowrap">
+                          {colour.name}
+                        </span>
+                      </button>
                     ))}
                   </div>
                 </PopoverContent>
@@ -224,7 +225,9 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                   'flex items-center justify-between',
                 )}
               >
-                <span className="text-sm">{tag.colour}</span>
+                <Muted className="!text-foreground">
+                  {COLOURS.find((c) => c.value === tag.colour)?.name}
+                </Muted>
                 <div
                   className="w-4 h-4 rounded-full border border-border"
                   style={{ backgroundColor: tag.colour }}
@@ -233,35 +236,35 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
             )}
           </div>
 
-          {[
-            {
-              id: 'tag-created',
-              label: 'Created',
-              value: new Date(tag.createdAt).toLocaleDateString(),
-            },
-            {
-              id: 'tag-updated',
-              label: 'Last Updated',
-              value: new Date(tag.updatedAt).toLocaleDateString(),
-            },
-          ].map((field) => (
-            <div key={field.id} className="space-y-2">
-              <Label htmlFor={field.id} className="text-foreground">
-                {field.label}
-              </Label>
-              <Input
-                id={field.id}
-                value={field.value}
-                readOnly
-                className={cn(
-                  'bg-background text-foreground',
-                  'border-border',
-                  'cursor-default focus:outline-none',
-                )}
-                aria-label={`Tag ${field.label.toLowerCase()}`}
-              />
-            </div>
-          ))}
+          <div className="space-y-2">
+            <Label htmlFor="tag-created">Created</Label>
+            <Input
+              id="tag-created"
+              value={new Date(tag.createdAt).toLocaleDateString()}
+              readOnly
+              className={cn(
+                'bg-background text-foreground',
+                'border-border',
+                'cursor-default focus:outline-none',
+              )}
+              aria-label="Tag creation date"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="tag-updated">Last Updated</Label>
+            <Input
+              id="tag-updated"
+              value={new Date(tag.updatedAt).toLocaleDateString()}
+              readOnly
+              className={cn(
+                'bg-background text-foreground',
+                'border-border',
+                'cursor-default focus:outline-none',
+              )}
+              aria-label="Tag last updated date"
+            />
+          </div>
         </form>
       </div>
 

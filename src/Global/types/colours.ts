@@ -1,13 +1,18 @@
-export const COLOURS = [
-  '#ef4444', // red
-  '#f97316', // orange
-  '#f59e0b', // amber
-  '#84cc16', // lime
-  '#22c55e', // green
-  '#06b6d4', // cyan
-  '#3b82f6', // blue
-  '#8b5cf6', // violet
-  '#d946ef', // fuchsia
+export interface ColourOption {
+  name: string
+  value: string
+}
+
+export const COLOURS: ColourOption[] = [
+  { name: 'Red', value: '#ef4444' },
+  { name: 'Orange', value: '#f97316' },
+  { name: 'Amber', value: '#f59e0b' },
+  { name: 'Lime', value: '#84cc16' },
+  { name: 'Green', value: '#22c55e' },
+  { name: 'Cyan', value: '#06b6d4' },
+  { name: 'Blue', value: '#3b82f6' },
+  { name: 'Violet', value: '#8b5cf6' },
+  { name: 'Fuchsia', value: '#d946ef' },
 ] as const
 
-export type Colour = (typeof COLOURS)[number]
+export type Colour = (typeof COLOURS)[number]['value']
