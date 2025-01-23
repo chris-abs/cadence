@@ -2,20 +2,19 @@ import { useDroppable } from '@dnd-kit/core'
 import { ScrollArea } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
-import { CompactItemCard } from '@/Item/components/atoms/card/CompactItemCard'
 import { Item } from '@/Item/types'
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 interface UnsortedItemsSectionProps {
   items: Item[]
-  isCompactView: boolean
 }
 
-export function UnsortedItemsSection({ items, isCompactView }: UnsortedItemsSectionProps) {
+export function UnsortedItemsSection({ items }: UnsortedItemsSectionProps) {
+  const { isCompactView } = useSettingsStore()
+
   const { setNodeRef, isOver } = useDroppable({
     id: 'unsorted',
   })
-
-  const ItemComponent = isCompactView ? CompactItemCard : SortableItemCard
 
   return (
     <div
@@ -42,7 +41,7 @@ export function UnsortedItemsSection({ items, isCompactView }: UnsortedItemsSect
           )}
         >
           {items.map((item) => (
-            <ItemComponent key={item.id} item={item} />
+            <SortableItemCard key={item.id} item={item} />
           ))}
         </div>
       </ScrollArea>

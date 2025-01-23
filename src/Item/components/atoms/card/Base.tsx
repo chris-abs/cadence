@@ -1,16 +1,45 @@
 import { Link } from '@tanstack/react-router'
 import { Clock } from 'lucide-react'
-
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { Badge, ScrollArea } from '@/Global/components/atoms'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { Item } from '@/Item/types'
 import { H4 } from '@/Global/components/molecules/Typography'
 
 interface ItemCardProps {
-  item: Item
+  item: Item | null
 }
 
 export function ItemCard({ item }: ItemCardProps) {
+  const { isCompactView } = useSettingsStore()
+
+  if (!item) {
+    return null
+  }
+
+  if (isCompactView) {
+    return (
+      <Link to="/items/$itemId" params={{ itemId: item.id.toString() }} className="block w-[200px]">
+        <article className="rounded-lg border bg-white p-2 hover:border-primary/50 transition-colors h-[100px]">
+          <div className="flex flex-col h-full">
+            <div className="flex justify-between items-start mb-1">
+              <h4 className="text-sm font-medium truncate">{item.name}</h4>
+              <span className="text-xs text-muted-foreground">Qty: {item.quantity}</span>
+            </div>
+            <p className="text-xs text-muted-foreground truncate mb-1">{item.description}</p>
+            {item.tags.length > 0 && (
+              <div className="flex gap-1 flex-wrap mt-auto">
+                {item.tags.map((tag) => (
+                  <Badge key={tag.id} tag={tag} className="text-[10px] px-1 py-0" />
+                ))}
+              </div>
+            )}
+          </div>
+        </article>
+      </Link>
+    )
+  }
+
   return (
     <Link to="/items/$itemId" params={{ itemId: item.id.toString() }} className="block w-[280px]">
       <article className="rounded-lg border bg-white overflow-hidden h-[200px] flex flex-col hover:border-primary/50 transition-colors">

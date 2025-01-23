@@ -20,6 +20,7 @@ import { ContainerRow } from '@/Container/components/molecules/sections/list/Con
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
 import { NoContent } from '@/Global/components/molecules'
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]
@@ -27,7 +28,6 @@ interface WorkspaceListSectionProps {
   unassignedContainers: Container[]
   visibleWorkspaceIds: Set<number>
   setVisibleWorkspaceIds: (ids: Set<number>) => void
-  isCompactView: boolean
 }
 
 export function WorkspaceListSection({
@@ -36,9 +36,9 @@ export function WorkspaceListSection({
   unassignedContainers,
   visibleWorkspaceIds,
   setVisibleWorkspaceIds,
-  isCompactView,
 }: WorkspaceListSectionProps) {
   const [openWorkspaces, setOpenWorkspaces] = useState<string[]>([])
+  const { isCompactView } = useSettingsStore()
 
   const handleValueChange = (value: string[]) => {
     setVisibleWorkspaceIds(new Set(value.map(Number)))
