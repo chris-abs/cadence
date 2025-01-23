@@ -18,6 +18,7 @@ import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
 import { Colour, COLOURS } from '@/Global/types/colours'
 import { Tag } from '@/Tag/types'
 import { UpdateTagData } from '@/Tag/schemas'
+import { H3 } from '@/Global/components/molecules'
 
 interface TagSectionProps {
   tag: Tag | null
@@ -82,9 +83,7 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
     <section className="bg-background border rounded-xl p-4" aria-labelledby="tag-section-title">
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <h2 id="tag-section-title" className="text-lg font-medium">
-            Tag Details
-          </h2>
+          <H3 id="tag-section-title">Tag Details</H3>
           {onUpdate && !isEditing ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

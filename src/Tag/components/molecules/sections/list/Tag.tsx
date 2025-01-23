@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
-import { Section } from '@/Global/components/molecules'
+import { H3, Section } from '@/Global/components/molecules'
 import { Tag } from '@/Tag/types'
 
 interface TagsListSectionProps {
@@ -17,9 +17,7 @@ export function TagsListSection({ tags, emptyStateComponent }: TagsListSectionPr
     <Section>
       <div className="space-y-4">
         <header className="flex justify-between items-center">
-          <h2 id="tags-section-title" className="text-lg font-medium">
-            Tags
-          </h2>
+          <H3 id="tags-section-title">Tags</H3>
         </header>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (

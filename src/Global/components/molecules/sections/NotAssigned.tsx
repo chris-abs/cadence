@@ -1,5 +1,6 @@
 import { Button } from '@/Global/components/atoms'
 import { Section } from './SectionWrapper'
+import { H3 } from '../Typography'
 
 interface NotAssignedSectionProps {
   title: string
@@ -20,9 +21,7 @@ export function NotAssignedSection({
     <Section>
       <div className="space-y-4">
         <header className="flex justify-between items-center">
-          <h2 id={headingId} className="text-lg font-medium">
-            {title}
-          </h2>
+          <H3 id={headingId}>{title}</H3>
         </header>
         <div
           className="flex flex-col h-32 items-center justify-center rounded-md border border-dashed"

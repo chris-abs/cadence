@@ -22,14 +22,14 @@ export function ItemList({ items }: ItemListProps) {
     <ScrollArea className="h-[calc(100vh-200px)]">
       {sortedItems.length > 0 && (
         <>
-          <h2 className="text-xl font-semibold mb-4">Sorted Items</h2>
+          <H3>Sorted Items</H3>
           <ItemGrid items={sortedItems} />
         </>
       )}
 
       {unsortedItems.length > 0 && (
         <>
-          <h2 className="text-xl font-semibold mb-4 mt-8">Unsorted Items</h2>
+          <H3>Unsorted Items</H3>
           <ItemGrid items={unsortedItems} />
         </>
       )}

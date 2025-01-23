@@ -51,7 +51,7 @@ export function WorkspaceListSection({
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <H2>Workspaces</H2>
         <Popover>
-          <div className="flex gap-10 ritems-center">
+          <div className="flex gap-10 items-center">
             <ViewToggle />
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">

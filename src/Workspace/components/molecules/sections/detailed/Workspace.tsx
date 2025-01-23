@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { Section } from '@/Global/components/molecules'
+import { H3, Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Global/components/organisms/modals/DeleteModal'
 import { cn } from '@/Global/lib/utils'
 import { Workspace } from '@/Workspace/types'
@@ -76,9 +76,7 @@ export function WorkspaceSection({
     <Section>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <h2 id="workspace-section-title" className="text-lg font-medium">
-            Workspace Details
-          </h2>
+          <H3 id="workspace-section-title">Workspace Details</H3>
           {onUpdate && !isEditing ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

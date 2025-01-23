@@ -118,6 +118,7 @@ function SettingsPage() {
             </Card>
 
             {/* Date & Time Settings */}
+            {/* TODO: could use the user's preferred time for createdAt */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

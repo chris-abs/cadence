@@ -35,7 +35,7 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
       className={cn('transition-colors', isOver && 'bg-primary/10 border-primary/20 rounded-lg')}
     >
       <Accordion type="multiple">
-        <AccordionItem value={`workspace-${workspace.id}`}>
+        <AccordionItem border value={`workspace-${workspace.id}`}>
           <AccordionTrigger parent>
             <div className="flex items-center justify-between w-full h-10">
               <div className="flex items-center gap-2">

@@ -1,10 +1,12 @@
 import { Link } from '@tanstack/react-router'
 import { Clock } from 'lucide-react'
+
+import { Badge, PlaceholderImage, ScrollArea } from '@/Global/components/atoms'
+import { H4 } from '@/Global/components/molecules/Typography'
+import { cn } from '@/Global/lib'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
-import { Badge, ScrollArea } from '@/Global/components/atoms'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { Item } from '@/Item/types'
-import { H4 } from '@/Global/components/molecules/Typography'
 
 interface ItemCardProps {
   item: Item | null
@@ -17,13 +19,20 @@ export function ItemCard({ item }: ItemCardProps) {
     return null
   }
 
+  const baseCardClasses = cn(
+    'rounded-lg border',
+    'bg-background hover:bg-contrast-accent',
+    'transition-colors duration-200',
+    'hover:border-primary/50',
+  )
+
   if (isCompact) {
     return (
       <Link to="/items/$itemId" params={{ itemId: item.id.toString() }} className="block w-[200px]">
-        <article className="rounded-lg border bg-white p-2 hover:border-primary/50 transition-colors h-[100px]">
+        <article className={cn(baseCardClasses, 'p-2 h-[100px]')}>
           <div className="flex flex-col h-full">
             <div className="flex justify-between items-start mb-1">
-              <h4 className="text-sm font-medium truncate">{item.name}</h4>
+              <h4 className="text-sm font-medium truncate text-foreground">{item.name}</h4>
               <span className="text-xs text-muted-foreground">Qty: {item.quantity}</span>
             </div>
             <p className="text-xs text-muted-foreground truncate mb-1">{item.description}</p>
@@ -42,14 +51,20 @@ export function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Link to="/items/$itemId" params={{ itemId: item.id.toString() }} className="block w-[280px]">
-      <article className="rounded-lg border bg-white overflow-hidden h-[200px] flex flex-col hover:border-primary/50 transition-colors">
-        <div className="w-full h-24 relative bg-gray-100">
-          <img
-            src={item.imgUrl || '/placeholder-item.jpg'}
-            alt={item.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-white/90 px-2 py-0.5 rounded-md text-xs">
+      <article className={cn(baseCardClasses, 'overflow-hidden h-[200px] flex flex-col')}>
+        <div className="w-full h-24 relative bg-muted">
+          {item.imgUrl ? (
+            <img src={item.imgUrl} alt={item.name} className="w-full h-full object-cover" />
+          ) : (
+            <PlaceholderImage />
+          )}
+          <div
+            className={cn(
+              'absolute bottom-2 right-2 flex items-center gap-1.5',
+              'px-2 py-0.5 rounded-md text-xs',
+              'bg-background/90 text-foreground',
+            )}
+          >
             <Clock className="w-3 h-3" />
             <span>{formatRelativeTime(item.updatedAt || item.createdAt)}</span>
           </div>
@@ -57,7 +72,7 @@ export function ItemCard({ item }: ItemCardProps) {
 
         <div className="px-3 pt-2 flex flex-col flex-1">
           <div className="mb-2">
-            <H4 className="truncate text-sm" id={`item-${item.id}-name`}>
+            <H4 className="truncate text-sm text-foreground" id={`item-${item.id}-name`}>
               {item.name}
             </H4>
             <div className="flex items-center justify-between text-xs text-muted-foreground">

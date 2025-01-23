@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { Section } from '@/Global/components/molecules'
+import { H3, Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Global/components/organisms/modals'
 import { cn } from '@/Global/lib/utils'
 import { Tag } from '@/Tag/types'
@@ -112,9 +112,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
     <Section>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <h2 id="item-section-title" className="text-lg font-medium">
-            Item Details
-          </h2>
+          <H3 id="item-section-title">Item Details</H3>
           {onUpdate && !isEditing ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
