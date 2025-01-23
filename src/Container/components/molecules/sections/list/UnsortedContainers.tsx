@@ -13,10 +13,6 @@ interface UnsortedContainersSectionProps {
 export function UnsortedContainersSection({ containers }: UnsortedContainersSectionProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'unsorted',
-    data: {
-      type: 'unsorted',
-      workspaceId: undefined,
-    },
   })
 
   return (

@@ -36,8 +36,8 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
     >
       <Accordion type="single">
         <AccordionItem value="workspace">
-          <AccordionTrigger parent>
-            <div className="flex items-center justify-between leading-4 w-full h-10 ">
+          <AccordionTrigger>
+            <div className="flex items-center justify-between w-full h-10">
               <div className="flex items-center gap-2">
                 <H3>{workspace.name}</H3>
                 <span className="text-xs text-muted-foreground">
@@ -60,9 +60,7 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
                   <div
                     className={cn(
                       'flex gap-4 pb-4 relative',
-                      isOver &&
-                        containers.length > 0 &&
-                        'translate-x-[296px] transition-transform duration-300',
+                      isOver && 'translate-x-[296px] transition-transform duration-300',
                     )}
                   >
                     {containers.map((container) => (

@@ -8,15 +8,14 @@ import {
   pointerWithin,
   useSensor,
   useSensors,
-  CollisionDetection,
-  DroppableContainer,
 } from '@dnd-kit/core'
 
+import { ScrollArea } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { UnsortedContainersSection } from '@/Container/components/molecules/sections/list/UnsortedContainers'
 import { Container } from '@/Container/types'
-import { WorkspaceDropzoneList } from '@/Workspace/components/molecules/sections/list/WorkspaceDropzoneList'
+import { WorkspaceListSection } from '@/Workspace/components/molecules/sections/list/WorkspaceList'
 import { Workspace } from '@/Workspace/types'
 
 interface ContainerOrganiserProps {
@@ -32,7 +31,6 @@ export function ContainerOrganiser({
 }: ContainerOrganiserProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [visibleWorkspaceIds, setVisibleWorkspaceIds] = useState<Set<number>>(new Set())
-
   const unassignedContainers = containers?.filter((container) => !container.workspaceId) ?? []
 
   useEffect(() => {
@@ -56,8 +54,6 @@ export function ContainerOrganiser({
 
       if (over.id.toString().startsWith('workspace-')) {
         newWorkspaceId = parseInt(over.id.toString().split('-')[1])
-      } else if (over.id === 'unsorted') {
-        newWorkspaceId = undefined
       }
 
       onUpdateContainer(containerId, newWorkspaceId)
@@ -65,41 +61,29 @@ export function ContainerOrganiser({
     setActiveId(null)
   }
 
-  const collisionDetectionStrategy: CollisionDetection = (args) => {
-    const pointerIntersections = pointerWithin(args)
-    return pointerIntersections.map((intersection) => ({
-      ...intersection,
-      data: {
-        ...intersection.data,
-        droppableContainer: args.droppableContainers.find((container: DroppableContainer) => {
-          if (intersection.id === 'unsorted') {
-            return container.id === 'unsorted'
-          }
-          if (intersection.id.toString().startsWith('workspace-')) {
-            return container.id === intersection.id
-          }
-          return false
-        }),
-      },
-    }))
-  }
-
   return (
     <DndContext
       sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      collisionDetection={collisionDetectionStrategy}
+      collisionDetection={pointerWithin}
     >
       <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
         <div className="flex-grow min-h-0">
           <Section className="h-full">
-            <WorkspaceDropzoneList
-              workspaces={workspaces}
-              containers={containers}
-              visibleWorkspaceIds={visibleWorkspaceIds}
-              setVisibleWorkspaceIds={setVisibleWorkspaceIds}
-            />
+            <ScrollArea className="h-full">
+              <div className="space-y-4 pr-4">
+                {workspaces
+                  .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
+                  .map((workspace) => (
+                    <WorkspaceListSection
+                      key={workspace.id}
+                      workspace={workspace}
+                      containers={containers.filter((c) => c.workspaceId === workspace.id)}
+                    />
+                  ))}
+              </div>
+            </ScrollArea>
           </Section>
         </div>
         <div className="h-[30%] min-h-[200px]">
@@ -108,20 +92,13 @@ export function ContainerOrganiser({
           </Section>
         </div>
       </div>
-      <DragOverlay dropAnimation={null}>
+      <DragOverlay>
         {activeId && containers && (
-          <div
-            style={{
-              transform: 'none',
-              cursor: 'grabbing',
-            }}
-          >
-            <SortableContainerCard
-              container={
-                containers.find((container) => `container-${container.id}` === activeId) || null
-              }
-            />
-          </div>
+          <SortableContainerCard
+            container={
+              containers.find((container) => `container-${container.id}` === activeId) || null
+            }
+          />
         )}
       </DragOverlay>
     </DndContext>
