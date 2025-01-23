@@ -89,7 +89,7 @@ export function ContainerSection({
     <Section>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <H3>Container Details</H3>
+          <H3 className="text-foreground">Container Details</H3>
           {!isEditing && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -97,7 +97,7 @@ export function ContainerSection({
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-background border-border">
                 <DropdownMenuItem onClick={onAssignOrReassign}>
                   <ArrowRight className="h-4 w-4 mr-2" />
                   Reassign Container
@@ -118,7 +118,12 @@ export function ContainerSection({
           )}
           {isEditing && (
             <div className="flex gap-2">
-              <Button variant="ghost" onClick={handleCancel} disabled={isUpdating}>
+              <Button
+                variant="ghost"
+                onClick={handleCancel}
+                disabled={isUpdating}
+                className="hover:bg-contrast-accent"
+              >
                 Cancel
               </Button>
               <Button onClick={handleSubmit} disabled={isUpdating}>
@@ -130,11 +135,15 @@ export function ContainerSection({
 
         <div className="grid grid-cols-2 gap-4" role="group" aria-label="Container information">
           <div className="row-span-4 flex flex-col items-center justify-center">
-            <Label className="text-center mb-1.5" htmlFor="qr-code">
+            <Label className="text-center mb-1.5 text-foreground" htmlFor="qr-code">
               QR Code
             </Label>
             <div
-              className="w-64 h-64 border rounded-lg p-3 bg-white flex items-center justify-center"
+              className={cn(
+                'w-64 h-64 border rounded-lg p-3',
+                'bg-background',
+                'transition-colors duration-200',
+              )}
               id="qr-code"
               role="img"
               aria-label={`QR Code for container ${container.name}`}
@@ -154,64 +163,58 @@ export function ContainerSection({
           </div>
 
           <form className="space-y-2" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <Label htmlFor="container-name">Name</Label>
-              <Input
-                id="container-name"
-                name="name"
-                value={isEditing ? formData?.name : container.name}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-                className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                aria-label="Container name"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="container-number">Container Number</Label>
-              <Input
-                id="container-number"
-                value={container.number ? `#${container.number}` : ''}
-                readOnly
-                className="cursor-default focus:outline-none"
-                aria-label="Container number"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="container-location">Location</Label>
-              <Input
-                id="container-location"
-                name="location"
-                value={isEditing ? formData?.location || '' : container.location || ''}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-                className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                aria-label="Container location"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="container-created">Created</Label>
-              <Input
-                id="container-created"
-                value={new Date(container.createdAt).toLocaleDateString()}
-                readOnly
-                className="cursor-default focus:outline-none"
-                aria-label="Container creation date"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="container-updated">Last Updated</Label>
-              <Input
-                id="container-updated"
-                value={new Date(container.updatedAt).toLocaleDateString()}
-                readOnly
-                className="cursor-default focus:outline-none"
-                aria-label="Container last updated date"
-              />
-            </div>
+            {[
+              {
+                id: 'container-name',
+                label: 'Name',
+                name: 'name',
+                value: isEditing ? formData?.name : container.name,
+              },
+              {
+                id: 'container-number',
+                label: 'Container Number',
+                value: container.number ? `#${container.number}` : '',
+                readonly: true,
+              },
+              {
+                id: 'container-location',
+                label: 'Location',
+                name: 'location',
+                value: isEditing ? formData?.location || '' : container.location || '',
+              },
+              {
+                id: 'container-created',
+                label: 'Created',
+                value: new Date(container.createdAt).toLocaleDateString(),
+                readonly: true,
+              },
+              {
+                id: 'container-updated',
+                label: 'Last Updated',
+                value: new Date(container.updatedAt).toLocaleDateString(),
+                readonly: true,
+              },
+            ].map((field) => (
+              <div key={field.id} className="space-y-2">
+                <Label htmlFor={field.id} className="text-foreground">
+                  {field.label}
+                </Label>
+                <Input
+                  id={field.id}
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.name ? handleInputChange : undefined}
+                  readOnly={field.readonly || !isEditing}
+                  className={cn(
+                    'bg-background text-foreground',
+                    'border-border',
+                    'placeholder:text-muted-foreground',
+                    (!isEditing || field.readonly) && 'cursor-default focus:outline-none',
+                  )}
+                  aria-label={`Container ${field.label.toLowerCase()}`}
+                />
+              </div>
+            ))}
           </form>
         </div>
       </div>

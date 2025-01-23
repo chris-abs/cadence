@@ -80,10 +80,19 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
   }
 
   return (
-    <section className="bg-background border rounded-xl p-4" aria-labelledby="tag-section-title">
+    <section
+      className={cn(
+        'rounded-xl p-4',
+        'bg-background border-border border',
+        'transition-colors duration-200',
+      )}
+      aria-labelledby="tag-section-title"
+    >
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <H3 id="tag-section-title">Tag Details</H3>
+          <H3 id="tag-section-title" className="text-foreground">
+            Tag Details
+          </H3>
           {onUpdate && !isEditing ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -91,7 +100,7 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-background border-border">
                 <DropdownMenuItem onClick={handleEdit}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
@@ -107,7 +116,12 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
             </DropdownMenu>
           ) : isEditing ? (
             <div className="flex gap-2">
-              <Button variant="ghost" onClick={handleCancel} disabled={isUpdating}>
+              <Button
+                variant="ghost"
+                onClick={handleCancel}
+                disabled={isUpdating}
+                className="hover:bg-contrast-accent"
+              >
                 Cancel
               </Button>
               <Button onClick={handleSubmit} disabled={isUpdating}>
@@ -119,47 +133,70 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
 
         <form className="space-y-2" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="tag-name">Name</Label>
+            <Label htmlFor="tag-name" className="text-foreground">
+              Name
+            </Label>
             <Input
               id="tag-name"
               name="name"
               value={isEditing ? formData?.name : tag.name}
               onChange={handleInputChange}
               readOnly={!isEditing}
-              className={cn(!isEditing && 'cursor-default focus:outline-none')}
+              className={cn(
+                'bg-background text-foreground',
+                'border-border',
+                'placeholder:text-muted-foreground',
+                !isEditing && 'cursor-default focus:outline-none',
+              )}
               aria-label="Tag name"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tag-description">Description</Label>
+            <Label htmlFor="tag-description" className="text-foreground">
+              Description
+            </Label>
             <Input
               id="tag-description"
               name="description"
               value={isEditing ? formData?.description || '' : tag.description || ''}
               onChange={handleInputChange}
               readOnly={!isEditing}
-              className={cn(!isEditing && 'cursor-default focus:outline-none')}
+              className={cn(
+                'bg-background text-foreground',
+                'border-border',
+                'placeholder:text-muted-foreground',
+                !isEditing && 'cursor-default focus:outline-none',
+              )}
               aria-label="Tag description"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tag-color">Color</Label>
+            <Label htmlFor="tag-color" className="text-foreground">
+              Colour
+            </Label>
             {isEditing ? (
               <Popover>
                 <PopoverTrigger asChild>
-                  <div className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm cursor-pointer">
+                  <div
+                    className={cn(
+                      'flex h-9 w-full rounded-md border',
+                      'bg-background text-foreground',
+                      'border-border',
+                      'px-3 py-1 text-sm shadow-sm cursor-pointer',
+                    )}
+                  >
                     <div className="flex-1 flex items-center justify-between">
                       <span>{formData?.colour}</span>
                       <div
-                        className="w-4 h-4 rounded-full border"
+                        className="w-4 h-4 rounded-full border border-border"
                         style={{ backgroundColor: formData?.colour }}
                       />
                     </div>
                   </div>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-3">
+                <PopoverContent className="w-full p-3 bg-background border-border">
                   <div className="flex flex-wrap gap-2">
                     {COLOURS.map((colour) => (
                       <button
@@ -179,37 +216,52 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
                 </PopoverContent>
               </Popover>
             ) : (
-              <div className="h-9 px-3 rounded-md border flex items-center justify-between">
+              <div
+                className={cn(
+                  'h-9 px-3 rounded-md border',
+                  'bg-background text-foreground',
+                  'border-border',
+                  'flex items-center justify-between',
+                )}
+              >
                 <span className="text-sm">{tag.colour}</span>
                 <div
-                  className="w-4 h-4 rounded-full border"
+                  className="w-4 h-4 rounded-full border border-border"
                   style={{ backgroundColor: tag.colour }}
                 />
               </div>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="tag-created">Created</Label>
-            <Input
-              id="tag-created"
-              value={new Date(tag.createdAt).toLocaleDateString()}
-              readOnly
-              className="cursor-default focus:outline-none"
-              aria-label="Tag creation date"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="tag-updated">Last Updated</Label>
-            <Input
-              id="tag-updated"
-              value={new Date(tag.updatedAt).toLocaleDateString()}
-              readOnly
-              className="cursor-default focus:outline-none"
-              aria-label="Tag last updated date"
-            />
-          </div>
+          {[
+            {
+              id: 'tag-created',
+              label: 'Created',
+              value: new Date(tag.createdAt).toLocaleDateString(),
+            },
+            {
+              id: 'tag-updated',
+              label: 'Last Updated',
+              value: new Date(tag.updatedAt).toLocaleDateString(),
+            },
+          ].map((field) => (
+            <div key={field.id} className="space-y-2">
+              <Label htmlFor={field.id} className="text-foreground">
+                {field.label}
+              </Label>
+              <Input
+                id={field.id}
+                value={field.value}
+                readOnly
+                className={cn(
+                  'bg-background text-foreground',
+                  'border-border',
+                  'cursor-default focus:outline-none',
+                )}
+                aria-label={`Tag ${field.label.toLowerCase()}`}
+              />
+            </div>
+          ))}
         </form>
       </div>
 

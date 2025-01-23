@@ -1,5 +1,5 @@
 import { Section } from '@/Global/components/molecules'
-import { H3 } from '@/Global/components/molecules/Typography'
+import { H2 } from '@/Global/components/molecules/Typography'
 import { Item } from '@/Item/types'
 import { ItemList } from '../../catalogue/ItemCatalogue'
 
@@ -17,7 +17,7 @@ export function ItemsListSection({ items, emptyStateComponent }: ItemsListSectio
     <Section>
       <div className="space-y-4">
         <header className="flex justify-between items-center">
-          <H3 id="items-section-title">Stored Items</H3>
+          <H2 id="items-section-title">Tagged Items</H2>
         </header>
         <ItemList items={items} />
       </div>
