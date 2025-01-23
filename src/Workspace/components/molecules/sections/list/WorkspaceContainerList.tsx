@@ -20,7 +20,7 @@ import { ContainerRow } from '@/Container/components/molecules/sections/list/Con
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
 import { NoContent } from '@/Global/components/molecules'
-import { useSettingsStore } from '@/Global/stores/useSettingsStore'
+import ViewToggle from '@/Global/components/molecules/toggle/ViewToggle'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]
@@ -38,7 +38,6 @@ export function WorkspaceListSection({
   setVisibleWorkspaceIds,
 }: WorkspaceListSectionProps) {
   const [openWorkspaces, setOpenWorkspaces] = useState<string[]>([])
-  const { isCompactView } = useSettingsStore()
 
   const handleValueChange = (value: string[]) => {
     setVisibleWorkspaceIds(new Set(value.map(Number)))
@@ -52,11 +51,14 @@ export function WorkspaceListSection({
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <H2>Workspaces</H2>
         <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="sm">
-              Filter Workspaces
-            </Button>
-          </PopoverTrigger>
+          <div className="flex gap-10 ritems-center">
+            <ViewToggle />
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm">
+                Filter Workspaces
+              </Button>
+            </PopoverTrigger>
+          </div>
           <PopoverContent className="w-64">
             <ScrollArea className="h-[300px]">
               <ToggleGroup
@@ -100,7 +102,6 @@ export function WorkspaceListSection({
                       <ContainerRow
                         container={container}
                         items={items.filter((item) => item.containerId === container.id)}
-                        isCompactView={isCompactView}
                       />
                     </AccordionItem>
                   ))}
@@ -131,7 +132,6 @@ export function WorkspaceListSection({
                           <ContainerRow
                             container={container}
                             items={items.filter((item) => item.containerId === container.id)}
-                            isCompactView={isCompactView}
                           />
                         </AccordionItem>
                       ))}

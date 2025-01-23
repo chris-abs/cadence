@@ -16,14 +16,16 @@ import { cn } from '@/Global/lib'
 import { Container } from '@/Container/types'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { Item } from '@/Item/types'
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 interface ContainerRowProps {
   container: Container
   items: Item[]
-  isCompactView: boolean
 }
 
-export function ContainerRow({ container, items, isCompactView }: ContainerRowProps) {
+export function ContainerRow({ container, items }: ContainerRowProps) {
+  const { isCompact } = useSettingsStore()
+
   const { setNodeRef, isOver } = useDroppable({
     id: `container-${container.id}`,
     data: {
@@ -33,7 +35,7 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
   })
 
   const [open, setOpen] = useState(true)
-  const cardWidth = isCompactView ? 200 : 280
+  const cardWidth = isCompact ? 200 : 280
 
   return (
     <div
@@ -89,7 +91,7 @@ export function ContainerRow({ container, items, isCompactView }: ContainerRowPr
                                          justify-center -translate-x-[296px]"
                                 style={{
                                   width: cardWidth,
-                                  height: isCompactView ? '100px' : '200px',
+                                  height: isCompact ? '100px' : '200px',
                                 }}
                               >
                                 <p className="text-sm text-muted-foreground">Drop here</p>

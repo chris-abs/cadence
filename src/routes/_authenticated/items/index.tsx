@@ -12,7 +12,7 @@ import {
   CollisionDetection,
 } from '@dnd-kit/core'
 
-import { EntityPageHeader, Section, ViewToggle } from '@/Global/components/molecules'
+import { EntityPageHeader, Section } from '@/Global/components/molecules'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { UnsortedItemsSection } from '@/Item/components/molecules/sections/list/UnsortedItems'
@@ -96,14 +96,11 @@ function ItemsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <div className="flex justify-between items-center">
-            <EntityPageHeader
-              title="Items"
-              entityType="item"
-              onAdd={() => setIsCreateModalOpen(true)}
-            />
-            <ViewToggle />
-          </div>
+          <EntityPageHeader
+            title="Items"
+            entityType="item"
+            onAdd={() => setIsCreateModalOpen(true)}
+          />
 
           <DndContext
             sensors={sensors}
