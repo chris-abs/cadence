@@ -5,7 +5,7 @@ import { EntityPageHeader } from '@/Global/components/molecules'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
 import { useContainers, useUpdateContainer } from '@/Container/queries'
-import { ContainerOrganiser } from '@/Item/components/molecules/organiser/ContainerOrganiser'
+import { ContainerOrganiser } from '@/Container/components/molecules/organiser/ContainerOrganiser'
 import { useWorkspaces } from '@/Workspace/queries'
 
 export const Route = createFileRoute('/_authenticated/containers/')({
