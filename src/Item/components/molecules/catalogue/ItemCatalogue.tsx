@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { Clock, Package } from 'lucide-react'
 
-import { Badge, ScrollArea } from '@/Global/components/atoms'
-import { NoContent, Section, H3 } from '@/Global/components/molecules'
+import { Badge, PlaceholderImage, ScrollArea } from '@/Global/components/atoms'
+import { NoContent, Section, H3, H5, Muted } from '@/Global/components/molecules'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
+import { cn } from '@/Global/lib'
 import { Item } from '@/Item/types'
 
 interface ItemListProps {
@@ -47,28 +48,41 @@ function ItemGrid({ items }: { items: Item[] }) {
           params={{ itemId: item.id.toString() }}
           className="block max-w-md"
         >
-          <Section className="overflow-hidden h-[320px] flex flex-col hover:border-primary/50 transition-colors">
-            <div className="w-full h-40 relative bg-gray-100">
-              <img
-                src={item.imgUrl || '/placeholder-item.jpg'}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-white/90 px-2 py-1 rounded-md text-xs">
+          <Section
+            className={cn(
+              'overflow-hidden h-[320px] flex flex-col',
+              'transition-colors duration-200',
+              'hover:border-primary/50',
+              'bg-background hover:bg-contrast-accent',
+            )}
+          >
+            <div className="w-full h-40 relative bg-muted">
+              {item.imgUrl ? (
+                <img src={item.imgUrl} alt={item.name} className="w-full h-full object-cover" />
+              ) : (
+                <PlaceholderImage />
+              )}
+              <div
+                className={cn(
+                  'absolute bottom-2 right-2 flex items-center gap-1.5',
+                  'px-2 py-1 rounded-md text-xs',
+                  'bg-background/90 text-foreground',
+                )}
+              >
                 <Clock className="w-3.5 h-3.5" />
                 <span>{formatRelativeTime(item.updatedAt || item.createdAt)}</span>
               </div>
             </div>
 
-            <div className="px-4 pt-4 flex flex-col flex-1">
+            <div className="pt-4 flex flex-col flex-1">
               <div className="mb-3">
-                <H3 className="font-semibold truncate" id={`item-${item.id}-name`}>
+                <H5 className="font-semibold truncate text-foreground" id={`item-${item.id}-name`}>
                   {item.name}
-                </H3>
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                </H5>
+                <Muted className="flex items-center justify-between text-muted-foreground">
                   <span>Quantity: {item.quantity}</span>
                   {item.container && <span>{item.container.name}</span>}
-                </div>
+                </Muted>
               </div>
 
               <div className="flex-1 min-h-0">
