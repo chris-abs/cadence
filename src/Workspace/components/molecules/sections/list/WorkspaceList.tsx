@@ -34,9 +34,9 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
       ref={setNodeRef}
       className={cn('transition-colors', isOver && 'bg-primary/10 border-primary/20 rounded-lg')}
     >
-      <Accordion type="single">
-        <AccordionItem value="workspace">
-          <AccordionTrigger>
+      <Accordion type="multiple">
+        <AccordionItem value={`workspace-${workspace.id}`}>
+          <AccordionTrigger parent>
             <div className="flex items-center justify-between w-full h-10">
               <div className="flex items-center gap-2">
                 <H3>{workspace.name}</H3>
@@ -68,8 +68,8 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
                         {isOver && containers[0]?.id === container.id && (
                           <div
                             className="absolute left-0 top-0 border-2 border-dashed 
-                           border-primary/30 rounded-lg flex items-center 
-                           justify-center -translate-x-[296px]"
+                             border-primary/30 rounded-lg flex items-center 
+                             justify-center -translate-x-[296px]"
                             style={{
                               width: 280,
                               height: 120,

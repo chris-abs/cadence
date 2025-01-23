@@ -15,6 +15,7 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedWorkspacesIndexImport } from './routes/_authenticated/workspaces/index'
 import { Route as AuthenticatedTagsIndexImport } from './routes/_authenticated/tags/index'
 import { Route as AuthenticatedItemsIndexImport } from './routes/_authenticated/items/index'
@@ -46,6 +47,12 @@ const AuthenticatedRoute = AuthenticatedImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedSettingsRoute = AuthenticatedSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -126,6 +133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/': {
       id: '/_authenticated/'
       path: '/'
@@ -195,6 +209,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedContainersContainerIdRoute: typeof AuthenticatedContainersContainerIdRoute
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
@@ -207,6 +222,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedContainersContainerIdRoute:
     AuthenticatedContainersContainerIdRoute,
@@ -228,6 +244,7 @@ export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
   '/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
@@ -242,6 +259,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
   '/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
@@ -258,6 +276,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
@@ -275,6 +294,7 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/register'
+    | '/settings'
     | '/'
     | '/containers/$containerId'
     | '/items/$itemId'
@@ -288,6 +308,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/register'
+    | '/settings'
     | '/'
     | '/containers/$containerId'
     | '/items/$itemId'
@@ -302,6 +323,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/register'
+    | '/_authenticated/settings'
     | '/_authenticated/'
     | '/_authenticated/containers/$containerId'
     | '/_authenticated/items/$itemId'
@@ -344,6 +366,7 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/settings",
         "/_authenticated/",
         "/_authenticated/containers/$containerId",
         "/_authenticated/items/$itemId",
@@ -360,6 +383,10 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/_authenticated/settings": {
+      "filePath": "_authenticated/settings.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/": {
       "filePath": "_authenticated/index.tsx",

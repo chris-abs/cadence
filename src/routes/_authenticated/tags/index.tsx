@@ -6,19 +6,6 @@ import { EntityPageHeader, Section } from '@/Global/components/molecules'
 import { TagList } from '@/Tag/components/molecules/catalogue/TagCatalogue'
 import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
 import { useTags } from '@/Tag/queries'
-import {
-  H1,
-  H2,
-  H3,
-  H4,
-  H5,
-  H6,
-  Large,
-  Lead,
-  Muted,
-  P,
-  Small,
-} from '@/Global/components/molecules/Typography'
 
 export const Route = createFileRoute('/_authenticated/tags/')({
   component: TagsPage,
@@ -41,20 +28,6 @@ function TagsPage() {
             <TagList tags={tags ?? []} isLoading={isLoading} />
           </Section>
         </div>
-      </div>
-      {/* TODO: Remove post refactor */}
-      <div className="flex flex-1 flex-col gap-3">
-        <H1>H1</H1>
-        <H2>H2</H2>
-        <H3>H3</H3>
-        <H4>H4</H4>
-        <H5>H5</H5>
-        <H6>H6</H6>
-        <P>P</P>
-        <Muted>Muted</Muted>
-        <Lead>Lead</Lead>
-        <Large>Large</Large>
-        <Small>Small</Small>
       </div>
       <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>
