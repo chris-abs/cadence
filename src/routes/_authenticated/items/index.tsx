@@ -12,8 +12,7 @@ import {
   CollisionDetection,
 } from '@dnd-kit/core'
 
-import { Switch } from '@/Global/components/atoms'
-import { EntityPageHeader, Section } from '@/Global/components/molecules'
+import { EntityPageHeader, Section, ViewToggle } from '@/Global/components/molecules'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { UnsortedItemsSection } from '@/Item/components/molecules/sections/list/UnsortedItems'
@@ -22,7 +21,6 @@ import { useItems, useUpdateItem } from '@/Item/queries'
 import { useWorkspaces } from '@/Workspace/queries'
 import { useContainers } from '@/Container/queries'
 import { WorkspaceListSection } from '@/Workspace/components/molecules/sections/list/WorkspaceContainerList'
-import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,
@@ -31,7 +29,6 @@ export const Route = createFileRoute('/_authenticated/items/')({
 function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const { data: items } = useItems()
-  const { isCompact, setCompact } = useSettingsStore()
   const { data: workspaces } = useWorkspaces()
   const { data: containers } = useContainers()
   const updateItem = useUpdateItem()
@@ -105,10 +102,7 @@ function ItemsPage() {
               entityType="item"
               onAdd={() => setIsCreateModalOpen(true)}
             />
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Compact View</span>
-              <Switch checked={isCompact} onCheckedChange={setCompact} />
-            </div>
+            <ViewToggle />
           </div>
 
           <DndContext
