@@ -39,7 +39,14 @@ export function ContainerOrganiser({
     }
   }, [workspaces])
 
-  const sensors = useSensors(useSensor(PointerSensor))
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 75,
+        tolerance: 5,
+      },
+    }),
+  )
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)

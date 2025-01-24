@@ -1,28 +1,12 @@
-import { CSS } from '@dnd-kit/utilities'
-import { useSortable } from '@dnd-kit/sortable'
-
-import { ContainerCard } from './Base'
+import { SortableEntityCard } from '@/Global/components/molecules'
 import { Container } from '@/Container/types'
+import { ContainerCard } from './Base'
 
-interface SortableContainerCardProps {
-  container: Container | null
-}
-
-export function SortableContainerCard({ container }: SortableContainerCardProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-    id: container ? `container-${container.id}` : 'placeholder',
-  })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
-
+export function SortableContainerCard({ container }: { container: Container | null }) {
   if (!container) return null
-
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <SortableEntityCard entity={container} type="container">
       <ContainerCard container={container} />
-    </div>
+    </SortableEntityCard>
   )
 }

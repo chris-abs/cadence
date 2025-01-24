@@ -28,16 +28,22 @@ interface ItemOrganiserProps {
 export function ItemOrganiser({ items, workspaces, containers, onUpdateItem }: ItemOrganiserProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [visibleWorkspaceIds, setVisibleWorkspaceIds] = useState<Set<number>>(new Set())
-
   const unassignedContainers = containers.filter((container) => !container.workspaceId)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 75,
+        tolerance: 5,
+      },
+    }),
+  )
 
   useEffect(() => {
     if (workspaces) {
       setVisibleWorkspaceIds(new Set(workspaces.map((w) => w.id)))
     }
   }, [workspaces])
-
-  const sensors = useSensors(useSensor(PointerSensor))
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
