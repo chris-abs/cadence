@@ -14,13 +14,13 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/Global/components/atoms'
-import { H2, H3 } from '@/Global/components/molecules/Typography'
+import { H2, H3, Muted, ViewToggle } from '@/Global/components/molecules'
 import { Workspace } from '@/Workspace/types'
 import { ContainerRow } from '@/Container/components/molecules/sections/list/ContainerRow'
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
 import { NoContent } from '@/Global/components/molecules'
-import ViewToggle from '@/Global/components/molecules/toggle/ViewToggle'
+import { cn } from '@/Global/lib'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]
@@ -59,7 +59,7 @@ export function WorkspaceListSection({
               </Button>
             </PopoverTrigger>
           </div>
-          <PopoverContent className="w-64">
+          <PopoverContent className="w-64 bg-background border-border">
             <ScrollArea className="h-[300px]">
               <ToggleGroup
                 type="multiple"
@@ -71,10 +71,15 @@ export function WorkspaceListSection({
                   <ToggleGroupItem
                     key={workspace.id}
                     value={String(workspace.id)}
-                    className="w-full justify-start px-3 py-2 data-[state=on]:bg-slate-900 data-[state=on]:text-white bg-accent/50 hover:bg-pink-100"
+                    className={cn(
+                      'w-full justify-start px-3 py-2',
+                      'bg-background hover:bg-contrast-accent',
+                      'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground',
+                      'transition-colors duration-200',
+                    )}
                   >
                     <Box className="h-4 w-4 shrink-0 mr-2" />
-                    <span className="truncate">{workspace.name}</span>
+                    <Muted className="!text-current truncate">{workspace.name}</Muted>
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>
@@ -95,7 +100,7 @@ export function WorkspaceListSection({
               <AccordionTrigger parent>
                 <H3>Unassigned Containers</H3>
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="bg-background">
                 <Accordion type="multiple" defaultValue={getContainerIds(unassignedContainers)}>
                   {unassignedContainers.map((container) => (
                     <AccordionItem border key={container.id} value={`container-${container.id}`}>
@@ -117,7 +122,7 @@ export function WorkspaceListSection({
                 <AccordionTrigger parent>
                   <H3>{workspace.name}</H3>
                 </AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="bg-background">
                   {workspace.containers?.length === 0 ? (
                     <NoContent
                       message={`No containers found for ${workspace.name}. Assign one to get started`}

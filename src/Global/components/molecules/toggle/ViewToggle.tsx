@@ -4,7 +4,7 @@ import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
 import { Small } from '../Typography'
 
-function ViewToggle() {
+export function ViewToggle() {
   const { isCompact, setCompact } = useSettingsStore()
 
   return (
