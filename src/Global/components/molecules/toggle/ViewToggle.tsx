@@ -26,7 +26,7 @@ function ViewToggle() {
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <Small>Default grid view</Small>
+            <Small>Detail card view</Small>
           </TooltipContent>
         </Tooltip>
 
@@ -46,7 +46,7 @@ function ViewToggle() {
             </button>
           </TooltipTrigger>
           <TooltipContent>
-            <Small>Compact list view</Small>
+            <Small>Compact card view</Small>
           </TooltipContent>
         </Tooltip>
       </div>

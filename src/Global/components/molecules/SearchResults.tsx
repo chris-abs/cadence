@@ -14,6 +14,8 @@ import {
 } from '@/Global/types'
 import { useSearch } from '@/Global/queries/search'
 import { ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from '../atoms'
+import { H3, Muted } from './Typography'
+import { cn } from '@/Global/lib'
 
 const searchTypes: { type: SearchType; icon: typeof Box; label: string }[] = [
   { type: 'workspace', icon: Box, label: 'Workspaces' },
@@ -39,75 +41,6 @@ interface ResultsListProps {
 interface ResultsSectionProps extends ResultsListProps {
   query: string
 }
-
-const ResultsList = ({ results, type, Icon, onClose }: ResultsListProps) => (
-  <div className="grid grid-cols-1 gap-2">
-    {results.map((result) => (
-      <div key={result.id} className="bg-muted/50 border rounded-md">
-        <Link
-          to={typeToRoute[type as SearchType](result.id)}
-          className="flex items-center gap-3 p-3 hover:bg-accent"
-          onClick={onClose}
-        >
-          <div className="shrink-0">
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-medium truncate">{result.name}</span>
-            {type === 'item' && (
-              <span className="text-xs text-muted-foreground truncate">
-                Container:{' '}
-                {(result as ItemSearchResult).containerName
-                  ? `${(result as ItemSearchResult).containerName}${
-                      (result as ItemSearchResult).containerLocation
-                        ? `, ${(result as ItemSearchResult).containerLocation}`
-                        : ''
-                    }`
-                  : 'unassigned'}
-              </span>
-            )}
-            {type === 'container' && (
-              <span className="text-xs text-muted-foreground truncate">
-                Workspace: {(result as ContainerSearchResult).workspaceName || 'unassigned'}
-                {(result as ContainerSearchResult).location &&
-                  ` • ${(result as ContainerSearchResult).location}`}
-              </span>
-            )}
-            {type === 'tag' && (
-              <span className="text-xs text-muted-foreground truncate">
-                {(result as TagSearchResult).itemCount || 0} items
-              </span>
-            )}
-            {type === 'workspace' && (
-              <span className="text-xs text-muted-foreground truncate">
-                {(result as WorkspaceSearchResult).containerCount || 0} containers
-              </span>
-            )}
-          </div>
-        </Link>
-      </div>
-    ))}
-  </div>
-)
-
-const NoResults = ({ type, query }: { type: string; query: string }) => (
-  <div className="flex items-center gap-2 p-4">
-    <span className="text-sm text-muted-foreground italic">
-      No {type}s matching "{query}"
-    </span>
-  </div>
-)
-
-const ResultsSection = ({ type, results, query, Icon, onClose }: ResultsSectionProps) => {
-  if (!query.trim()) return null
-
-  return results.length > 0 ? (
-    <ResultsList results={results} type={type} Icon={Icon} onClose={onClose} />
-  ) : (
-    <NoResults type={type} query={query} />
-  )
-}
-
 interface SearchResultsProps {
   query: string
   onClose?: () => void
@@ -116,10 +49,7 @@ interface SearchResultsProps {
 export function SearchResults({ query, onClose }: SearchResultsProps) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>(searchTypes.map((t) => t.type))
   const debouncedSearch = useDebounce(query, 300)
-
-  const { data, isLoading } = useSearch(debouncedSearch, {
-    enabled: debouncedSearch.length > 0,
-  })
+  const { data, isLoading } = useSearch(debouncedSearch, { enabled: debouncedSearch.length > 0 })
 
   const handleValueChange = (value: string[]) => {
     if (value.length > 0) {
@@ -140,7 +70,13 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
   if (!query) return null
 
   return (
-    <div className="absolute left-[12.5%] right-[12.5%] top-full z-50 mt-2 rounded-lg border bg-background shadow-lg">
+    <div
+      className={cn(
+        'absolute left-[12.5%] right-[12.5%] top-full z-50 mt-2',
+        'rounded-lg border border-border',
+        'bg-background shadow-lg',
+      )}
+    >
       <div className="p-4 space-y-4">
         <ToggleGroup
           type="multiple"
@@ -153,7 +89,12 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
               key={type}
               value={type}
               aria-label={`Toggle ${label}`}
-              className="flex-1 px-3 data-[state=on]:bg-slate-900 data-[state=on]:text-white bg-accent/50 hover:bg-accent"
+              className={cn(
+                'flex-1 px-3',
+                'bg-background hover:bg-contrast-accent',
+                'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground',
+                'transition-colors duration-200',
+              )}
             >
               <div className="xl:hidden">
                 <Tooltip>
@@ -178,10 +119,10 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
 
             return (
               <div key={type} className="space-y-2">
-                <h3 className="font-medium capitalize">{type}s</h3>
+                <H3 className="capitalize">{type}s</H3>
                 <div className="rounded-md">
                   {isLoading ? (
-                    <div className="p-4 text-sm text-muted-foreground">Loading...</div>
+                    <Muted className="p-4">Loading...</Muted>
                   ) : (
                     <ResultsSection
                       type={type}
@@ -200,3 +141,80 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
     </div>
   )
 }
+
+const ResultsSection = ({ type, results, query, Icon, onClose }: ResultsSectionProps) => {
+  if (!query.trim()) return null
+
+  return results.length > 0 ? (
+    <ResultsList results={results} type={type} Icon={Icon} onClose={onClose} />
+  ) : (
+    <NoResults type={type} query={query} />
+  )
+}
+
+const ResultsList = ({ results, type, Icon, onClose }: ResultsListProps) => (
+  <div className="grid grid-cols-1 gap-2">
+    {results.map((result) => (
+      <div
+        key={result.id}
+        className={cn(
+          'border border-border rounded-md',
+          'bg-background',
+          'transition-colors duration-200',
+        )}
+      >
+        <Link
+          to={typeToRoute[type as SearchType](result.id)}
+          className={cn(
+            'flex items-center gap-3 p-3',
+            'hover:bg-contrast-accent',
+            'transition-colors duration-200',
+          )}
+          onClick={onClose}
+        >
+          <div className="shrink-0">
+            <Icon className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <H3 className="truncate text-sm">{result.name}</H3>
+            {type === 'item' && (
+              <Muted className="truncate">
+                Container:{' '}
+                {(result as ItemSearchResult).containerName
+                  ? `${(result as ItemSearchResult).containerName}${
+                      (result as ItemSearchResult).containerLocation
+                        ? `, ${(result as ItemSearchResult).containerLocation}`
+                        : ''
+                    }`
+                  : 'unassigned'}
+              </Muted>
+            )}
+            {type === 'container' && (
+              <Muted className="truncate">
+                Workspace: {(result as ContainerSearchResult).workspaceName || 'unassigned'}
+                {(result as ContainerSearchResult).location &&
+                  ` • ${(result as ContainerSearchResult).location}`}
+              </Muted>
+            )}
+            {type === 'tag' && (
+              <Muted className="truncate">{(result as TagSearchResult).itemCount || 0} items</Muted>
+            )}
+            {type === 'workspace' && (
+              <Muted className="truncate">
+                {(result as WorkspaceSearchResult).containerCount || 0} containers
+              </Muted>
+            )}
+          </div>
+        </Link>
+      </div>
+    ))}
+  </div>
+)
+
+const NoResults = ({ type, query }: { type: string; query: string }) => (
+  <div className="flex items-center gap-2 p-4">
+    <Muted className="italic">
+      No {type}s matching "{query}"
+    </Muted>
+  </div>
+)
