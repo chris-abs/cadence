@@ -14,7 +14,7 @@ import {
   FormMessage,
   Input,
 } from '@/Global/components/atoms'
-import { registerSchema } from '@/Global/schemas/auth'
+import { registerSchema } from '@/User/schemas/auth'
 
 type FormData = z.infer<typeof registerSchema>
 

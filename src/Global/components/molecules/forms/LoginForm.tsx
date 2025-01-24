@@ -14,7 +14,7 @@ import {
   AlertDescription,
   Input,
 } from '@/Global/components/atoms'
-import { loginSchema } from '@/Global/schemas/auth'
+import { loginSchema } from '@/User/schemas/auth'
 
 type FormData = z.infer<typeof loginSchema>
 

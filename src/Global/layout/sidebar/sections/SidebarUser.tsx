@@ -21,7 +21,7 @@ import {
   useSidebar,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
 import { useAuth } from '@/Global/hooks/useAuth'
-import { useUser } from '@/Global/queries/user'
+import { useUser } from '@/User/queries/user'
 
 export function SidebarUser() {
   const { data: user, isLoading } = useUser()
@@ -88,11 +88,13 @@ export function SidebarUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck className="mr-2 h-4 w-4" />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
+              <Link to="/profile">
+                <DropdownMenuItem>
+                  <BadgeCheck className="mr-2 h-4 w-4" />
+                  Account
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem disabled>
                 <Bell className="mr-2 h-4 w-4" />
                 Notifications
               </DropdownMenuItem>
