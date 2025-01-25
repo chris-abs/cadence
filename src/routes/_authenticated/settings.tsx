@@ -82,7 +82,7 @@ function SettingsPage() {
                       Use a condensed layout for items and containers
                     </p>
                   </div>
-                  <Switch checked={isCompact} onCheckedChange={setCompact} />{' '}
+                  <Switch checked={isCompact} onCheckedChange={setCompact} />
                 </div>
               </CardContent>
             </Card>
@@ -151,3 +151,26 @@ function SettingsPage() {
     </PageLayout>
   )
 }
+
+/*
+<Card>
+  <CardHeader>
+    <CardTitle className="flex items-center gap-2">
+      <Palette className="h-5 w-5" />
+      Appearance
+    </CardTitle>
+    <CardDescription>Customize how the application looks and feels</CardDescription>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    <div className="flex items-center justify-between">
+      <div className="space-y-0.5">content</div>
+    </div>
+
+    <Separator />
+
+    <div className="flex items-center justify-between">
+      <div className="space-y-0.5">content</div>
+    </div>
+  </CardContent>
+</Card>
+*/
