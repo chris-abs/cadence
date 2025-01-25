@@ -10,9 +10,10 @@ export const createItemSchema = z.object({
 
 export const updateItemSchema = createItemSchema.partial().extend({
   id: z.number(),
-  imgUrl: z.string().optional(),
   tags: z.array(z.number()).optional(),
   containerId: z.number().nullable().optional(),
+  images: z.array(z.instanceof(File)).optional(),
+  imagesToDelete: z.array(z.string()).optional(),
 })
 
 export type CreateItemData = z.infer<typeof createItemSchema>

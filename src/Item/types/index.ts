@@ -1,11 +1,12 @@
 import { Container } from '@/Container/types'
 import { Tag } from '@/Tag/types'
 
-// TODO: add array of images for items
 export interface ItemImage {
   id: number
   url: string
+  displayOrder: number
   createdAt: string
+  updatedAt: string
 }
 
 export interface Item {
@@ -13,9 +14,9 @@ export interface Item {
   name: string
   description: string
   quantity: number
-  imgUrl: string
   containerId: number
   container?: Container
+  images: ItemImage[]
   tags: Tag[]
   createdAt: string
   updatedAt: string

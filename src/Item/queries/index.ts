@@ -58,11 +58,16 @@ export function useUpdateItem() {
 
   return useMutation({
     mutationFn: (data: UpdateItemData) => {
-      console.log('Mutation payload:', data)
-      return api.put<Item>(`/items/${data.id}`, data)
+      const formData = new FormData()
+      formData.append('itemData', JSON.stringify(data))
+
+      if (data.images?.length) {
+        data.images.forEach((file) => formData.append('images', file))
+      }
+
+      return api.put<Item>(`/items/${data.id}`, formData)
     },
     onSuccess: (updatedItem) => {
-      console.log('Updated item response:', updatedItem)
       queryClient.setQueryData(queryKeys.items.detail(updatedItem.id), updatedItem)
       queryClient.invalidateQueries({ queryKey: queryKeys.items.list })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })

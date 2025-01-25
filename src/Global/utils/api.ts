@@ -62,12 +62,18 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-  put: <T>(endpoint: string, data: unknown, options?: RequestInit) =>
-    fetchWithAuth<T>(endpoint, {
+  put: <T>(endpoint: string, data: unknown, options?: RequestInit): Promise<T> => {
+    const headers: Record<string, string> = { ...(options?.headers as Record<string, string>) }
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json'
+    }
+    return fetchWithAuth<T>(endpoint, {
       ...options,
       method: 'PUT',
-      body: JSON.stringify(data),
-    }),
+      headers,
+      body: data instanceof FormData ? data : JSON.stringify(data),
+    })
+  },
 
   delete: <T>(endpoint: string, options?: RequestInit) =>
     fetchWithAuth<T>(endpoint, { ...options, method: 'DELETE' }),
