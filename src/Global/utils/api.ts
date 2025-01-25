@@ -17,14 +17,17 @@ export async function fetchWithAuth<T>(endpoint: string, options: RequestInit = 
     throw createApiError(401, 'No token found')
   }
 
+  const headers = new Headers(options.headers)
+  headers.set('Authorization', `Bearer ${token}`)
+
+  if (!options.body || !(options.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json')
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-        ...options.headers,
-      },
+      headers,
     })
 
     const data = (await response.json().catch(() => ({}))) as ApiResponse<T>
@@ -59,14 +62,11 @@ export const api = {
     fetchWithAuth<T>(endpoint, {
       ...options,
       method: 'POST',
-      body: JSON.stringify(data),
+      body: data instanceof FormData ? data : JSON.stringify(data),
     }),
 
-  put: <T>(endpoint: string, data: unknown, options?: RequestInit): Promise<T> => {
-    const headers: Record<string, string> = { ...(options?.headers as Record<string, string>) }
-    if (!(data instanceof FormData)) {
-      headers['Content-Type'] = 'application/json'
-    }
+  put: <T>(endpoint: string, data: unknown, options?: RequestInit) => {
+    const headers = new Headers(options?.headers)
     return fetchWithAuth<T>(endpoint, {
       ...options,
       method: 'PUT',
