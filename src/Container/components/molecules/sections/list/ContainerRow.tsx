@@ -41,8 +41,8 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
     <div
       ref={setNodeRef}
       className={cn(
-        'px-4 py-3 border-t first:border-t-0 transition-colors',
-        isOver && 'bg-primary/10 border-primary/20',
+        'px-4 py-3 border-t rounded-md first:border-t-0 transition-colors',
+        isOver && 'px-6 bg-primary/30 border-primary/20',
       )}
     >
       <Accordion type="single" value={open ? 'container' : ''}>
@@ -70,8 +70,8 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
                   <div className="min-w-max">
                     <div
                       className={cn(
-                        'flex gap-4 pb-4 relative',
-                        isOver && 'translate-x-[296px] transition-transform duration-300',
+                        'flex gap-4 pb-4 relative transition-all duration-300 ease-in-out',
+                        isOver && 'translate-x-[296px] w-[calc(100%-296px)]',
                       )}
                     >
                       {items.length === 0 ? (

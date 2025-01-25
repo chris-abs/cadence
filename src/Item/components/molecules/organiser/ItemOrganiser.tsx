@@ -17,6 +17,7 @@ import { Item } from '@/Item/types'
 import { WorkspaceListSection } from '@/Workspace/components/molecules/sections/list/WorkspaceContainerList'
 import { Workspace } from '@/Workspace/types'
 import { Container } from '@/Container/types'
+import { cn } from '@/Global/lib'
 
 interface ItemOrganiserProps {
   items: Item[]
@@ -72,9 +73,15 @@ export function ItemOrganiser({ items, workspaces, containers, onUpdateItem }: I
       onDragEnd={handleDragEnd}
       collisionDetection={pointerWithin}
     >
-      <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
-        <div className="flex-grow min-h-0">
-          <Section className="h-full">
+      <div className="flex flex-col gap-4 h-[calc(100vh-10rem)]">
+        <div
+          className={cn(
+            'flex-1 min-h-0',
+            !items.some((item) => !item.containerId) &&
+              'animate-out slide-out-to-bottom duration-300',
+          )}
+        >
+          <Section className="h-full overflow-hidden">
             <WorkspaceListSection
               workspaces={workspaces}
               items={items}
@@ -84,11 +91,13 @@ export function ItemOrganiser({ items, workspaces, containers, onUpdateItem }: I
             />
           </Section>
         </div>
-        <div className="h-[32.5%] min-h-[250px]">
-          <Section className="h-full">
-            <UnsortedItemsSection items={items.filter((item) => !item.containerId)} />
-          </Section>
-        </div>
+        {items.some((item) => !item.containerId) && (
+          <div className="h-[300px] shrink-0 animate-in mb-4 slide-in-from-bottom duration-300">
+            <Section className="h-full overflow-hidden">
+              <UnsortedItemsSection items={items.filter((item) => !item.containerId)} />
+            </Section>
+          </div>
+        )}
       </div>
       <DragOverlay>
         {activeId && items && (

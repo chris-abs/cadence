@@ -59,7 +59,7 @@ export function WorkspaceListSection({
         </CardHeader>
       </Card>
 
-      <div className="flex flex-col pt-4 h-full overflow-hidden">
+      <div className="flex flex-col pt-4 h-full">
         <ScrollArea className="flex-1">
           <Accordion
             type="multiple"
@@ -84,11 +84,7 @@ export function WorkspaceListSection({
                         defaultValue={getContainerIds(unassignedContainers)}
                       >
                         {unassignedContainers.map((container) => (
-                          <AccordionItem
-                            border
-                            key={container.id}
-                            value={`container-${container.id}`}
-                          >
+                          <AccordionItem key={container.id} value={`container-${container.id}`}>
                             <ContainerRow
                               container={container}
                               items={items.filter((item) => item.containerId === container.id)}
