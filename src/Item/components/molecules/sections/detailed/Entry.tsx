@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pencil, Trash2, MoreVertical } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical, X, Upload } from 'lucide-react'
 
 import {
   Input,
@@ -34,10 +34,22 @@ interface ItemEntryProps {
 
 export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: ItemEntryProps) {
   const [isEditing, setIsEditing] = useState(false)
+  const [imagesToUpload, setImagesToUpload] = useState<File[]>([])
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateItemData> | null>(null)
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const { data: allTags } = useTags()
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImagesToUpload(Array.from(e.target.files))
+    }
+  }
+
+  const handleImageDelete = (imageUrl: string) => {
+    setImagesToDelete((prev) => [...prev, imageUrl])
+  }
 
   if (!item?.name) {
     return emptyStateComponent || null
@@ -96,7 +108,8 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
       quantity: formData.quantity,
       tags: selectedTags.map((tag) => tag.id),
       containerId: item.containerId,
-      imgUrl: item.imgUrl,
+      images: imagesToUpload,
+      imagesToDelete,
     }
 
     try {
@@ -104,6 +117,8 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
       setIsEditing(false)
       setFormData(null)
       setSelectedTags([])
+      setImagesToUpload([])
+      setImagesToDelete([])
     } catch (error) {
       console.error('Failed to update item:', error)
     }
@@ -153,30 +168,62 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
             <div className="w-64 relative">
               <Carousel className="w-full">
                 <CarouselContent>
-                  <CarouselItem>
-                    <div className="p-1">
-                      <div className="overflow-hidden rounded-lg border">
-                        {item.imgUrl ? (
-                          <img
-                            src={item.imgUrl}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
+                  {item.images.length === 0 && !isEditing ? (
+                    <CarouselItem>
+                      <div className="p-1">
+                        <div className="overflow-hidden rounded-lg border">
                           <PlaceholderImage />
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </CarouselItem>
+                    </CarouselItem>
+                  ) : (
+                    <>
+                      {item.images.map((image, index) => (
+                        <CarouselItem key={image.id}>
+                          <div className="p-1 relative">
+                            <div className="overflow-hidden rounded-lg border">
+                              <img
+                                src={image.url}
+                                alt={`${item.name} - ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            {isEditing && !imagesToDelete.includes(image.url) && (
+                              <button
+                                onClick={() => handleImageDelete(image.url)}
+                                className="absolute top-2 right-2 p-1 rounded-full bg-destructive text-white hover:bg-destructive/90"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        </CarouselItem>
+                      ))}
+                      {isEditing && (
+                        <CarouselItem>
+                          <div className="p-1">
+                            <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <Upload className="h-6 w-6 mb-2" />
+                                <p className="text-sm text-gray-500">Click to upload</p>
+                              </div>
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                multiple
+                                onChange={handleImageUpload}
+                              />
+                            </label>
+                          </div>
+                        </CarouselItem>
+                      )}
+                    </>
+                  )}
                 </CarouselContent>
-                <CarouselPrevious className="hidden" />
-                <CarouselNext className="hidden" />
+                <CarouselPrevious />
+                <CarouselNext />
               </Carousel>
-              {!isEditing && (
-                <div className="mt-1 text-center text-sm text-muted-foreground">
-                  {item.imgUrl || 'Placeholder Image'}
-                </div>
-              )}
             </div>
           </div>
 

@@ -58,14 +58,16 @@ function ItemPage() {
 
   const handleUpdateItem = async (data: UpdateItemData) => {
     try {
-      console.log('Update item data:', data)
       const updatedItemData: UpdateItemData = {
-        ...item,
-        ...data,
-        tags: data.tags || item.tags.map((tag) => tag.id),
+        id: item.id,
+        name: data.name ?? item.name,
+        description: data.description ?? item.description,
+        quantity: data.quantity ?? item.quantity,
         containerId: data.containerId,
+        tags: data.tags || item.tags.map((tag) => tag.id),
+        images: data.images,
+        imagesToDelete: data.imagesToDelete,
       }
-      console.log('Final update item data:', updatedItemData)
       await updateItem.mutateAsync(updatedItemData)
       toast('Item updated', {
         description: `${data.name || item.name} has been updated successfully`,
@@ -109,7 +111,6 @@ function ItemPage() {
         quantity: item.quantity,
         containerId: containerId,
         tags: item.tags.map((tag) => tag.id),
-        imgUrl: item.imgUrl,
       }
 
       await updateItem.mutateAsync(updatedItemData)
