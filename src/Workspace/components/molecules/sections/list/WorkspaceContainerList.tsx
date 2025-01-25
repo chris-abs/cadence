@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardContent,
 } from '@/Global/components/atoms'
-import { H3 } from '@/Global/components/molecules'
 import { Workspace } from '@/Workspace/types'
 import { ContainerRow } from '@/Container/components/molecules/sections/list/ContainerRow'
 import { Container } from '@/Container/types'
@@ -69,43 +69,24 @@ export function WorkspaceListSection({
           >
             {unassignedContainers.length > 0 && (
               <AccordionItem value="unassigned">
-                <AccordionTrigger parent>
-                  <H3>Unassigned Containers</H3>
-                </AccordionTrigger>
-                <AccordionContent className="bg-background">
-                  <Accordion type="multiple" defaultValue={getContainerIds(unassignedContainers)}>
-                    {unassignedContainers.map((container) => (
-                      <AccordionItem border key={container.id} value={`container-${container.id}`}>
-                        <ContainerRow
-                          container={container}
-                          items={items.filter((item) => item.containerId === container.id)}
-                        />
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </AccordionContent>
-              </AccordionItem>
-            )}
-
-            {workspaces
-              .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
-              .map((workspace) => (
-                <AccordionItem key={workspace.id} value={`workspace-${workspace.id}`}>
-                  <AccordionTrigger parent>
-                    <H3>{workspace.name}</H3>
-                  </AccordionTrigger>
-                  <AccordionContent className="bg-background">
-                    {workspace.containers?.length === 0 ? (
-                      <NoContent
-                        message={`No containers found for ${workspace.name}. Assign one to get started`}
-                      />
-                    ) : (
+                <Card>
+                  <CardHeader>
+                    <AccordionTrigger className="hover:no-underline">
+                      <CardTitle>Unassigned Containers</CardTitle>
+                    </AccordionTrigger>
+                  </CardHeader>
+                  <AccordionContent>
+                    <CardContent>
                       <Accordion
                         type="multiple"
-                        defaultValue={getContainerIds(workspace.containers || [])}
+                        defaultValue={getContainerIds(unassignedContainers)}
                       >
-                        {workspace.containers?.map((container) => (
-                          <AccordionItem key={container.id} value={`container-${container.id}`}>
+                        {unassignedContainers.map((container) => (
+                          <AccordionItem
+                            border
+                            key={container.id}
+                            value={`container-${container.id}`}
+                          >
                             <ContainerRow
                               container={container}
                               items={items.filter((item) => item.containerId === container.id)}
@@ -113,8 +94,49 @@ export function WorkspaceListSection({
                           </AccordionItem>
                         ))}
                       </Accordion>
-                    )}
+                    </CardContent>
                   </AccordionContent>
+                </Card>
+              </AccordionItem>
+            )}
+
+            {workspaces
+              .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
+              .map((workspace) => (
+                <AccordionItem key={workspace.id} value={`workspace-${workspace.id}`}>
+                  <Card>
+                    <CardHeader>
+                      <AccordionTrigger className="hover:no-underline">
+                        <CardTitle>{workspace.name}</CardTitle>
+                      </AccordionTrigger>
+                      {workspace.description && (
+                        <CardDescription>{workspace.description}</CardDescription>
+                      )}
+                    </CardHeader>
+                    <AccordionContent>
+                      <CardContent>
+                        {workspace.containers?.length === 0 ? (
+                          <NoContent
+                            message={`No containers found for ${workspace.name}. Assign one to get started`}
+                          />
+                        ) : (
+                          <Accordion
+                            type="multiple"
+                            defaultValue={getContainerIds(workspace.containers || [])}
+                          >
+                            {workspace.containers?.map((container) => (
+                              <AccordionItem key={container.id} value={`container-${container.id}`}>
+                                <ContainerRow
+                                  container={container}
+                                  items={items.filter((item) => item.containerId === container.id)}
+                                />
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+                        )}
+                      </CardContent>
+                    </AccordionContent>
+                  </Card>
                 </AccordionItem>
               ))}
           </Accordion>
