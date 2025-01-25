@@ -59,21 +59,23 @@ export function WorkspaceListSection({
         </CardHeader>
       </Card>
 
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex flex-col pt-4 h-full overflow-hidden">
         <ScrollArea className="flex-1">
           <Accordion
             type="multiple"
             value={openWorkspaces}
             onValueChange={setOpenWorkspaces}
-            className="space-y-4 pr-4"
+            className="space-y-4"
           >
             {unassignedContainers.length > 0 && (
               <AccordionItem value="unassigned">
                 <Card>
                   <CardHeader>
-                    <AccordionTrigger className="hover:no-underline">
-                      <CardTitle>Unassigned Containers</CardTitle>
-                    </AccordionTrigger>
+                    <CardTitle>
+                      <AccordionTrigger className="hover:no-underline">
+                        Unassigned Containers
+                      </AccordionTrigger>
+                    </CardTitle>
                   </CardHeader>
                   <AccordionContent>
                     <CardContent>
@@ -106,7 +108,7 @@ export function WorkspaceListSection({
                 <AccordionItem key={workspace.id} value={`workspace-${workspace.id}`}>
                   <Card>
                     <CardHeader>
-                      <AccordionTrigger className="hover:no-underline">
+                      <AccordionTrigger>
                         <CardTitle>{workspace.name}</CardTitle>
                       </AccordionTrigger>
                       {workspace.description && (

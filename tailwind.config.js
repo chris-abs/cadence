@@ -43,6 +43,10 @@ export default {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
+        accordion: {
+          DEFAULT: 'hsl(var(--accordion))',
+          foreground: 'hsl(var(--accordion-foreground))',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
