@@ -1,8 +1,8 @@
+// components/molecules/sections/detailed/Entry/index.tsx
 import { useState } from 'react'
-import { Pencil, Trash2, MoreVertical, X, Upload, AlertTriangle } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical, X, Upload } from 'lucide-react'
 
 import {
-  Label,
   Button,
   Carousel,
   CarouselContent,
@@ -13,12 +13,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Label,
   PlaceholderImage,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Input,
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Global/components/organisms/modals'
@@ -27,7 +23,8 @@ import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
-import { TagManagement } from './TagManagement'
+import { ItemForm } from './form'
+import { ImageDeleteModal } from '../../../modals/ItemDeleteModal'
 
 interface ItemEntryProps {
   item: Item | null
@@ -46,6 +43,8 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const { data: allTags } = useTags()
 
+  if (!item?.name) return emptyStateComponent || null
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setImagesToUpload(Array.from(e.target.files))
@@ -53,15 +52,9 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
   }
 
   const handleImageDelete = (imageUrl: string) => {
-    if (imagesToDelete.includes(imageUrl)) {
-      setImagesToDelete((prev) => prev.filter((url) => url !== imageUrl))
-    } else {
-      setImagesToDelete((prev) => [...prev, imageUrl])
-    }
-  }
-
-  if (!item?.name) {
-    return emptyStateComponent || null
+    setImagesToDelete((prev) =>
+      prev.includes(imageUrl) ? prev.filter((url) => url !== imageUrl) : [...prev, imageUrl],
+    )
   }
 
   const handleEdit = () => {
@@ -124,11 +117,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
 
     try {
       await onUpdate(updateData)
-      setIsEditing(false)
-      setFormData(null)
-      setSelectedTags([])
-      setImagesToUpload([])
-      setImagesToDelete([])
+      handleCancel()
       setIsImageDeleteConfirmOpen(false)
     } catch (error) {
       console.error('Failed to update item:', error)
@@ -258,80 +247,15 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
             </div>
           </div>
 
-          <form className="space-y-2" onSubmit={handleSubmit}>
-            <form className="space-y-2" onSubmit={handleSubmit}>
-              <div className="space-y-2">
-                <Label htmlFor="item-name">Name</Label>
-                <Input
-                  id="item-name"
-                  name="name"
-                  value={isEditing ? formData?.name : item.name}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                  className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                  aria-label="Item name"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="item-description">Description</Label>
-                <Input
-                  id="item-description"
-                  name="description"
-                  value={isEditing ? formData?.description || '' : item.description || ''}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                  className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                  aria-label="Item description"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="item-quantity">Quantity</Label>
-                <Input
-                  id="item-quantity"
-                  name="quantity"
-                  type="number"
-                  value={isEditing ? formData?.quantity : item.quantity.toString()}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                  className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                  aria-label="Item quantity"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="item-tags">Tags</Label>
-                <TagManagement
-                  tags={isEditing ? selectedTags : item.tags}
-                  onChange={handleTagsChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="item-created">Created</Label>
-                <Input
-                  id="item-created"
-                  value={new Date(item.createdAt).toLocaleDateString()}
-                  readOnly
-                  className="cursor-default focus:outline-none"
-                  aria-label="Item creation date"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="item-updated">Last Updated</Label>
-                <Input
-                  id="item-updated"
-                  value={new Date(item.updatedAt).toLocaleDateString()}
-                  readOnly
-                  className="cursor-default focus:outline-none"
-                  aria-label="Item last updated date"
-                />
-              </div>
-            </form>
-          </form>
+          <ItemForm
+            item={item}
+            isEditing={isEditing}
+            formData={formData}
+            selectedTags={selectedTags}
+            onInputChange={handleInputChange}
+            onTagsChange={handleTagsChange}
+            onSubmit={handleSubmit}
+          />
         </div>
       </div>
 
@@ -343,34 +267,13 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
         entityName={item.name}
       />
 
-      <Dialog open={isImageDeleteConfirmOpen} onOpenChange={setIsImageDeleteConfirmOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-5 w-5" />
-              Delete Selected Images
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-3">
-            <p className="text-sm text-muted-foreground">
-              This will permanently delete {imagesToDelete.length} image
-              {imagesToDelete.length > 1 ? 's' : ''}. This action cannot be undone.
-            </p>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => setIsImageDeleteConfirmOpen(false)}
-              disabled={isUpdating}
-            >
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={submitUpdate} disabled={isUpdating}>
-              {isUpdating ? 'Deleting...' : 'Delete Images'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ImageDeleteModal
+        isOpen={isImageDeleteConfirmOpen}
+        onClose={() => setIsImageDeleteConfirmOpen(false)}
+        count={imagesToDelete.length}
+        onConfirm={submitUpdate}
+        isDeleting={isUpdating}
+      />
     </Section>
   )
 }
