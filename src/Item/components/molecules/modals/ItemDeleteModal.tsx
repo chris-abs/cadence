@@ -1,4 +1,5 @@
 import { AlertTriangle } from 'lucide-react'
+
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
 
 interface ImageDeleteModalProps {

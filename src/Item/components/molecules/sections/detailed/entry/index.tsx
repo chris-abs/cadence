@@ -1,4 +1,3 @@
-// components/molecules/sections/detailed/Entry/index.tsx
 import { useState } from 'react'
 import { Pencil, Trash2, MoreVertical, X, Upload } from 'lucide-react'
 
@@ -22,10 +21,10 @@ import { DeleteModal } from '@/Global/components/organisms/modals'
 import { cn } from '@/Global/lib/utils'
 import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
+import { ImageDeleteModal } from '@/Item/components/molecules/modals'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
 import { ItemForm } from './form'
-import { ImageDeleteModal } from '../../../modals/ItemDeleteModal'
 
 interface ItemEntryProps {
   item: Item | null
