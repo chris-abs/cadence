@@ -13,6 +13,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Input,
   Label,
   PlaceholderImage,
 } from '@/Global/components/atoms'
@@ -177,12 +178,29 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
             <div className="w-64 relative">
               <Carousel className="w-full">
                 <CarouselContent>
-                  {item.images.length === 0 && !isEditing ? (
+                  {item.images.length === 0 ? (
                     <CarouselItem>
                       <div className="p-1">
                         <div className="overflow-hidden rounded-lg border">
                           <PlaceholderImage />
                         </div>
+                        {isEditing && (
+                          <div className="mt-2 flex justify-center">
+                            <label className="cursor-pointer">
+                              <Input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                multiple
+                                onChange={handleImageUpload}
+                              />
+                              <Button variant="outline" size="sm">
+                                <Upload className="h-4 w-4 mr-2" />
+                                Upload Images
+                              </Button>
+                            </label>
+                          </div>
+                        )}
                       </div>
                     </CarouselItem>
                   ) : (
@@ -221,19 +239,19 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                       ))}
                       {isEditing && (
                         <CarouselItem>
-                          <div className="p-1">
-                            <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <Upload className="h-6 w-6 mb-2" />
-                                <p className="text-sm text-gray-500">Click to upload</p>
-                              </div>
-                              <input
+                          <div className="p-1 flex items-center justify-center h-full">
+                            <label className="cursor-pointer">
+                              <Input
                                 type="file"
                                 className="hidden"
                                 accept="image/*"
                                 multiple
                                 onChange={handleImageUpload}
                               />
+                              <Button variant="outline">
+                                <Upload className="h-4 w-4 mr-2" />
+                                Add More Images
+                              </Button>
                             </label>
                           </div>
                         </CarouselItem>
@@ -241,8 +259,12 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                     </>
                   )}
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
+                {item.images.length > 0 && (
+                  <>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </>
+                )}
               </Carousel>
             </div>
           </div>
