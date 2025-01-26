@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Pencil, Trash2, MoreVertical, X, Upload } from 'lucide-react'
 
 import {
+  Input,
+  Label,
   Button,
   Carousel,
   CarouselContent,
@@ -12,8 +14,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Input,
-  Label,
   PlaceholderImage,
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
@@ -21,33 +21,43 @@ import { DeleteModal } from '@/Global/components/organisms/modals'
 import { cn } from '@/Global/lib/utils'
 import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
-import { ImageDeleteModal } from '@/Item/components/molecules/modals'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
 import { ItemForm } from './form'
+import { ImageDeleteModal } from '../../../modals'
 
 interface ItemEntryProps {
   item: Item | null
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateItemData) => Promise<void>
-  isUpdating?: boolean
+  isUpdating: boolean
 }
 
 export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: ItemEntryProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [imagesToUpload, setImagesToUpload] = useState<File[]>([])
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isImageDeleteConfirmOpen, setIsImageDeleteConfirmOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateItemData> | null>(null)
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const { data: allTags } = useTags()
 
-  if (!item?.name) return emptyStateComponent || null
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [previewUrls])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setImagesToUpload(Array.from(e.target.files))
+      const files = Array.from(e.target.files)
+      setImagesToUpload(files)
+
+      previewUrls.forEach((url) => URL.revokeObjectURL(url))
+      const newPreviewUrls = files.map((file) => URL.createObjectURL(file))
+      setPreviewUrls(newPreviewUrls)
     }
   }
 
@@ -55,6 +65,10 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
     setImagesToDelete((prev) =>
       prev.includes(imageUrl) ? prev.filter((url) => url !== imageUrl) : [...prev, imageUrl],
     )
+  }
+
+  if (!item?.name) {
+    return emptyStateComponent || null
   }
 
   const handleEdit = () => {
@@ -74,6 +88,8 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
     setSelectedTags([])
     setImagesToDelete([])
     setImagesToUpload([])
+    previewUrls.forEach((url) => URL.revokeObjectURL(url))
+    setPreviewUrls([])
     setIsEditing(false)
   }
 
@@ -177,7 +193,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
             <div className="w-64 relative">
               <Carousel className="w-full">
                 <CarouselContent>
-                  {item.images.length === 0 ? (
+                  {item.images.length === 0 && previewUrls.length === 0 ? (
                     <CarouselItem>
                       <div className="p-1">
                         <div className="overflow-hidden rounded-lg border">
@@ -187,31 +203,59 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                     </CarouselItem>
                   ) : (
                     <>
-                      {item.images.map((image, index) => (
-                        <CarouselItem key={image.id}>
-                          <div className="p-1 relative">
-                            <div
-                              className={cn(
-                                'overflow-hidden rounded-lg border',
-                                imagesToDelete.includes(image.url) &&
-                                  'border-2 border-destructive/50',
+                      {item.images
+                        .filter((image) => !imagesToDelete.includes(image.url))
+                        .map((image, index) => (
+                          <CarouselItem key={image.id}>
+                            <div className="p-1 relative">
+                              <div
+                                className={cn(
+                                  'overflow-hidden rounded-lg border',
+                                  imagesToDelete.includes(image.url) &&
+                                    'border-2 border-destructive/50',
+                                )}
+                              >
+                                <img
+                                  src={image.url}
+                                  alt={`${item.name} - ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              {isEditing && (
+                                <button
+                                  onClick={() => handleImageDelete(image.url)}
+                                  className={cn(
+                                    'absolute top-2 right-2 p-1 rounded-full text-white',
+                                    imagesToDelete.includes(image.url)
+                                      ? 'bg-destructive/70 hover:bg-destructive'
+                                      : 'bg-destructive/90 hover:bg-destructive',
+                                  )}
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
                               )}
-                            >
+                            </div>
+                          </CarouselItem>
+                        ))}
+
+                      {previewUrls.map((url, index) => (
+                        <CarouselItem key={`preview-${index}`}>
+                          <div className="p-1 relative">
+                            <div className="overflow-hidden rounded-lg border">
                               <img
-                                src={image.url}
-                                alt={`${item.name} - ${index + 1}`}
+                                src={url}
+                                alt={`New upload preview ${index + 1}`}
                                 className="w-full h-full object-cover"
                               />
                             </div>
                             {isEditing && (
                               <button
-                                onClick={() => handleImageDelete(image.url)}
-                                className={cn(
-                                  'absolute top-2 right-2 p-1 rounded-full text-white',
-                                  imagesToDelete.includes(image.url)
-                                    ? 'bg-destructive/70 hover:bg-destructive'
-                                    : 'bg-destructive/90 hover:bg-destructive',
-                                )}
+                                onClick={() => {
+                                  URL.revokeObjectURL(url)
+                                  setPreviewUrls((prev) => prev.filter((u) => u !== url))
+                                  setImagesToUpload((prev) => prev.filter((_, i) => i !== index))
+                                }}
+                                className="absolute top-2 right-2 p-1 rounded-full bg-destructive/90 text-white hover:bg-destructive"
                               >
                                 <X className="h-4 w-4" />
                               </button>
@@ -222,31 +266,32 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                     </>
                   )}
                 </CarouselContent>
-                {item.images.length > 0 && (
+                {(item.images.length > 0 || previewUrls.length > 0) && (
                   <>
                     <CarouselPrevious />
                     <CarouselNext />
                   </>
                 )}
               </Carousel>
+
               {isEditing && (
                 <div className="mt-4">
-                  <label className="cursor-pointer">
-                    <Input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageUpload}
-                    />
-                    <Button
-                      variant="outline"
-                      className="w-full flex items-center justify-center gap-2"
-                    >
+                  <Input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    id="file-upload"
+                  />
+                  <Button variant="outline" className="w-full" asChild>
+                    <label htmlFor="file-upload" className="flex items-center justify-center gap-2">
                       <Upload className="h-4 w-4" />
-                      {item.images.length === 0 ? 'Upload Photo' : 'Upload More Photos'}
-                    </Button>
-                  </label>
+                      {item.images.length === 0 && previewUrls.length === 0
+                        ? 'Upload Photo'
+                        : 'Upload More Photos'}
+                    </label>
+                  </Button>
                 </div>
               )}
             </div>
@@ -277,7 +322,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
         onClose={() => setIsImageDeleteConfirmOpen(false)}
         count={imagesToDelete.length}
         onConfirm={submitUpdate}
-        isDeleting={isUpdating ?? false}
+        isDeleting={isUpdating}
       />
     </Section>
   )

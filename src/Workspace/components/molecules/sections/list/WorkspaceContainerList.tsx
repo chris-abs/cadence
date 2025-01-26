@@ -45,7 +45,7 @@ export function WorkspaceListSection({
         <CardHeader>
           <div className="flex justify-between items-center flex-shrink-0">
             <div className="flex flex-col gap-2">
-              <CardTitle className="gap-2">Workspaces</CardTitle>
+              <CardTitle className="gap-2 text-xl">Workspaces</CardTitle>
               <CardDescription>
                 Expand your workspaces to sort items into their containers!
               </CardDescription>
