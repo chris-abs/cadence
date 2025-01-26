@@ -184,23 +184,6 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                         <div className="overflow-hidden rounded-lg border">
                           <PlaceholderImage />
                         </div>
-                        {isEditing && (
-                          <div className="mt-2 flex justify-center">
-                            <label className="cursor-pointer">
-                              <Input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                multiple
-                                onChange={handleImageUpload}
-                              />
-                              <Button variant="outline" size="sm">
-                                <Upload className="h-4 w-4 mr-2" />
-                                Upload Images
-                              </Button>
-                            </label>
-                          </div>
-                        )}
                       </div>
                     </CarouselItem>
                   ) : (
@@ -237,25 +220,6 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                           </div>
                         </CarouselItem>
                       ))}
-                      {isEditing && (
-                        <CarouselItem>
-                          <div className="p-1 flex items-center justify-center h-full">
-                            <label className="cursor-pointer">
-                              <Input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                multiple
-                                onChange={handleImageUpload}
-                              />
-                              <Button variant="outline">
-                                <Upload className="h-4 w-4 mr-2" />
-                                Add More Images
-                              </Button>
-                            </label>
-                          </div>
-                        </CarouselItem>
-                      )}
                     </>
                   )}
                 </CarouselContent>
@@ -266,6 +230,26 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                   </>
                 )}
               </Carousel>
+              {isEditing && (
+                <div className="mt-4">
+                  <label className="cursor-pointer">
+                    <Input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                    />
+                    <Button
+                      variant="outline"
+                      className="w-full flex items-center justify-center gap-2"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {item.images.length === 0 ? 'Upload Photo' : 'Upload More Photos'}
+                    </Button>
+                  </label>
+                </div>
+              )}
             </div>
           </div>
 
