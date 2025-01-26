@@ -272,7 +272,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
         onClose={() => setIsImageDeleteConfirmOpen(false)}
         count={imagesToDelete.length}
         onConfirm={submitUpdate}
-        isDeleting={isUpdating}
+        isDeleting={isUpdating ?? false}
       />
     </Section>
   )
