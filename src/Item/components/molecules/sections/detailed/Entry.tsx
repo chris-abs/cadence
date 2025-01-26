@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { Pencil, Trash2, MoreVertical, X, Upload } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical, X, Upload, AlertTriangle } from 'lucide-react'
 
 import {
-  Input,
   Label,
   Button,
   Carousel,
@@ -15,6 +14,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   PlaceholderImage,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  Input,
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Global/components/organisms/modals'
@@ -37,6 +41,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
   const [imagesToUpload, setImagesToUpload] = useState<File[]>([])
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isImageDeleteConfirmOpen, setIsImageDeleteConfirmOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateItemData> | null>(null)
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const { data: allTags } = useTags()
@@ -48,7 +53,11 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
   }
 
   const handleImageDelete = (imageUrl: string) => {
-    setImagesToDelete((prev) => [...prev, imageUrl])
+    if (imagesToDelete.includes(imageUrl)) {
+      setImagesToDelete((prev) => prev.filter((url) => url !== imageUrl))
+    } else {
+      setImagesToDelete((prev) => [...prev, imageUrl])
+    }
   }
 
   if (!item?.name) {
@@ -70,6 +79,8 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
   const handleCancel = () => {
     setFormData(null)
     setSelectedTags([])
+    setImagesToDelete([])
+    setImagesToUpload([])
     setIsEditing(false)
   }
 
@@ -97,8 +108,7 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const submitUpdate = async () => {
     if (!formData || !onUpdate) return
 
     const updateData: UpdateItemData = {
@@ -119,9 +129,19 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
       setSelectedTags([])
       setImagesToUpload([])
       setImagesToDelete([])
+      setIsImageDeleteConfirmOpen(false)
     } catch (error) {
       console.error('Failed to update item:', error)
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (imagesToDelete.length > 0) {
+      setIsImageDeleteConfirmOpen(true)
+      return
+    }
+    await submitUpdate()
   }
 
   return (
@@ -181,17 +201,28 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
                       {item.images.map((image, index) => (
                         <CarouselItem key={image.id}>
                           <div className="p-1 relative">
-                            <div className="overflow-hidden rounded-lg border">
+                            <div
+                              className={cn(
+                                'overflow-hidden rounded-lg border',
+                                imagesToDelete.includes(image.url) &&
+                                  'border-2 border-destructive/50',
+                              )}
+                            >
                               <img
                                 src={image.url}
                                 alt={`${item.name} - ${index + 1}`}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            {isEditing && !imagesToDelete.includes(image.url) && (
+                            {isEditing && (
                               <button
                                 onClick={() => handleImageDelete(image.url)}
-                                className="absolute top-2 right-2 p-1 rounded-full bg-destructive text-white hover:bg-destructive/90"
+                                className={cn(
+                                  'absolute top-2 right-2 p-1 rounded-full text-white',
+                                  imagesToDelete.includes(image.url)
+                                    ? 'bg-destructive/70 hover:bg-destructive'
+                                    : 'bg-destructive/90 hover:bg-destructive',
+                                )}
                               >
                                 <X className="h-4 w-4" />
                               </button>
@@ -228,76 +259,78 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
           </div>
 
           <form className="space-y-2" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <Label htmlFor="item-name">Name</Label>
-              <Input
-                id="item-name"
-                name="name"
-                value={isEditing ? formData?.name : item.name}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-                className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                aria-label="Item name"
-              />
-            </div>
+            <form className="space-y-2" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="item-name">Name</Label>
+                <Input
+                  id="item-name"
+                  name="name"
+                  value={isEditing ? formData?.name : item.name}
+                  onChange={handleInputChange}
+                  readOnly={!isEditing}
+                  className={cn(!isEditing && 'cursor-default focus:outline-none')}
+                  aria-label="Item name"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="item-description">Description</Label>
-              <Input
-                id="item-description"
-                name="description"
-                value={isEditing ? formData?.description || '' : item.description || ''}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-                className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                aria-label="Item description"
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="item-description">Description</Label>
+                <Input
+                  id="item-description"
+                  name="description"
+                  value={isEditing ? formData?.description || '' : item.description || ''}
+                  onChange={handleInputChange}
+                  readOnly={!isEditing}
+                  className={cn(!isEditing && 'cursor-default focus:outline-none')}
+                  aria-label="Item description"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="item-quantity">Quantity</Label>
-              <Input
-                id="item-quantity"
-                name="quantity"
-                type="number"
-                value={isEditing ? formData?.quantity : item.quantity.toString()}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-                className={cn(!isEditing && 'cursor-default focus:outline-none')}
-                aria-label="Item quantity"
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="item-quantity">Quantity</Label>
+                <Input
+                  id="item-quantity"
+                  name="quantity"
+                  type="number"
+                  value={isEditing ? formData?.quantity : item.quantity.toString()}
+                  onChange={handleInputChange}
+                  readOnly={!isEditing}
+                  className={cn(!isEditing && 'cursor-default focus:outline-none')}
+                  aria-label="Item quantity"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="item-tags">Tags</Label>
-              <TagManagement
-                tags={isEditing ? selectedTags : item.tags}
-                onChange={handleTagsChange}
-                readOnly={!isEditing}
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="item-tags">Tags</Label>
+                <TagManagement
+                  tags={isEditing ? selectedTags : item.tags}
+                  onChange={handleTagsChange}
+                  readOnly={!isEditing}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="item-created">Created</Label>
-              <Input
-                id="item-created"
-                value={new Date(item.createdAt).toLocaleDateString()}
-                readOnly
-                className="cursor-default focus:outline-none"
-                aria-label="Item creation date"
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="item-created">Created</Label>
+                <Input
+                  id="item-created"
+                  value={new Date(item.createdAt).toLocaleDateString()}
+                  readOnly
+                  className="cursor-default focus:outline-none"
+                  aria-label="Item creation date"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="item-updated">Last Updated</Label>
-              <Input
-                id="item-updated"
-                value={new Date(item.updatedAt).toLocaleDateString()}
-                readOnly
-                className="cursor-default focus:outline-none"
-                aria-label="Item last updated date"
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="item-updated">Last Updated</Label>
+                <Input
+                  id="item-updated"
+                  value={new Date(item.updatedAt).toLocaleDateString()}
+                  readOnly
+                  className="cursor-default focus:outline-none"
+                  aria-label="Item last updated date"
+                />
+              </div>
+            </form>
           </form>
         </div>
       </div>
@@ -309,6 +342,35 @@ export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: I
         entityId={item.id}
         entityName={item.name}
       />
+
+      <Dialog open={isImageDeleteConfirmOpen} onOpenChange={setIsImageDeleteConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              Delete Selected Images
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-3">
+            <p className="text-sm text-muted-foreground">
+              This will permanently delete {imagesToDelete.length} image
+              {imagesToDelete.length > 1 ? 's' : ''}. This action cannot be undone.
+            </p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setIsImageDeleteConfirmOpen(false)}
+              disabled={isUpdating}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={submitUpdate} disabled={isUpdating}>
+              {isUpdating ? 'Deleting...' : 'Delete Images'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Section>
   )
 }
