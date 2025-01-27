@@ -17,12 +17,20 @@ export function useUpdateUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: UpdateUserData) => api.put<User>(`/users/${data.id}`, data),
+    mutationFn: async (data: UpdateUserData) => {
+      const formData = new FormData()
+      formData.append('firstName', data.firstName || '')
+      formData.append('lastName', data.lastName || '')
+
+      if (data.image instanceof File) {
+        formData.append('image', data.image)
+      }
+
+      return api.put<User>(`/users/${data.id}`, formData)
+    },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(queryKeys.user, updatedUser)
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.user,
-      })
+      queryClient.invalidateQueries({ queryKey: queryKeys.user })
     },
   })
 }

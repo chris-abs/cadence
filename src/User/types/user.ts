@@ -17,6 +17,5 @@ export interface UpdateUserData {
   id: number
   firstName?: string
   lastName?: string
-  email?: string
-  imageUrl?: string
+  image?: File
 }

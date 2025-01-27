@@ -15,22 +15,24 @@ import { User } from '@/User/types'
 
 interface UserProfileSectionProps {
   user: User
-  onUpdate: (data: Partial<User>) => Promise<void>
+  onUpdate: (data: Partial<User> & { image?: File }) => Promise<void>
   isUpdating: boolean
 }
 
 export function UserProfileSection({ user, onUpdate, isUpdating }: UserProfileSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState<Partial<User>>({
+  const [formData, setFormData] = useState<Partial<User> & { image?: File }>({
     firstName: user.firstName,
     lastName: user.lastName,
-    imageUrl: user.imageUrl,
   })
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      // TODO: file upload imlementation
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }))
     }
   }
 
@@ -43,8 +45,15 @@ export function UserProfileSection({ user, onUpdate, isUpdating }: UserProfileSe
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onUpdate(formData)
+    await onUpdate({
+      ...formData,
+      id: user.id,
+    })
     setIsEditing(false)
+    setFormData({
+      firstName: user.firstName,
+      lastName: user.lastName,
+    })
   }
 
   return (
@@ -60,9 +69,14 @@ export function UserProfileSection({ user, onUpdate, isUpdating }: UserProfileSe
             <div className="flex gap-2">
               <Button
                 variant="ghost"
-                onClick={() => setIsEditing(false)}
+                onClick={() => {
+                  setIsEditing(false)
+                  setFormData({
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                  })
+                }}
                 disabled={isUpdating}
-                className="hover:bg-contrast-accent"
               >
                 Cancel
               </Button>
@@ -76,8 +90,10 @@ export function UserProfileSection({ user, onUpdate, isUpdating }: UserProfileSe
         <div className="flex gap-8">
           <div className="flex flex-col items-center gap-2">
             <Avatar className="h-24 w-24">
-              {formData.imageUrl ? (
-                <AvatarImage src={formData.imageUrl} />
+              {formData.image ? (
+                <AvatarImage src={URL.createObjectURL(formData.image)} />
+              ) : user.imageUrl ? (
+                <AvatarImage src={user.imageUrl} />
               ) : (
                 <AvatarFallback className="text-lg">
                   {`${user.firstName[0]}${user.lastName[0]}`}
@@ -105,7 +121,7 @@ export function UserProfileSection({ user, onUpdate, isUpdating }: UserProfileSe
             )}
           </div>
 
-          <form className="flex-1 space-y-4">
+          <form className="flex-1 space-y-4" onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
