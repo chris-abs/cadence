@@ -1,4 +1,3 @@
-// src/pages/ItemsPage.tsx
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -30,7 +29,6 @@ function ItemsPage() {
         name: item.name,
         description: item.description,
         quantity: item.quantity,
-        imgUrl: item.imgUrl,
         tags: item.tags.map((tag) => tag.id),
       })
     }
