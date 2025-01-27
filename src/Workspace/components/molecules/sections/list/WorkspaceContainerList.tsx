@@ -72,9 +72,7 @@ export function WorkspaceListSection({
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      <AccordionTrigger className="hover:no-underline">
-                        Unassigned Containers
-                      </AccordionTrigger>
+                      <AccordionTrigger>Unassigned Containers</AccordionTrigger>
                     </CardTitle>
                   </CardHeader>
                   <AccordionContent>
