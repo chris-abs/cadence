@@ -32,7 +32,7 @@ export function UnsortedContainersSection({ containers }: UnsortedContainersSect
   return (
     <div
       ref={setNodeRef}
-      className={cn('transition-all duration-200', isExpanded ? 'h-[355px]' : 'h-[150px]')}
+      className={cn('transition-all duration-200', isExpanded ? 'h-[285px]' : 'h-[140px]')}
     >
       <Section className="h-full overflow-hidden">
         <Accordion
