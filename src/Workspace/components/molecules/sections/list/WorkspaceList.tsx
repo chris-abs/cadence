@@ -1,6 +1,5 @@
 import { useDroppable } from '@dnd-kit/core'
 import { Link } from '@tanstack/react-router'
-import { ChevronRight } from 'lucide-react'
 import {
   Card,
   CardHeader,
@@ -42,7 +41,7 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
         <AccordionItem value={`workspace-${workspace.id}`} className="border-none">
           <Card>
             <CardHeader>
-              <AccordionTrigger className="w-full">
+              <AccordionTrigger parent className="w-full">
                 <div className="flex justify-between items-center w-full">
                   <div className="flex flex-col gap-1">
                     <CardTitle>{workspace.name}</CardTitle>
@@ -53,12 +52,6 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                       <Muted>({containers.length} containers)</Muted>
-                      <ChevronRight
-                        className={cn(
-                          'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
-                          'data-[state=open]:rotate-90',
-                        )}
-                      />
                     </div>
                     <Link
                       to="/workspaces/$workspaceId"
