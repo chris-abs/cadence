@@ -44,7 +44,7 @@ export function WorkspaceListSection({
             type="multiple"
             value={openWorkspaces}
             onValueChange={setOpenWorkspaces}
-            className="space-y-4 -pr-2"
+            className="space-y-4"
           >
             {workspaces
               .filter((workspace) => visibleWorkspaceIds.has(workspace.id))

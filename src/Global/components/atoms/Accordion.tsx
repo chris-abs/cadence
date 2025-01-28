@@ -28,7 +28,7 @@ const AccordionTrigger = React.forwardRef<
       className={cn(
         'flex flex-1 items-center justify-between text- font-medium transition-all text-left [&[data-state=open]>svg]:rotate-90',
         parent
-          ? 'text-foreground hover:underline'
+          ? 'text-foreground hover:underline hover:text-accordion-foreground'
           : 'text-accordion hover:text-accordion-foreground',
         className,
       )}

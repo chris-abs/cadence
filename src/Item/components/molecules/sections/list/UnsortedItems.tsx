@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useDroppable } from '@dnd-kit/core'
-import { ChevronRight } from 'lucide-react'
 
 import {
   ScrollArea,
@@ -54,22 +53,16 @@ export function UnsortedItemsSection({ items }: UnsortedItemsSectionProps) {
               )}
             >
               <CardHeader className="py-6">
-                <AccordionTrigger className="hover:no-underline w-full">
+                <AccordionTrigger parent className="hover:no-underline w-full">
                   <div className="flex justify-between items-center w-full">
                     <div className="flex flex-col gap-1">
-                      <CardTitle>Unsorted Items</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <CardTitle>Unsorted Items</CardTitle>
+                        <Muted>({items.length} items)</Muted>
+                      </div>
                       <CardDescription className="text-muted-foreground m-0">
-                        All new Items will be placed here! Drag them into containers to sort them
+                        All new Items will be placed here! Drag them into Containers to sort them
                       </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Muted>({items.length} items)</Muted>
-                      <ChevronRight
-                        className={cn(
-                          'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
-                          isExpanded && 'rotate-90',
-                        )}
-                      />
                     </div>
                   </div>
                 </AccordionTrigger>

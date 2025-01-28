@@ -16,7 +16,7 @@ import { Workspace } from '@/Workspace/types'
 import { ContainerRow } from '@/Container/components/molecules/sections/list/ContainerRow'
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
-import { NoContent } from '@/Global/components/molecules'
+import { Muted, NoContent } from '@/Global/components/molecules'
 import { WorkspacePopover } from './WorkspacePopover'
 
 interface WorkspaceListSectionProps {
@@ -97,13 +97,21 @@ export function WorkspaceListSection({
             )}
 
             {workspaces
-              .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
+              .filter(
+                (workspace) =>
+                  visibleWorkspaceIds.has(workspace.id) && (workspace.containers?.length ?? 0) > 0,
+              )
               .map((workspace) => (
                 <AccordionItem key={workspace.id} value={`workspace-${workspace.id}`}>
                   <Card>
                     <CardHeader>
-                      <AccordionTrigger>
-                        <CardTitle>{workspace.name}</CardTitle>
+                      <AccordionTrigger parent className="hover:no-underline">
+                        <CardTitle>
+                          <div className="flex items-center gap-2">
+                            <CardTitle>{workspace.name}</CardTitle>
+                            <Muted>({workspace?.containers?.length || 0} containers)</Muted>
+                          </div>
+                        </CardTitle>
                       </AccordionTrigger>
                       {workspace.description && (
                         <CardDescription>{workspace.description}</CardDescription>

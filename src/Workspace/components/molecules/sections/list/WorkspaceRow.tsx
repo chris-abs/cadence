@@ -19,6 +19,7 @@ import { cn } from '@/Global/lib'
 import { Workspace } from '@/Workspace/types'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { Container } from '@/Container/types'
+import { Link } from '@tanstack/react-router'
 
 interface WorkspaceRowProps {
   workspace: Workspace
@@ -35,17 +36,27 @@ export function WorkspaceRow({ workspace, containers }: WorkspaceRowProps) {
     <AccordionItem value={`workspace-${workspace.id}`} className="border-none">
       <Card>
         <CardHeader>
-          <AccordionTrigger className="w-full">
+          <AccordionTrigger parent className="hover:no-underline w-full">
             <div className="flex justify-between items-center w-full">
               <div className="flex flex-col gap-1">
-                <CardTitle>{workspace.name}</CardTitle>
-                {workspace.description && (
-                  <CardDescription className="text-muted-foreground">
-                    {workspace.description}
-                  </CardDescription>
-                )}
+                <div className="flex items-center gap-2">
+                  <CardTitle>{workspace.name}</CardTitle>
+                  <Muted>({containers.length} containers)</Muted>
+                </div>
+
+                <CardDescription className="text-muted-foreground">
+                  {workspace.description}
+                </CardDescription>
               </div>
-              <Muted>({containers.length} containers)</Muted>
+              <div className="flex flex-col gap-1">
+                <Link
+                  to="/workspaces/$workspaceId"
+                  params={{ workspaceId: workspace.id.toString() }}
+                  className="hover:text-primary"
+                >
+                  <Muted className="hover:text-foreground">Workspace Details →</Muted>
+                </Link>
+              </div>
             </div>
           </AccordionTrigger>
         </CardHeader>

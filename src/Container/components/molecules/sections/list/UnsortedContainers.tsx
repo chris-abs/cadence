@@ -54,7 +54,8 @@ export function UnsortedContainersSection({ containers }: UnsortedContainersSect
                     <div className="flex flex-col gap-1">
                       <CardTitle>Unassigned Containers</CardTitle>
                       <CardDescription className="text-muted-foreground m-0">
-                        Drop containers here to remove them from their workspaces
+                        All new Containers will be placed here! Drag them into Workspaces to sort
+                        them
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
