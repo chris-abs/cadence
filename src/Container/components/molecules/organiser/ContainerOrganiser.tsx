@@ -74,7 +74,7 @@ export function ContainerOrganiser({
       onDragEnd={handleDragEnd}
       collisionDetection={pointerWithin}
     >
-      <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
+      <div className="flex flex-col gap-4 h-[calc(100vh-10rem)]">
         <div className="flex-1 min-h-0">
           <Section className="h-full overflow-hidden">
             <WorkspaceListSection
