@@ -1,7 +1,20 @@
+import { useState } from 'react'
 import { useDroppable } from '@dnd-kit/core'
-
-import { ScrollArea } from '@/Global/components/atoms'
-import { H3 } from '@/Global/components/molecules'
+import { ChevronRight } from 'lucide-react'
+import {
+  ScrollArea,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/Global/components/atoms'
+import { Section } from '@/Global/components/molecules'
+import { Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { Container } from '@/Container/types'
@@ -11,32 +24,73 @@ interface UnsortedContainersSectionProps {
 }
 
 export function UnsortedContainersSection({ containers }: UnsortedContainersSectionProps) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: 'unsorted',
-  })
+  const { setNodeRef, isOver } = useDroppable({ id: 'unsorted' })
+  const [openSections, setOpenSections] = useState<string[]>(['unsorted'])
+  const isExpanded = openSections.includes('unsorted')
 
   return (
     <div
-      className={cn('h-full flex flex-col transition-colors', isOver && 'bg-primary/5 rounded-lg')}
       ref={setNodeRef}
+      className={cn('transition-all duration-200', isExpanded ? 'h-[355px]' : 'h-[150px]')}
     >
-      <div className="flex justify-between items-center mb-4">
-        <H3>Unassigned Containers</H3>
-        <span className="text-sm text-muted-foreground">({containers.length} containers)</span>
-      </div>
-
-      <ScrollArea
-        className={cn(
-          'flex-1 rounded-lg transition-colors',
-          isOver && 'border-2 border-primary/20',
-        )}
-      >
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-2 pb-4">
-          {containers.map((container) => (
-            <SortableContainerCard key={container.id} container={container} />
-          ))}
-        </div>
-      </ScrollArea>
+      <Section className="h-full overflow-hidden">
+        <Accordion
+          type="multiple"
+          value={openSections}
+          onValueChange={setOpenSections}
+          className="h-full"
+        >
+          <AccordionItem value="unsorted" className="border-none h-full">
+            <Card
+              className={cn(
+                'transition-all duration-200 h-full',
+                isOver && 'bg-primary/5 border-primary/20',
+              )}
+            >
+              <CardHeader className="py-6">
+                <AccordionTrigger className="hover:no-underline w-full">
+                  <div className="flex justify-between items-center w-full">
+                    <div className="flex flex-col gap-1">
+                      <CardTitle>Unassigned Containers</CardTitle>
+                      <CardDescription className="text-muted-foreground m-0">
+                        Drop containers here to remove them from their workspaces
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Muted>({containers.length} containers)</Muted>
+                      <ChevronRight
+                        className={cn(
+                          'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
+                          isExpanded && 'rotate-90',
+                        )}
+                      />
+                    </div>
+                  </div>
+                </AccordionTrigger>
+              </CardHeader>
+              <AccordionContent>
+                <CardContent>
+                  <ScrollArea className="h-[200px]">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 pb-4">
+                      {containers.map((container) => (
+                        <div
+                          key={container.id}
+                          className={cn(
+                            'transition-opacity duration-200',
+                            isExpanded ? 'opacity-100' : 'opacity-0',
+                          )}
+                        >
+                          <SortableContainerCard container={container} />
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        </Accordion>
+      </Section>
     </div>
   )
 }
