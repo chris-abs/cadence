@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { ChevronRight } from 'lucide-react'
+
 import {
   ScrollArea,
   Accordion,

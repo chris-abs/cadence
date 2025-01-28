@@ -10,7 +10,6 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 
-import { ScrollArea } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { UnsortedContainersSection } from '@/Container/components/molecules/sections/list/UnsortedContainers'
@@ -76,24 +75,21 @@ export function ContainerOrganiser({
       collisionDetection={pointerWithin}
     >
       <div className="flex flex-col gap-4 h-[calc(100vh-8rem)]">
-        <div className="flex-grow min-h-0">
-          <Section className="h-full">
-            <ScrollArea className="h-full">
-              <div className="space-y-4 pr-4">
-                {workspaces
-                  .filter((workspace) => visibleWorkspaceIds.has(workspace.id))
-                  .map((workspace) => (
-                    <WorkspaceListSection
-                      key={workspace.id}
-                      workspace={workspace}
-                      containers={containers.filter((c) => c.workspaceId === workspace.id)}
-                    />
-                  ))}
-              </div>
-            </ScrollArea>
+        <div className="flex-1 min-h-0">
+          <Section className="h-full overflow-hidden">
+            <WorkspaceListSection
+              workspaces={workspaces}
+              containers={containers}
+              visibleWorkspaceIds={visibleWorkspaceIds}
+              setVisibleWorkspaceIds={setVisibleWorkspaceIds}
+            />
           </Section>
         </div>
-        <UnsortedContainersSection containers={unassignedContainers} />
+        <div className="h-[32.5%] min-h-[220px]">
+          <Section className="h-full">
+            <UnsortedContainersSection containers={unassignedContainers} />
+          </Section>
+        </div>
       </div>
       <DragOverlay>
         {activeId && containers && (
