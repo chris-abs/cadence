@@ -1,15 +1,19 @@
 import { useDroppable } from '@dnd-kit/core'
 import { Link } from '@tanstack/react-router'
-
+import { ChevronRight } from 'lucide-react'
 import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  ScrollArea,
   Accordion,
-  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  ScrollArea,
-  ScrollBar,
+  AccordionContent,
 } from '@/Global/components/atoms'
-import { H3, Muted } from '@/Global/components/molecules'
+import { Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { Container } from '@/Container/types'
@@ -34,59 +38,57 @@ export function WorkspaceListSection({ workspace, containers }: WorkspaceListSec
       ref={setNodeRef}
       className={cn('transition-colors', isOver && 'bg-primary/10 border-primary/20 rounded-lg')}
     >
-      <Accordion type="multiple">
-        <AccordionItem border value={`workspace-${workspace.id}`}>
-          <AccordionTrigger parent>
-            <div className="flex items-center justify-between w-full h-10">
-              <div className="flex items-center gap-2">
-                <H3>{workspace.name}</H3>
-                <span className="text-xs text-muted-foreground">
-                  ({containers.length} containers)
-                </span>
-              </div>
-              <Link
-                to="/workspaces/$workspaceId"
-                params={{ workspaceId: workspace.id.toString() }}
-                className="hover:text-primary"
-              >
-                <Muted className="hover:text-foreground">Workspace Details →</Muted>
-              </Link>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="flex">
-              <ScrollArea type="always" className="w-1 flex-1">
-                <div className="min-w-max">
-                  <div
-                    className={cn(
-                      'flex gap-4 pb-4 relative',
-                      isOver && 'translate-x-[296px] transition-transform duration-300',
+      <Accordion type="multiple" className="space-y-4">
+        <AccordionItem value={`workspace-${workspace.id}`} className="border-none">
+          <Card>
+            <CardHeader>
+              <AccordionTrigger className="w-full">
+                <div className="flex justify-between items-center w-full">
+                  <div className="flex flex-col gap-1">
+                    <CardTitle>{workspace.name}</CardTitle>
+                    {workspace.description && (
+                      <CardDescription>{workspace.description}</CardDescription>
                     )}
-                  >
-                    {containers.map((container) => (
-                      <div key={container.id}>
-                        {isOver && containers[0]?.id === container.id && (
-                          <div
-                            className="absolute left-0 top-0 border-2 border-dashed 
-                             border-primary/30 rounded-lg flex items-center 
-                             justify-center -translate-x-[296px]"
-                            style={{
-                              width: 280,
-                              height: 120,
-                            }}
-                          >
-                            <p className="text-sm text-muted-foreground">Drop here</p>
-                          </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Muted>({containers.length} containers)</Muted>
+                      <ChevronRight
+                        className={cn(
+                          'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
+                          'data-[state=open]:rotate-90',
                         )}
-                        <SortableContainerCard container={container} />
-                      </div>
-                    ))}
+                      />
+                    </div>
+                    <Link
+                      to="/workspaces/$workspaceId"
+                      params={{ workspaceId: workspace.id.toString() }}
+                      className="hover:text-primary"
+                    >
+                      <Muted className="hover:text-foreground">Workspace Details →</Muted>
+                    </Link>
                   </div>
                 </div>
-                <ScrollBar orientation="horizontal" className="w-full" />
-              </ScrollArea>
-            </div>
-          </AccordionContent>
+              </AccordionTrigger>
+            </CardHeader>
+            <AccordionContent>
+              <CardContent>
+                {containers.length === 0 ? (
+                  <div className="flex items-center justify-center h-[100px]">
+                    <Muted>No containers found for {workspace.name}. Add one to get started.</Muted>
+                  </div>
+                ) : (
+                  <ScrollArea className="h-[300px] w-full pr-4">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 pb-4">
+                      {containers.map((container) => (
+                        <SortableContainerCard key={container.id} container={container} />
+                      ))}
+                    </div>
+                  </ScrollArea>
+                )}
+              </CardContent>
+            </AccordionContent>
+          </Card>
         </AccordionItem>
       </Accordion>
     </div>
