@@ -64,6 +64,7 @@ export function TagOrganiser({ tags, isLoading: isTagsPropLoading }: TagOrganise
         onSave={handleSave}
       />
 
+      {/* TODO: fix type */}
       <ItemList
         items={displayedItems}
         selectedItemIds={selectedItemIds}

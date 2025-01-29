@@ -9,7 +9,7 @@ import {
   Input,
 } from '@/Global/components/atoms'
 import { SearchResults } from '@/Global/components/molecules'
-import { EntityType } from '@/Global/types'
+import { EntityType } from '@/Collection/types'
 
 interface EntitySearchProps {
   searchQuery: string

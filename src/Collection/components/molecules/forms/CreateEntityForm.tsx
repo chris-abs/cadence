@@ -7,7 +7,7 @@ import { Button } from '@/Global/components/atoms/Button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/Global/components/atoms/Form'
 import { Input } from '@/Global/components/atoms/Input'
 import { Alert, AlertDescription } from '@/Global/components/atoms/Alert'
-import { EntityType } from '@/Global/types'
+import { EntityType } from '@/Collection/types'
 
 const createEntitySchema = z.object({
   name: z.string().min(1, 'Name is required'),

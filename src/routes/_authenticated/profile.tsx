@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { User } from '@/User/types'
 import { useUpdateUser, useUser } from '@/User/queries/user'

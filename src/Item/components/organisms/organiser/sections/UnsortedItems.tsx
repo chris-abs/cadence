@@ -13,12 +13,11 @@ import {
   CardDescription,
   CardContent,
 } from '@/Global/components/atoms'
-import { Section } from '@/Global/components/molecules'
-import { Muted } from '@/Global/components/molecules/Typography'
-import { useSettingsStore } from '@/Global/stores/useSettingsStore'
-import { cn } from '@/Global/lib'
+import { Section, Muted } from '@/Global/components/molecules'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { Item } from '@/Item/types'
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
+import { cn } from '@/Global/lib'
 
 interface UnsortedItemsSectionProps {
   items: Item[]

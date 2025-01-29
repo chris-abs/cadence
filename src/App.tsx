@@ -1,6 +1,7 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
 import { queryClient } from '@/Global/lib/queryClient'
 import { useAuth } from './Global/hooks/useAuth'
 import { ThemeProvider, DragProvider } from '@/Global/providers'

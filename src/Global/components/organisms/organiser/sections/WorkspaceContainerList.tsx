@@ -12,12 +12,11 @@ import {
   CardDescription,
   CardContent,
 } from '@/Global/components/atoms'
+import { Muted, NoContent } from '@/Global/components/molecules'
+import { ContainerRow, WorkspacePopover } from '@/Container/components/organisms/organiser/sections'
 import { Workspace } from '@/Workspace/types'
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
-import { Muted, NoContent } from '@/Global/components/molecules'
-import { WorkspacePopover } from '../../../../../Container/components/organisms/organiser/sections/WorkspacePopover'
-import { ContainerRow } from '../../../../../Container/components/organisms/organiser/sections/ContainerRow'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]

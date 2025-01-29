@@ -1,4 +1,3 @@
-// src/pages/SettingsPage.tsx
 import { createFileRoute } from '@tanstack/react-router'
 import { Clock, Bell, Palette } from 'lucide-react'
 
@@ -46,7 +45,6 @@ function SettingsPage() {
             <H2>Settings</H2>
           </Section>
           <Section className="space-y-6">
-            {/* Appearance Settings */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -87,7 +85,6 @@ function SettingsPage() {
               </CardContent>
             </Card>
 
-            {/* Notification Settings */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -117,7 +114,6 @@ function SettingsPage() {
               </CardContent>
             </Card>
 
-            {/* Date & Time Settings */}
             {/* TODO: could use the user's preferred time for createdAt */}
             <Card>
               <CardHeader>
@@ -151,26 +147,3 @@ function SettingsPage() {
     </PageLayout>
   )
 }
-
-/*
-<Card>
-  <CardHeader>
-    <CardTitle className="flex items-center gap-2">
-      <Palette className="h-5 w-5" />
-      Appearance
-    </CardTitle>
-    <CardDescription>Customize how the application looks and feels</CardDescription>
-  </CardHeader>
-  <CardContent className="space-y-4">
-    <div className="flex items-center justify-between">
-      <div className="space-y-0.5">content</div>
-    </div>
-
-    <Separator />
-
-    <div className="flex items-center justify-between">
-      <div className="space-y-0.5">content</div>
-    </div>
-  </CardContent>
-</Card>
-*/

@@ -1,6 +1,6 @@
-import { EntityType } from '@/Global/types'
-import { useRecentEntities } from '@/Container/queries'
+import { EntityType } from '@/Collection/types'
 import { EntitySearch, EntityList } from './sections'
+import { useRecentEntities } from '@/Collection/queries'
 
 interface CollectionOrganiserProps {
   searchQuery: string

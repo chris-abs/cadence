@@ -1,7 +1,7 @@
 import { Section } from '@/Global/components/molecules'
 import { H2 } from '@/Global/components/molecules/Typography'
+import { ItemCatalogue } from '@/Tag/components/organisms/detail/sections'
 import { Item } from '@/Item/types'
-import { ItemCatalogue } from '../../../../../Tag/components/organisms/detail/sections/ItemCatalogue'
 
 interface ItemsListSectionProps {
   items: Item[]
