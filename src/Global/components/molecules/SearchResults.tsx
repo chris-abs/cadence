@@ -13,7 +13,13 @@ import {
   WorkspaceSearchResult,
 } from '@/Global/types'
 import { useSearch } from '@/Global/queries/search'
-import { ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from '../atoms'
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '../../../../Global/components/atoms'
 import { H3, Muted } from './Typography'
 import { cn } from '@/Global/lib'
 

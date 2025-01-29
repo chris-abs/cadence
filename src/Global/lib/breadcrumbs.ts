@@ -1,8 +1,8 @@
 import { useRouter } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 
+import { EntityType } from '@/Collection/types/collection'
 import { queryKeys } from './queryKeys'
-import { EntityType } from '../types'
 
 function getQueryKeyForEntity(type: 'workspace' | 'container' | 'item' | 'tag', id: number) {
   switch (type) {
@@ -32,6 +32,7 @@ export function useBreadcrumbs() {
 
   const listMatch = pathname.match(/^\/(workspaces|containers|items|tags)$/)
   if (listMatch) {
+    // todo: change from type assertion to type guard
     const entityType = listMatch[1] as EntityType
     return [
       { label: 'Dashboard', href: '/' },
