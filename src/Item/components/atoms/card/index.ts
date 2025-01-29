@@ -1,2 +1,2 @@
-export * from './Base'
+export * from './ItemCard'
 export * from './SortableItemCard'

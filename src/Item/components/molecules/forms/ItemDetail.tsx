@@ -3,7 +3,7 @@ import { cn } from '@/Global/lib/utils'
 import { UpdateItemData } from '@/Item/schemas'
 import { Item } from '@/Item/types'
 import { Tag } from '@/Tag/types'
-import { TagManagement } from '../TagManagement'
+import { TagManagement } from '../../organisms/detail/sections/TagManagement'
 
 interface ItemFormProps {
   item: Item

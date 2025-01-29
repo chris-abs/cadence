@@ -30,6 +30,7 @@ export async function fetchWithAuth<T>(endpoint: string, options: RequestInit = 
       headers,
     })
 
+    // todo: use type guard instead of type assertion
     const data = (await response.json().catch(() => ({}))) as ApiResponse<T>
 
     if (!response.ok) {
@@ -50,6 +51,7 @@ export async function fetchWithAuth<T>(endpoint: string, options: RequestInit = 
     if ((error as ApiError).statusCode) {
       throw error
     }
+    // todo: use type guard instead of type assertion
     throw createApiError(500, (error as Error).message || 'Unknown error occurred')
   }
 }

@@ -1,1 +1,1 @@
-export * from './ItemDeleteModal'
+export * from '../../../../../Item/components/organisms/modal/ImageDeleteModal'

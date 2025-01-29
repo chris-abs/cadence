@@ -6,8 +6,8 @@ import { AlertTriangle } from 'lucide-react'
 
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
 import { showEntityActionToast } from '@/Global/components/molecules/EntityActionToast'
-import { EntityType } from '@/Global/types'
-import { deleteCollectionEntity } from '@/Global/queries/collection'
+import { EntityType } from '@/Collection/types/collection'
+import { deleteCollectionEntity } from '@/Collection/queries/collection'
 
 interface DeleteModalProps {
   isOpen: boolean

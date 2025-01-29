@@ -3,11 +3,11 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { EntityPageHeader } from '@/Global/components/molecules'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { CreateItemModal } from '@/Item/components/organisms/ItemModal'
-import { useItems, useUpdateItem } from '@/Item/queries'
-import { ItemOrganiser } from '@/Item/components/molecules/organiser/ItemOrganiser'
 import { useWorkspaces } from '@/Workspace/queries'
 import { useContainers } from '@/Container/queries'
+import { ItemOrganiser } from '@/Item/components/organisms/organiser'
+import { CreateItemModal } from '@/Item/components/organisms/modal'
+import { useItems, useUpdateItem } from '@/Item/queries'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,

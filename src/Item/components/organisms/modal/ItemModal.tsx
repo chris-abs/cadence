@@ -12,7 +12,7 @@ import {
 } from '@/Global/components/atoms'
 import { useCreateItem } from '@/Item/queries'
 import { CreateItemData } from '@/Item/schemas'
-import { ItemForm } from '../molecules/forms/ItemForm'
+import { ItemForm } from '../../../../PENDING/Item/components/molecules/forms/ItemForm'
 
 interface CreateItemModalProps {
   isOpen: boolean

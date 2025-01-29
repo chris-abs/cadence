@@ -17,23 +17,28 @@ import {
   PlaceholderImage,
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
-import { DeleteModal } from 'src/Collection/components/organisms/modals'
+import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { cn } from '@/Global/lib/utils'
 import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
-import { ItemForm } from './form'
-import { ImageDeleteModal } from '../../../modals'
+import { ItemForm } from '../../../molecules/forms'
+import { ImageDeleteModal } from '../../modal'
 
-interface ItemEntryProps {
+interface ItemDetailsSectionProps {
   item: Item | null
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateItemData) => Promise<void>
   isUpdating: boolean
 }
 
-export function ItemEntry({ item, emptyStateComponent, onUpdate, isUpdating }: ItemEntryProps) {
+export function ItemDetailsSection({
+  item,
+  emptyStateComponent,
+  onUpdate,
+  isUpdating,
+}: ItemDetailsSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [imagesToUpload, setImagesToUpload] = useState<File[]>([])
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([])

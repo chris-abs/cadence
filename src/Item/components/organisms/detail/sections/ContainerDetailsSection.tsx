@@ -17,7 +17,7 @@ import { Container } from '@/Container/types'
 import { UpdateContainerData } from '@/Container/schemas'
 import { NotAssignedSection, Section } from '@/Global/components/molecules'
 
-interface ContainerSectionProps {
+interface ContainerDetailsSectionProps {
   container: Container | undefined
   emptyStateComponent?: React.ReactNode
   onUpdateContainer?: (data: UpdateContainerData) => Promise<void>
@@ -25,13 +25,13 @@ interface ContainerSectionProps {
   isUpdating?: boolean
 }
 
-export function ContainerSection({
+export function ContainerDetailsSection({
   container,
   emptyStateComponent,
   onUpdateContainer,
   onAssignOrReassign,
   isUpdating,
-}: ContainerSectionProps) {
+}: ContainerDetailsSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateContainerData> | null>(null)
