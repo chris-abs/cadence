@@ -15,11 +15,11 @@ import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { cn } from '@/Global/lib'
 import { Item } from '@/Item/types'
 
-interface ItemListProps {
+interface ItemCatalogueProps {
   items: Item[]
 }
 
-export function ItemList({ items }: ItemListProps) {
+export function ItemCatalogue({ items }: ItemCatalogueProps) {
   const sortedItems = items.filter((item) => item.container?.name)
   const unsortedItems = items.filter((item) => !item.container?.name)
 
@@ -75,6 +75,7 @@ function ItemGrid({ items }: { items: Item[] }) {
             )}
           >
             <div className="w-full h-40 relative bg-muted">
+              {/* TODO: fix broken item imageURL -> which image out of image array will be priority? */}
               {item.imgUrl ? (
                 <img src={item.imgUrl} alt={item.name} className="w-full h-full object-cover" />
               ) : (
@@ -124,4 +125,4 @@ function ItemGrid({ items }: { items: Item[] }) {
   )
 }
 
-export default ItemList
+export default ItemCatalogue

@@ -1,7 +1,7 @@
 import { Section } from '@/Global/components/molecules'
 import { H2 } from '@/Global/components/molecules/Typography'
 import { Item } from '@/Item/types'
-import { ItemList } from '../../catalogue/ItemCatalogue'
+import { ItemCatalogue } from './ItemCatalogue'
 
 interface ItemsListSectionProps {
   items: Item[]
@@ -19,7 +19,7 @@ export function ItemsListSection({ items, emptyStateComponent }: ItemsListSectio
         <header className="flex justify-between items-center">
           <H2 id="items-section-title">Tagged Items</H2>
         </header>
-        <ItemList items={items} />
+        <ItemCatalogue items={items} />
       </div>
     </Section>
   )
