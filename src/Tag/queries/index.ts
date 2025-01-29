@@ -31,6 +31,7 @@ export function useCreateTag() {
         return [...old, newTag]
       })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
     },
   })
 }
@@ -46,6 +47,7 @@ export function useUpdateTag() {
         return old.map((tag) => (tag.id === variables.id ? updatedTag : tag))
       })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
     },
   })
 }
@@ -75,6 +77,7 @@ export function useDeleteTag() {
         return old.filter((tag) => tag.id !== deletedId)
       })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
     },
   })
 }

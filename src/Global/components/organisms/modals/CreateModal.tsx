@@ -27,9 +27,8 @@ export function CreateModal({ isOpen, onClose, selectedType, onTypeChange }: Cre
     setError(null)
 
     try {
-      const response = await createCollectionEntity(selectedType, data)
+      const response = await createCollectionEntity(selectedType, data, queryClient)
       onClose()
-      queryClient.invalidateQueries({ queryKey: ['recent'] })
 
       showEntityActionToast({
         actionType: 'create',

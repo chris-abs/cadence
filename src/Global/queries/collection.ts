@@ -7,10 +7,14 @@ import { EntityType } from '../types'
 export async function createCollectionEntity(
   type: EntityType,
   data: { name: string },
+  queryClient: QueryClient,
 ): Promise<{ id: number }> {
   const response = await api.post<{ id: number }>(`/${type}s`, data)
-  const queryClient = new QueryClient()
-  queryClient.invalidateQueries({ queryKey: [type + 's'] })
+  if (type === 'tag') {
+    queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
+  } else {
+    queryClient.invalidateQueries({ queryKey: [type + 's'] })
+  }
   queryClient.invalidateQueries({ queryKey: queryKeys.recent })
   return response
 }
@@ -18,7 +22,12 @@ export async function createCollectionEntity(
 export async function deleteCollectionEntity(type: EntityType, id: number): Promise<void> {
   await api.delete(`/${type}s/${id}`)
   const queryClient = new QueryClient()
-  queryClient.invalidateQueries({ queryKey: [type + 's'] })
-  queryClient.invalidateQueries({ queryKey: [type + 's', id] })
+  if (type === 'tag') {
+    queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
+    queryClient.invalidateQueries({ queryKey: queryKeys.tags.detail(id) })
+  } else {
+    queryClient.invalidateQueries({ queryKey: [type + 's'] })
+    queryClient.invalidateQueries({ queryKey: [type + 's', id] })
+  }
   queryClient.invalidateQueries({ queryKey: queryKeys.recent })
 }

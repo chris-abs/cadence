@@ -71,6 +71,7 @@ export function useUpdateItem() {
       queryClient.setQueryData(queryKeys.items.detail(updatedItem.id), updatedItem)
       queryClient.invalidateQueries({ queryKey: queryKeys.items.list })
       queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+      queryClient.invalidateQueries({ queryKey: queryKeys.tags })
 
       if (updatedItem.containerId) {
         queryClient.invalidateQueries({
