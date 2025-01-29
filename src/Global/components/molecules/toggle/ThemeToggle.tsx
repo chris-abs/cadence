@@ -5,7 +5,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../../../../Global/components/atoms'
+} from '@/Global/components/atoms'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 export function ThemeToggle() {

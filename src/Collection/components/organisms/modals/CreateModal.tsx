@@ -3,11 +3,11 @@ import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { CreateEntityForm } from '@/Global/components/molecules/forms/CreateEntityForm'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
 import { showEntityActionToast } from '@/Global/components/molecules/EntityActionToast'
-import { EntityType } from '@/Global/types'
-import { createCollectionEntity } from '@/Global/queries/collection'
+import { EntityType } from '@/Collection/types'
+import { createCollectionEntity } from '@/Collection/queries/collection'
+import { CreateEntityForm } from '../../molecules/forms'
 
 interface CreateModalProps {
   isOpen: boolean

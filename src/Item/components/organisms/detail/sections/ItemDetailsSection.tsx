@@ -23,7 +23,7 @@ import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
-import { ItemForm } from '../../../molecules/forms'
+import { ItemDetail } from '../../../molecules/forms'
 import { ImageDeleteModal } from '../../modal'
 
 interface ItemDetailsSectionProps {
@@ -302,7 +302,7 @@ export function ItemDetailsSection({
             </div>
           </div>
 
-          <ItemForm
+          <ItemDetail
             item={item}
             isEditing={isEditing}
             formData={formData}

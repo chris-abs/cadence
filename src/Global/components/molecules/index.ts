@@ -1,7 +1,5 @@
 export * from './Breadcrumb'
 export * from './EntityActionToast'
-export * from '../../../../src/Collection/components/molecules/entity/EntityCard'
-export * from '../../../../src/Collection/components/molecules/entity/EntityEntry'
 export * from './EntityPageHeader'
 export * from './NoContent'
 export * from './SearchResults'

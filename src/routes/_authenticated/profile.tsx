@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { User } from '@/User/types'
-import { UserEmailSection, UserProfileSection } from '@/User/components/molecules/sections'
 import { useUpdateUser, useUser } from '@/User/queries/user'
+import { UserEmailSection, UserProfileSection } from '@/User/components/organisms/detail/sections'
 
 export const Route = createFileRoute('/_authenticated/profile')({
   component: UserPage,

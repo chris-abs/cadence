@@ -2,9 +2,9 @@ import { LucideIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/Global/components/atoms'
+import { Muted } from '@/Global/components/molecules'
+import { EntityType } from '@/Collection/types'
 import { EntityEntry } from './EntityEntry'
-import { EntityType } from '@/Global/types'
-import { Muted } from '../../../../../pending/Global/components/molecules/Typography'
 
 interface EntityCardProps {
   type: EntityType

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { LucideIcon } from 'lucide-react'
 
-import { EntityType } from '@/Global/types'
+import { EntityType } from '@/Collection/types'
 
 interface EntityEntryProps {
   id: number

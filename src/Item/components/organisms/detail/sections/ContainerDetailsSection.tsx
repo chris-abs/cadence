@@ -10,12 +10,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { H3, Muted } from '@/Global/components/molecules/Typography'
-import { DeleteModal } from 'src/Collection/components/organisms/modals/DeleteModal'
+import { NotAssignedSection, Section, H3, Muted } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib/utils'
+import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Container } from '@/Container/types'
 import { UpdateContainerData } from '@/Container/schemas'
-import { NotAssignedSection, Section } from '@/Global/components/molecules'
 
 interface ContainerDetailsSectionProps {
   container: Container | undefined

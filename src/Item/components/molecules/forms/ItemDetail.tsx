@@ -5,7 +5,7 @@ import { Item } from '@/Item/types'
 import { Tag } from '@/Tag/types'
 import { TagManagement } from '../../organisms/detail/sections/TagManagement'
 
-interface ItemFormProps {
+interface ItemDetailProps {
   item: Item
   isEditing: boolean
   formData: Partial<UpdateItemData> | null
@@ -15,7 +15,7 @@ interface ItemFormProps {
   onSubmit: (e: React.FormEvent) => void
 }
 
-export function ItemForm({
+export function ItemDetail({
   item,
   isEditing,
   formData,
@@ -23,7 +23,7 @@ export function ItemForm({
   onInputChange,
   onTagsChange,
   onSubmit,
-}: ItemFormProps) {
+}: ItemDetailProps) {
   return (
     <form className="space-y-2" onSubmit={onSubmit}>
       <div className="space-y-2">

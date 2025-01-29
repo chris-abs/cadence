@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { CreateModal } from 'src/Collection/components/organisms/modals'
-import { EntityType } from '@/Global/types'
-import { CollectionOrganizer } from '@/Collection/components/organisms/CollectionOrganizer'
+import { CollectionOrganiser } from '@/Collection/components/organisms/organiser'
+import { CreateModal } from '@/Collection/components/organisms/modals'
+import { EntityType } from '@/Collection/types'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Dashboard,
@@ -22,7 +23,7 @@ function Dashboard() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <CollectionOrganizer
+        <CollectionOrganiser
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onCreateEntity={handleCreate}

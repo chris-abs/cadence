@@ -1,6 +1,7 @@
 import { Box, FolderOpen, Package, Tags } from 'lucide-react'
-import { EntityCard } from '@/Global/components/molecules'
-import { RecentResponse } from '@/Global/types'
+
+import { EntityCard } from '@/Collection/components/molecules/entity'
+import { RecentResponse } from '@/Collection/types'
 
 interface EntityListProps {
   recentEntities?: RecentResponse

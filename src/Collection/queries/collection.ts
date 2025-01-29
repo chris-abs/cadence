@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query'
 
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { api } from '@/Global/utils/api'
-import { EntityType } from '../types/collection'
+import { EntityType } from '../types'
 
 export async function createCollectionEntity(
   type: EntityType,

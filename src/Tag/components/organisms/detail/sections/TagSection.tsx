@@ -13,12 +13,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
+import { H3, Muted } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib/utils'
-import { DeleteModal } from 'src/Collection/components/organisms/modals/DeleteModal'
 import { ColourOption, Colour, COLOURS } from '@/Global/types/colours'
+import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Tag } from '@/Tag/types'
 import { UpdateTagData } from '@/Tag/schemas'
-import { H3, Muted } from '@/Global/components/molecules'
 
 interface TagSectionProps {
   tag: Tag | null

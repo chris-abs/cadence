@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/Global/components/atoms'
 import { H3, Muted, Section } from '@/Global/components/molecules'
 import { User } from '@/User/types'
-import { EmailChangeModal } from '../../organisms/modals/EmailChangeModal'
+import { EmailChangeModal } from '@/User/components/organisms/modals'
 
 interface UserEmailSectionProps {
   user: User

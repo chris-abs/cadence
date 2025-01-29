@@ -11,12 +11,12 @@ import {
 } from '@dnd-kit/core'
 
 import { Section } from '@/Global/components/molecules'
+import { WorkspaceListSection } from '@/Global/components/organisms/organiser/sections'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
-import { UnsortedItemsSection } from '@/Item/components/molecules/sections/list/UnsortedItems'
 import { Item } from '@/Item/types'
-import { WorkspaceListSection } from '@/Workspace/components/molecules/sections/list/WorkspaceContainerList'
 import { Workspace } from '@/Workspace/types'
 import { Container } from '@/Container/types'
+import { UnsortedItemsSection } from './sections'
 
 interface ItemOrganiserProps {
   items: Item[]
