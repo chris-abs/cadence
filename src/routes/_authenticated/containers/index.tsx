@@ -3,10 +3,10 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { EntityPageHeader } from '@/Global/components/molecules'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { CreateContainerModal } from '@/Container/components/organisms/ContainerModal'
 import { useContainers, useUpdateContainer } from '@/Container/queries'
-import { ContainerOrganiser } from '@/Container/components/molecules/organiser/ContainerOrganiser'
 import { useWorkspaces } from '@/Workspace/queries'
+import { ContainerOrganiser } from '@/Container/components/organisms/organiser/ContainerOrganiser'
+import { CreateContainerModal } from '@/Container/components/organisms/modals/ContainerModal'
 
 export const Route = createFileRoute('/_authenticated/containers/')({
   component: ContainersPage,

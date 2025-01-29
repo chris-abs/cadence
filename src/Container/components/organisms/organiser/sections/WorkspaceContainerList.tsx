@@ -13,11 +13,11 @@ import {
   CardContent,
 } from '@/Global/components/atoms'
 import { Workspace } from '@/Workspace/types'
-import { ContainerRow } from '@/Container/components/molecules/sections/list/ContainerRow'
 import { Container } from '@/Container/types'
 import { Item } from '@/Item/types'
 import { Muted, NoContent } from '@/Global/components/molecules'
 import { WorkspacePopover } from './WorkspacePopover'
+import { ContainerRow } from './ContainerRow'
 
 interface WorkspaceListSectionProps {
   workspaces: Workspace[]

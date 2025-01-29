@@ -12,10 +12,9 @@ import {
 
 import { Section } from '@/Global/components/molecules'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
-import { UnsortedContainersSection } from '@/Container/components/molecules/sections/list/UnsortedContainers'
 import { Container } from '@/Container/types'
-import { WorkspaceListSection } from '@/Workspace/components/molecules/sections/list/WorkspaceList'
 import { Workspace } from '@/Workspace/types'
+import { UnsortedContainersSection, WorkspaceListSection } from './sections'
 
 interface ContainerOrganiserProps {
   containers: Container[]

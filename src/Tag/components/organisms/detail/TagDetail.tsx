@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { ItemsListSection } from '@/Global/components/organisms/detail/sections'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
 import { useUpdateTag } from '@/Tag/queries'
 import { UpdateTagData } from '@/Tag/schemas'
 import { Tag } from '@/Tag/types'
-import { TagSection, ItemsListSection } from './sections'
+import { TagSection } from './sections'
 
 interface TagDetailProps {
   tag: Tag
