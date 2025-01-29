@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { EntityPageHeader, Section } from '@/Global/components/molecules'
-import { TagCatalogue } from '@/Tag/components/molecules/catalogue/TagCatalogue'
+import { TagOrganiser } from '@/Tag/components/molecules/organiser/TagOrganiser'
 import { CreateTagModal } from '@/Tag/components/organisms/TagModal'
 import { useTags } from '@/Tag/queries'
 
@@ -25,7 +25,7 @@ function TagsPage() {
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
           <EntityPageHeader title="Tags" entityType="tag" onAdd={handleAdd} />
           <Section className="flex-1">
-            <TagCatalogue tags={tags ?? []} isLoading={isLoading} />
+            <TagOrganiser tags={tags ?? []} isLoading={isLoading} />
           </Section>
         </div>
       </div>
