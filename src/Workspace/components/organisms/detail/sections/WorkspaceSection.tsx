@@ -11,8 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
-import { DeleteModal } from 'src/Collection/components/organisms/modals/DeleteModal'
 import { cn } from '@/Global/lib/utils'
+import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Workspace } from '@/Workspace/types'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 
