@@ -4,12 +4,12 @@ import { ScrollArea } from '@/Global/components/atoms'
 import { Workspace } from '@/Workspace/types'
 import { H3, Muted } from '@/Global/components/molecules'
 
-interface WorkspaceListProps {
+interface WorkspaceCatalogueProps {
   workspaces: Workspace[]
   isLoading?: boolean
 }
 
-export function WorkspaceList({ workspaces, isLoading }: WorkspaceListProps) {
+export function WorkspaceCatalogue({ workspaces, isLoading }: WorkspaceCatalogueProps) {
   if (isLoading) {
     return (
       <div className="space-y-2" role="status" aria-label="Loading workspaces">

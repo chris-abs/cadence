@@ -49,6 +49,9 @@ export function ItemCard({ item }: ItemCardProps) {
     )
   }
 
+  {
+    /* TODO: Fix invalid dom nesting */
+  }
   return (
     <Link to="/items/$itemId" params={{ itemId: item.id.toString() }} className="block w-[280px]">
       <article className={cn(baseCardClasses, 'overflow-hidden h-[200px] flex flex-col')}>

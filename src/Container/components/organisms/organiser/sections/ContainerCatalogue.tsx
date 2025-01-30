@@ -15,7 +15,7 @@ import { Container } from '@/Container/types'
 import { Workspace } from '@/Workspace/types'
 import { useUpdateContainer } from '@/Container/queries'
 
-interface ContainerListProps {
+interface ContainerCatalogueProps {
   containers: Container[]
   workspaces: Workspace[]
   isLoading?: boolean
@@ -23,7 +23,7 @@ interface ContainerListProps {
 
 type FilterType = 'all' | 'assigned' | 'unassigned'
 
-export function ContainerList({ containers, workspaces, isLoading }: ContainerListProps) {
+export function ContainerCatalogue({ containers, workspaces, isLoading }: ContainerCatalogueProps) {
   const [filter, setFilter] = useState<FilterType>('all')
   const updateContainer = useUpdateContainer()
 

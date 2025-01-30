@@ -196,6 +196,7 @@ export function ItemDetailsSection({
           <div className="row-span-4 flex flex-col items-center justify-center">
             <Label className="text-center mb-1.5">Image</Label>
             <div className="w-64 relative">
+              {/* TODO: non-unique key warning */}
               <Carousel className="w-full">
                 <CarouselContent>
                   {item.images.length === 0 && previewUrls.length === 0 ? (
