@@ -1,5 +1,6 @@
-import { Button, Input } from '@/Global/components/atoms'
+import { Button } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
+import { SearchInput } from '@/Global/components/molecules/SearchInput'
 
 interface ItemSearchProps {
   searchQuery: string
@@ -19,11 +20,11 @@ export function ItemSearch({
   return (
     <Section>
       <div className="flex items-center gap-4">
-        <Input
-          placeholder="Search items..."
+        <SearchInput
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="max-w-md"
+          onChange={onSearchChange}
+          placeholder="Search for items.."
+          className="max-w-xl"
         />
         <Button
           variant="default"

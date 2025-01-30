@@ -1,4 +1,4 @@
-import { Plus, Box, FolderOpen, Package, Tags, Search } from 'lucide-react'
+import { Plus, Box, FolderOpen, Package, Tags } from 'lucide-react'
 
 import {
   Button,
@@ -6,10 +6,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Input,
 } from '@/Global/components/atoms'
 import { SearchResults } from '@/Global/components/molecules'
 import { EntityType } from '@/Collection/types'
+import { SearchInput } from '@/Global/components/molecules/SearchInput'
 
 interface EntitySearchProps {
   searchQuery: string
@@ -49,36 +49,14 @@ export function EntitySearch({ searchQuery, onSearchChange, onCreateEntity }: En
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="relative w-3/4 mx-auto">
-        <div className="relative pb-4 pt-4">
-          <div className="relative cursor-text">
-            <Input
-              type="search"
-              placeholder="Search across all collections..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="h-12 pl-4 pr-16 radius-xl [&::-webkit-search-cancel-button]:hidden"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => onSearchChange('')}
-                className="absolute right-14 top-0 h-12 px-2 hover:text-foreground text-muted-foreground"
-              >
-                ✕
-              </button>
-            )}
-            <Button
-              variant="default"
-              size="icon"
-              className="absolute right-0 top-0 radius-xl rounded-l-none h-12 w-12"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-        {searchQuery.trim() && (
+      <div className="relative w-3/4 py-6 mx-auto">
+        <SearchInput
+          value={searchQuery}
+          onChange={onSearchChange}
+          placeholder="Search across all collections..."
+        >
           <SearchResults query={searchQuery} onClose={() => onSearchChange('')} />
-        )}
+        </SearchInput>
       </div>
     </div>
   )
