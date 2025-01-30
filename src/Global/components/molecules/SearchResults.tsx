@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 
 import { useDebounce } from '@/Global/hooks/useDebounce'
 import { getSearchResultsByEntityType } from '@/Global/utils/search'
+import { useSearch } from '@/Global/queries/search'
+import { H3, Muted } from './Typography'
+import { cn } from '@/Global/lib'
 import {
   ContainerSearchResult,
   ItemSearchResult,
@@ -11,11 +14,8 @@ import {
   SearchType,
   TagSearchResult,
   WorkspaceSearchResult,
-} from '@/Global/types'
-import { useSearch } from '@/Global/queries/search'
+} from '@/Collection/types/search'
 import { ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from '../atoms'
-import { H3, Muted } from './Typography'
-import { cn } from '@/Global/lib'
 
 const searchTypes: { type: SearchType; icon: typeof Box; label: string }[] = [
   { type: 'workspace', icon: Box, label: 'Workspaces' },
@@ -179,7 +179,7 @@ const ResultsList = ({ results, type, Icon, onClose }: ResultsListProps) => (
             <H3 className="truncate text-sm">{result.name}</H3>
             {type === 'item' && (
               <Muted className="truncate">
-                Container:{' '}
+                Container: {/* TODO: Sort this shit out */}
                 {(result as ItemSearchResult).containerName
                   ? `${(result as ItemSearchResult).containerName}${
                       (result as ItemSearchResult).containerLocation

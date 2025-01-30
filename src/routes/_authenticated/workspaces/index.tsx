@@ -3,9 +3,9 @@ import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { EntityPageHeader, Section } from '@/Global/components/molecules'
-import { WorkspaceList } from '@/Workspace/components/molecules/catalogue/WorkspaceCatalogue'
-import { CreateWorkspaceModal } from '@/Workspace/components/organisms/WorkspaceModal'
 import { useWorkspaces } from '@/Workspace/queries'
+import { CreateWorkspaceModal } from '@/Workspace/components/organisms/modals'
+import { WorkspaceCatalogue } from '@/Workspace/components/organisms/organiser/sections'
 
 export const Route = createFileRoute('/_authenticated/workspaces/')({
   component: WorkspacesPage,
@@ -26,7 +26,7 @@ function WorkspacesPage() {
           <EntityPageHeader title="Workspaces" entityType="workspace" onAdd={handleAdd} />
           <Section>
             <div className="flex-1">
-              <WorkspaceList workspaces={workspaces ?? []} isLoading={isLoading} />
+              <WorkspaceCatalogue workspaces={workspaces ?? []} isLoading={isLoading} />
             </div>
           </Section>
         </div>

@@ -26,7 +26,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@collection/*": ["./src/Collection/*"],
       "@container/*": ["./src/Container/*"],
+      "@pending/*": ["./src/PENDING/*"],
       "@global/*": ["src/Global/*"],
       "@item/*": ["./src/Item/*"],
       "@tag/*": ["./src/Tag/*"],

@@ -2,8 +2,8 @@ import { Plus } from 'lucide-react'
 import { useRouter } from '@tanstack/react-router'
 
 import { Button } from '@/Global/components/atoms'
-import { EntityType } from '@/Global/types'
 import { H1 } from './Typography'
+import { EntityType } from '@/Collection/types'
 
 interface EntityPageHeaderProps {
   title: string

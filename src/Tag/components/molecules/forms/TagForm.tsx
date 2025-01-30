@@ -24,6 +24,7 @@ interface TagFormProps {
   isLoading?: boolean
 }
 
+// TODO: fix broken types
 export function TagForm({ onSubmit, error, isLoading }: TagFormProps) {
   const form = useForm<CreateTagData>({
     resolver: zodResolver(createTagSchema),

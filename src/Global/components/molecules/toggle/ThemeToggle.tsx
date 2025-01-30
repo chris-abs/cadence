@@ -1,5 +1,11 @@
 import { Moon, Sun, Monitor } from 'lucide-react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../atoms'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/Global/components/atoms'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 export function ThemeToggle() {

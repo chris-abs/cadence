@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { SearchResponse } from '../types'
+import { SearchResponse } from '@/Collection/types/search'
 
 export function useSearch(query: string, options?: { enabled?: boolean }) {
   return useQuery({

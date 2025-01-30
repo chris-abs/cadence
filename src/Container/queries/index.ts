@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { RecentResponse } from '@/Global/types'
 import { Container } from '../types'
 import { CreateContainerData, UpdateContainerData } from '../schemas'
 import { Item } from '@/Item/types'
@@ -17,13 +16,6 @@ function isItemWithContainer(data: unknown): data is Item & { container: { id: n
     'id' in data.container &&
     typeof data.container.id === 'number'
   )
-}
-
-export function useRecentEntities() {
-  return useQuery({
-    queryKey: queryKeys.recent,
-    queryFn: () => api.get<RecentResponse>('/recent'),
-  })
 }
 
 export function useContainer(id: number) {
