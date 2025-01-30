@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
@@ -16,10 +17,18 @@ import { Tag } from '@/Tag/types'
 interface TagSelectorProps {
   tags: Tag[]
   selectedTagIds: string[]
+  selectedItemIds: Set<number>
   onTagToggle: (values: string[]) => void
+  onSave: () => void
 }
 
-export function TagSelector({ tags, selectedTagIds, onTagToggle }: TagSelectorProps) {
+export function TagSelector({
+  tags,
+  selectedTagIds,
+  selectedItemIds,
+  onTagToggle,
+  onSave,
+}: TagSelectorProps) {
   return (
     <Section>
       <Card>
@@ -28,8 +37,29 @@ export function TagSelector({ tags, selectedTagIds, onTagToggle }: TagSelectorPr
             <div className="flex flex-col gap-2">
               <CardTitle className="gap-2 text-xl">All Tags</CardTitle>
               <CardDescription>
-                Select any number of tags and item to tag selected items, dont forget to save!{' '}
+                Select any number of tags and items to tag selected items, dont forget to save!{' '}
               </CardDescription>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                // onClick={handleCancel}
+                // disabled={isUpdating}
+                className="hover:bg-contrast-accent"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={onSave}
+                disabled={
+                  // isUpdating ||
+                  selectedTagIds.length === 0 || selectedItemIds.size === 0
+                }
+              >
+                Save Changes
+                {/* {isUpdating ? 'Saving...' : 'Save Changes'} */}
+              </Button>
             </div>
           </div>
         </CardHeader>

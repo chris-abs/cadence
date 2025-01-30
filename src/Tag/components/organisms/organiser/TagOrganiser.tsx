@@ -54,14 +54,14 @@ export function TagOrganiser({ tags, isLoading: isTagsPropLoading }: TagOrganise
 
   return (
     <div className="flex flex-col gap-6">
-      <ItemSearch
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+      <ItemSearch searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+      <TagSelector
+        onSave={handleSave}
+        tags={tags}
         selectedTagIds={selectedTagIds}
         selectedItemIds={selectedItemIds}
-        onSave={handleSave}
+        onTagToggle={handleTagToggle}
       />
-      <TagSelector tags={tags} selectedTagIds={selectedTagIds} onTagToggle={handleTagToggle} />
 
       {/* TODO: fix type */}
       <ItemList
