@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { NotAssignedSection } from '@/Global/components/molecules'
+import { EntityHeader } from '@/Global/components/molecules/headers'
 import { ItemsListSection } from '@/Global/components/organisms/detail/sections'
 import { ContainerSelectionModal } from '@/Container/components/organisms/modals'
 import { useUpdateContainer } from '@/Container/queries'
 import { UpdateContainerData } from '@/Container/schemas'
-import { CreateItemModal } from '@/Item/components/organisms/modal'
 import { Container } from '@/Container/types'
+import { CreateItemModal } from '@/Item/components/organisms/modal'
 
 interface ContainerDetailProps {
   container: Container
@@ -38,7 +39,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityPageHeader title={container.name} entityType="item" onAdd={handleAdd} />
+      <EntityHeader title={container.name} entityType="item" onAdd={handleAdd} />
 
       <ContainerSelectionModal
         container={container}

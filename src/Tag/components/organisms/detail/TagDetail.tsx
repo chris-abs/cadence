@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { NotAssignedSection } from '@/Global/components/molecules'
 import { ItemsListSection } from '@/Global/components/organisms/detail/sections'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
 import { useUpdateTag } from '@/Tag/queries'
 import { UpdateTagData } from '@/Tag/schemas'
 import { Tag } from '@/Tag/types'
 import { TagSection } from './sections'
+import { EntityHeader } from '@/Global/components/molecules/headers'
 
 interface TagDetailProps {
   tag: Tag
@@ -38,7 +39,7 @@ export function TagDetail({ tag }: TagDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityPageHeader title={tag.name} entityType="item" onAdd={handleAdd} />
+      <EntityHeader title={tag.name} entityType="item" onAdd={handleAdd} />
 
       <TagSection
         tag={tag}

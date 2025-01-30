@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
+import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { EntityPageHeader, Section } from '@/Global/components/molecules'
 import { useTags } from '@/Tag/queries'
 import { TagOrganiser } from '@/Tag/components/organisms/organiser/TagOrganiser'
 import { CreateTagModal } from '@/Tag/components/organisms/modals'
@@ -13,6 +13,7 @@ export const Route = createFileRoute('/_authenticated/tags/')({
 
 function TagsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const { data: tags, isLoading } = useTags()
 
   const handleAdd = () => {
@@ -23,10 +24,14 @@ function TagsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <EntityPageHeader title="Tags" entityType="tag" onAdd={handleAdd} />
-          <Section className="flex-1">
-            <TagOrganiser tags={tags ?? []} isLoading={isLoading} />
-          </Section>
+          <SearchEntityHeader
+            title="Tags"
+            entityType="tag"
+            onAdd={handleAdd}
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
+          <TagOrganiser tags={tags ?? []} isLoading={isLoading} searchQuery={searchQuery} />
         </div>
       </div>
       <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />

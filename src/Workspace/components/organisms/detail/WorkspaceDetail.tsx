@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { EntityPageHeader, NotAssignedSection } from '@/Global/components/molecules'
+import { NotAssignedSection } from '@/Global/components/molecules'
+import { EntityHeader } from '@/Global/components/molecules/headers'
 import { useUpdateWorkspace } from '@/Workspace/queries'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 import { CreateContainerModal } from '@/Container/components/organisms/modals'
@@ -37,7 +38,7 @@ export function WorkspaceDetail({ workspace }: WorkspaceDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityPageHeader title={workspace.name} entityType="container" onAdd={handleAdd} />
+      <EntityHeader title={workspace.name} entityType="container" onAdd={handleAdd} />
 
       <WorkspaceSection
         workspace={workspace}

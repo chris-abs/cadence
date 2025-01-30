@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { EntityPageHeader } from '@/Global/components/molecules'
+import { EntityHeader } from '@/Global/components/molecules/headers'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { useContainers, useUpdateContainer } from '@/Container/queries'
 import { useWorkspaces } from '@/Workspace/queries'
@@ -35,7 +35,7 @@ function ContainersPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <EntityPageHeader
+          <EntityHeader
             title="Containers"
             entityType="container"
             onAdd={() => setIsCreateModalOpen(true)}

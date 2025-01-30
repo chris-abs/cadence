@@ -2,10 +2,10 @@ import { Plus } from 'lucide-react'
 import { useRouter } from '@tanstack/react-router'
 
 import { Button } from '@/Global/components/atoms'
-import { H1 } from './Typography'
 import { EntityType } from '@/Collection/types'
+import { H1 } from '../Typography'
 
-interface EntityPageHeaderProps {
+interface EntityHeaderProps {
   title: string
   entityType: EntityType
   onAdd?: () => void
@@ -18,7 +18,7 @@ const entityAddRelations: Record<EntityType, EntityType | null> = {
   tag: 'item',
 }
 
-export function EntityPageHeader({ title, entityType, onAdd }: EntityPageHeaderProps) {
+export function EntityHeader({ title, entityType, onAdd }: EntityHeaderProps) {
   const router = useRouter()
   const isDetailPage = router.state.location.pathname.includes(`/${entityType}s/`)
 

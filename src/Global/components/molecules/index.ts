@@ -1,6 +1,5 @@
 export * from './Breadcrumb'
 export * from './EntityActionToast'
-export * from './EntityPageHeader'
 export * from './NoContent'
 export * from './SearchResults'
 export * from './SortableEntityCard'

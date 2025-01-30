@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { useUpdateItem } from '@/Item/queries'
-import { EntityPageHeader } from '@/Global/components/molecules'
+import { EntityHeader } from '@/Global/components/molecules/headers'
 import { ContainerSelectionModal } from '@/Container/components/organisms/modals'
 import { useUpdateContainer } from '@/Container/queries'
 import { UpdateContainerData } from '@/Container/schemas'
@@ -97,7 +97,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityPageHeader title={item.name} entityType="item" onAdd={handleAddTag} />
+      <EntityHeader title={item.name} entityType="item" onAdd={handleAddTag} />
 
       <ItemDetailsSection
         item={item}

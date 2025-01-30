@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { EntityPageHeader } from '@/Global/components/molecules'
+import { EntityHeader } from '@/Global/components/molecules/headers'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { useWorkspaces } from '@/Workspace/queries'
 import { useContainers } from '@/Container/queries'
@@ -38,11 +38,7 @@ function ItemsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <EntityPageHeader
-            title="Items"
-            entityType="item"
-            onAdd={() => setIsCreateModalOpen(true)}
-          />
+          <EntityHeader title="Items" entityType="item" onAdd={() => setIsCreateModalOpen(true)} />
 
           <ItemOrganiser
             items={items ?? []}

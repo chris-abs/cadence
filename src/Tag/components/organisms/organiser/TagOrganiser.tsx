@@ -4,17 +4,21 @@ import { useSearch } from '@/Global/queries/search'
 import { useItems } from '@/Item/queries'
 import { useUpdateItemTags } from '@/Tag/queries'
 import { Tag } from '@/Tag/types'
-import { TagSelector, ItemList, ItemSearch } from './sections'
+import { TagSelector, ItemList } from './sections'
 
 interface TagOrganiserProps {
   tags: Tag[]
   isLoading: boolean
+  searchQuery: string
 }
 
-export function TagOrganiser({ tags, isLoading: isTagsPropLoading }: TagOrganiserProps) {
+export function TagOrganiser({
+  tags,
+  isLoading: isTagsPropLoading,
+  searchQuery,
+}: TagOrganiserProps) {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [selectedItemIds, setSelectedItemIds] = useState<Set<number>>(new Set())
-  const [searchQuery, setSearchQuery] = useState('')
 
   const { data: items, isLoading: isItemsLoading } = useItems()
   const { data: searchResults, isLoading: isSearching } = useSearch(searchQuery, {
@@ -54,7 +58,6 @@ export function TagOrganiser({ tags, isLoading: isTagsPropLoading }: TagOrganise
 
   return (
     <div className="flex flex-col gap-6">
-      <ItemSearch searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <TagSelector
         onSave={handleSave}
         tags={tags}
@@ -63,7 +66,6 @@ export function TagOrganiser({ tags, isLoading: isTagsPropLoading }: TagOrganise
         onTagToggle={handleTagToggle}
       />
 
-      {/* TODO: fix type */}
       <ItemList
         items={displayedItems}
         selectedItemIds={selectedItemIds}

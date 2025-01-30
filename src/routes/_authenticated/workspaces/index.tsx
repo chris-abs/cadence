@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { EntityPageHeader, Section } from '@/Global/components/molecules'
+import { Section } from '@/Global/components/molecules'
+import { EntityHeader } from '@/Global/components/molecules/headers'
 import { useWorkspaces } from '@/Workspace/queries'
 import { CreateWorkspaceModal } from '@/Workspace/components/organisms/modals'
 import { WorkspaceCatalogue } from '@/Workspace/components/organisms/organiser/sections'
@@ -23,7 +24,7 @@ function WorkspacesPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
-          <EntityPageHeader title="Workspaces" entityType="workspace" onAdd={handleAdd} />
+          <EntityHeader title="Workspaces" entityType="workspace" onAdd={handleAdd} />
           <Section>
             <div className="flex-1">
               <WorkspaceCatalogue workspaces={workspaces ?? []} isLoading={isLoading} />
