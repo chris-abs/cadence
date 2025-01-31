@@ -50,6 +50,22 @@ export function ItemDetail({ item }: ItemDetailProps) {
     }
   }
 
+  const handleTagCreated = async (tagId: number) => {
+    try {
+      await updateItem.mutateAsync({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        quantity: item.quantity,
+        containerId: item.containerId,
+        tags: [...item.tags.map((tag) => tag.id), tagId],
+      })
+    } catch (err) {
+      toast.error('Failed to assign tag to item')
+      throw err
+    }
+  }
+
   const handleUpdateContainer = async (data: UpdateContainerData) => {
     try {
       await updateContainer.mutateAsync(data)
@@ -115,6 +131,8 @@ export function ItemDetail({ item }: ItemDetailProps) {
       <CreateTagModal
         isOpen={isCreateTagModalOpen}
         onClose={() => setIsCreateTagModalOpen(false)}
+        item={item}
+        onTagCreated={handleTagCreated}
       />
 
       <ContainerSelectionModal
