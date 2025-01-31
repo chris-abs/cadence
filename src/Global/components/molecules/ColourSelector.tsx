@@ -1,10 +1,10 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@/Global/components/atoms'
 import { Muted } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib/utils'
-import { ColourOption, Colour, COLOURS } from '@/Global/types/colours'
+import { COLOURS, ColourOption } from '@/Global/types/colours'
 
 interface ColourSelectorProps {
-  selectedColour: Colour | undefined
+  selectedColour: string | undefined
   onSelect: (colour: ColourOption) => void
   disabled?: boolean
   className?: string
@@ -16,6 +16,8 @@ export function ColourSelector({
   disabled,
   className,
 }: ColourSelectorProps) {
+  const selectedOption = COLOURS.find((c) => c.value === selectedColour)
+
   if (disabled) {
     return (
       <div
@@ -27,9 +29,7 @@ export function ColourSelector({
           className,
         )}
       >
-        <Muted className="!text-foreground">
-          {COLOURS.find((c) => c.value === selectedColour)?.name}
-        </Muted>
+        <Muted className="!text-foreground">{selectedOption?.name || 'No colour selected'}</Muted>
         <div
           className="w-4 h-4 rounded-full border border-border"
           style={{ backgroundColor: selectedColour }}
@@ -51,9 +51,7 @@ export function ColourSelector({
           )}
         >
           <div className="flex-1 flex items-center justify-between">
-            <Muted className="!text-foreground">
-              {COLOURS.find((c) => c.value === selectedColour)?.name}
-            </Muted>
+            <Muted className="!text-foreground">{selectedOption?.name || 'Select a colour'}</Muted>
             <div
               className="w-4 h-4 rounded-full border border-border"
               style={{ backgroundColor: selectedColour }}

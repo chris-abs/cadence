@@ -24,13 +24,11 @@ interface TagFormProps {
   isLoading?: boolean
 }
 
-// TODO: fix broken types
 export function TagForm({ onSubmit, error, isLoading }: TagFormProps) {
   const form = useForm<CreateTagData>({
     resolver: zodResolver(createTagSchema),
     defaultValues: {
       name: '',
-      colour: COLOURS[0],
     },
   })
 
@@ -66,22 +64,28 @@ export function TagForm({ onSubmit, error, isLoading }: TagFormProps) {
           name="colour"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Colour</FormLabel>
+              <FormLabel>Colour (optional)</FormLabel>
               <div className="flex flex-wrap gap-2">
                 {COLOURS.map((colour) => (
                   <button
-                    key={colour}
+                    key={colour.value}
                     type="button"
-                    className={`w-8 h-8 rounded-full border-2 transition-all ${
-                      field.value === colour
+                    className={`w-8 h-8 rounded-full border-2 transition-all group relative ${
+                      field.value === colour.value
                         ? 'border-primary scale-110'
                         : 'border-transparent hover:scale-105'
                     }`}
-                    style={{ backgroundColor: colour }}
-                    onClick={() => field.onChange(colour)}
-                  />
+                    style={{ backgroundColor: colour.value }}
+                    onClick={() => field.onChange(colour.value)}
+                  >
+                    <span className="sr-only">{colour.name}</span>
+                    <span className="absolute -top-8 scale-0 group-hover:scale-100 transition-transform bg-background text-foreground text-xs py-1 px-2 rounded border border-border whitespace-nowrap">
+                      {colour.name}
+                    </span>
+                  </button>
                 ))}
               </div>
+              <FormDescription>Select a colour for your tag</FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -1,11 +1,8 @@
 import * as z from 'zod'
 
-import { COLOURS } from '@/Global/types'
-
-// TODO: Fix type
 export const createTagSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  colour: z.enum(COLOURS).optional(),
+  colour: z.string().optional(),
   description: z.string().optional(),
 })
 

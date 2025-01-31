@@ -51,7 +51,7 @@ export function CreateTagModal({ isOpen, onClose }: CreateTagModalProps) {
         <DialogHeader>
           <DialogTitle>Create Tag</DialogTitle>
           <DialogDescription>
-            Create a new tag to help organise your items. Both name and color are required.
+            Create a new tag to help organise your items. Both name and colour are required.
           </DialogDescription>
         </DialogHeader>
         <TagForm onSubmit={handleSubmit} error={error} isLoading={createTag.isPending} />

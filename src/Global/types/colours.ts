@@ -1,9 +1,4 @@
-export interface ColourOption {
-  name: string
-  value: string
-}
-
-export const COLOURS: ColourOption[] = [
+export const COLOURS = [
   { name: 'Red', value: '#ef4444' },
   { name: 'Orange', value: '#f97316' },
   { name: 'Amber', value: '#f59e0b' },
@@ -15,4 +10,4 @@ export const COLOURS: ColourOption[] = [
   { name: 'Fuchsia', value: '#d946ef' },
 ] as const
 
-export type Colour = (typeof COLOURS)[number]['value']
+export type ColourOption = (typeof COLOURS)[number]

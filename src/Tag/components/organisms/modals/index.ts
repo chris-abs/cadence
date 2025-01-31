@@ -1,1 +1,1 @@
-export * from './TagModal'
+export * from './CreateTagModal'

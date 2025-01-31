@@ -12,10 +12,10 @@ import {
 } from '@/Global/components/atoms'
 import { ColourSelector, H3 } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib/utils'
-import { Colour, ColourOption } from '@/Global/types/colours'
 import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Tag } from '@/Tag/types'
 import { UpdateTagData } from '@/Tag/schemas'
+import { ColourOption } from '@/Global/types'
 
 interface TagSectionProps {
   tag: Tag | null
@@ -38,7 +38,7 @@ export function TagSection({ tag, emptyStateComponent, onUpdate, isUpdating }: T
       id: tag.id,
       name: tag.name,
       description: tag.description,
-      colour: tag.colour as Colour,
+      colour: tag.colour,
     })
     setIsEditing(true)
   }
