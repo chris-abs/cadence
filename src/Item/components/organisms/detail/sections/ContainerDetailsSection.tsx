@@ -3,7 +3,6 @@ import { Pencil, Trash2, MoreVertical, ArrowRight } from 'lucide-react'
 
 import {
   Button,
-  Input,
   Label,
   DropdownMenu,
   DropdownMenuContent,
@@ -11,10 +10,10 @@ import {
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
 import { NotAssignedSection, Section, H3, Muted } from '@/Global/components/molecules'
-import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Container } from '@/Container/types'
 import { UpdateContainerData } from '@/Container/schemas'
+import { ContainerDetailForm } from './ContainerDetailForm'
 
 interface ContainerDetailsSectionProps {
   container: Container | undefined
@@ -138,12 +137,7 @@ export function ContainerDetailsSection({
               QR Code
             </Label>
             <div
-              className={cn(
-                'w-64 h-64 rounded-lg p-3',
-                'border border-border',
-                'bg-background',
-                'transition-colors duration-200',
-              )}
+              className="w-64 h-64 rounded-lg p-3 border border-border bg-background"
               id="qr-code"
               role="img"
               aria-label={`QR Code for container ${container.name}`}
@@ -159,58 +153,13 @@ export function ContainerDetailsSection({
             </Muted>
           </div>
 
-          <form className="space-y-2" onSubmit={handleSubmit}>
-            {[
-              {
-                id: 'container-name',
-                label: 'Name',
-                name: 'name',
-                value: isEditing ? formData?.name : container.name,
-              },
-              {
-                id: 'container-number',
-                label: 'Container Number',
-                value: container.number ? `#${container.number}` : '',
-                readonly: true,
-              },
-              {
-                id: 'container-location',
-                label: 'Location',
-                name: 'location',
-                value: isEditing ? formData?.location || '' : container.location || '',
-              },
-              {
-                id: 'container-created',
-                label: 'Created',
-                value: new Date(container.createdAt).toLocaleDateString(),
-                readonly: true,
-              },
-              {
-                id: 'container-updated',
-                label: 'Last Updated',
-                value: new Date(container.updatedAt).toLocaleDateString(),
-                readonly: true,
-              },
-            ].map((field) => (
-              <div key={field.id} className="space-y-2">
-                <Label htmlFor={field.id}>{field.label}</Label>
-                <Input
-                  id={field.id}
-                  name={field.name}
-                  value={field.value}
-                  onChange={field.name ? handleInputChange : undefined}
-                  readOnly={field.readonly || !isEditing}
-                  className={cn(
-                    'bg-background text-foreground',
-                    'border-border',
-                    'placeholder:text-muted-foreground',
-                    (!isEditing || field.readonly) && 'cursor-default focus:outline-none',
-                  )}
-                  aria-label={`Container ${field.label.toLowerCase()}`}
-                />
-              </div>
-            ))}
-          </form>
+          <ContainerDetailForm
+            container={container}
+            isEditing={isEditing}
+            formData={formData}
+            onInputChange={handleInputChange}
+            onSubmit={handleSubmit}
+          />
         </div>
       </div>
 
