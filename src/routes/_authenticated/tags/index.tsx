@@ -29,7 +29,7 @@ function TagsPage() {
             entityType="tag"
             onAdd={handleAdd}
             searchValue={searchQuery}
-            onSearchChange={setSearchQuery}
+            onSearch={setSearchQuery}
           />
           <TagOrganiser tags={tags ?? []} isLoading={isLoading} searchQuery={searchQuery} />
         </div>

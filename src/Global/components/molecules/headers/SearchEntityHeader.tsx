@@ -16,7 +16,7 @@ interface SearchEntityHeaderProps {
   entityType: EntityType
   onAdd?: () => void
   searchValue: string
-  onSearchChange: (value: string) => void
+  onSearch: (value: string) => void
 }
 
 export function SearchEntityHeader({
@@ -24,7 +24,7 @@ export function SearchEntityHeader({
   entityType,
   onAdd,
   searchValue,
-  onSearchChange,
+  onSearch,
 }: SearchEntityHeaderProps) {
   return (
     <section className="bg-background border rounded-xl px-4 py-2 md:px-6">
@@ -33,7 +33,7 @@ export function SearchEntityHeader({
         <div className="flex items-center gap-2 md:gap-4 lg:gap-6">
           <CollapsibleSearch
             value={searchValue}
-            onChange={onSearchChange}
+            onSearch={onSearch}
             placeholder={`Search ${entityType}s...`}
           />
           {onAdd && (
