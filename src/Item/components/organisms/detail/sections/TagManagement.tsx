@@ -13,38 +13,25 @@ interface TagManagementProps {
 export function TagManagement({ tags, onChange, readOnly }: TagManagementProps) {
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleTagChange = (newTags: Tag[]) => {
-    onChange(newTags.map((tag) => tag.id))
+  const handleTagRemove = (tagToRemove: Tag) => {
+    const updatedTags = tags.filter((tag) => tag.id !== tagToRemove.id)
+    onChange(updatedTags.map((tag) => tag.id))
   }
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
         {tags.map((tag) => (
-          <div key={tag.id} className="tag-enter">
-            <Badge
-              tag={tag}
-              onRemove={
-                readOnly
-                  ? undefined
-                  : () => {
-                      const tagElement = document.getElementById(`tag-${tag.id}`)
-                      if (tagElement) {
-                        tagElement.classList.remove('tag-enter')
-                        tagElement.classList.add('tag-exit')
-                        setTimeout(() => {
-                          handleTagChange(tags.filter((t) => t.id !== tag.id))
-                        }, 200)
-                      }
-                    }
-              }
-            />
-          </div>
+          <Badge
+            key={tag.id}
+            tag={tag}
+            onRemove={readOnly ? undefined : () => handleTagRemove(tag)}
+          />
         ))}
         {!readOnly && (
           <TagSelector
             selectedTags={tags}
-            onChange={handleTagChange}
+            onChange={(newTags) => onChange(newTags.map((tag) => tag.id))}
             isOpen={isOpen}
             onOpenChange={setIsOpen}
           />
