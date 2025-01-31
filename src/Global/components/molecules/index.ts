@@ -1,4 +1,5 @@
 export * from './Breadcrumb'
+export * from './ColourSelector'
 export * from './EntityActionToast'
 export * from './NoContent'
 export * from './SearchResults'
