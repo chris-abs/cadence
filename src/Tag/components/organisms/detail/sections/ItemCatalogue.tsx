@@ -75,9 +75,12 @@ function ItemGrid({ items }: { items: Item[] }) {
             )}
           >
             <div className="w-full h-40 relative bg-muted">
-              {/* TODO: fix broken item imageURL -> which image out of image array will be priority? */}
-              {item.imgUrl ? (
-                <img src={item.imgUrl} alt={item.name} className="w-full h-full object-cover" />
+              {item.images && item.images.length > 0 ? (
+                <img
+                  src={item.images[0].url}
+                  alt={item.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <PlaceholderImage />
               )}

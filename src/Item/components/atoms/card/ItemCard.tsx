@@ -56,9 +56,8 @@ export function ItemCard({ item }: ItemCardProps) {
     <Link to="/items/$itemId" params={{ itemId: item.id.toString() }} className="block w-[280px]">
       <article className={cn(baseCardClasses, 'overflow-hidden h-[200px] flex flex-col')}>
         <div className="w-full h-24 relative bg-muted">
-          {/* TODO: Needs updating to use the new item image structure */}
-          {item.imgUrl ? (
-            <img src={item.imgUrl} alt={item.name} className="w-full h-full object-cover" />
+          {item.images && item.images.length > 0 ? (
+            <img src={item.images[0].url} alt={item.name} className="w-full h-full object-cover" />
           ) : (
             <PlaceholderImage />
           )}
