@@ -9,7 +9,7 @@ import { ItemOrganiser } from '@/Item/components/organisms/organiser'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
 import { useItems, useUpdateItem } from '@/Item/queries'
 
-export const Route = createFileRoute('/_authenticated/items/')({
+export const Route = createFileRoute('/_authenticated/items/assign/')({
   component: ItemsPage,
 })
 
