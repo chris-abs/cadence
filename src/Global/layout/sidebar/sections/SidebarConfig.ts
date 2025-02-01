@@ -8,12 +8,13 @@ import {
   Tags,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { type ElementType } from 'react'
 
 interface TeamConfig {
   name: string
-  logo: LucideIcon
+  logo: ElementType
   plan: string
-  disabled?: boolean
+  disabled: boolean
 }
 
 interface NavigationItem {
