@@ -67,6 +67,16 @@ const data = {
         title: 'Tags',
         url: '/tags',
         icon: Tags,
+        items: [
+          {
+            title: 'List',
+            url: '/tags',
+          },
+          {
+            title: 'Assign',
+            url: '/tags/assign',
+          },
+        ],
       },
     ],
   },
