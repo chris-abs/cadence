@@ -10,8 +10,8 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@/Global/components/atoms'
+import Badge from '@/Global/components/atoms/BadgeNew'
 import { Section } from '@/Global/components/molecules'
-import { cn } from '@/Global/lib'
 import { Tag } from '@/Tag/types'
 
 interface TagSelectorProps {
@@ -71,25 +71,18 @@ export function TagSelector({
                   type="multiple"
                   value={selectedTagIds}
                   onValueChange={onTagToggle}
-                  className="flex flex-wrap gap-2"
+                  className="flex flex-wrap gap-2 pb-4"
                 >
                   {tags?.map((tag) => (
-                    <ToggleGroupItem
-                      key={tag.id}
-                      value={String(tag.id)}
-                      className={cn(
-                        'px-2 py-0.5 text-sm',
-                        'flex items-center gap-1.5 whitespace-nowrap',
-                      )}
-                      style={{
-                        color: tag.colour || 'currentColor',
-                      }}
-                    >
-                      <div
-                        className="h-2 w-2 rounded-full"
-                        style={{ backgroundColor: 'currentColor' }}
+                    <ToggleGroupItem key={tag.id} value={String(tag.id)}>
+                      <Badge
+                        colour={{
+                          name: tag.name,
+                          value: tag.colour,
+                        }}
+                        variant="toggle"
+                        isActive={selectedTagIds.includes(String(tag.id))}
                       />
-                      {tag.name}
                     </ToggleGroupItem>
                   ))}
                 </ToggleGroup>
