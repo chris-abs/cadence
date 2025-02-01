@@ -8,7 +8,7 @@ import { useWorkspaces } from '@/Workspace/queries'
 import { ContainerOrganiser } from '@/Container/components/organisms/organiser/ContainerOrganiser'
 import { CreateContainerModal } from '@/Container/components/organisms/modals/ContainerModal'
 
-export const Route = createFileRoute('/_authenticated/containers/')({
+export const Route = createFileRoute('/_authenticated/containers/assign/')({
   component: ContainersPage,
 })
 
@@ -18,8 +18,13 @@ function ContainersPage() {
   const { data: workspaces } = useWorkspaces()
   const updateContainer = useUpdateContainer()
 
-  const handleUpdateContainer = (containerId: number, workspaceId: number | undefined) => {
-    const container = containers?.find((container) => container.id === containerId)
+  const handleUpdateContainer = (
+    containerId: number,
+    workspaceId: number | undefined,
+  ) => {
+    const container = containers?.find(
+      (container) => container.id === containerId,
+    )
     if (container) {
       updateContainer.mutate({
         id: containerId,

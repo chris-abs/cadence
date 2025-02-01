@@ -19,12 +19,12 @@ import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/se
 import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWorkspacesIndexImport } from './routes/_authenticated/workspaces/index'
 import { Route as AuthenticatedTagsIndexImport } from './routes/_authenticated/tags/index'
-import { Route as AuthenticatedContainersIndexImport } from './routes/_authenticated/containers/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdImport } from './routes/_authenticated/workspaces/$workspaceId'
 import { Route as AuthenticatedTagsTagIdImport } from './routes/_authenticated/tags/$tagId'
 import { Route as AuthenticatedItemsItemIdImport } from './routes/_authenticated/items/$itemId'
 import { Route as AuthenticatedContainersContainerIdImport } from './routes/_authenticated/containers/$containerId'
 import { Route as AuthenticatedItemsAssignIndexImport } from './routes/_authenticated/items/assign/index'
+import { Route as AuthenticatedContainersAssignIndexImport } from './routes/_authenticated/containers/assign/index'
 
 // Create/Update Routes
 
@@ -76,13 +76,6 @@ const AuthenticatedTagsIndexRoute = AuthenticatedTagsIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedContainersIndexRoute =
-  AuthenticatedContainersIndexImport.update({
-    id: '/containers/',
-    path: '/containers/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
 const AuthenticatedWorkspacesWorkspaceIdRoute =
   AuthenticatedWorkspacesWorkspaceIdImport.update({
     id: '/workspaces/$workspaceId',
@@ -113,6 +106,13 @@ const AuthenticatedItemsAssignIndexRoute =
   AuthenticatedItemsAssignIndexImport.update({
     id: '/items/assign/',
     path: '/items/assign/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedContainersAssignIndexRoute =
+  AuthenticatedContainersAssignIndexImport.update({
+    id: '/containers/assign/',
+    path: '/containers/assign/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -190,13 +190,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/containers/': {
-      id: '/_authenticated/containers/'
-      path: '/containers'
-      fullPath: '/containers'
-      preLoaderRoute: typeof AuthenticatedContainersIndexImport
-      parentRoute: typeof AuthenticatedImport
-    }
     '/_authenticated/tags/': {
       id: '/_authenticated/tags/'
       path: '/tags'
@@ -209,6 +202,13 @@ declare module '@tanstack/react-router' {
       path: '/workspaces'
       fullPath: '/workspaces'
       preLoaderRoute: typeof AuthenticatedWorkspacesIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/containers/assign/': {
+      id: '/_authenticated/containers/assign/'
+      path: '/containers/assign'
+      fullPath: '/containers/assign'
+      preLoaderRoute: typeof AuthenticatedContainersAssignIndexImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/items/assign/': {
@@ -231,9 +231,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedTagsTagIdRoute: typeof AuthenticatedTagsTagIdRoute
   AuthenticatedWorkspacesWorkspaceIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
-  AuthenticatedContainersIndexRoute: typeof AuthenticatedContainersIndexRoute
   AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
   AuthenticatedWorkspacesIndexRoute: typeof AuthenticatedWorkspacesIndexRoute
+  AuthenticatedContainersAssignIndexRoute: typeof AuthenticatedContainersAssignIndexRoute
   AuthenticatedItemsAssignIndexRoute: typeof AuthenticatedItemsAssignIndexRoute
 }
 
@@ -247,9 +247,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedTagsTagIdRoute: AuthenticatedTagsTagIdRoute,
   AuthenticatedWorkspacesWorkspaceIdRoute:
     AuthenticatedWorkspacesWorkspaceIdRoute,
-  AuthenticatedContainersIndexRoute: AuthenticatedContainersIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
   AuthenticatedWorkspacesIndexRoute: AuthenticatedWorkspacesIndexRoute,
+  AuthenticatedContainersAssignIndexRoute:
+    AuthenticatedContainersAssignIndexRoute,
   AuthenticatedItemsAssignIndexRoute: AuthenticatedItemsAssignIndexRoute,
 }
 
@@ -268,9 +269,9 @@ export interface FileRoutesByFullPath {
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
-  '/containers': typeof AuthenticatedContainersIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
   '/workspaces': typeof AuthenticatedWorkspacesIndexRoute
+  '/containers/assign': typeof AuthenticatedContainersAssignIndexRoute
   '/items/assign': typeof AuthenticatedItemsAssignIndexRoute
 }
 
@@ -284,9 +285,9 @@ export interface FileRoutesByTo {
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
-  '/containers': typeof AuthenticatedContainersIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
   '/workspaces': typeof AuthenticatedWorkspacesIndexRoute
+  '/containers/assign': typeof AuthenticatedContainersAssignIndexRoute
   '/items/assign': typeof AuthenticatedItemsAssignIndexRoute
 }
 
@@ -302,9 +303,9 @@ export interface FileRoutesById {
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
-  '/_authenticated/containers/': typeof AuthenticatedContainersIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
   '/_authenticated/workspaces/': typeof AuthenticatedWorkspacesIndexRoute
+  '/_authenticated/containers/assign/': typeof AuthenticatedContainersAssignIndexRoute
   '/_authenticated/items/assign/': typeof AuthenticatedItemsAssignIndexRoute
 }
 
@@ -321,9 +322,9 @@ export interface FileRouteTypes {
     | '/items/$itemId'
     | '/tags/$tagId'
     | '/workspaces/$workspaceId'
-    | '/containers'
     | '/tags'
     | '/workspaces'
+    | '/containers/assign'
     | '/items/assign'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -336,9 +337,9 @@ export interface FileRouteTypes {
     | '/items/$itemId'
     | '/tags/$tagId'
     | '/workspaces/$workspaceId'
-    | '/containers'
     | '/tags'
     | '/workspaces'
+    | '/containers/assign'
     | '/items/assign'
   id:
     | '__root__'
@@ -352,9 +353,9 @@ export interface FileRouteTypes {
     | '/_authenticated/items/$itemId'
     | '/_authenticated/tags/$tagId'
     | '/_authenticated/workspaces/$workspaceId'
-    | '/_authenticated/containers/'
     | '/_authenticated/tags/'
     | '/_authenticated/workspaces/'
+    | '/_authenticated/containers/assign/'
     | '/_authenticated/items/assign/'
   fileRoutesById: FileRoutesById
 }
@@ -396,9 +397,9 @@ export const routeTree = rootRoute
         "/_authenticated/items/$itemId",
         "/_authenticated/tags/$tagId",
         "/_authenticated/workspaces/$workspaceId",
-        "/_authenticated/containers/",
         "/_authenticated/tags/",
         "/_authenticated/workspaces/",
+        "/_authenticated/containers/assign/",
         "/_authenticated/items/assign/"
       ]
     },
@@ -436,16 +437,16 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/workspaces/$workspaceId.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/containers/": {
-      "filePath": "_authenticated/containers/index.tsx",
-      "parent": "/_authenticated"
-    },
     "/_authenticated/tags/": {
       "filePath": "_authenticated/tags/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/workspaces/": {
       "filePath": "_authenticated/workspaces/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/containers/assign/": {
+      "filePath": "_authenticated/containers/assign/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/items/assign/": {
