@@ -7,7 +7,7 @@ import { useTags } from '@/Tag/queries'
 import { TagOrganiser } from '@/Tag/components/organisms/organiser/TagOrganiser'
 import { CreateTagModal } from '@/Tag/components/organisms/modals'
 
-export const Route = createFileRoute('/_authenticated/tags/')({
+export const Route = createFileRoute('/_authenticated/tags/assign/')({
   component: TagsPage,
 })
 
@@ -31,10 +31,17 @@ function TagsPage() {
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <TagOrganiser tags={tags ?? []} isLoading={isLoading} searchQuery={searchQuery} />
+          <TagOrganiser
+            tags={tags ?? []}
+            isLoading={isLoading}
+            searchQuery={searchQuery}
+          />
         </div>
       </div>
-      <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateTagModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </PageLayout>
   )
 }
