@@ -1,3 +1,4 @@
+export * from './SidebarConfig'
 export * from './SidebarCore'
 export * from './SidebarFoundation'
 export * from './SidebarTeamSwitcher'
