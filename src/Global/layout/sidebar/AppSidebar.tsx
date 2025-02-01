@@ -57,11 +57,31 @@ const data = {
         title: 'Containers',
         url: '/containers',
         icon: FolderOpen,
+        items: [
+          {
+            title: 'List',
+            url: '/containers',
+          },
+          {
+            title: 'Assign',
+            url: '/containers/assign',
+          },
+        ],
       },
       {
         title: 'Items',
         url: '/items',
         icon: Package,
+        items: [
+          {
+            title: 'List',
+            url: '/items',
+          },
+          {
+            title: 'Assign',
+            url: '/items/assign',
+          },
+        ],
       },
       {
         title: 'Tags',
