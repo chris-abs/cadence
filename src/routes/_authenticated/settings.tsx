@@ -30,11 +30,13 @@ function SettingsPage() {
     pushNotifications,
     dateFormat,
     isCompact,
+    sidebarCollapsed,
     applyTheme,
     setEmailNotifications,
     setPushNotifications,
     setDateFormat,
     setCompact,
+    setSidebarCollapsed,
   } = useSettingsStore()
 
   return (
@@ -81,6 +83,21 @@ function SettingsPage() {
                     </p>
                   </div>
                   <Switch checked={isCompact} onCheckedChange={setCompact} />
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <span className="text-sm font-medium">Default Sidebar State</span>
+                    <p className="text-sm text-muted-foreground">
+                      Choose whether the sidebar starts collapsed or expanded
+                    </p>
+                  </div>
+                  <Switch
+                    checked={!sidebarCollapsed}
+                    onCheckedChange={(checked) => setSidebarCollapsed(!checked)}
+                  />
                 </div>
               </CardContent>
             </Card>

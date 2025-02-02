@@ -10,12 +10,14 @@ interface SettingsState {
   emailNotifications: boolean
   pushNotifications: boolean
   dateFormat: DateFormat
+  sidebarCollapsed: boolean
 
   applyTheme: (newTheme: Theme) => void
   setCompact: (isCompact: boolean) => void
   setEmailNotifications: (enabled: boolean) => void
   setPushNotifications: (enabled: boolean) => void
   setDateFormat: (format: DateFormat) => void
+  setSidebarCollapsed: (collapsed: boolean) => void
 }
 
 const applyThemeToDOM = (theme: Theme) => {
@@ -40,6 +42,7 @@ export const useSettingsStore = create<SettingsState>()(
       emailNotifications: true,
       pushNotifications: true,
       dateFormat: 'relative',
+      sidebarCollapsed: false,
 
       applyTheme: (newTheme) => {
         set({ theme: newTheme })
@@ -48,11 +51,13 @@ export const useSettingsStore = create<SettingsState>()(
 
       setCompact: (isCompact) => {
         set({ isCompact })
+        applyCompactView(isCompact)
       },
 
       setEmailNotifications: (enabled) => set({ emailNotifications: enabled }),
       setPushNotifications: (enabled) => set({ pushNotifications: enabled }),
       setDateFormat: (format) => set({ dateFormat: format }),
+      setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
     }),
     {
       name: 'user-settings',
@@ -63,6 +68,7 @@ export const useSettingsStore = create<SettingsState>()(
         emailNotifications: state.emailNotifications,
         pushNotifications: state.pushNotifications,
         dateFormat: state.dateFormat,
+        sidebarCollapsed: state.sidebarCollapsed,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -73,21 +79,3 @@ export const useSettingsStore = create<SettingsState>()(
     },
   ),
 )
-
-const initializeThemeListener = () => {
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-  const handleChange = () => {
-    const currentState = useSettingsStore.getState()
-    if (currentState.theme === 'system') {
-      applyThemeToDOM('system')
-    }
-  }
-
-  mediaQuery.addEventListener('change', handleChange)
-  return () => mediaQuery.removeEventListener('change', handleChange)
-}
-
-if (typeof window !== 'undefined') {
-  initializeThemeListener()
-}
