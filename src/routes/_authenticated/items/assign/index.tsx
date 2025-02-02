@@ -38,7 +38,12 @@ function ItemsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 p-4 min-h-0">
-          <EntityHeader title="Items" entityType="item" onAdd={() => setIsCreateModalOpen(true)} />
+          <EntityHeader
+            title="Items"
+            entityType="item"
+            addEntity="item"
+            onAdd={() => setIsCreateModalOpen(true)}
+          />
 
           <ItemOrganiser
             items={items ?? []}

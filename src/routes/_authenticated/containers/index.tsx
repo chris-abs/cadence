@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { EntityHeader } from '@/Global/components/molecules/headers'
 import { useContainers } from '@/Container/queries'
+import { CreateContainerModal } from '@/Container/components/organisms/modals'
 
 export const Route = createFileRoute('/_authenticated/containers/')({
   component: ContainersPage,
@@ -21,7 +22,12 @@ function ContainersPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
-          <EntityHeader title="Containers" entityType="container" onAdd={handleAdd} />
+          <EntityHeader
+            title="Containers"
+            entityType="container"
+            addEntity="container"
+            onAdd={handleAdd}
+          />
           <div className="flex flex-col gap-4">
             {isLoading ? (
               <div>Loading...</div>
@@ -35,6 +41,10 @@ function ContainersPage() {
           </div>
         </div>
       </div>
+      <CreateContainerModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </PageLayout>
   )
 }

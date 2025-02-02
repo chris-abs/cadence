@@ -39,7 +39,7 @@ export function TagDetail({ tag }: TagDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityHeader title={tag.name} entityType="item" onAdd={handleAdd} />
+      <EntityHeader title={tag.name} entityType="item" addEntity="item" onAdd={handleAdd} />
 
       <TagSection
         tag={tag}

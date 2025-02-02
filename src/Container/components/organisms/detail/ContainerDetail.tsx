@@ -39,7 +39,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityHeader title={container.name} entityType="item" onAdd={handleAdd} />
+      <EntityHeader title={container.name} entityType="item" addEntity="tag" onAdd={handleAdd} />
 
       <ContainerSelectionModal
         container={container}

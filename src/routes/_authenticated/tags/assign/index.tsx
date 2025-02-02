@@ -27,21 +27,15 @@ function TagsPage() {
           <SearchEntityHeader
             title="Tags"
             entityType="tag"
+            addEntity="item"
             onAdd={handleAdd}
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <TagOrganiser
-            tags={tags ?? []}
-            isLoading={isLoading}
-            searchQuery={searchQuery}
-          />
+          <TagOrganiser tags={tags ?? []} isLoading={isLoading} searchQuery={searchQuery} />
         </div>
       </div>
-      <CreateTagModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
+      <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>
   )
 }

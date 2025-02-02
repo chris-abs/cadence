@@ -24,7 +24,12 @@ function WorkspacesPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
-          <EntityHeader title="Workspaces" entityType="workspace" onAdd={handleAdd} />
+          <EntityHeader
+            title="Workspaces"
+            entityType="workspace"
+            addEntity="workspace"
+            onAdd={handleAdd}
+          />
           <Section>
             <div className="flex-1">
               <WorkspaceCatalogue workspaces={workspaces ?? []} isLoading={isLoading} />

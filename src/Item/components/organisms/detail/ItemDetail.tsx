@@ -113,7 +113,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityHeader title={item.name} entityType="item" onAdd={handleAddTag} />
+      <EntityHeader title={item.name} entityType="item" addEntity="tag" onAdd={handleAddTag} />
 
       <ItemDetailsSection
         item={item}

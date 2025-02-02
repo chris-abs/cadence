@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { EntityHeader } from '@/Global/components/molecules/headers'
 import { useTags } from '@/Tag/queries'
+import { CreateTagModal } from '@/Tag/components/organisms/modals'
 
 export const Route = createFileRoute('/_authenticated/tags/')({
   component: TagsPage,
@@ -21,7 +22,7 @@ function TagsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
-          <EntityHeader title="Tags" entityType="tag" onAdd={handleAdd} />
+          <EntityHeader title="Tags" entityType="tag" addEntity="tag" onAdd={handleAdd} />
           <div className="flex flex-col gap-4">
             {isLoading ? (
               <div>Loading...</div>
@@ -35,6 +36,7 @@ function TagsPage() {
           </div>
         </div>
       </div>
+      <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>
   )
 }

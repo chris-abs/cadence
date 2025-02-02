@@ -38,7 +38,12 @@ export function WorkspaceDetail({ workspace }: WorkspaceDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <EntityHeader title={workspace.name} entityType="container" onAdd={handleAdd} />
+      <EntityHeader
+        title={workspace.name}
+        entityType="workspace"
+        addEntity="container"
+        onAdd={handleAdd}
+      />
 
       <WorkspaceSection
         workspace={workspace}

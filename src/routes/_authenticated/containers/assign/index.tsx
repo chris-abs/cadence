@@ -18,13 +18,8 @@ function ContainersPage() {
   const { data: workspaces } = useWorkspaces()
   const updateContainer = useUpdateContainer()
 
-  const handleUpdateContainer = (
-    containerId: number,
-    workspaceId: number | undefined,
-  ) => {
-    const container = containers?.find(
-      (container) => container.id === containerId,
-    )
+  const handleUpdateContainer = (containerId: number, workspaceId: number | undefined) => {
+    const container = containers?.find((container) => container.id === containerId)
     if (container) {
       updateContainer.mutate({
         id: containerId,
@@ -43,6 +38,7 @@ function ContainersPage() {
           <EntityHeader
             title="Containers"
             entityType="container"
+            addEntity="container"
             onAdd={() => setIsCreateModalOpen(true)}
           />
 

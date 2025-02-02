@@ -2,8 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { EntityHeader } from '@/Global/components/molecules/headers'
+import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { useItems } from '@/Item/queries'
+import { CreateItemModal } from '@/Item/components/organisms/modal'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,
@@ -11,6 +12,7 @@ export const Route = createFileRoute('/_authenticated/items/')({
 
 function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const { data: items, isLoading } = useItems()
 
   const handleAdd = () => {
@@ -21,7 +23,14 @@ function ItemsPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
-          <EntityHeader title="Items" entityType="item" onAdd={handleAdd} />
+          <SearchEntityHeader
+            title="Items"
+            entityType="item"
+            addEntity="item"
+            onAdd={handleAdd}
+            searchValue={searchQuery}
+            onSearch={setSearchQuery}
+          />
           <div className="flex flex-col gap-4">
             {isLoading ? (
               <div>Loading...</div>
@@ -35,6 +44,7 @@ function ItemsPage() {
           </div>
         </div>
       </div>
+      <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>
   )
 }
