@@ -3,8 +3,8 @@ import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { SearchEntityHeader } from '@/Global/components/molecules/headers'
-import { useItems } from '@/Item/queries'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
+import { ItemArchive } from '@/Item/components/organisms/achive'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,
@@ -13,7 +13,6 @@ export const Route = createFileRoute('/_authenticated/items/')({
 function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: items, isLoading } = useItems()
 
   const handleAdd = () => {
     setIsCreateModalOpen(true)
@@ -31,17 +30,7 @@ function ItemsPage() {
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <div className="flex flex-col gap-4">
-            {isLoading ? (
-              <div>Loading...</div>
-            ) : (
-              items?.map((item) => (
-                <div key={item.id} className="p-4 border rounded-lg shadow-sm">
-                  <h3 className="font-medium">{item.name}</h3>
-                </div>
-              ))
-            )}
-          </div>
+          <ItemArchive />
         </div>
       </div>
       <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
