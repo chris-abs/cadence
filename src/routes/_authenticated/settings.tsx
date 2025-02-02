@@ -92,10 +92,7 @@ function SettingsPage() {
                     <span className="text-sm font-medium">Compact Sidebar View</span>
                     <p className="text-sm text-muted-foreground">Use a condensed sidebar</p>
                   </div>
-                  <Switch
-                    checked={!sidebarCollapsed}
-                    onCheckedChange={(checked) => setSidebarCollapsed(!checked)}
-                  />
+                  <Switch checked={sidebarCollapsed} onCheckedChange={setSidebarCollapsed} />
                 </div>
               </CardContent>
             </Card>
