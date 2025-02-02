@@ -77,7 +77,7 @@ function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Compact View</span>
+                    <span className="text-sm font-medium">Compact Entity View</span>
                     <p className="text-sm text-muted-foreground">
                       Use a condensed layout for items and containers
                     </p>
@@ -89,10 +89,8 @@ function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Default Sidebar State</span>
-                    <p className="text-sm text-muted-foreground">
-                      Choose whether the sidebar starts collapsed or expanded
-                    </p>
+                    <span className="text-sm font-medium">Compact Sidebar View</span>
+                    <p className="text-sm text-muted-foreground">Use a condensed sidebar</p>
                   </div>
                   <Switch
                     checked={!sidebarCollapsed}
