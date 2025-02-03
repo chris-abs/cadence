@@ -30,7 +30,7 @@ function ItemsPage() {
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <ItemArchive />
+          <ItemArchive searchQuery={searchQuery} />
         </div>
       </div>
       <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
