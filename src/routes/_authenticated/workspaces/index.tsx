@@ -2,11 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { Section } from '@/Global/components/molecules'
-import { EntityHeader } from '@/Global/components/molecules/headers'
-import { useWorkspaces } from '@/Workspace/queries'
+import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { CreateWorkspaceModal } from '@/Workspace/components/organisms/modals'
-import { WorkspaceCatalogue } from '@/Workspace/components/organisms/organiser/sections'
+import { WorkspaceArchive } from '@/Workspace/components/organisms/archive'
 
 export const Route = createFileRoute('/_authenticated/workspaces/')({
   component: WorkspacesPage,
@@ -14,7 +12,7 @@ export const Route = createFileRoute('/_authenticated/workspaces/')({
 
 function WorkspacesPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const { data: workspaces, isLoading } = useWorkspaces()
+  const [searchQuery, setSearchQuery] = useState('')
 
   const handleAdd = () => {
     setIsCreateModalOpen(true)
@@ -24,17 +22,15 @@ function WorkspacesPage() {
     <PageLayout>
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
-          <EntityHeader
+          <SearchEntityHeader
             title="Workspaces"
             entityType="workspace"
             addEntity="workspace"
             onAdd={handleAdd}
+            searchValue={searchQuery}
+            onSearch={setSearchQuery}
           />
-          <Section>
-            <div className="flex-1">
-              <WorkspaceCatalogue workspaces={workspaces ?? []} isLoading={isLoading} />
-            </div>
-          </Section>
+          <WorkspaceArchive />
         </div>
       </div>
       <CreateWorkspaceModal
