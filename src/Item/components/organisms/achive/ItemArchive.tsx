@@ -28,7 +28,7 @@ export const ItemArchive = ({ searchQuery }: ItemArchiveProps) => {
   const isLoading = isLoadingItems || (!!searchQuery && isSearching)
 
   return (
-    <Section className="mb-4">
+    <Section>
       <Card className="h-fit">
         <CardHeader>
           <div className="flex justify-between items-center flex-shrink-0">
@@ -43,7 +43,7 @@ export const ItemArchive = ({ searchQuery }: ItemArchiveProps) => {
             <ViewToggle />
           </div>
         </CardHeader>
-        <ScrollArea className="min-h-0 max-h-[calc(100vh-17rem)] overflow-auto">
+        <ScrollArea className="min-h-0 max-h-[calc(100vh-19rem)] overflow-auto">
           <CardContent>
             {isLoading ? (
               <div className="space-y-2">
