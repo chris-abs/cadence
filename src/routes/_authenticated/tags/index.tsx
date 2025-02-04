@@ -31,7 +31,7 @@ function TagsPage() {
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <TagArchive />
+          <TagArchive searchQuery={searchQuery} />
         </div>
       </div>
       <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />

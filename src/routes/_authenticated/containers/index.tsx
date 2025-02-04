@@ -30,7 +30,7 @@ function ContainersPage() {
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <ContainerArchive />
+          <ContainerArchive searchQuery={searchQuery} />
         </div>
       </div>
       <CreateContainerModal

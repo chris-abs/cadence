@@ -30,7 +30,7 @@ function WorkspacesPage() {
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <WorkspaceArchive />
+          <WorkspaceArchive searchQuery={searchQuery} />
         </div>
       </div>
       <CreateWorkspaceModal

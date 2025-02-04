@@ -8,10 +8,10 @@ import {
 } from '@/Global/components/atoms'
 import { Section, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
+import { useItemSearch } from '@/Global/queries/search'
 import { cn } from '@/Global/lib'
 import { useItems } from '@/Item/queries'
 import { ItemCard } from '../../atoms/card'
-import { useItemSearch } from '@/Global/queries/search'
 
 interface ItemArchiveProps {
   searchQuery: string
@@ -22,8 +22,8 @@ export const ItemArchive = ({ searchQuery }: ItemArchiveProps) => {
   const { data: searchResults, isLoading: isSearching } = useItemSearch(searchQuery, {
     enabled: !!searchQuery,
   })
-  const { isCompact } = useSettingsStore()
 
+  const { isCompact } = useSettingsStore()
   const displayData = searchQuery ? searchResults : items
   const isLoading = isLoadingItems || (!!searchQuery && isSearching)
 

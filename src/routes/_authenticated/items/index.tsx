@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
-import { ItemArchive } from '@/Item/components/organisms/achive'
+import { ItemArchive } from '@/Item/components/organisms/archive'
 
 export const Route = createFileRoute('/_authenticated/items/')({
   component: ItemsPage,
