@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Package } from 'lucide-react'
 
 import {
   Accordion,
@@ -13,7 +12,7 @@ import {
   CardDescription,
   CardContent,
 } from '@/Global/components/atoms'
-import { NoContent, Section, H3, Muted, ViewToggle } from '@/Global/components/molecules'
+import { Section, H3, Muted, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
 import { Item } from '@/Item/types'
@@ -28,10 +27,6 @@ export function ItemCatalogue({ items }: ItemCatalogueProps) {
 
   const sortedItems = items.filter((item) => item.container?.name)
   const unsortedItems = items.filter((item) => !item.container?.name)
-
-  if (items.length === 0) {
-    return <NoContent icon={Package} message="No items found. Create one to get started." />
-  }
 
   return (
     <div className={cn('transition-all duration-200')}>
