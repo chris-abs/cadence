@@ -38,7 +38,7 @@ export function TagCard({ tag }: TagCardProps) {
             <Muted>{tag.items?.length || 0} items</Muted>
             <Muted className="flex items-center gap-1.5">
               <Clock className="h-3 w-3" />
-              <span>{formatRelativeTime(tag.updatedAt || tag.createdAt)}</span>
+              <span>{formatRelativeTime(tag.updatedAt)}</span>
             </Muted>
           </div>
         </div>

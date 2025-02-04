@@ -43,7 +43,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
             <Muted>{container.items?.length || 0} items</Muted>
             <Muted className="flex items-center gap-1.5">
               <Clock className="h-3 w-3" />
-              <span>{formatRelativeTime(container.updatedAt || container.createdAt)}</span>
+              <span>{formatRelativeTime(container.updatedAt)}</span>
             </Muted>
           </div>
         </div>

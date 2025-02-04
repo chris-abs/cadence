@@ -69,9 +69,7 @@ export function ItemCard({ item }: ItemCardProps) {
             )}
           >
             <Clock className="w-3 h-3" />
-            <Muted className="!text-foreground">
-              {formatRelativeTime(item.updatedAt || item.createdAt)}
-            </Muted>
+            <Muted className="!text-foreground">{formatRelativeTime(item.updatedAt)}</Muted>
           </div>
         </div>
 

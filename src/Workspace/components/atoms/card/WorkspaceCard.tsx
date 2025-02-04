@@ -44,7 +44,7 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
             <Muted>{workspace.containers?.length || 0} containers</Muted>
             <Muted className="flex items-center gap-1.5">
               <Clock className="h-3 w-3" />
-              <span>{formatRelativeTime(workspace.updatedAt || workspace.createdAt)}</span>
+              <span>{formatRelativeTime(workspace.updatedAt)}</span>
             </Muted>
           </div>
         </div>
