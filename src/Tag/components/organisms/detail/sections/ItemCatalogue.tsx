@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Clock, Package } from 'lucide-react'
 
@@ -9,9 +10,15 @@ import {
   Badge,
   PlaceholderImage,
   ScrollArea,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
 } from '@/Global/components/atoms'
-import { NoContent, Section, H3, H5, Muted } from '@/Global/components/molecules'
+import { NoContent, Section, H3, H5, Muted, ViewToggle } from '@/Global/components/molecules'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
 import { Item } from '@/Item/types'
 
@@ -20,6 +27,10 @@ interface ItemCatalogueProps {
 }
 
 export function ItemCatalogue({ items }: ItemCatalogueProps) {
+  const { isCompact } = useSettingsStore()
+  const [openSections, setOpenSections] = useState<string[]>(['tagged-items'])
+  const isExpanded = openSections.includes('tagged-items')
+
   const sortedItems = items.filter((item) => item.container?.name)
   const unsortedItems = items.filter((item) => !item.container?.name)
 
@@ -28,47 +39,87 @@ export function ItemCatalogue({ items }: ItemCatalogueProps) {
   }
 
   return (
-    <ScrollArea className="h-[calc(100vh-200px)]">
-      <Accordion type="multiple" defaultValue={['sorted', 'unsorted']} className="space-y-4">
-        {sortedItems.length > 0 && (
-          <AccordionItem border value="sorted">
-            <AccordionTrigger parent>
-              <H3>Sorted ({sortedItems.length})</H3>
-            </AccordionTrigger>
-            <AccordionContent>
-              <ItemGrid items={sortedItems} />
-            </AccordionContent>
-          </AccordionItem>
-        )}
+    <div
+      className={cn(
+        'transition-all duration-200',
+        isExpanded ? (isCompact ? 'h-[255px]' : 'h-[355px]') : 'h-[150px]',
+      )}
+    >
+      <Section className="h-full overflow-hidden">
+        <Accordion
+          type="multiple"
+          value={openSections}
+          onValueChange={setOpenSections}
+          className="h-full"
+        >
+          <AccordionItem value="tagged-items" className="border-none h-full">
+            <Card className="h-full">
+              <CardHeader className="py-6">
+                <AccordionTrigger className="hover:no-underline w-full [&[data-state=open]>svg]:rotate-180">
+                  <div className="flex justify-between items-center w-full">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <CardTitle>Tagged Items</CardTitle>
+                        <Muted>({items.length} items)</Muted>
+                      </div>
+                      <CardDescription className="text-muted-foreground m-0">
+                        Items using this tag, organised by their container status
+                      </CardDescription>
+                    </div>
+                    <ViewToggle />
+                  </div>
+                </AccordionTrigger>
+              </CardHeader>
+              <AccordionContent>
+                <CardContent className="p-0">
+                  <ScrollArea className={cn(isCompact ? 'h-[100px]' : 'h-[200px]')}>
+                    <div className="space-y-6 p-6">
+                      {sortedItems.length > 0 && (
+                        <div>
+                          <H3 className="mb-4">Sorted ({sortedItems.length})</H3>
+                          <ItemGrid items={sortedItems} isCompact={isCompact} />
+                        </div>
+                      )}
 
-        {unsortedItems.length > 0 && (
-          <AccordionItem border value="unsorted">
-            <AccordionTrigger parent>
-              <H3>Unsorted ({unsortedItems.length})</H3>
-            </AccordionTrigger>
-            <AccordionContent>
-              <ItemGrid items={unsortedItems} />
-            </AccordionContent>
+                      {unsortedItems.length > 0 && (
+                        <div>
+                          <H3 className="mb-4">Unsorted ({unsortedItems.length})</H3>
+                          <ItemGrid items={unsortedItems} isCompact={isCompact} />
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </AccordionContent>
+            </Card>
           </AccordionItem>
-        )}
-      </Accordion>
-    </ScrollArea>
+        </Accordion>
+      </Section>
+    </div>
   )
 }
 
-function ItemGrid({ items }: { items: Item[] }) {
+function ItemGrid({ items, isCompact }: { items: Item[]; isCompact: boolean }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+    <div
+      className={cn(
+        'grid gap-4',
+        isCompact
+          ? 'grid-cols-[repeat(auto-fill,minmax(200px,1fr))]'
+          : 'grid-cols-[repeat(auto-fill,minmax(280px,1fr))]',
+      )}
+    >
       {items.map((item) => (
         <Link
           key={item.id}
           to="/items/$itemId"
           params={{ itemId: item.id.toString() }}
-          className="block max-w-md"
+          className="block"
         >
           <Section
             className={cn(
-              'overflow-hidden h-[320px] flex flex-col',
+              'overflow-hidden flex flex-col',
+              isCompact ? 'h-[200px]' : 'h-[320px]',
               'transition-colors duration-200',
               'hover:border-primary/50',
               'bg-background hover:bg-contrast-accent',
@@ -127,5 +178,3 @@ function ItemGrid({ items }: { items: Item[] }) {
     </div>
   )
 }
-
-export default ItemCatalogue
