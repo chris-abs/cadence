@@ -1,5 +1,5 @@
 import { Section } from '@/Global/components/molecules'
-import { SearchInput } from '@/Global/components/molecules/SearchInput'
+import { SearchInput } from '@/Global/components/molecules/search/SearchInput'
 
 interface ItemSearchProps {
   searchQuery: string

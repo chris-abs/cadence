@@ -7,9 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { SearchResults } from '@/Global/components/molecules'
 import { EntityType } from '@/Collection/types'
-import { SearchInput } from '@/Global/components/molecules/SearchInput'
+import { SearchInput, SearchResults } from '@/Global/components/molecules/search'
 
 interface EntitySearchProps {
   searchQuery: string
