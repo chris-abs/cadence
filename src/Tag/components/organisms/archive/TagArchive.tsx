@@ -4,6 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  ScrollArea,
 } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
 import { useTags } from '@/Tag/queries'
@@ -13,8 +14,8 @@ export const TagArchive = () => {
   const { data: tags, isLoading } = useTags()
 
   return (
-    <Section>
-      <Card>
+    <Section className="mb-4">
+      <Card className="h-fit">
         <CardHeader>
           <div className="flex justify-between items-center flex-shrink-0">
             <div>
@@ -23,19 +24,21 @@ export const TagArchive = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : (
-            <div className="flex flex-wrap gap-4 justify-center">
-              {tags?.map((tag) => (
-                <div key={tag.id} className="shrink-0 w-[240px]">
-                  <TagCard tag={tag} />
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
+        <ScrollArea className="min-h-0 max-h-[calc(100vh-17rem)] overflow-auto">
+          <CardContent>
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : (
+              <div className="flex flex-wrap gap-4 justify-center">
+                {tags?.map((tag) => (
+                  <div key={tag.id} className="shrink-0 w-[240px]">
+                    <TagCard tag={tag} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </ScrollArea>
       </Card>
     </Section>
   )
