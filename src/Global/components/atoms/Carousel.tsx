@@ -143,6 +143,7 @@ const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
           className={cn(
             'flex',
             orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
+            'min-h-full items-center',
             className,
           )}
           {...props}

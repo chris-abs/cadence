@@ -1,30 +1,28 @@
-import { useEffect, useState } from 'react'
-import { Pencil, Trash2, MoreVertical, X, Upload } from 'lucide-react'
+import { useState } from 'react'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 
 import {
-  Input,
   Label,
   Button,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  PlaceholderImage,
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Collection/components/organisms/modals'
-import { cn } from '@/Global/lib/utils'
 import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
 import { ItemDetail } from '../../../molecules/forms'
 import { ImageDeleteModal } from '../../modal'
+import { ItemDetailsCarousel } from './ItemDetailsCarousel'
+
+interface ItemDetailsFormData extends Partial<UpdateItemData> {
+  images?: File[]
+  imagesToDelete?: string[]
+}
 
 interface ItemDetailsSectionProps {
   item: Item | null
@@ -40,37 +38,11 @@ export function ItemDetailsSection({
   isUpdating,
 }: ItemDetailsSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
-  const [imagesToUpload, setImagesToUpload] = useState<File[]>([])
-  const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
-  const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isImageDeleteConfirmOpen, setIsImageDeleteConfirmOpen] = useState(false)
-  const [formData, setFormData] = useState<Partial<UpdateItemData> | null>(null)
+  const [formData, setFormData] = useState<ItemDetailsFormData | null>(null)
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const { data: allTags } = useTags()
-
-  useEffect(() => {
-    return () => {
-      previewUrls.forEach((url) => URL.revokeObjectURL(url))
-    }
-  }, [previewUrls])
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files)
-      setImagesToUpload(files)
-
-      previewUrls.forEach((url) => URL.revokeObjectURL(url))
-      const newPreviewUrls = files.map((file) => URL.createObjectURL(file))
-      setPreviewUrls(newPreviewUrls)
-    }
-  }
-
-  const handleImageDelete = (imageUrl: string) => {
-    setImagesToDelete((prev) =>
-      prev.includes(imageUrl) ? prev.filter((url) => url !== imageUrl) : [...prev, imageUrl],
-    )
-  }
 
   if (!item?.name) {
     return emptyStateComponent || null
@@ -91,10 +63,6 @@ export function ItemDetailsSection({
   const handleCancel = () => {
     setFormData(null)
     setSelectedTags([])
-    setImagesToDelete([])
-    setImagesToUpload([])
-    previewUrls.forEach((url) => URL.revokeObjectURL(url))
-    setPreviewUrls([])
     setIsEditing(false)
   }
 
@@ -122,6 +90,18 @@ export function ItemDetailsSection({
     }))
   }
 
+  const handleImagesChange = (images: File[], imagesToDelete: string[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      images,
+      imagesToDelete,
+    }))
+
+    if (imagesToDelete.length > 0) {
+      setIsImageDeleteConfirmOpen(true)
+    }
+  }
+
   const submitUpdate = async () => {
     if (!formData || !onUpdate) return
 
@@ -132,8 +112,8 @@ export function ItemDetailsSection({
       quantity: formData.quantity,
       tags: selectedTags.map((tag) => tag.id),
       containerId: item.containerId,
-      images: imagesToUpload,
-      imagesToDelete,
+      images: formData.images || [],
+      imagesToDelete: formData.imagesToDelete || [],
     }
 
     try {
@@ -147,7 +127,7 @@ export function ItemDetailsSection({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (imagesToDelete.length > 0) {
+    if (formData?.imagesToDelete && formData.imagesToDelete.length > 0) {
       setIsImageDeleteConfirmOpen(true)
       return
     }
@@ -195,112 +175,11 @@ export function ItemDetailsSection({
         <div className="grid grid-cols-2 gap-4" role="group" aria-label="Item information">
           <div className="row-span-4 flex flex-col items-center justify-center">
             <Label className="text-center mb-1.5">Image</Label>
-            <div className="w-64 relative">
-              {/* TODO: non-unique key warning */}
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {item.images.length === 0 && previewUrls.length === 0 ? (
-                    <CarouselItem>
-                      <div className="p-1">
-                        <div className="overflow-hidden rounded-lg border">
-                          <PlaceholderImage />
-                        </div>
-                      </div>
-                    </CarouselItem>
-                  ) : (
-                    <>
-                      {item.images
-                        .filter((image) => !imagesToDelete.includes(image.url))
-                        .map((image, index) => (
-                          <CarouselItem key={image.id}>
-                            <div className="p-1 relative">
-                              <div
-                                className={cn(
-                                  'overflow-hidden rounded-lg border',
-                                  imagesToDelete.includes(image.url) &&
-                                    'border-2 border-destructive/50',
-                                )}
-                              >
-                                <img
-                                  src={image.url}
-                                  alt={`${item.name} - ${index + 1}`}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              {isEditing && (
-                                <button
-                                  onClick={() => handleImageDelete(image.url)}
-                                  className={cn(
-                                    'absolute top-2 right-2 p-1 rounded-full text-white',
-                                    imagesToDelete.includes(image.url)
-                                      ? 'bg-destructive/70 hover:bg-destructive'
-                                      : 'bg-destructive/90 hover:bg-destructive',
-                                  )}
-                                >
-                                  <X className="h-4 w-4" />
-                                </button>
-                              )}
-                            </div>
-                          </CarouselItem>
-                        ))}
-
-                      {previewUrls.map((url, index) => (
-                        <CarouselItem key={`preview-${index}`}>
-                          <div className="p-1 relative">
-                            <div className="overflow-hidden rounded-lg border">
-                              <img
-                                src={url}
-                                alt={`New upload preview ${index + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            {isEditing && (
-                              <button
-                                onClick={() => {
-                                  URL.revokeObjectURL(url)
-                                  setPreviewUrls((prev) => prev.filter((u) => u !== url))
-                                  setImagesToUpload((prev) => prev.filter((_, i) => i !== index))
-                                }}
-                                className="absolute top-2 right-2 p-1 rounded-full bg-destructive/90 text-white hover:bg-destructive"
-                              >
-                                <X className="h-4 w-4" />
-                              </button>
-                            )}
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </>
-                  )}
-                </CarouselContent>
-                {(item.images.length > 0 || previewUrls.length > 0) && (
-                  <>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </>
-                )}
-              </Carousel>
-
-              {isEditing && (
-                <div className="mt-4">
-                  <Input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                    id="file-upload"
-                  />
-                  <Button variant="outline" className="w-full" asChild>
-                    <label htmlFor="file-upload" className="flex items-center justify-center gap-2">
-                      <Upload className="h-4 w-4" />
-                      {item.images.length === 0 && previewUrls.length === 0
-                        ? 'Upload Photo'
-                        : 'Upload More Photos'}
-                    </label>
-                  </Button>
-                </div>
-              )}
-            </div>
+            <ItemDetailsCarousel
+              item={item}
+              isEditing={isEditing}
+              onImagesChange={handleImagesChange}
+            />
           </div>
 
           <ItemDetail
@@ -326,7 +205,7 @@ export function ItemDetailsSection({
       <ImageDeleteModal
         isOpen={isImageDeleteConfirmOpen}
         onClose={() => setIsImageDeleteConfirmOpen(false)}
-        count={imagesToDelete.length}
+        count={formData?.imagesToDelete?.length || 0}
         onConfirm={submitUpdate}
         isDeleting={isUpdating}
       />

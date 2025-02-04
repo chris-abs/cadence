@@ -1,4 +1,6 @@
+export * from './ContainerDetailForm'
 export * from './ContainerDetailsSection'
+export * from './ItemDetailsCarousel'
 export * from './ItemDetailsSection'
 export * from './TagManagement'
 export * from './TagSelector'
