@@ -3,12 +3,12 @@ import { toast } from 'sonner'
 
 import { NotAssignedSection } from '@/Global/components/molecules'
 import { EntityHeader } from '@/Global/components/molecules/headers'
-import { ItemsListSection } from '@/Global/components/organisms/detail/sections'
 import { ContainerSelectionModal } from '@/Container/components/organisms/modals'
 import { useUpdateContainer } from '@/Container/queries'
 import { UpdateContainerData } from '@/Container/schemas'
 import { Container } from '@/Container/types'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
+import { ItemCatalogue } from '@/Tag/components/organisms/detail/sections'
 
 interface ContainerDetailProps {
   container: Container
@@ -50,12 +50,12 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
         }
       />
 
-      <ItemsListSection
+      <ItemCatalogue
         items={container.items || []}
         emptyStateComponent={
           <NotAssignedSection
             title="Items"
-            message="No items in this container yet. Add items to get started."
+            message="No items are using this tag yet. Add this tag to items to see them here."
           />
         }
       />

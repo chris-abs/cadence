@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Package } from 'lucide-react'
 
 import {
   Accordion,
@@ -12,7 +13,7 @@ import {
   CardDescription,
   CardContent,
 } from '@/Global/components/atoms'
-import { Section, H3, Muted, ViewToggle } from '@/Global/components/molecules'
+import { NoContent, Section, H3, Muted, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
 import { Item } from '@/Item/types'
@@ -20,10 +21,21 @@ import { ItemCard } from '@/Item/components/atoms/card'
 
 interface ItemCatalogueProps {
   items: Item[]
+  emptyStateComponent?: React.ReactNode
 }
 
-export function ItemCatalogue({ items }: ItemCatalogueProps) {
+// TODO: prop to update card header title and description depending which page we're on
+
+export function ItemCatalogue({ items, emptyStateComponent }: ItemCatalogueProps) {
   const [openSections, setOpenSections] = useState<string[]>(['tagged-items'])
+
+  if (!items?.length) {
+    return (
+      emptyStateComponent || (
+        <NoContent icon={Package} message="No items found. Create one to get started." />
+      )
+    )
+  }
 
   const sortedItems = items.filter((item) => item.container?.name)
   const unsortedItems = items.filter((item) => !item.container?.name)

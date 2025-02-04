@@ -10,8 +10,6 @@ import { cn } from '@/Global/lib'
 import {
   ContainerSearchResult,
   ItemSearchResult,
-  SearchResult,
-  SearchType,
   TagSearchResult,
   WorkspaceSearchResult,
 } from '@/Collection/types/search'
