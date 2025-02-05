@@ -188,7 +188,6 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
 
         {data?.tags && data.tags.length > 0 && (
           <div className="border-t border-border pt-4">
-            <Muted className="text-sm mb-2">Related Tags</Muted>
             <ScrollArea className="w-full">
               <div className="flex gap-2 pb-2">
                 {data.tags.map((tag) => (

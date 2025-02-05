@@ -1,4 +1,7 @@
-export type SearchType = 'container' | 'item' | 'tag' | 'tagged_item' | 'workspace'
+import type { Container } from '@/Container/types'
+import type { Item } from '@/Item/types'
+import type { Tag } from '@/Tag/types'
+import type { Workspace } from '@/Workspace/types'
 
 export interface BaseSearchResult {
   id: number
@@ -8,40 +11,20 @@ export interface BaseSearchResult {
   rank: number
   containerName?: string
   workspaceName?: string
+  colour?: string
 }
 
-export interface DashboardContainerSearchResult extends BaseSearchResult {
-  type: 'container'
-  location?: string
-  workspaceName?: string
-}
-
-export interface DashboardItemSearchResult extends BaseSearchResult {
-  type: 'item' | 'tagged_item'
-  containerName?: string
-  containerLocation?: string
-}
-
-export interface DashboardTagSearchResult extends BaseSearchResult {
-  type: 'tag'
-  itemCount?: number
-}
-
-export interface DashboardWorkspaceSearchResult extends BaseSearchResult {
-  type: 'workspace'
-  containerCount?: number
-}
-
-export type SearchResult =
-  | DashboardContainerSearchResult
-  | DashboardItemSearchResult
-  | DashboardTagSearchResult
-  | DashboardWorkspaceSearchResult
+export type SearchType = 'container' | 'item' | 'tag' | 'tagged_item' | 'workspace'
 
 export interface SearchResponse {
-  containers: DashboardContainerSearchResult[]
-  items: DashboardItemSearchResult[]
-  tags: DashboardTagSearchResult[]
-  taggedItems: DashboardItemSearchResult[]
-  workspaces: DashboardWorkspaceSearchResult[]
+  containers: BaseSearchResult[]
+  items: BaseSearchResult[]
+  tags: BaseSearchResult[]
+  taggedItems: BaseSearchResult[]
+  workspaces: BaseSearchResult[]
 }
+
+export type ItemSearchResponse = Array<Item & { rank: number }>
+export type ContainerSearchResponse = Array<Container & { rank: number }>
+export type TagSearchResponse = Array<Tag & { rank: number }>
+export type WorkspaceSearchResponse = Array<Workspace & { rank: number }>
