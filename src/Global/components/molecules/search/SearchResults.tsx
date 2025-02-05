@@ -1,20 +1,28 @@
-import { Box, Tags, FolderOpen, Package } from 'lucide-react'
+import { Box, FolderOpen, Package, Tag } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 
 import { useDebounce } from '@/Global/hooks/useDebounce'
-import { getSearchResultsByEntityType } from '@/Global/utils/search'
 import { useSearch } from '@/Global/queries/search'
-import { cn } from '@/Global/lib'
-import { ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from '../../atoms'
-import { H3, Muted } from '../Typography'
 import type { SearchType } from '@/Global/types/search'
+import { cn } from '@/Global/lib'
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  ScrollArea,
+  ScrollBar,
+} from '../../atoms'
+import { H3, Muted } from '../Typography'
 import { ResultsList, NoResults } from './'
 
 const searchTypes = [
   { type: 'workspace', icon: Box, label: 'Workspaces' },
   { type: 'container', icon: FolderOpen, label: 'Containers' },
   { type: 'item', icon: Package, label: 'Items' },
-  { type: 'tag', icon: Tags, label: 'Tags' },
+  { type: 'tagged_item', icon: Tag, label: 'Tagged Items' },
 ] as const
 
 interface SearchResultsProps {
@@ -23,7 +31,9 @@ interface SearchResultsProps {
 }
 
 export function SearchResults({ query, onClose }: SearchResultsProps) {
-  const [selectedTypes, setSelectedTypes] = useState<SearchType[]>(searchTypes.map((t) => t.type))
+  const [selectedTypes, setSelectedTypes] = useState<SearchType[]>(
+    searchTypes.map((t) => t.type as SearchType),
+  )
   const debouncedSearch = useDebounce(query, 300)
   const { data, isLoading } = useSearch(debouncedSearch, {
     enabled: debouncedSearch.length > 0,
@@ -90,27 +100,117 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
           ))}
         </ToggleGroup>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
-          {selectedTypes.map((type) => {
-            const results = getSearchResultsByEntityType(data, type)
-            const Icon = searchTypes.find((t) => t.type === type)?.icon || Box
-
-            return (
-              <div key={type} className="space-y-2">
-                <H3 className="capitalize">{type}s</H3>
-                <div className="rounded-md">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
+            {selectedTypes.includes('workspace') && (
+              <div>
+                <H3 className="mb-2">Workspaces</H3>
+                <ScrollArea className="h-[200px]">
                   {isLoading ? (
                     <Muted className="p-4">Loading...</Muted>
-                  ) : results.length === 0 ? (
-                    <NoResults type={type} query={query} />
+                  ) : data?.workspaces.length === 0 ? (
+                    <NoResults type="workspace" query={query} />
                   ) : (
-                    <ResultsList results={results} type={type} Icon={Icon} onClose={onClose} />
+                    <ResultsList
+                      results={data?.workspaces ?? []}
+                      type="workspace"
+                      Icon={Box}
+                      onClose={onClose}
+                    />
                   )}
-                </div>
+                </ScrollArea>
               </div>
-            )
-          })}
+            )}
+
+            {selectedTypes.includes('container') && (
+              <div>
+                <H3 className="mb-2">Containers</H3>
+                <ScrollArea className="h-[200px]">
+                  {isLoading ? (
+                    <Muted className="p-4">Loading...</Muted>
+                  ) : data?.containers.length === 0 ? (
+                    <NoResults type="container" query={query} />
+                  ) : (
+                    <ResultsList
+                      results={data?.containers ?? []}
+                      type="container"
+                      Icon={FolderOpen}
+                      onClose={onClose}
+                    />
+                  )}
+                </ScrollArea>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            {selectedTypes.includes('item') && (
+              <div>
+                <H3 className="mb-2">Items</H3>
+                <ScrollArea className="h-[200px]">
+                  {isLoading ? (
+                    <Muted className="p-4">Loading...</Muted>
+                  ) : data?.items.length === 0 ? (
+                    <NoResults type="item" query={query} />
+                  ) : (
+                    <ResultsList
+                      results={data?.items ?? []}
+                      type="item"
+                      Icon={Package}
+                      onClose={onClose}
+                    />
+                  )}
+                </ScrollArea>
+              </div>
+            )}
+
+            {selectedTypes.includes('tagged_item') && (
+              <div>
+                <H3 className="mb-2">Tagged Items</H3>
+                <ScrollArea className="h-[200px]">
+                  {isLoading ? (
+                    <Muted className="p-4">Loading...</Muted>
+                  ) : data?.taggedItems.length === 0 ? (
+                    <NoResults type="tagged_item" query={query} />
+                  ) : (
+                    <ResultsList
+                      results={data?.taggedItems ?? []}
+                      type="tagged_item"
+                      Icon={Package}
+                      onClose={onClose}
+                    />
+                  )}
+                </ScrollArea>
+              </div>
+            )}
+          </div>
         </div>
+
+        {data?.tags && data.tags.length > 0 && (
+          <div className="border-t border-border pt-4">
+            <Muted className="text-sm mb-2">Related Tags</Muted>
+            <ScrollArea className="w-full">
+              <div className="flex gap-2 pb-2">
+                {data.tags.map((tag) => (
+                  <Link
+                    key={tag.id}
+                    to="/tags/$tagId"
+                    params={{ tagId: tag.id.toString() }}
+                    className={cn(
+                      'px-2 py-1 rounded-md whitespace-nowrap',
+                      'bg-muted hover:bg-muted/80',
+                      'transition-colors duration-200',
+                    )}
+                    onClick={onClose}
+                  >
+                    {tag.name}
+                  </Link>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </div>
+        )}
       </div>
     </div>
   )

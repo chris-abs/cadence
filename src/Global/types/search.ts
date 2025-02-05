@@ -1,4 +1,4 @@
-export type SearchType = 'container' | 'item' | 'tag' | 'workspace'
+export type SearchType = 'container' | 'item' | 'tag' | 'tagged_item' | 'workspace'
 
 export interface BaseSearchResult {
   id: number
@@ -6,6 +6,8 @@ export interface BaseSearchResult {
   name: string
   description: string
   rank: number
+  containerName?: string
+  workspaceName?: string
 }
 
 export interface DashboardContainerSearchResult extends BaseSearchResult {
@@ -15,7 +17,7 @@ export interface DashboardContainerSearchResult extends BaseSearchResult {
 }
 
 export interface DashboardItemSearchResult extends BaseSearchResult {
-  type: 'item'
+  type: 'item' | 'tagged_item'
   containerName?: string
   containerLocation?: string
 }
@@ -40,5 +42,6 @@ export interface SearchResponse {
   containers: DashboardContainerSearchResult[]
   items: DashboardItemSearchResult[]
   tags: DashboardTagSearchResult[]
+  taggedItems: DashboardItemSearchResult[]
   workspaces: DashboardWorkspaceSearchResult[]
 }

@@ -22,4 +22,7 @@ export const queryKeys = {
     detail: (id: number) => ['tags', id] as const,
     search: (query: string) => ['tags', 'search', query] as const,
   },
+  taggedItems: {
+    search: (query: string) => ['tagged-items', 'search', query] as const,
+  },
 }

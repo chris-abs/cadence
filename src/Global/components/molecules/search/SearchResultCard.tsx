@@ -8,6 +8,7 @@ const typeToRoute = {
   workspace: (id: number) => `/workspaces/${id}`,
   container: (id: number) => `/containers/${id}`,
   item: (id: number) => `/items/${id}`,
+  tagged_item: (id: number) => `/items/${id}`,
   tag: (id: number) => `/tags/${id}`,
 } as const
 
@@ -21,6 +22,7 @@ export function SearchResultCard({ result, Icon, onClose }: SearchResultCardProp
   const renderExtraInfo = () => {
     switch (result.type) {
       case 'item':
+      case 'tagged_item':
         return (
           <Muted className="truncate">
             Container:{' '}
@@ -29,6 +31,7 @@ export function SearchResultCard({ result, Icon, onClose }: SearchResultCardProp
               : 'unassigned'}
           </Muted>
         )
+
       case 'container':
         return (
           <Muted className="truncate">

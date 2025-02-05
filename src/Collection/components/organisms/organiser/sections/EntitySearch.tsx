@@ -52,7 +52,7 @@ export function EntitySearch({ searchQuery, onSearchChange, onCreateEntity }: En
         <SearchInput
           value={searchQuery}
           onChange={onSearchChange}
-          placeholder="Search across all collections..."
+          placeholder="Search across your entire collection..."
         >
           <SearchResults query={searchQuery} onClose={() => onSearchChange('')} />
         </SearchInput>
