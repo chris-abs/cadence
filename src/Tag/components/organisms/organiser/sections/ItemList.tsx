@@ -1,4 +1,3 @@
-import { Tags } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -7,7 +6,7 @@ import {
   CardTitle,
   ScrollArea,
 } from '@/Global/components/atoms'
-import { NoContent, Section, ViewToggle } from '@/Global/components/molecules'
+import { Section, ViewToggle } from '@/Global/components/molecules'
 import { Item } from '@/Item/types'
 import { SelectableItemCard } from '@/Item/components/atoms/card'
 import { cn } from '@/Global/lib'

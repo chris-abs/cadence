@@ -41,7 +41,7 @@ export function TagSelector({
         <CardHeader>
           <div className="flex justify-between items-center flex-shrink-0">
             <div className="flex flex-col gap-2">
-              <CardTitle className="gap-2 text-xl">All Tags</CardTitle>
+              <CardTitle>All Tags</CardTitle>
               <CardDescription>
                 Select any number of tags and items to tag selected items, dont forget to save!{' '}
               </CardDescription>
@@ -49,6 +49,7 @@ export function TagSelector({
 
             <div className="flex gap-2">
               <Button
+                size="sm"
                 variant="ghost"
                 // onClick={handleCancel}
                 // disabled={isUpdating}
