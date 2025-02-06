@@ -1,8 +1,17 @@
 import { Tags } from 'lucide-react'
-import { ScrollArea } from '@/Global/components/atoms'
-import { NoContent, Section } from '@/Global/components/molecules'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  ScrollArea,
+} from '@/Global/components/atoms'
+import { NoContent, Section, ViewToggle } from '@/Global/components/molecules'
 import { Item } from '@/Item/types'
 import { SelectableItemCard } from '@/Item/components/atoms/card'
+import { cn } from '@/Global/lib'
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 interface ItemListProps {
   items: Item[]
@@ -12,32 +21,51 @@ interface ItemListProps {
 }
 
 export function ItemList({ items, selectedItemIds, onItemToggle, isLoading }: ItemListProps) {
+  const { isCompact } = useSettingsStore()
+
   return (
     <Section>
-      <div className="flex-1">
-        {isLoading ? (
-          <div className="grid grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-[200px] rounded-lg bg-muted animate-pulse" />
-            ))}
-          </div>
-        ) : items.length === 0 ? (
-          <NoContent icon={Tags} message="No items found." />
-        ) : (
-          <ScrollArea className="h-[calc(100vh-300px)]">
-            <div className="grid grid-cols-3 gap-4 pr-4 pb-4">
-              {items.map((item) => (
-                <SelectableItemCard
-                  key={item.id}
-                  item={item}
-                  isSelected={selectedItemIds.has(item.id)}
-                  onSelect={onItemToggle}
-                />
-              ))}
+      <ScrollArea className="min-h-0 max-h-[calc(100vh-31rem)] overflow-auto">
+        <Card className="h-fit">
+          <CardHeader>
+            <div className="flex justify-between items-center flex-shrink-0">
+              <div>
+                <CardTitle>All Items</CardTitle>
+                <CardDescription>Select items to assign tags to.</CardDescription>
+              </div>
+              <ViewToggle />
             </div>
+          </CardHeader>
+          <ScrollArea className="min-h-0 max-h-[calc(100vh-19rem)] overflow-auto">
+            <CardContent>
+              {isLoading ? (
+                <div className="space-y-2">
+                  {[...Array(3)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        'rounded-md bg-muted animate-pulse',
+                        isCompact ? 'h-[100px]' : 'h-[200px]',
+                      )}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-4 p-2 justify-center">
+                  {items.map((item) => (
+                    <SelectableItemCard
+                      key={item.id}
+                      item={item}
+                      isSelected={selectedItemIds.has(item.id)}
+                      onSelect={onItemToggle}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
           </ScrollArea>
-        )}
-      </div>
+        </Card>
+      </ScrollArea>
     </Section>
   )
 }
