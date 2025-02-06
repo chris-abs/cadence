@@ -1,9 +1,8 @@
-import { Check, Tags } from 'lucide-react'
-
+import { Tags } from 'lucide-react'
 import { ScrollArea } from '@/Global/components/atoms'
 import { NoContent, Section } from '@/Global/components/molecules'
-import { cn } from '@/Global/lib'
 import { Item } from '@/Item/types'
+import { SelectableItemCard } from '@/Item/components/atoms/card'
 
 interface ItemListProps {
   items: Item[]
@@ -17,38 +16,23 @@ export function ItemList({ items, selectedItemIds, onItemToggle, isLoading }: It
     <Section>
       <div className="flex-1">
         {isLoading ? (
-          <div className="space-y-2">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 rounded-md bg-muted animate-pulse" />
+          <div className="grid grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-[200px] rounded-lg bg-muted animate-pulse" />
             ))}
           </div>
         ) : items.length === 0 ? (
           <NoContent icon={Tags} message="No items found." />
         ) : (
           <ScrollArea className="h-[calc(100vh-300px)]">
-            <div className="space-y-2 pr-4">
+            <div className="grid grid-cols-3 gap-4 pr-4 pb-4">
               {items.map((item) => (
-                <button
+                <SelectableItemCard
                   key={item.id}
-                  onClick={() => onItemToggle(item.id)}
-                  className={cn(
-                    'w-full flex items-center justify-between',
-                    'rounded-sm border p-4',
-                    'bg-background hover:bg-accent/50',
-                    'transition-colors duration-200',
-                    selectedItemIds.has(item.id) && 'border-border',
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    {selectedItemIds.has(item.id) && <Check className="h-4 w-4" />}
-                    <span className="font-medium">{item.name}</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground">
-                      {item.tags?.length || 0} tags
-                    </span>
-                  </div>
-                </button>
+                  item={item}
+                  isSelected={selectedItemIds.has(item.id)}
+                  onSelect={onItemToggle}
+                />
               ))}
             </div>
           </ScrollArea>
