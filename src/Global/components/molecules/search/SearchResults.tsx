@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
   ScrollArea,
   ScrollBar,
+  Badge,
 } from '../../atoms'
 import { H3, Muted } from '../Typography'
 import { ResultsList, NoResults } from './'
@@ -190,19 +191,14 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
           <div className="border-t border-border pt-4">
             <ScrollArea className="w-full">
               <div className="flex gap-2 pb-2">
-                {data.tags.map((tag) => (
+                {data.tags.map((searchTag) => (
                   <Link
-                    key={tag.id}
+                    key={searchTag.id}
                     to="/tags/$tagId"
-                    params={{ tagId: tag.id.toString() }}
-                    className={cn(
-                      'px-2 py-1 rounded-md whitespace-nowrap',
-                      'bg-muted hover:bg-muted/80',
-                      'transition-colors duration-200',
-                    )}
+                    params={{ tagId: searchTag.id.toString() }}
                     onClick={onClose}
                   >
-                    {tag.name}
+                    <Badge tag={searchTag} className="me-0" />
                   </Link>
                 ))}
               </div>

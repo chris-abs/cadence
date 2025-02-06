@@ -1,4 +1,5 @@
 import {
+  BadgeToggle,
   Button,
   Card,
   CardContent,
@@ -7,12 +8,9 @@ import {
   CardTitle,
   ScrollArea,
   ScrollBar,
-  ToggleGroup,
-  ToggleGroupItem,
 } from '@/Global/components/atoms'
-import Badge from '@/Global/components/atoms/BadgeNew'
 import { Section } from '@/Global/components/molecules'
-import { Tag } from '@/Tag/types'
+import { SimplifiedTag, Tag } from '@/Tag/types'
 
 interface TagSelectorProps {
   tags: Tag[]
@@ -29,6 +27,14 @@ export function TagSelector({
   onTagToggle,
   onSave,
 }: TagSelectorProps) {
+  const handleTagToggle = (tagId: string, isActive: boolean) => {
+    if (isActive) {
+      onTagToggle([...selectedTagIds, tagId])
+    } else {
+      onTagToggle(selectedTagIds.filter((id) => id !== tagId))
+    }
+  }
+
   return (
     <Section>
       <Card>
@@ -67,25 +73,23 @@ export function TagSelector({
           <div className="flex">
             <ScrollArea type="always" className="w-1 flex-1">
               <div className="min-w-max">
-                <ToggleGroup
-                  type="multiple"
-                  value={selectedTagIds}
-                  onValueChange={onTagToggle}
-                  className="flex flex-wrap gap-2 pb-4"
-                >
-                  {tags?.map((tag) => (
-                    <ToggleGroupItem key={tag.id} value={String(tag.id)}>
-                      <Badge
-                        colour={{
-                          name: tag.name,
-                          value: tag.colour,
-                        }}
-                        variant="toggle"
+                <div className="flex flex-wrap gap-2 p-4 pb-6">
+                  {tags?.map((tag) => {
+                    const simplifiedTag: SimplifiedTag = {
+                      id: tag.id,
+                      name: tag.name,
+                      colour: tag.colour,
+                    }
+                    return (
+                      <BadgeToggle
+                        key={tag.id}
+                        tag={simplifiedTag}
                         isActive={selectedTagIds.includes(String(tag.id))}
+                        onToggle={(isActive) => handleTagToggle(String(tag.id), isActive)}
                       />
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
+                    )
+                  })}
+                </div>
               </div>
               <ScrollBar orientation="horizontal" className="w-full" />
             </ScrollArea>

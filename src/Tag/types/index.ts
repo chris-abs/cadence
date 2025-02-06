@@ -9,3 +9,7 @@ export interface Tag {
   createdAt: string
   updatedAt: string
 }
+
+export type SimplifiedTag = Pick<Tag, 'id' | 'name'> & {
+  colour?: string
+}
