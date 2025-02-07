@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Clock, Bell, Palette, Camera } from 'lucide-react'
+import { Clock, Bell, Palette } from 'lucide-react'
 
 import {
   Card,
@@ -17,7 +17,7 @@ import {
 } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { H2, Section } from '@/Global/components/molecules'
-import { CameraPermissionStatus, useSettingsStore } from '@/Global/stores/useSettingsStore'
+import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 export const Route = createFileRoute('/_authenticated/settings')({
   component: SettingsPage,
@@ -31,15 +31,12 @@ function SettingsPage() {
     dateFormat,
     isCompact,
     sidebarCollapsed,
-    cameraPermission,
-    requestCameraPermission,
     applyTheme,
     setEmailNotifications,
     setPushNotifications,
     setDateFormat,
     setCompact,
     setSidebarCollapsed,
-    setCameraPermission,
   } = useSettingsStore()
 
   return (
@@ -151,45 +148,6 @@ function SettingsPage() {
                     <SelectContent>
                       <SelectItem value="relative">Relative (2 hours ago)</SelectItem>
                       <SelectItem value="absolute">Absolute (Jan 23, 2024)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Camera className="h-5 w-5" />
-                  Camera Access
-                </CardTitle>
-                <CardDescription>Configure camera access for QR code scanning</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Camera Permission</span>
-                    <p className="text-sm text-muted-foreground">
-                      Control camera access for QR scanning
-                    </p>
-                  </div>
-                  <Select
-                    value={cameraPermission}
-                    onValueChange={async (value: CameraPermissionStatus) => {
-                      if (value === 'granted') {
-                        await requestCameraPermission()
-                      } else {
-                        setCameraPermission(value)
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="prompt">Ask Every Time</SelectItem>
-                      <SelectItem value="granted">Allow</SelectItem>
-                      <SelectItem value="denied">Block</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
