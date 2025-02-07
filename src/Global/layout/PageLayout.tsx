@@ -13,6 +13,7 @@ import {
 import { useAuth } from '@/Global/hooks/useAuth'
 import { useBreadcrumbs } from '@/Global/lib/breadcrumbs'
 import { AppSidebar, SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar'
+import { QrSearch } from '../components/molecules/search/scanner'
 
 interface PageLayoutProps {
   children: React.ReactNode
@@ -45,26 +46,31 @@ export function PageLayout({ children }: PageLayoutProps) {
       <AppSidebar />
       <SidebarInset className="flex flex-col h-screen">
         <div className="flex items-center gap-2 px-4 h-16 border-b shrink-0">
-          <SidebarTrigger className="-ml-1" />
-          <Separator className="mx-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              {breadcrumbs.map((crumb, index) => (
-                <React.Fragment key={crumb.label}>
-                  <BreadcrumbItem className="hidden md:block">
-                    {index === breadcrumbs.length - 1 ? (
-                      <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                    ) : (
-                      <BreadcrumbLink href={crumb.href || ''}>{crumb.label}</BreadcrumbLink>
-                    )}
-                  </BreadcrumbItem>
-                  {index < breadcrumbs.length - 1 && (
-                    <BreadcrumbSeparator className="hidden md:block" />
-                  )}
-                </React.Fragment>
-              ))}
-            </BreadcrumbList>
-          </Breadcrumb>
+          <div className="flex justify-between items-center w-full">
+            <div className="flex items-center">
+              <SidebarTrigger className="-ml-1" />
+              <Separator className="mx-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {breadcrumbs.map((crumb, index) => (
+                    <React.Fragment key={crumb.label}>
+                      <BreadcrumbItem className="hidden md:block">
+                        {index === breadcrumbs.length - 1 ? (
+                          <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink href={crumb.href || ''}>{crumb.label}</BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                      {index < breadcrumbs.length - 1 && (
+                        <BreadcrumbSeparator className="hidden md:block" />
+                      )}
+                    </React.Fragment>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+            <QrSearch />
+          </div>
         </div>
         <main className="flex-1 bg-contrast-accent overflow-y-auto">{children}</main>
       </SidebarInset>

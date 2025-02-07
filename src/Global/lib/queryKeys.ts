@@ -6,6 +6,7 @@ export const queryKeys = {
     list: ['containers'] as const,
     detail: (id: number) => ['containers', id] as const,
     search: (query: string) => ['containers', 'search', query] as const,
+    qr: (code: string) => ['containers', 'qr', code] as const,
   },
   workspaces: {
     list: ['workspaces'] as const,

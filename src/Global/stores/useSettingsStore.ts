@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 
 type Theme = 'light' | 'dark' | 'system'
 type DateFormat = 'relative' | 'absolute'
+export type CameraPermissionStatus = 'granted' | 'denied' | 'prompt' | 'not_supported'
 
 interface SettingsState {
   theme: Theme
@@ -11,6 +12,7 @@ interface SettingsState {
   pushNotifications: boolean
   dateFormat: DateFormat
   sidebarCollapsed: boolean
+  cameraPermission: CameraPermissionStatus
 
   applyTheme: (newTheme: Theme) => void
   setCompact: (isCompact: boolean) => void
@@ -18,6 +20,9 @@ interface SettingsState {
   setPushNotifications: (enabled: boolean) => void
   setDateFormat: (format: DateFormat) => void
   setSidebarCollapsed: (collapsed: boolean) => void
+  setCameraPermission: (status: CameraPermissionStatus) => void
+  checkCameraSupport: () => Promise<boolean>
+  requestCameraPermission: () => Promise<boolean>
 }
 
 const applyThemeToDOM = (theme: Theme) => {
@@ -43,6 +48,7 @@ export const useSettingsStore = create<SettingsState>()(
       pushNotifications: true,
       dateFormat: 'relative',
       sidebarCollapsed: false,
+      cameraPermission: 'prompt',
 
       applyTheme: (newTheme) => {
         set({ theme: newTheme })
@@ -58,6 +64,31 @@ export const useSettingsStore = create<SettingsState>()(
       setPushNotifications: (enabled) => set({ pushNotifications: enabled }),
       setDateFormat: (format) => set({ dateFormat: format }),
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
+      setCameraPermission: (status) => set({ cameraPermission: status }),
+      checkCameraSupport: async () => {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          set({ cameraPermission: 'not_supported' })
+          return false
+        }
+        return true
+      },
+
+      requestCameraPermission: async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' },
+          })
+          stream.getTracks().forEach((track) => track.stop())
+          set({ cameraPermission: 'granted' })
+          return true
+        } catch (error) {
+          set({
+            cameraPermission:
+              error instanceof Error && error.name === 'NotAllowedError' ? 'denied' : 'prompt',
+          })
+          return false
+        }
+      },
     }),
     {
       name: 'user-settings',
@@ -69,6 +100,7 @@ export const useSettingsStore = create<SettingsState>()(
         pushNotifications: state.pushNotifications,
         dateFormat: state.dateFormat,
         sidebarCollapsed: state.sidebarCollapsed,
+        cameraPermission: state.cameraPermission,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

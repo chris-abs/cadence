@@ -9,6 +9,7 @@ import type {
   DashboardWorkspaceSearchResult,
   SearchResponse,
 } from '@/Global/types/search'
+import { Container } from '@/Container/types'
 
 export function useSearch(query: string, options?: { enabled?: boolean }) {
   return useQuery({
@@ -64,5 +65,13 @@ export function useTaggedItemSearch(query: string, options?: { enabled?: boolean
     queryFn: () =>
       api.get<DashboardItemSearchResult[]>(`/search/tagged-items?q=${encodeURIComponent(query)}`),
     enabled: options?.enabled && !!query,
+  })
+}
+
+export function useContainerQRSearch(qrCode: string, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: queryKeys.containers.qr(qrCode),
+    queryFn: () => api.get<Container>(`/search/containers/qr/${encodeURIComponent(qrCode)}`),
+    enabled: options?.enabled && !!qrCode,
   })
 }
