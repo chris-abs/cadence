@@ -7,10 +7,10 @@ import {
   ScrollArea,
 } from '@/Global/components/atoms'
 import { Section, ViewToggle } from '@/Global/components/molecules'
-import { Item } from '@/Item/types'
-import { SelectableItemCard } from '@/Item/components/atoms/card'
-import { cn } from '@/Global/lib'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
+import { cn } from '@/Global/lib'
+import { SelectableItemCard } from '@/Item/components/atoms/card'
+import { Item } from '@/Item/types'
 
 interface ItemListProps {
   items: Item[]
