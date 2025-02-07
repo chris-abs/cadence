@@ -20,8 +20,23 @@ export function QrSearch() {
 
   const handleScan = async () => {
     try {
+      const permissionStatus = await navigator.permissions.query({
+        name: 'camera' as PermissionName,
+      })
+      if (permissionStatus.state === 'denied') {
+        toast.error('Camera access required', {
+          description: 'Please enable camera access in your browser settings',
+        })
+        return
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
+        video: {
+          facingMode: 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: false,
       })
 
       const video = document.createElement('video')
@@ -43,10 +58,12 @@ export function QrSearch() {
 
       stream.getTracks().forEach((track) => track.stop())
       reader.reset()
-    } catch {
-      toast.error('Camera access required', {
-        description: 'Please allow camera access when prompted',
-      })
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error('Camera error', {
+          description: 'Failed to initialize camera. Please try again.',
+        })
+      }
     }
   }
 
