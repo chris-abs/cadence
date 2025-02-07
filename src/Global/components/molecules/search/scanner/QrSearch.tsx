@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
-import { BrowserMultiFormatReader } from '@zxing/library'
+import { useState } from 'react'
+import { QrReader } from 'react-qr-reader'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { Camera } from 'lucide-react'
@@ -7,8 +7,8 @@ import { Camera } from 'lucide-react'
 import {
   Button,
   Dialog,
-  DialogHeader,
   DialogContent,
+  DialogHeader,
   DialogTitle,
   Tooltip,
   TooltipContent,
@@ -19,90 +19,50 @@ import { useContainerQRSearch } from '@/Global/queries/search'
 
 export function QrSearch() {
   const [isOpen, setIsOpen] = useState(false)
-  const [stream, setStream] = useState<MediaStream | null>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
   const navigate = useNavigate()
 
   const { refetch: searchContainer } = useContainerQRSearch('', {
     enabled: false,
   })
 
-  useEffect(() => {
-    if (isOpen && videoRef.current && !stream) {
-      navigator.mediaDevices
-        .getUserMedia({
-          video: { facingMode: 'environment' },
-          audio: false,
-        })
-        .then((mediaStream) => {
-          setStream(mediaStream)
-          if (videoRef.current) {
-            videoRef.current.srcObject = mediaStream
-            videoRef.current.play()
-          }
-        })
-        .catch((error) => {
-          toast.error('Camera access required', {
-            description: error instanceof Error ? error.message : 'Please enable camera access',
-          })
-          setIsOpen(false)
-        })
+  const handleScan = async (result: { getText: () => string } | null | undefined) => {
+    if (!result) {
+      toast.error('Camera error', {
+        description: 'Please ensure you have good lighting and the QR code is clearly visible',
+      })
+      return
     }
 
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop())
-        setStream(null)
+    const qrCode = result.getText()
+    if (!qrCode.startsWith('STORAGE-CONTAINER-')) {
+      toast.error('Invalid QR code', {
+        description: 'Please scan a valid container QR code',
+      })
+      return
+    }
+
+    try {
+      const { data } = await searchContainer()
+      if (data) {
+        setIsOpen(false)
+        navigate({
+          to: '/containers/$containerId',
+          params: { containerId: data.id.toString() },
+        })
       }
+    } catch {
+      toast.error('Failed to find container', {
+        description: 'The scanned QR code did not match any containers',
+      })
     }
-  }, [isOpen, stream])
-
-  useEffect(() => {
-    if (isOpen && videoRef.current && stream) {
-      const reader = new BrowserMultiFormatReader()
-
-      const scanInterval = setInterval(async () => {
-        try {
-          if (videoRef.current) {
-            const result = await reader.decodeOnce(videoRef.current)
-            const qrCode = result?.getText()
-
-            if (qrCode?.startsWith('STORAGE-CONTAINER-')) {
-              const { data } = await searchContainer()
-              if (data) {
-                clearInterval(scanInterval)
-                setIsOpen(false)
-                navigate({
-                  to: '/containers/$containerId',
-                  params: { containerId: data.id.toString() },
-                })
-              }
-            }
-          }
-        } catch {
-          // Ignore errors during scanning attempts
-        }
-      }, 500)
-
-      return () => {
-        clearInterval(scanInterval)
-        reader.reset()
-      }
-    }
-  }, [isOpen, stream, navigate, searchContainer])
+  }
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto"
-              onClick={() => setIsOpen(true)}
-              aria-label="Scan QR code"
-            >
+            <Button variant="ghost" size="icon" className="ml-auto" onClick={() => setIsOpen(true)}>
               <Camera className="h-5 w-5" />
             </Button>
           </span>
@@ -111,22 +71,21 @@ export function QrSearch() {
       </Tooltip>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-md" aria-labelledby="qr-scan-title">
-          <DialogHeader>
-            <DialogTitle id="qr-scan-title">Scan Container QR Code</DialogTitle>
-          </DialogHeader>
-          <div
-            className="aspect-square overflow-hidden rounded-md bg-black"
-            role="application"
-            aria-label="QR code scanner view"
-          >
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              playsInline
-              autoPlay
-              aria-hidden="true" // Video feed doesn't need to be announced by screen readers
-            />
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>Scan Container QR Code</DialogTitle>
+          <DialogHeader />
+          <div className="aspect-square overflow-hidden rounded-md bg-white">
+            {isOpen && (
+              <QrReader
+                onResult={handleScan}
+                constraints={{
+                  facingMode: 'environment',
+                  aspectRatio: 1,
+                  frameRate: { ideal: 60, min: 30 },
+                }}
+                className="w-full h-full"
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>
