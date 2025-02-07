@@ -17,6 +17,10 @@ import {
 } from '@/Global/components/atoms'
 import { useContainerQRSearch } from '@/Global/queries/search'
 
+type QRCodeResult = {
+  getText(): string
+}
+
 export function QrSearch() {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -25,15 +29,11 @@ export function QrSearch() {
     enabled: false,
   })
 
-  const handleScan = async (result: { getText: () => string } | null | undefined) => {
-    if (!result) {
-      toast.error('Camera error', {
-        description: 'Please ensure you have good lighting and the QR code is clearly visible',
-      })
-      return
-    }
+  const handleScan = async (result: QRCodeResult | null | undefined) => {
+    if (!result) return
 
     const qrCode = result.getText()
+
     if (!qrCode.startsWith('STORAGE-CONTAINER-')) {
       toast.error('Invalid QR code', {
         description: 'Please scan a valid container QR code',

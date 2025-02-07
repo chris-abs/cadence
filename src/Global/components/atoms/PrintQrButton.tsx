@@ -1,7 +1,7 @@
 import { Printer } from 'lucide-react'
-import { Button, Tooltip, TooltipTrigger } from '@/Global/components/atoms'
+
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@/Global/components/atoms'
 import { usePrintQR } from '@/Global/hooks/usePrintQr'
-import { TooltipContent } from '@radix-ui/react-tooltip'
 import { Small } from '../molecules'
 
 interface PrintQRButtonProps {
