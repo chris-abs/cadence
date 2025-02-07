@@ -29,6 +29,11 @@ export function QrSearch() {
     enabled: false,
   })
 
+  const stopMediaTracks = () => {
+    const tracks = document.querySelector('video')?.srcObject as MediaStream
+    tracks?.getTracks().forEach((track) => track.stop())
+  }
+
   const handleScan = async (result: QRCodeResult | null | undefined) => {
     if (!result) return
 
@@ -44,6 +49,7 @@ export function QrSearch() {
     try {
       const { data } = await searchContainer()
       if (data) {
+        stopMediaTracks()
         setIsOpen(false)
         navigate({
           to: '/containers/$containerId',
@@ -70,7 +76,15 @@ export function QrSearch() {
         <TooltipContent>Scan container QR code</TooltipContent>
       </Tooltip>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            stopMediaTracks()
+          }
+          setIsOpen(open)
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogTitle>Scan Container QR Code</DialogTitle>
           <DialogHeader />
