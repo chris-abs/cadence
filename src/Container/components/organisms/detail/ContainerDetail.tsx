@@ -99,6 +99,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
         container={container}
         onUpdateContainer={handleUpdateContainer}
         isUpdating={updateContainer.isPending}
+        allowReassignment={false}
       />
 
       <WorkspaceSection

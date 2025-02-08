@@ -126,6 +126,7 @@ export function ItemDetail({ item }: ItemDetailProps) {
         onUpdateContainer={handleUpdateContainer}
         isUpdating={updateContainer.isPending}
         onAssignOrReassign={handleAssignOrReassignContainer}
+        allowReassignment={true}
       />
 
       <CreateTagModal

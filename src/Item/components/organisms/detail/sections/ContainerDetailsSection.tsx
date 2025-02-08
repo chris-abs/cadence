@@ -22,6 +22,7 @@ interface ContainerDetailsSectionProps {
   onUpdateContainer?: (data: UpdateContainerData) => Promise<void>
   onAssignOrReassign?: () => void
   isUpdating?: boolean
+  allowReassignment?: boolean
 }
 
 export function ContainerDetailsSection({
@@ -30,6 +31,7 @@ export function ContainerDetailsSection({
   onUpdateContainer,
   onAssignOrReassign,
   isUpdating,
+  allowReassignment,
 }: ContainerDetailsSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -99,10 +101,12 @@ export function ContainerDetailsSection({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background border-border">
-                  <DropdownMenuItem onClick={onAssignOrReassign}>
-                    <ArrowRight className="h-4 w-4 mr-2" />
-                    <span>Reassign Container</span>
-                  </DropdownMenuItem>
+                  {allowReassignment && (
+                    <DropdownMenuItem onClick={onAssignOrReassign}>
+                      <ArrowRight className="h-4 w-4 mr-2" />
+                      <span>Reassign Container</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleEdit}>
                     <Pencil className="h-4 w-4 mr-2" />
                     <span>Edit</span>
