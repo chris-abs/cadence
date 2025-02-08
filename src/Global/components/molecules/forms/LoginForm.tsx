@@ -1,26 +1,29 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
-  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  Input,
   Alert,
   AlertDescription,
-  Input,
+  Button,
 } from '@/Global/components/atoms'
-import { loginSchema } from '@/User/schemas/auth'
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1, 'Password is required'),
+})
 
 type FormData = z.infer<typeof loginSchema>
 
 interface LoginFormProps {
   onSubmit: (credentials: FormData) => void
-  error?: Error | null
+  error?: string | null
   isLoading?: boolean
 }
 
@@ -35,10 +38,10 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertDescription>{error.message || 'Invalid email or password'}</AlertDescription>
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
@@ -51,12 +54,10 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="name@example.com"
                   {...field}
-                  onFocus={() => form.clearErrors('email')}
+                  className={form.formState.errors.email ? 'border-destructive' : ''}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -70,12 +71,10 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
               <FormControl>
                 <Input
                   type="password"
-                  placeholder="••••••"
                   {...field}
-                  onFocus={() => form.clearErrors('password')}
+                  className={form.formState.errors.password ? 'border-destructive' : ''}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
