@@ -1,4 +1,6 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 import {
   Card,
@@ -16,6 +18,7 @@ export const Route = createFileRoute('/register')({
 function RegisterPage() {
   const router = useRouter()
   const { authentication: auth } = Route.useRouteContext()
+  const [registerError, setRegisterError] = useState<string | null>(null)
 
   const handleRegister = async (credentials: {
     email: string
@@ -24,22 +27,32 @@ function RegisterPage() {
     lastName: string
   }) => {
     try {
+      setRegisterError(null)
       await auth.register(credentials)
+      toast.success('Account created successfully')
       router.navigate({ to: '/login' })
     } catch (err) {
-      console.error('Registration failed:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed'
+      setRegisterError(errorMessage)
+      toast.error('Registration failed', {
+        description: errorMessage,
+      })
     }
   }
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Card className="w-[400px]">
+    <div className="grid min-h-screen place-items-center px-4">
+      <Card className="w-full max-w-[400px]">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
           <CardDescription>Enter your details below to create your account</CardDescription>
         </CardHeader>
         <CardContent>
-          <RegisterForm onSubmit={handleRegister} error={auth.error} isLoading={auth.isLoading} />
+          <RegisterForm
+            onSubmit={handleRegister}
+            error={registerError}
+            isLoading={auth.isLoading}
+          />
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
             <Link to="/login" className="text-primary underline-offset-4 hover:underline">

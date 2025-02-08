@@ -11,7 +11,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   Input,
 } from '@/Global/components/atoms'
 import { registerSchema } from '@/User/schemas/auth'
@@ -20,7 +19,7 @@ type FormData = z.infer<typeof registerSchema>
 
 interface RegisterFormProps {
   onSubmit: (credentials: FormData) => void
-  error?: Error | null
+  error?: string | null
   isLoading?: boolean
 }
 
@@ -40,7 +39,7 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>{error.message}</AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
@@ -52,9 +51,12 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
               <FormItem>
                 <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John" {...field} />
+                  <Input
+                    placeholder="John"
+                    {...field}
+                    className={form.formState.errors.firstName ? 'border-destructive' : ''}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -66,9 +68,12 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Doe" {...field} />
+                  <Input
+                    placeholder="Doe"
+                    {...field}
+                    className={form.formState.errors.lastName ? 'border-destructive' : ''}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -81,9 +86,12 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="email@example.com" {...field} />
+                <Input
+                  placeholder="email@example.com"
+                  {...field}
+                  className={form.formState.errors.email ? 'border-destructive' : ''}
+                />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -95,15 +103,19 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••" {...field} />
+                <Input
+                  type="password"
+                  placeholder="••••••"
+                  {...field}
+                  className={form.formState.errors.password ? 'border-destructive' : ''}
+                />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Loading...' : 'Create Account'}
+          {isLoading ? 'Creating account...' : 'Create Account'}
         </Button>
       </form>
     </Form>
