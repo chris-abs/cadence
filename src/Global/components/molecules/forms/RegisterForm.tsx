@@ -39,7 +39,7 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="capitalize">{error}</AlertDescription>
           </Alert>
         )}
 

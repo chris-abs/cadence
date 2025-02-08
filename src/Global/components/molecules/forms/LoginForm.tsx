@@ -41,7 +41,7 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="capitalize">{error}</AlertDescription>
           </Alert>
         )}
 
