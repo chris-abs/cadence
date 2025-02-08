@@ -6,11 +6,13 @@ import { EntityHeader } from '@/Global/components/molecules/headers'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 import { useUpdateWorkspace } from '@/Workspace/queries'
 import { WorkspaceSection } from '@/Workspace/components/organisms/detail/sections'
+import { WorkspaceSelectionModal } from '@/Workspace/components/organisms/modals'
 import { useUpdateContainer } from '@/Container/queries'
 import { UpdateContainerData } from '@/Container/schemas'
 import { Container } from '@/Container/types'
 import { ContainerDetailsSection } from '@/Item/components/organisms/detail/sections'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
+import { ItemCatalogue } from './sections'
 
 interface ContainerDetailProps {
   container: Container
@@ -113,7 +115,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
         }
       />
 
-      <ContainerItemCatalogue
+      <ItemCatalogue
         items={container.items}
         emptyStateComponent={
           <NotAssignedSection
