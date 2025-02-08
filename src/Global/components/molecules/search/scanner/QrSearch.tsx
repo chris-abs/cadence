@@ -1,7 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { QrReader } from 'react-qr-reader'
 import { useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
 import { Camera } from 'lucide-react'
 
 import {
@@ -23,11 +22,23 @@ type QRCodeResult = {
 
 export function QrSearch() {
   const [isOpen, setIsOpen] = useState(false)
+  const [scannedCode, setScannedCode] = useState('')
   const navigate = useNavigate()
 
-  const { refetch: searchContainer } = useContainerQRSearch('', {
-    enabled: false,
+  const { data: container } = useContainerQRSearch(scannedCode, {
+    enabled: !!scannedCode,
   })
+
+  useEffect(() => {
+    if (container) {
+      stopMediaTracks()
+      setIsOpen(false)
+      navigate({
+        to: '/containers/$containerId',
+        params: { containerId: container.id.toString() },
+      })
+    }
+  }, [container, navigate])
 
   const stopMediaTracks = () => {
     const tracks = document.querySelector('video')?.srcObject as MediaStream
@@ -36,31 +47,7 @@ export function QrSearch() {
 
   const handleScan = async (result: QRCodeResult | null | undefined) => {
     if (!result) return
-
-    const qrCode = result.getText()
-
-    if (!qrCode.startsWith('STORAGE-CONTAINER-')) {
-      toast.error('Invalid QR code', {
-        description: 'Please scan a valid container QR code',
-      })
-      return
-    }
-
-    try {
-      const { data } = await searchContainer()
-      if (data) {
-        stopMediaTracks()
-        setIsOpen(false)
-        navigate({
-          to: '/containers/$containerId',
-          params: { containerId: data.id.toString() },
-        })
-      }
-    } catch {
-      toast.error('Failed to find container', {
-        description: 'The scanned QR code did not match any containers',
-      })
-    }
+    setScannedCode(result.getText())
   }
 
   return (
@@ -81,6 +68,7 @@ export function QrSearch() {
         onOpenChange={(open) => {
           if (!open) {
             stopMediaTracks()
+            setScannedCode('')
           }
           setIsOpen(open)
         }}
