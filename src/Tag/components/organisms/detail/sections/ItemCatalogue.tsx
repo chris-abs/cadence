@@ -24,8 +24,6 @@ interface ItemCatalogueProps {
   emptyStateComponent?: React.ReactNode
 }
 
-// TODO: prop to update card header title and description depending which page we're on
-
 export function ItemCatalogue({ items, emptyStateComponent }: ItemCatalogueProps) {
   const [openSections, setOpenSections] = useState<string[]>(['tagged-items'])
 
