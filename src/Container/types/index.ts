@@ -1,4 +1,5 @@
 import { Item } from '@/Item/types'
+import { Workspace } from '@/Workspace/types'
 
 export interface Container {
   id: number
@@ -8,6 +9,7 @@ export interface Container {
   qrCode: string
   qrCodeImage: string
   workspaceId?: number
+  workspace?: Workspace
   items: Item[]
   createdAt: string
   updatedAt: string

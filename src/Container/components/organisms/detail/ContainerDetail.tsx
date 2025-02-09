@@ -103,7 +103,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
       />
 
       <WorkspaceSection
-        workspace={container?.workspace}
+        workspace={container?.workspace || null}
         onUpdate={handleUpdateWorkspace}
         isUpdating={updateWorkspace.isPending}
         emptyStateComponent={
@@ -121,7 +121,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
         emptyStateComponent={
           <NotAssignedSection
             title="Items"
-            message="No items in this container yet. Add items to organize them here."
+            message="No items in this container yet. Create new items or assign existing ones to organise this container."
           />
         }
       />
