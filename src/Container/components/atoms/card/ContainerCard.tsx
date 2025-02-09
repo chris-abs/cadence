@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Clock, FolderOpen, Package } from 'lucide-react'
+import { Clock, FolderOpen } from 'lucide-react'
 
 import { H4, Muted } from '@/Global/components/molecules/Typography'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
@@ -41,8 +41,8 @@ export function ContainerCard({ container }: ContainerCardProps) {
           }}
         />
 
-        <div className="absolute -right-6 -bottom-6 opacity-5">
-          <Package className="w-24 h-24" />
+        <div className="absolute -right-6 -bottom-9 opacity-5">
+          <FolderOpen className="w-32 h-32" />
         </div>
 
         <div className="p-4 flex flex-col flex-1 relative">
