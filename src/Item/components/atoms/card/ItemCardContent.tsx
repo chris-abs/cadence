@@ -1,5 +1,5 @@
-import { Clock } from 'lucide-react'
-import { Badge, PlaceholderImage, ScrollArea } from '@/Global/components/atoms'
+import { Clock, Package } from 'lucide-react'
+import { Badge, PlaceholderImage, ScrollArea, ScrollBar } from '@/Global/components/atoms'
 import { H4, Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
@@ -20,28 +20,60 @@ export function ItemCardContent({ item, className }: ItemCardContentProps) {
 
   const baseCardClasses = cn(
     'rounded-lg border border-border',
-    'bg-background hover:bg-contrast-accent',
-    'transition-colors duration-200',
+    'bg-background hover:bg-accent/5',
+    'transition-all duration-200',
     'hover:border-primary/50',
+    'group',
     className,
   )
 
   if (isCompact) {
     return (
-      <article className={cn(baseCardClasses, 'p-2 h-[100px]')}>
-        <div className="flex flex-col h-full">
-          <H4 className="truncate" id={`item-${item.id}-name`}>
-            {item.name}
-          </H4>
-          <Muted className="text-xs">Qty: {item.quantity}</Muted>
-          <Muted className="text-xs truncate mb-1">{item.description}</Muted>
-          {item.tags.length > 0 && (
-            <div className="flex gap-1 flex-wrap mt-auto">
-              {item.tags.map((tag) => (
-                <Badge key={tag.id} tag={tag} className="text-[10px] px-1 py-0" />
-              ))}
+      <article className={cn(baseCardClasses, 'h-[125px] relative overflow-hidden')}>
+        <div className="absolute -right-8 -bottom-8 opacity-[0.02] transition-opacity duration-200 group-hover:opacity-[0.04]">
+          <Package className="w-32 h-32" />
+        </div>
+
+        <div className="h-full p-3 flex flex-col">
+          <div className="mb-1">
+            <H4 className="truncate font-medium" id={`item-${item.id}-name`}>
+              {item.name}
+            </H4>
+          </div>
+
+          <div className="flex gap-4 flex-1">
+            <div className="flex flex-col justify-between min-w-0 flex-1">
+              <div className="h-6 flex items-center">
+                {item.container ? (
+                  <Muted className="text-xs truncate">{item.container.name}</Muted>
+                ) : (
+                  <span className="text-xs text-muted-foreground/50">No container</span>
+                )}
+              </div>
+
+              <div className="h-6 flex items-center">
+                <Muted className="text-xs">Qty: {item.quantity}</Muted>
+              </div>
+
+              <div className="h-6 flex items-center gap-1.5">
+                <Clock className="w-3 h-3 text-muted-foreground" />
+                <Muted className="text-xs">{formatRelativeTime(item.updatedAt)}</Muted>
+              </div>
             </div>
-          )}
+
+            <div className="w-2/5">
+              <ScrollArea className="h-[72px] -mr-2.5 pr-2.5">
+                <div className="space-y-1" role="list" aria-label="Item tags">
+                  {item.tags.map((tag) => (
+                    <div key={tag.id} className="pr-2">
+                      <Badge tag={tag} className="w-full text-[10px] px-1.5 py-0.5" />
+                    </div>
+                  ))}
+                </div>
+                <ScrollBar />
+              </ScrollArea>
+            </div>
+          </div>
         </div>
       </article>
     )
