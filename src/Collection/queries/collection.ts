@@ -10,12 +10,24 @@ export async function createCollectionEntity(
   queryClient: QueryClient,
 ): Promise<{ id: number }> {
   const response = await api.post<{ id: number }>(`/${type}s`, data)
-  if (type === 'tag') {
-    queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
-  } else {
-    queryClient.invalidateQueries({ queryKey: [type + 's'] })
+
+  switch (type) {
+    case 'workspace':
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaces.list })
+      break
+    case 'container':
+      queryClient.invalidateQueries({ queryKey: queryKeys.containers.list })
+      break
+    case 'item':
+      queryClient.invalidateQueries({ queryKey: queryKeys.items.list })
+      break
+    case 'tag':
+      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
+      break
   }
+
   queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+
   return response
 }
 
