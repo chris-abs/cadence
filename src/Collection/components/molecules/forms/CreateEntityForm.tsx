@@ -71,7 +71,7 @@ export function CreateEntityForm({
           </Alert>
         )}
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-4 gap-1">
           {(Object.keys(typeDetails) as EntityType[]).map((type) => {
             const { icon: TypeIcon } = typeDetails[type]
             return (
@@ -80,9 +80,9 @@ export function CreateEntityForm({
                 type="button"
                 variant={selectedType === type ? 'default' : 'outline'}
                 onClick={() => onTypeChange(type)}
-                className="flex-1"
+                className="w-full capitalize"
               >
-                <TypeIcon className="mr-2 h-4 w-4" />
+                <TypeIcon className="mr-[0.5] h-4 w-4" />
                 {type}
               </Button>
             )
