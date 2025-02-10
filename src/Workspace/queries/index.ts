@@ -31,6 +31,11 @@ export function useCreateWorkspace() {
         return [...old, newWorkspace]
       })
 
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+
       invalidateQueries(queryClient, {
         lists: ['workspaces'],
       })
@@ -52,11 +57,12 @@ export function useUpdateWorkspace() {
         )
       })
 
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+
       invalidateQueries(queryClient, {
-        exactIds: {
-          workspaceId: variables.id,
-          containerIds: updatedWorkspace.containers?.map((c) => c.id),
-        },
         lists: ['workspaces'],
       })
     },
@@ -67,14 +73,8 @@ export function useDeleteWorkspace() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (id: number) => {
-      const workspace = queryClient.getQueryData<Workspace>(queryKeys.workspaces.detail(id))
-      const containerIds = workspace?.containers?.map((c) => c.id) || []
-
-      await api.delete(`/workspaces/${id}`)
-      return { containerIds }
-    },
-    onSuccess: (result, deletedId) => {
+    mutationFn: (id: number) => api.delete(`/workspaces/${id}`),
+    onSuccess: (_, deletedId) => {
       queryClient.removeQueries({
         queryKey: queryKeys.workspaces.detail(deletedId),
       })
@@ -83,10 +83,12 @@ export function useDeleteWorkspace() {
         return old.filter((workspace) => workspace.id !== deletedId)
       })
 
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+
       invalidateQueries(queryClient, {
-        exactIds: {
-          containerIds: result.containerIds,
-        },
         lists: ['workspaces'],
       })
     },

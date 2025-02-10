@@ -1,10 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
+import { invalidateQueries } from '@/Global/utils/queryInvalidation'
 import { Item } from '@/Item/types'
-import { CreateTagData, UpdateItemTagsData, UpdateTagData } from '../schemas'
 import { Tag } from '../types'
+import { CreateTagData, UpdateTagData, UpdateItemTagsData } from '../schemas'
 
 export function useTag(id: number) {
   return useQuery({
@@ -30,8 +31,15 @@ export function useCreateTag() {
       queryClient.setQueryData(queryKeys.tags.list, (old: Tag[] = []) => {
         return [...old, newTag]
       })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
-      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['tags'],
+      })
     },
   })
 }
@@ -43,11 +51,19 @@ export function useUpdateTag() {
     mutationFn: (data: UpdateTagData) => api.put<Tag>(`/tags/${data.id}`, data),
     onSuccess: (updatedTag, variables) => {
       queryClient.setQueryData(queryKeys.tags.detail(variables.id), updatedTag)
+
       queryClient.setQueryData(queryKeys.tags.list, (old: Tag[] = []) => {
         return old.map((tag) => (tag.id === variables.id ? updatedTag : tag))
       })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
-      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['tags'],
+      })
     },
   })
 }
@@ -60,8 +76,19 @@ export function useUpdateItemTags() {
       api.put<Item>(`/items/${itemId}/tags`, { tagIds }),
     onSuccess: (updatedItem) => {
       queryClient.setQueryData(queryKeys.items.detail(updatedItem.id), updatedItem)
-      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+
+      queryClient.setQueryData(queryKeys.items.list, (old: Item[] = []) => {
+        return old.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.tags.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['items'],
+      })
     },
   })
 }
@@ -72,12 +99,22 @@ export function useDeleteTag() {
   return useMutation({
     mutationFn: (id: number) => api.delete(`/tags/${id}`),
     onSuccess: (_, deletedId) => {
-      queryClient.removeQueries({ queryKey: queryKeys.tags.detail(deletedId) })
+      queryClient.removeQueries({
+        queryKey: queryKeys.tags.detail(deletedId),
+      })
+
       queryClient.setQueryData(queryKeys.tags.list, (old: Tag[] = []) => {
         return old.filter((tag) => tag.id !== deletedId)
       })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
-      queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['tags'],
+      })
     },
   })
 }

@@ -1,21 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { Container } from '@/Container/types'
-import { CreateItemData, UpdateItemData } from '../schemas'
+import { invalidateQueries } from '@/Global/utils/queryInvalidation'
 import { Item } from '../types'
+import { CreateItemData, UpdateItemData } from '../schemas'
 
 export function useItem(id: number) {
   return useQuery({
     queryKey: queryKeys.items.detail(id),
-    queryFn: async () => {
-      const item = await api.get<Item>(`/items/${id}`)
-      return {
-        ...item,
-        queryKey: [queryKeys.items.detail(id), item.container?.id],
-      }
-    },
+    queryFn: () => api.get<Item>(`/items/${id}`),
     enabled: !!id,
   })
 }
@@ -36,19 +30,20 @@ export function useCreateItem() {
       queryClient.setQueryData(queryKeys.items.list, (old: Item[] = []) => {
         return [...old, newItem]
       })
-      if (newItem.containerId) {
-        queryClient.setQueryData(
-          queryKeys.containers.detail(newItem.containerId),
-          (oldContainer: Container | undefined) => {
-            if (!oldContainer) return oldContainer
-            return {
-              ...oldContainer,
-              items: [...(oldContainer.items || []), newItem],
-            }
-          },
-        )
-      }
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.tags.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['items'],
+      })
     },
   })
 }
@@ -67,17 +62,57 @@ export function useUpdateItem() {
 
       return api.put<Item>(`/items/${data.id}`, formData)
     },
-    onSuccess: (updatedItem) => {
-      queryClient.setQueryData(queryKeys.items.detail(updatedItem.id), updatedItem)
-      queryClient.invalidateQueries({ queryKey: queryKeys.items.list })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
-      queryClient.invalidateQueries({ queryKey: queryKeys.tags })
+    onSuccess: (updatedItem, variables) => {
+      queryClient.setQueryData(queryKeys.items.detail(variables.id), updatedItem)
 
-      if (updatedItem.containerId) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.containers.detail(updatedItem.containerId),
-        })
-      }
+      queryClient.setQueryData(queryKeys.items.list, (old: Item[] = []) => {
+        return old.map((item) => (item.id === variables.id ? updatedItem : item))
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.tags.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['items'],
+      })
+    },
+  })
+}
+
+export function useDeleteItem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => api.delete(`/items/${id}`),
+    onSuccess: (_, deletedId) => {
+      queryClient.removeQueries({
+        queryKey: queryKeys.items.detail(deletedId),
+      })
+
+      queryClient.setQueryData(queryKeys.items.list, (old: Item[] = []) => {
+        return old.filter((item) => item.id !== deletedId)
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.tags.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['items'],
+      })
     },
   })
 }

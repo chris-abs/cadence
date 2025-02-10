@@ -31,10 +31,17 @@ export function useCreateContainer() {
         return [...old, newContainer]
       })
 
+      queryClient.refetchQueries({
+        queryKey: queryKeys.workspaces.list,
+        exact: true,
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+
       invalidateQueries(queryClient, {
-        exactIds: {
-          workspaceId: newContainer.workspaceId,
-        },
         lists: ['containers'],
       })
     },
@@ -47,10 +54,6 @@ export function useUpdateContainer() {
   return useMutation({
     mutationFn: (data: UpdateContainerData) => api.put<Container>(`/containers/${data.id}`, data),
     onSuccess: (updatedContainer, variables) => {
-      const oldContainer = queryClient.getQueryData<Container>(
-        queryKeys.containers.detail(variables.id),
-      )
-
       queryClient.setQueryData(queryKeys.containers.detail(variables.id), updatedContainer)
 
       queryClient.setQueryData(queryKeys.containers.list, (old: Container[] = []) => {
@@ -59,24 +62,19 @@ export function useUpdateContainer() {
         )
       })
 
-      if (oldContainer?.workspaceId !== updatedContainer.workspaceId) {
-        invalidateQueries(queryClient, {
-          exactIds: {
-            workspaceId: oldContainer?.workspaceId,
-            containerIds: [variables.id],
-          },
-          lists: ['containers'],
-        })
-      }
+      queryClient.refetchQueries({
+        queryKey: queryKeys.workspaces.list,
+        exact: true,
+      })
 
-      if (oldContainer?.items?.length !== updatedContainer.items?.length) {
-        invalidateQueries(queryClient, {
-          exactIds: {
-            itemIds: updatedContainer.items?.map((item) => item.id),
-          },
-          lists: ['items'],
-        })
-      }
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+
+      invalidateQueries(queryClient, {
+        lists: ['containers'],
+      })
     },
   })
 }
@@ -85,17 +83,8 @@ export function useDeleteContainer() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (id: number) => {
-      const container = queryClient.getQueryData<Container>(queryKeys.containers.detail(id))
-      const relationshipIds = {
-        workspaceId: container?.workspaceId,
-        itemIds: container?.items?.map((item) => item.id) || [],
-      }
-
-      await api.delete(`/containers/${id}`)
-      return relationshipIds
-    },
-    onSuccess: (relationshipIds, deletedId) => {
+    mutationFn: (id: number) => api.delete(`/containers/${id}`),
+    onSuccess: (_, deletedId) => {
       queryClient.removeQueries({
         queryKey: queryKeys.containers.detail(deletedId),
       })
@@ -104,11 +93,17 @@ export function useDeleteContainer() {
         return old.filter((container) => container.id !== deletedId)
       })
 
+      queryClient.refetchQueries({
+        queryKey: queryKeys.workspaces.list,
+        exact: true,
+      })
+
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+
       invalidateQueries(queryClient, {
-        exactIds: {
-          workspaceId: relationshipIds.workspaceId,
-          itemIds: relationshipIds.itemIds,
-        },
         lists: ['containers'],
       })
     },
