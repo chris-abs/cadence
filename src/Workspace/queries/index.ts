@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
+import { invalidateQueries } from '@/Global/utils/queryInvalidation'
 import { Workspace } from '../types'
 import { CreateWorkspaceData, UpdateWorkspaceData } from '../schemas'
 
@@ -29,7 +30,10 @@ export function useCreateWorkspace() {
       queryClient.setQueryData(queryKeys.workspaces.list, (old: Workspace[] = []) => {
         return [...old, newWorkspace]
       })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+
+      invalidateQueries(queryClient, {
+        lists: ['workspaces'],
+      })
     },
   })
 }
@@ -41,12 +45,20 @@ export function useUpdateWorkspace() {
     mutationFn: (data: UpdateWorkspaceData) => api.put<Workspace>(`/workspaces/${data.id}`, data),
     onSuccess: (updatedWorkspace, variables) => {
       queryClient.setQueryData(queryKeys.workspaces.detail(variables.id), updatedWorkspace)
+
       queryClient.setQueryData(queryKeys.workspaces.list, (old: Workspace[] = []) => {
         return old.map((workspace) =>
           workspace.id === variables.id ? updatedWorkspace : workspace,
         )
       })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+
+      invalidateQueries(queryClient, {
+        exactIds: {
+          workspaceId: variables.id,
+          containerIds: updatedWorkspace.containers?.map((c) => c.id),
+        },
+        lists: ['workspaces'],
+      })
     },
   })
 }
@@ -55,13 +67,28 @@ export function useDeleteWorkspace() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: number) => api.delete(`/workspaces/${id}`),
-    onSuccess: (_, deletedId) => {
-      queryClient.removeQueries({ queryKey: queryKeys.workspaces.detail(deletedId) })
+    mutationFn: async (id: number) => {
+      const workspace = queryClient.getQueryData<Workspace>(queryKeys.workspaces.detail(id))
+      const containerIds = workspace?.containers?.map((c) => c.id) || []
+
+      await api.delete(`/workspaces/${id}`)
+      return { containerIds }
+    },
+    onSuccess: (result, deletedId) => {
+      queryClient.removeQueries({
+        queryKey: queryKeys.workspaces.detail(deletedId),
+      })
+
       queryClient.setQueryData(queryKeys.workspaces.list, (old: Workspace[] = []) => {
         return old.filter((workspace) => workspace.id !== deletedId)
       })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+
+      invalidateQueries(queryClient, {
+        exactIds: {
+          containerIds: result.containerIds,
+        },
+        lists: ['workspaces'],
+      })
     },
   })
 }
