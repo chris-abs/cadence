@@ -34,7 +34,7 @@ export function UnsortedItemsSection({ items }: UnsortedItemsSectionProps) {
       ref={setNodeRef}
       className={cn(
         'transition-all duration-200',
-        isExpanded ? (isCompact ? 'h-[255px]' : 'h-[355px]') : 'h-[150px]',
+        isExpanded ? (isCompact ? 'h-[290px]' : 'h-[355px]') : 'h-[150px]',
       )}
     >
       <Section className="h-full overflow-hidden">
@@ -68,7 +68,7 @@ export function UnsortedItemsSection({ items }: UnsortedItemsSectionProps) {
               </CardHeader>
               <AccordionContent>
                 <CardContent>
-                  <ScrollArea className={cn(isCompact ? 'h-[100px]' : 'h-[200px]')}>
+                  <ScrollArea className={cn(isCompact ? 'h-[125px]' : 'h-[200px]')}>
                     <div
                       className={cn(
                         'grid gap-4 pb-4',

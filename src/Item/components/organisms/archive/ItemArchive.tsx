@@ -52,7 +52,7 @@ export const ItemArchive = ({ searchQuery }: ItemArchiveProps) => {
                     key={i}
                     className={cn(
                       'rounded-md bg-muted animate-pulse',
-                      isCompact ? 'h-[100px]' : 'h-[200px]',
+                      isCompact ? 'h-[125px]' : 'h-[200px]',
                     )}
                   />
                 ))}
