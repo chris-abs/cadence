@@ -27,7 +27,7 @@ export function CreateItemModal({ isOpen, onClose, containerId }: CreateItemModa
 
   const handleSubmit = async (data: CreateItemData) => {
     try {
-      const response = await createItem.mutateAsync(data)
+      const response = await createItem.mutateAsync({ ...data, containerId })
       onClose()
 
       toast.success('Item created', {

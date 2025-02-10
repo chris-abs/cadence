@@ -31,6 +31,12 @@ export function useCreateItem() {
         return [...old, newItem]
       })
 
+      if (newItem.containerId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.containers.detail(newItem.containerId),
+        })
+      }
+
       queryClient.refetchQueries({
         queryKey: queryKeys.containers.list,
         exact: true,
