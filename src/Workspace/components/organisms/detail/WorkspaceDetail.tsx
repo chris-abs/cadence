@@ -57,6 +57,7 @@ export function WorkspaceDetail({ workspace }: WorkspaceDetailProps) {
       <CreateContainerModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+        workspaceId={workspace.id}
       />
     </div>
   )

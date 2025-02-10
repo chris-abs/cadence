@@ -17,16 +17,17 @@ import { ContainerForm } from '@/Container/components/molecules/forms'
 interface CreateContainerModalProps {
   isOpen: boolean
   onClose: () => void
+  workspaceId: number
 }
 
-export function CreateContainerModal({ isOpen, onClose }: CreateContainerModalProps) {
+export function CreateContainerModal({ isOpen, onClose, workspaceId }: CreateContainerModalProps) {
   const [error, setError] = useState<Error | null>(null)
   const navigate = useNavigate()
   const createContainer = useCreateContainer()
 
   const handleSubmit = async (data: CreateContainerData) => {
     try {
-      const response = await createContainer.mutateAsync(data)
+      const response = await createContainer.mutateAsync({ ...data, workspaceId })
       onClose()
 
       toast.success('Container created', {
