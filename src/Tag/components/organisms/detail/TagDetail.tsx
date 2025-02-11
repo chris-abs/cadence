@@ -57,7 +57,11 @@ export function TagDetail({ tag }: TagDetailProps) {
         }
       />
 
-      <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateItemModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        tag={tag}
+      />
     </div>
   )
 }

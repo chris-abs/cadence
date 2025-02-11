@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { invalidateQueries } from '@/Global/utils/queryInvalidation'
+import { Tag } from '@/Tag/types'
 import { Item } from '../types'
 import { CreateItemData, UpdateItemData } from '../schemas'
 
@@ -26,26 +27,38 @@ export function useCreateItem() {
 
   return useMutation({
     mutationFn: (data: CreateItemData) => api.post<Item>('/items', data),
-    onSuccess: (newItem) => {
+    onSuccess: (newItem, variables) => {
       queryClient.setQueryData(queryKeys.items.list, (old: Item[] = []) => {
         return [...old, newItem]
       })
 
-      if (newItem.containerId) {
+      if (variables.containerId) {
         queryClient.invalidateQueries({
-          queryKey: queryKeys.containers.detail(newItem.containerId),
+          queryKey: queryKeys.containers.detail(variables.containerId),
+        })
+
+        queryClient.refetchQueries({
+          queryKey: queryKeys.containers.list,
+          exact: true,
         })
       }
 
-      queryClient.refetchQueries({
-        queryKey: queryKeys.containers.list,
-        exact: true,
-      })
+      if (variables.tagNames?.length) {
+        queryClient.refetchQueries({
+          queryKey: queryKeys.tags.list,
+          exact: true,
+        })
 
-      queryClient.refetchQueries({
-        queryKey: queryKeys.tags.list,
-        exact: true,
-      })
+        const tags = queryClient.getQueryData<Tag[]>(queryKeys.tags.list)
+        variables.tagNames.forEach((tagName) => {
+          const tag = tags?.find((t) => t.name === tagName)
+          if (tag) {
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.tags.detail(tag.id),
+            })
+          }
+        })
+      }
 
       invalidateQueries(queryClient, {
         lists: ['items'],
