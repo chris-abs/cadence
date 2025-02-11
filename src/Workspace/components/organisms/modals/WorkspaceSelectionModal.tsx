@@ -18,7 +18,7 @@ import { useWorkspaces } from '@/Workspace/queries'
 interface WorkspaceSelectionModalProps {
   isOpen: boolean
   onClose: () => void
-  onSelect: (workspaceId: number) => void
+  onSelect: (workspaceId: number | undefined) => void // Changed to allow undefined
   currentWorkspaceId?: number
 }
 
@@ -29,12 +29,12 @@ export function WorkspaceSelectionModal({
   currentWorkspaceId,
 }: WorkspaceSelectionModalProps) {
   const { data: workspaces, isLoading } = useWorkspaces()
-  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<number | null>(null)
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<number | undefined>(
+    currentWorkspaceId,
+  )
 
   const handleSelect = () => {
-    if (selectedWorkspaceId) {
-      onSelect(selectedWorkspaceId)
-    }
+    onSelect(selectedWorkspaceId)
   }
 
   return (
@@ -44,19 +44,19 @@ export function WorkspaceSelectionModal({
           <DialogTitle>Select Workspace</DialogTitle>
         </DialogHeader>
         <Select
-          onValueChange={(value) => setSelectedWorkspaceId(Number(value))}
+          onValueChange={(value) =>
+            setSelectedWorkspaceId(value === 'none' ? undefined : Number(value))
+          }
           disabled={isLoading}
+          defaultValue={currentWorkspaceId?.toString() || 'none'}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a workspace" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="none">No Workspace</SelectItem>
             {workspaces?.map((workspace) => (
-              <SelectItem
-                key={workspace.id}
-                value={workspace.id.toString()}
-                disabled={workspace.id === currentWorkspaceId}
-              >
+              <SelectItem key={workspace.id} value={workspace.id.toString()}>
                 {workspace.name}
               </SelectItem>
             ))}
@@ -66,8 +66,8 @@ export function WorkspaceSelectionModal({
           <Button onClick={onClose} variant="outline">
             Cancel
           </Button>
-          <Button onClick={handleSelect} disabled={!selectedWorkspaceId}>
-            Assign
+          <Button onClick={handleSelect} disabled={selectedWorkspaceId === currentWorkspaceId}>
+            {selectedWorkspaceId === undefined ? 'Remove' : 'Assign'}
           </Button>
         </DialogFooter>
       </DialogContent>

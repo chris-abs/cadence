@@ -132,11 +132,19 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
         containerId={container.id}
       />
 
-      <WorkspaceSelectionModal
-        isOpen={isWorkspaceModalOpen}
-        onClose={() => setIsWorkspaceModalOpen(false)}
-        currentWorkspaceId={container.workspace?.id}
-        onSelect={handleWorkspaceSelection}
+      <WorkspaceSection
+        workspace={container?.workspace || null}
+        onUpdate={handleUpdateWorkspace}
+        onReassign={handleAssignOrReassignWorkspace}
+        isUpdating={updateWorkspace.isPending}
+        emptyStateComponent={
+          <NotAssignedSection
+            title="Workspace"
+            message="No workspace assigned to this container yet."
+            actionLabel="Assign Workspace"
+            onAction={handleAssignOrReassignWorkspace}
+          />
+        }
       />
     </div>
   )

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pencil, Trash2, MoreVertical } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical, ArrowRight } from 'lucide-react'
 
 import {
   Input,
@@ -20,6 +20,7 @@ interface WorkspaceSectionProps {
   workspace: Workspace | null
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateWorkspaceData) => Promise<void>
+  onReassign?: () => void
   isUpdating?: boolean
 }
 
@@ -27,6 +28,7 @@ export function WorkspaceSection({
   workspace,
   emptyStateComponent,
   onUpdate,
+  onReassign,
   isUpdating,
 }: WorkspaceSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
@@ -85,6 +87,12 @@ export function WorkspaceSection({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {onReassign && (
+                  <DropdownMenuItem onClick={onReassign}>
+                    <ArrowRight className="h-4 w-4 mr-2" />
+                    Reassign Workspace
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={handleEdit}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
