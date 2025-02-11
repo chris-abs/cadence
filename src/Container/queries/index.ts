@@ -91,31 +91,30 @@ export function useUpdateContainer() {
 
 export function useDeleteContainer() {
   const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: (id: number) => api.delete(`/containers/${id}`),
     onSuccess: (_, deletedId) => {
-      // Remove deleted container cache
       queryClient.removeQueries({
         queryKey: queryKeys.containers.detail(deletedId),
       })
 
-      // Immediately update containers list view
       queryClient.setQueryData(queryKeys.containers.list, (old: Container[] = []) => {
         return old.filter((container) => container.id !== deletedId)
       })
 
-      // Invalidate ALL item queries (both list and detail)
-      queryClient.invalidateQueries({
-        queryKey: ['items'],
+      queryClient.refetchQueries({
+        queryKey: queryKeys.workspaces.list,
+        exact: true,
       })
 
-      // Invalidate related entity lists
-      queryClient.invalidateQueries({
-        queryKey: ['workspaces'],
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
       })
 
-      queryClient.invalidateQueries({
-        queryKey: ['containers'],
+      invalidateQueries(queryClient, {
+        lists: ['containers'],
       })
     },
   })
