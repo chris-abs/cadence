@@ -54,8 +54,7 @@ export function useUpdateContainer() {
   return useMutation({
     mutationFn: (data: UpdateContainerData) => api.put<Container>(`/containers/${data.id}`, data),
     onSuccess: (updatedContainer, variables) => {
-      queryClient.setQueryData(queryKeys.containers.detail(variables.id), updatedContainer)
-
+      // Update container list cache immediately for UI responsiveness
       queryClient.setQueryData(queryKeys.containers.list, (old: Container[] = []) => {
         return old.map((container) =>
           container.id === variables.id ? updatedContainer : container,
@@ -65,6 +64,7 @@ export function useUpdateContainer() {
       const oldContainer = queryClient.getQueryData<Container>(
         queryKeys.containers.detail(variables.id),
       )
+
       if (oldContainer?.workspaceId !== updatedContainer.workspaceId) {
         if (oldContainer?.workspaceId) {
           queryClient.invalidateQueries({
@@ -80,6 +80,13 @@ export function useUpdateContainer() {
           queryKey: queryKeys.workspaces.list,
           exact: true,
         })
+
+        queryClient.refetchQueries({
+          queryKey: queryKeys.containers.detail(variables.id),
+          exact: true,
+        })
+      } else {
+        queryClient.setQueryData(queryKeys.containers.detail(variables.id), updatedContainer)
       }
 
       invalidateQueries(queryClient, {
