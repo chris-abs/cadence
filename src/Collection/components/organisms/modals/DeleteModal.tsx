@@ -6,7 +6,6 @@ import { AlertTriangle } from 'lucide-react'
 
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
 import { showEntityActionToast } from '@/Global/components/molecules/EntityActionToast'
-import { queryKeys } from '@/Global/lib/queryKeys'
 import { EntityType } from '@/Collection/types'
 import { deleteCollectionEntity } from '@/Collection/queries/collection'
 
@@ -43,44 +42,7 @@ export function DeleteModal({
     setIsLoading(true)
 
     try {
-      await deleteCollectionEntity(entityType, entityId)
-
-      queryClient.removeQueries({
-        queryKey: queryKeys[`${entityType}s`].detail(entityId),
-        exact: true,
-      })
-
-      if (entityType === 'workspace') {
-        queryClient.refetchQueries({
-          queryKey: queryKeys.containers.list,
-          exact: true,
-        })
-      } else if (entityType === 'container') {
-        queryClient.refetchQueries({
-          queryKey: queryKeys.items.list,
-          exact: true,
-        })
-      } else if (entityType === 'tag' || entityType === 'item') {
-        queryClient.refetchQueries({
-          queryKey: queryKeys.items.list,
-          exact: true,
-        })
-        queryClient.refetchQueries({
-          queryKey: queryKeys.tags.list,
-          exact: true,
-        })
-      }
-
-      queryClient.refetchQueries({
-        queryKey: queryKeys[`${entityType}s`].list,
-        exact: true,
-      })
-
-      queryClient.refetchQueries({
-        queryKey: queryKeys.recent,
-        exact: true,
-      })
-
+      await deleteCollectionEntity(entityType, entityId, queryClient)
       onClose()
       showEntityActionToast({
         actionType: 'delete',
@@ -88,8 +50,6 @@ export function DeleteModal({
         entityName,
         navigate,
       })
-
-      navigate({ to: '/' })
     } catch {
       toast('Error', {
         description: `Failed to delete ${entityType}`,

@@ -31,15 +31,68 @@ export async function createCollectionEntity(
   return response
 }
 
-export async function deleteCollectionEntity(type: EntityType, id: number): Promise<void> {
+export async function deleteCollectionEntity(
+  type: EntityType,
+  id: number,
+  queryClient: QueryClient,
+): Promise<void> {
   await api.delete(`/${type}s/${id}`)
-  const queryClient = new QueryClient()
-  if (type === 'tag') {
-    queryClient.invalidateQueries({ queryKey: queryKeys.tags.list })
-    queryClient.invalidateQueries({ queryKey: queryKeys.tags.detail(id) })
-  } else {
-    queryClient.invalidateQueries({ queryKey: [type + 's'] })
-    queryClient.invalidateQueries({ queryKey: [type + 's', id] })
+
+  queryClient.removeQueries({
+    queryKey: queryKeys[`${type}s`].detail(id),
+  })
+
+  switch (type) {
+    case 'workspace':
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['containers'],
+      })
+      break
+
+    case 'container':
+      queryClient.refetchQueries({
+        queryKey: queryKeys.workspaces.list,
+        exact: true,
+      })
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['items'],
+      })
+      break
+
+    case 'item':
+      queryClient.refetchQueries({
+        queryKey: queryKeys.containers.list,
+        exact: true,
+      })
+      queryClient.refetchQueries({
+        queryKey: queryKeys.tags.list,
+        exact: true,
+      })
+      break
+
+    case 'tag':
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+      break
   }
-  queryClient.invalidateQueries({ queryKey: queryKeys.recent })
+
+  queryClient.refetchQueries({
+    queryKey: queryKeys[`${type}s`].list,
+    exact: true,
+  })
+
+  queryClient.refetchQueries({
+    queryKey: queryKeys.recent,
+    exact: true,
+  })
 }

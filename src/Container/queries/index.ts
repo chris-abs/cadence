@@ -62,15 +62,25 @@ export function useUpdateContainer() {
         )
       })
 
-      queryClient.refetchQueries({
-        queryKey: queryKeys.workspaces.list,
-        exact: true,
-      })
-
-      queryClient.refetchQueries({
-        queryKey: queryKeys.items.list,
-        exact: true,
-      })
+      const oldContainer = queryClient.getQueryData<Container>(
+        queryKeys.containers.detail(variables.id),
+      )
+      if (oldContainer?.workspaceId !== updatedContainer.workspaceId) {
+        if (oldContainer?.workspaceId) {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.workspaces.detail(oldContainer.workspaceId),
+          })
+        }
+        if (updatedContainer.workspaceId) {
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.workspaces.detail(updatedContainer.workspaceId),
+          })
+        }
+        queryClient.refetchQueries({
+          queryKey: queryKeys.workspaces.list,
+          exact: true,
+        })
+      }
 
       invalidateQueries(queryClient, {
         lists: ['containers'],
@@ -81,30 +91,31 @@ export function useUpdateContainer() {
 
 export function useDeleteContainer() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: (id: number) => api.delete(`/containers/${id}`),
     onSuccess: (_, deletedId) => {
+      // Remove deleted container cache
       queryClient.removeQueries({
         queryKey: queryKeys.containers.detail(deletedId),
       })
 
+      // Immediately update containers list view
       queryClient.setQueryData(queryKeys.containers.list, (old: Container[] = []) => {
         return old.filter((container) => container.id !== deletedId)
       })
 
-      queryClient.refetchQueries({
-        queryKey: queryKeys.workspaces.list,
-        exact: true,
+      // Invalidate ALL item queries (both list and detail)
+      queryClient.invalidateQueries({
+        queryKey: ['items'],
       })
 
-      queryClient.refetchQueries({
-        queryKey: queryKeys.items.list,
-        exact: true,
+      // Invalidate related entity lists
+      queryClient.invalidateQueries({
+        queryKey: ['workspaces'],
       })
 
-      invalidateQueries(queryClient, {
-        lists: ['containers'],
+      queryClient.invalidateQueries({
+        queryKey: ['containers'],
       })
     },
   })
