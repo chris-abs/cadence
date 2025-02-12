@@ -14,27 +14,27 @@ import {
   CardContent,
 } from '@/Global/components/atoms'
 import { Section, Muted } from '@/Global/components/molecules'
-import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
-import { Item } from '@/Item/types'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
+import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
+import { Item } from '@/Item/types'
 
-interface UnsortedItemsSectionProps {
+interface UnassignedItemsSectionProps {
   items: Item[]
 }
 
-export function UnsortedItemsSection({ items }: UnsortedItemsSectionProps) {
+export function UnassignedItemsSection({ items }: UnassignedItemsSectionProps) {
   const { isCompact } = useSettingsStore()
-  const { setNodeRef, isOver } = useDroppable({ id: 'unsorted' })
-  const [openSections, setOpenSections] = useState<string[]>(['unsorted'])
-  const isExpanded = openSections.includes('unsorted')
+  const { setNodeRef, isOver } = useDroppable({ id: 'unassigned' })
+  const [openSections, setOpenSections] = useState<string[]>(['unassigned'])
+  const isExpanded = openSections.includes('unassigned')
 
   return (
     <div
       ref={setNodeRef}
       className={cn(
         'transition-all duration-200',
-        isExpanded ? (isCompact ? 'h-[290px]' : 'h-[355px]') : 'h-[150px]',
+        isExpanded ? (isCompact ? 'h-[290px]' : 'h-[365px]') : 'h-[150px]',
       )}
     >
       <Section className="h-full overflow-hidden">
@@ -44,7 +44,7 @@ export function UnsortedItemsSection({ items }: UnsortedItemsSectionProps) {
           onValueChange={setOpenSections}
           className="h-full"
         >
-          <AccordionItem value="unsorted" className="border-none h-full">
+          <AccordionItem value="unassigned" className="border-none h-full">
             <Card
               className={cn(
                 'transition-all duration-200 h-full',
@@ -56,11 +56,11 @@ export function UnsortedItemsSection({ items }: UnsortedItemsSectionProps) {
                   <div className="flex justify-between items-center w-full">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
-                        <CardTitle>Unsorted Items</CardTitle>
+                        <CardTitle>Unassigned Items</CardTitle>
                         <Muted>({items.length} items)</Muted>
                       </div>
                       <CardDescription className="text-muted-foreground m-0">
-                        All new Items will be placed here! Drag them into Containers to sort them
+                        All new Items will be placed here! Drag them into Containers to assign them
                       </CardDescription>
                     </div>
                   </div>

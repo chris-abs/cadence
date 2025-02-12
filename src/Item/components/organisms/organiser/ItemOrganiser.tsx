@@ -16,7 +16,7 @@ import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
 import { Item } from '@/Item/types'
 import { Workspace } from '@/Workspace/types'
 import { Container } from '@/Container/types'
-import { UnsortedItemsSection } from './sections'
+import { UnassignedItemsSection } from './sections'
 
 interface ItemOrganiserProps {
   items: Item[]
@@ -84,7 +84,7 @@ export function ItemOrganiser({ items, workspaces, containers, onUpdateItem }: I
             />
           </Section>
         </div>
-        <UnsortedItemsSection items={items.filter((item) => !item.containerId)} />
+        <UnassignedItemsSection items={items.filter((item) => !item.containerId)} />
       </div>
       <DragOverlay>
         {activeId && items && (

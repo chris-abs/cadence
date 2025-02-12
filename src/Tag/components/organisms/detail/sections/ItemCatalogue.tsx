@@ -35,8 +35,8 @@ export function ItemCatalogue({ items, emptyStateComponent }: ItemCatalogueProps
     )
   }
 
-  const sortedItems = items.filter((item) => item.container?.name)
-  const unsortedItems = items.filter((item) => !item.container?.name)
+  const assignedItems = items.filter((item) => item.container?.name)
+  const unassignedItems = items.filter((item) => !item.container?.name)
 
   return (
     <div className={cn('transition-all duration-200')}>
@@ -69,17 +69,17 @@ export function ItemCatalogue({ items, emptyStateComponent }: ItemCatalogueProps
                 <CardContent className="p-0">
                   <ScrollArea>
                     <div className="space-y-6 p-6">
-                      {sortedItems.length > 0 && (
+                      {assignedItems.length > 0 && (
                         <div>
-                          <H3 className="mb-4">Sorted ({sortedItems.length})</H3>
-                          <ItemGrid items={sortedItems} />
+                          <H3 className="mb-4">Assigned ({assignedItems.length})</H3>
+                          <ItemGrid items={assignedItems} />
                         </div>
                       )}
 
-                      {unsortedItems.length > 0 && (
+                      {unassignedItems.length > 0 && (
                         <div>
-                          <H3 className="mb-4">Unsorted ({unsortedItems.length})</H3>
-                          <ItemGrid items={unsortedItems} />
+                          <H3 className="mb-4">Unassigned ({unassignedItems.length})</H3>
+                          <ItemGrid items={unassignedItems} />
                         </div>
                       )}
                     </div>

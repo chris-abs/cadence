@@ -25,9 +25,9 @@ interface UnassignedContainersSectionProps {
 }
 
 export function UnassignedContainersSection({ containers }: UnassignedContainersSectionProps) {
-  const { setNodeRef, isOver } = useDroppable({ id: 'unsorted' })
-  const [openSections, setOpenSections] = useState<string[]>(['unsorted'])
-  const isExpanded = openSections.includes('unsorted')
+  const { setNodeRef, isOver } = useDroppable({ id: 'unassigned' })
+  const [openSections, setOpenSections] = useState<string[]>(['unassigned'])
+  const isExpanded = openSections.includes('unassigned')
 
   return (
     <div
@@ -41,7 +41,7 @@ export function UnassignedContainersSection({ containers }: UnassignedContainers
           onValueChange={setOpenSections}
           className="h-full"
         >
-          <AccordionItem value="unsorted" className="border-none h-full">
+          <AccordionItem value="unassigned" className="border-none h-full">
             <Card
               className={cn(
                 'transition-all duration-200 h-full',
