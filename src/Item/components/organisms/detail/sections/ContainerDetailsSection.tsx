@@ -9,8 +9,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   PrintQRButton,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
 } from '@/Global/components/atoms'
-import { NotAssignedSection, Section, H3, Muted } from '@/Global/components/molecules'
+import { NotAssignedSection, Section, Muted } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Container } from '@/Container/types'
 import { UpdateContainerData } from '@/Container/schemas'
@@ -88,96 +93,102 @@ export function ContainerDetailsSection({
 
   return (
     <Section className="bg-background transition-colors duration-200">
-      <div className="space-y-6">
-        <header className="flex justify-between items-center">
-          <H3>Container Details</H3>
-          {!isEditing && (
-            <div className="flex gap-2">
-              <PrintQRButton qrImage={container.qrCodeImage} qrCode={container.qrCode} />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" size="sm">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background border-border">
-                  {allowReassignment && (
-                    <DropdownMenuItem onClick={onAssignOrReassign}>
-                      <ArrowRight className="h-4 w-4 mr-2" />
-                      <span>Reassign Container</span>
+      <Card className="h-fit">
+        <CardHeader>
+          <div className="flex justify-between items-center flex-shrink-0">
+            <div>
+              <CardTitle>Container Details</CardTitle>
+              {container.description && <CardDescription>{container.description}</CardDescription>}
+            </div>
+            {!isEditing && (
+              <div className="flex gap-2">
+                <PrintQRButton qrImage={container.qrCodeImage} qrCode={container.qrCode} />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="secondary" size="sm">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-background border-border">
+                    {allowReassignment && (
+                      <DropdownMenuItem onClick={onAssignOrReassign}>
+                        <ArrowRight className="h-4 w-4 mr-2" />
+                        <span>Reassign Container</span>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={handleEdit}>
+                      <Pencil className="h-4 w-4 mr-2" />
+                      <span>Edit</span>
                     </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={handleEdit}>
-                    <Pencil className="h-4 w-4 mr-2" />
-                    <span>Edit</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setIsDeleteModalOpen(true)}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
-          {isEditing && (
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                onClick={handleCancel}
-                disabled={isUpdating}
-                className="hover:bg-contrast-accent"
+                    <DropdownMenuItem
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      <span>Delete</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+            {isEditing && (
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={handleCancel}
+                  disabled={isUpdating}
+                  className="hover:bg-contrast-accent"
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmit} disabled={isUpdating}>
+                  {isUpdating ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </div>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4" role="group" aria-label="Container information">
+            <div className="row-span-4 flex flex-col items-center justify-center">
+              <Label className="text-center mb-1.5" htmlFor="qr-code">
+                QR Code
+              </Label>
+              <div
+                className="w-64 h-64 rounded-lg p-3 border border-border bg-background"
+                id="qr-code"
+                role="img"
+                aria-label={`QR Code for container ${container.name}`}
               >
-                Cancel
-              </Button>
-              <Button onClick={handleSubmit} disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save Changes'}
-              </Button>
+                <img
+                  src={container.qrCodeImage}
+                  alt={`QR Code for container ${container.name}`}
+                  className="w-full h-full"
+                />
+              </div>
+              <Muted className="mt-2 font-mono" aria-label="QR Code value">
+                {container.qrCode}
+              </Muted>
             </div>
-          )}
-        </header>
 
-        <div className="grid grid-cols-2 gap-4" role="group" aria-label="Container information">
-          <div className="row-span-4 flex flex-col items-center justify-center">
-            <Label className="text-center mb-1.5" htmlFor="qr-code">
-              QR Code
-            </Label>
-            <div
-              className="w-64 h-64 rounded-lg p-3 border border-border bg-background"
-              id="qr-code"
-              role="img"
-              aria-label={`QR Code for container ${container.name}`}
-            >
-              <img
-                src={container.qrCodeImage}
-                alt={`QR Code for container ${container.name}`}
-                className="w-full h-full"
-              />
-            </div>
-            <Muted className="mt-2 font-mono" aria-label="QR Code value">
-              {container.qrCode}
-            </Muted>
+            <ContainerDetailForm
+              container={container}
+              isEditing={isEditing}
+              formData={formData}
+              onInputChange={handleInputChange}
+              onSubmit={handleSubmit}
+            />
           </div>
 
-          <ContainerDetailForm
-            container={container}
-            isEditing={isEditing}
-            formData={formData}
-            onInputChange={handleInputChange}
-            onSubmit={handleSubmit}
+          <DeleteModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            entityType="container"
+            entityId={container.id}
+            entityName={container.name}
           />
-        </div>
-      </div>
-
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        entityType="container"
-        entityId={container.id}
-        entityName={container.name}
-      />
+        </CardContent>
+      </Card>
     </Section>
   )
 }

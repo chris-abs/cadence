@@ -8,14 +8,19 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
 } from '@/Global/components/atoms'
-import { H3, Section } from '@/Global/components/molecules'
+import { Section } from '@/Global/components/molecules'
 import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Tag } from '@/Tag/types'
 import { useTags } from '@/Tag/queries'
 import { Item } from '@/Item/types'
 import { UpdateItemData } from '@/Item/schemas'
-import { ItemDetail } from '../../../molecules/forms'
+import { ItemDetailForm } from '../../../molecules/forms'
 import { ImageDeleteModal } from '../../modal'
 import { ItemDetailsCarousel } from './ItemDetailsCarousel'
 
@@ -136,79 +141,85 @@ export function ItemDetailsSection({
 
   return (
     <Section>
-      <div className="space-y-6">
-        <header className="flex justify-between items-center">
-          <H3 id="item-section-title">Item Details</H3>
-          {onUpdate && !isEditing ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="sm">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleEdit}>
-                  <Pencil className="h-4 w-4 mr-2" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setIsDeleteModalOpen(true)}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : isEditing ? (
-            <div className="flex gap-2">
-              <Button variant="ghost" onClick={handleCancel} disabled={isUpdating}>
-                Cancel
-              </Button>
-              <Button onClick={handleSubmit} disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save Changes'}
-              </Button>
+      <Card className="h-fit">
+        <CardHeader>
+          <div className="flex justify-between items-center flex-shrink-0">
+            <div>
+              <CardTitle>Item Details</CardTitle>
+              {item.description && <CardDescription>{item.description}</CardDescription>}
             </div>
-          ) : null}
-        </header>
+            {onUpdate && !isEditing ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" size="sm">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleEdit}>
+                    <Pencil className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : isEditing ? (
+              <div className="flex gap-2">
+                <Button variant="ghost" onClick={handleCancel} disabled={isUpdating}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmit} disabled={isUpdating}>
+                  {isUpdating ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4" role="group" aria-label="Item information">
+            <div className="row-span-4 flex flex-col items-center justify-center">
+              <Label className="text-center mb-1.5">Image</Label>
+              <ItemDetailsCarousel
+                item={item}
+                isEditing={isEditing}
+                onImagesChange={handleImagesChange}
+              />
+            </div>
 
-        <div className="grid grid-cols-2 gap-4" role="group" aria-label="Item information">
-          <div className="row-span-4 flex flex-col items-center justify-center">
-            <Label className="text-center mb-1.5">Image</Label>
-            <ItemDetailsCarousel
+            <ItemDetailForm
               item={item}
               isEditing={isEditing}
-              onImagesChange={handleImagesChange}
+              formData={formData}
+              selectedTags={selectedTags}
+              onInputChange={handleInputChange}
+              onTagsChange={handleTagsChange}
+              onSubmit={handleSubmit}
             />
           </div>
 
-          <ItemDetail
-            item={item}
-            isEditing={isEditing}
-            formData={formData}
-            selectedTags={selectedTags}
-            onInputChange={handleInputChange}
-            onTagsChange={handleTagsChange}
-            onSubmit={handleSubmit}
+          <DeleteModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            entityType="item"
+            entityId={item.id}
+            entityName={item.name}
           />
-        </div>
-      </div>
 
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        entityType="item"
-        entityId={item.id}
-        entityName={item.name}
-      />
-
-      <ImageDeleteModal
-        isOpen={isImageDeleteConfirmOpen}
-        onClose={() => setIsImageDeleteConfirmOpen(false)}
-        count={formData?.imagesToDelete?.length || 0}
-        onConfirm={submitUpdate}
-        isDeleting={isUpdating}
-      />
+          <ImageDeleteModal
+            isOpen={isImageDeleteConfirmOpen}
+            onClose={() => setIsImageDeleteConfirmOpen(false)}
+            count={formData?.imagesToDelete?.length || 0}
+            onConfirm={submitUpdate}
+            isDeleting={isUpdating}
+          />
+        </CardContent>
+      </Card>
     </Section>
   )
 }

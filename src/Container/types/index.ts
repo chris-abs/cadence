@@ -4,6 +4,7 @@ import { Workspace } from '@/Workspace/types'
 export interface Container {
   id: number
   name: string
+  description?: string
   location: string
   number: number
   qrCode: string
