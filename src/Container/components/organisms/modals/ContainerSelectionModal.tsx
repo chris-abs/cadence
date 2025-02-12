@@ -29,7 +29,9 @@ export function ContainerSelectionModal({
   currentContainerId,
 }: ContainerSelectionModalProps) {
   const { data: containers, isLoading } = useContainers()
-  const [selectedContainerId, setSelectedContainerId] = useState<number | null>(null)
+  const [selectedContainerId, setSelectedContainerId] = useState<number | null>(
+    currentContainerId || null,
+  )
 
   const handleSelect = () => {
     if (selectedContainerId) {
@@ -46,6 +48,7 @@ export function ContainerSelectionModal({
         <Select
           onValueChange={(value) => setSelectedContainerId(Number(value))}
           disabled={isLoading}
+          defaultValue={currentContainerId?.toString()}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a container" />
