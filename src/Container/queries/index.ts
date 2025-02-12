@@ -31,13 +31,19 @@ export function useCreateContainer() {
         return [...old, newContainer]
       })
 
-      queryClient.refetchQueries({
-        queryKey: queryKeys.workspaces.list,
-        exact: true,
-      })
+      if (newContainer.workspaceId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.workspaces.detail(newContainer.workspaceId),
+        })
+
+        queryClient.refetchQueries({
+          queryKey: queryKeys.workspaces.list,
+          exact: true,
+        })
+      }
 
       queryClient.refetchQueries({
-        queryKey: queryKeys.items.list,
+        queryKey: queryKeys.containers.list,
         exact: true,
       })
 
