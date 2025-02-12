@@ -7,7 +7,7 @@ import { useUpdateWorkspace } from '@/Workspace/queries'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 import { CreateContainerModal } from '@/Container/components/organisms/modals'
 import { Workspace } from '@/Workspace/types'
-import { WorkspaceSection } from './sections/WorkspaceSection'
+import { WorkspaceDetailsSection } from './sections/WorkspaceSection'
 
 interface WorkspaceDetailProps {
   workspace: Workspace
@@ -45,10 +45,11 @@ export function WorkspaceDetail({ workspace }: WorkspaceDetailProps) {
         onAdd={handleAdd}
       />
 
-      <WorkspaceSection
+      <WorkspaceDetailsSection
         workspace={workspace}
         onUpdate={handleUpdateWorkspace}
         isUpdating={updateWorkspace.isPending}
+        allowReassignment={false}
         emptyStateComponent={
           <NotAssignedSection title="Workspace" message="No workspace details available." />
         }

@@ -2,41 +2,52 @@ import { useState } from 'react'
 import { Pencil, Trash2, MoreVertical, ArrowRight } from 'lucide-react'
 
 import {
-  Input,
-  Label,
   Button,
+  Label,
+  Input,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { H3, Section } from '@/Global/components/molecules'
+import { NotAssignedSection, Section, H3 } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib/utils'
 import { DeleteModal } from '@/Collection/components/organisms/modals'
 import { Workspace } from '@/Workspace/types'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 
-interface WorkspaceSectionProps {
+interface WorkspaceDetailsSectionProps {
   workspace: Workspace | null
   emptyStateComponent?: React.ReactNode
   onUpdate?: (data: UpdateWorkspaceData) => Promise<void>
-  onReassign?: () => void
+  onAssignOrReassign?: () => void
   isUpdating?: boolean
+  allowReassignment?: boolean
 }
 
-export function WorkspaceSection({
+export function WorkspaceDetailsSection({
   workspace,
   emptyStateComponent,
   onUpdate,
-  onReassign,
+  onAssignOrReassign,
   isUpdating,
-}: WorkspaceSectionProps) {
+  allowReassignment,
+}: WorkspaceDetailsSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateWorkspaceData> | null>(null)
 
   if (!workspace?.name) {
-    return emptyStateComponent || null
+    return (
+      emptyStateComponent || (
+        <NotAssignedSection
+          title="Workspace"
+          message="No workspace assigned to this container yet."
+          actionLabel="Assign Workspace"
+          onAction={onAssignOrReassign}
+        />
+      )
+    )
   }
 
   const handleEdit = () => {
@@ -78,7 +89,7 @@ export function WorkspaceSection({
     <Section>
       <div className="space-y-6">
         <header className="flex justify-between items-center">
-          <H3 id="workspace-section-title">Workspace Details</H3>
+          <H3>Workspace Details</H3>
           {onUpdate && !isEditing ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -87,10 +98,10 @@ export function WorkspaceSection({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {onReassign && (
-                  <DropdownMenuItem onClick={onReassign}>
+                {allowReassignment && (
+                  <DropdownMenuItem onClick={onAssignOrReassign}>
                     <ArrowRight className="h-4 w-4 mr-2" />
-                    Reassign Workspace
+                    <span>Reassign Workspace</span>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={handleEdit}>
@@ -128,7 +139,6 @@ export function WorkspaceSection({
               onChange={handleInputChange}
               readOnly={!isEditing}
               className={cn(!isEditing && 'cursor-default focus:outline-none')}
-              aria-label="Workspace name"
             />
           </div>
 
@@ -141,7 +151,6 @@ export function WorkspaceSection({
               onChange={handleInputChange}
               readOnly={!isEditing}
               className={cn(!isEditing && 'cursor-default focus:outline-none')}
-              aria-label="Workspace description"
             />
           </div>
 
@@ -152,7 +161,6 @@ export function WorkspaceSection({
               value={new Date(workspace.createdAt).toLocaleDateString()}
               readOnly
               className="cursor-default focus:outline-none"
-              aria-label="Workspace creation date"
             />
           </div>
 
@@ -163,7 +171,6 @@ export function WorkspaceSection({
               value={new Date(workspace.updatedAt).toLocaleDateString()}
               readOnly
               className="cursor-default focus:outline-none"
-              aria-label="Workspace last updated date"
             />
           </div>
         </form>

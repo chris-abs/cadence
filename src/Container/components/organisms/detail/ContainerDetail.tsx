@@ -5,13 +5,13 @@ import { NotAssignedSection } from '@/Global/components/molecules'
 import { EntityHeader } from '@/Global/components/molecules/headers'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 import { useUpdateWorkspace } from '@/Workspace/queries'
-import { WorkspaceSection } from '@/Workspace/components/organisms/detail/sections'
+import { WorkspaceDetailsSection } from '@/Workspace/components/organisms/detail/sections'
 import { WorkspaceSelectionModal } from '@/Workspace/components/organisms/modals'
 import { useUpdateContainer } from '@/Container/queries'
 import { UpdateContainerData } from '@/Container/schemas'
 import { Container } from '@/Container/types'
-import { ContainerDetailsSection } from '@/Item/components/organisms/detail/sections'
 import { CreateItemModal } from '@/Item/components/organisms/modal'
+import { ContainerDetailsSection } from '@/Item/components/organisms/detail/sections'
 import { ItemCatalogue } from './sections'
 
 interface ContainerDetailProps {
@@ -79,10 +79,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
       })
       setIsWorkspaceModalOpen(false)
     } catch {
-      toast('Error', {
-        description: 'Failed to update workspace',
-        duration: 3000,
-      })
+      toast.error('Failed to update workspace')
     }
   }
 
@@ -102,10 +99,12 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
         allowReassignment={false}
       />
 
-      <WorkspaceSection
+      <WorkspaceDetailsSection
         workspace={container?.workspace || null}
         onUpdate={handleUpdateWorkspace}
+        onAssignOrReassign={handleAssignOrReassignWorkspace}
         isUpdating={updateWorkspace.isPending}
+        allowReassignment={true}
         emptyStateComponent={
           <NotAssignedSection
             title="Workspace"
@@ -132,19 +131,11 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
         containerId={container.id}
       />
 
-      <WorkspaceSection
-        workspace={container?.workspace || null}
-        onUpdate={handleUpdateWorkspace}
-        onReassign={handleAssignOrReassignWorkspace}
-        isUpdating={updateWorkspace.isPending}
-        emptyStateComponent={
-          <NotAssignedSection
-            title="Workspace"
-            message="No workspace assigned to this container yet."
-            actionLabel="Assign Workspace"
-            onAction={handleAssignOrReassignWorkspace}
-          />
-        }
+      <WorkspaceSelectionModal
+        isOpen={isWorkspaceModalOpen}
+        onClose={() => setIsWorkspaceModalOpen(false)}
+        currentWorkspaceId={container.workspace?.id}
+        onSelect={handleWorkspaceSelection}
       />
     </div>
   )
