@@ -20,11 +20,11 @@ import { cn } from '@/Global/lib'
 import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
 import { Container } from '@/Container/types'
 
-interface UnsortedContainersSectionProps {
+interface UnassignedContainersSectionProps {
   containers: Container[]
 }
 
-export function UnsortedContainersSection({ containers }: UnsortedContainersSectionProps) {
+export function UnassignedContainersSection({ containers }: UnassignedContainersSectionProps) {
   const { setNodeRef, isOver } = useDroppable({ id: 'unsorted' })
   const [openSections, setOpenSections] = useState<string[]>(['unsorted'])
   const isExpanded = openSections.includes('unsorted')
@@ -32,7 +32,7 @@ export function UnsortedContainersSection({ containers }: UnsortedContainersSect
   return (
     <div
       ref={setNodeRef}
-      className={cn('transition-all duration-200', isExpanded ? 'h-[285px]' : 'h-[140px]')}
+      className={cn('transition-all duration-200', isExpanded ? 'h-[355px]' : 'h-[150px]')}
     >
       <Section className="h-full overflow-hidden">
         <Accordion
@@ -52,21 +52,21 @@ export function UnsortedContainersSection({ containers }: UnsortedContainersSect
                 <AccordionTrigger className="hover:no-underline w-full">
                   <div className="flex justify-between items-center w-full">
                     <div className="flex flex-col gap-1">
-                      <CardTitle>Unassigned Containers</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <CardTitle>Unassigned Containers</CardTitle>
+                        <Muted>({containers.length} containers)</Muted>
+                      </div>
                       <CardDescription className="text-muted-foreground m-0">
                         All new Containers will be placed here! Drag them into Workspaces to sort
                         them
                       </CardDescription>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Muted>({containers.length} containers)</Muted>
-                      <ChevronRight
-                        className={cn(
-                          'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
-                          isExpanded && 'rotate-90',
-                        )}
-                      />
-                    </div>
+                    <ChevronRight
+                      className={cn(
+                        'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
+                        isExpanded && 'rotate-90',
+                      )}
+                    />
                   </div>
                 </AccordionTrigger>
               </CardHeader>
