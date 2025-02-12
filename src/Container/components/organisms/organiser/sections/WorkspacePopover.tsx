@@ -8,7 +8,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@/Global/components/atoms'
-import { Muted, ViewToggle } from '@/Global/components/molecules'
+import { Muted } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib'
 import { Workspace } from '@/Workspace/types'
 
@@ -30,7 +30,6 @@ export function WorkspacePopover({
   return (
     <Popover>
       <div className="flex gap-10 items-center">
-        <ViewToggle />
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm">
             Filter Workspaces

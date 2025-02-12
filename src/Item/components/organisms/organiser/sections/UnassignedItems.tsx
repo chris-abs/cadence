@@ -13,7 +13,7 @@ import {
   CardDescription,
   CardContent,
 } from '@/Global/components/atoms'
-import { Section, Muted } from '@/Global/components/molecules'
+import { Section, Muted, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
 import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
@@ -53,7 +53,7 @@ export function UnassignedItemsSection({ items }: UnassignedItemsSectionProps) {
             >
               <CardHeader className="py-6">
                 <AccordionTrigger parent className="hover:no-underline w-full">
-                  <div className="flex justify-between items-center w-full">
+                  <div className="flex justify-between items-center pr-6 w-full">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <CardTitle>Unassigned Items</CardTitle>
@@ -63,6 +63,7 @@ export function UnassignedItemsSection({ items }: UnassignedItemsSectionProps) {
                         All new Items will be placed here! Drag them into Containers to assign them
                       </CardDescription>
                     </div>
+                    <ViewToggle />
                   </div>
                 </AccordionTrigger>
               </CardHeader>
