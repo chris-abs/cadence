@@ -7,7 +7,7 @@ import { useUpdateWorkspace } from '@/Workspace/queries'
 import { UpdateWorkspaceData } from '@/Workspace/schemas'
 import { CreateContainerModal } from '@/Container/components/organisms/modals'
 import { Workspace } from '@/Workspace/types'
-import { WorkspaceDetailsSection } from './sections/WorkspaceSection'
+import { WorkspaceDetailsSection, ContainerCatalogue } from './sections'
 
 interface WorkspaceDetailProps {
   workspace: Workspace
@@ -52,6 +52,16 @@ export function WorkspaceDetail({ workspace }: WorkspaceDetailProps) {
         allowReassignment={false}
         emptyStateComponent={
           <NotAssignedSection title="Workspace" message="No workspace details available." />
+        }
+      />
+
+      <ContainerCatalogue
+        containers={workspace.containers}
+        emptyStateComponent={
+          <NotAssignedSection
+            title="Containers"
+            message="No containers in this workspace yet. Create new containers or assign existing ones to organise this workspace."
+          />
         }
       />
 
