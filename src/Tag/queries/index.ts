@@ -93,27 +93,23 @@ export function useUpdateItemTags() {
   })
 }
 
-export function useBulkAssignTags() {
+export function useAssignTags() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: BulkAssignTagsData) => api.post<void>('/tags/bulk-assign', data),
+    mutationFn: (data: { tagIds: number[]; itemIds: number[] }) =>
+      api.post<void>('/tags/assign', data),
     onSuccess: (_, variables) => {
-      variables.itemIds.forEach((itemId) => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.items.detail(itemId),
-        })
-      })
-
       variables.tagIds.forEach((tagId) => {
         queryClient.invalidateQueries({
           queryKey: queryKeys.tags.detail(tagId),
         })
       })
 
-      queryClient.refetchQueries({
-        queryKey: queryKeys.items.list,
-        exact: true,
+      variables.itemIds.forEach((itemId) => {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.items.detail(itemId),
+        })
       })
 
       queryClient.refetchQueries({
@@ -121,8 +117,13 @@ export function useBulkAssignTags() {
         exact: true,
       })
 
+      queryClient.refetchQueries({
+        queryKey: queryKeys.items.list,
+        exact: true,
+      })
+
       invalidateQueries(queryClient, {
-        lists: ['items', 'tags'],
+        lists: ['tags', 'items'],
       })
     },
   })
