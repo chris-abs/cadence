@@ -32,6 +32,18 @@ export function ContainerDetailForm({
           aria-label="Container name"
         />
       </div>
+      <div className="space-y-2">
+        <Label htmlFor="container-name">Description</Label>
+        <Input
+          id="container-description"
+          name="description"
+          value={isEditing ? formData?.description : container.description}
+          onChange={onInputChange}
+          readOnly={!isEditing}
+          className={cn(!isEditing && 'cursor-default focus:outline-none')}
+          aria-label="Container description"
+        />
+      </div>
 
       <div className="space-y-2">
         <Label htmlFor="container-location">Location</Label>

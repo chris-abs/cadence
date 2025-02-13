@@ -2,6 +2,7 @@ import * as z from 'zod'
 
 const containerBaseSchema = {
   name: z.string().min(1, 'Name is required'),
+  description: z.string().optional(),
   location: z.string().optional(),
   workspaceId: z.number().optional(),
   number: z.number().optional(),

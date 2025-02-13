@@ -67,6 +67,7 @@ export function ContainerDetail({ container }: ContainerDetailProps) {
       const updatedContainerData: UpdateContainerData = {
         id: container.id,
         name: container.name,
+        description: container.description,
         location: container.location,
         workspaceId: workspaceId,
       }
