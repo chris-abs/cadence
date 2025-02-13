@@ -18,6 +18,8 @@ interface TagSelectorProps {
   selectedItemIds: Set<number>
   onTagToggle: (values: string[]) => void
   onSave: () => void
+  onCancel: () => void
+  isUpdating: boolean
 }
 
 export function TagSelector({
@@ -26,6 +28,8 @@ export function TagSelector({
   selectedItemIds,
   onTagToggle,
   onSave,
+  onCancel,
+  isUpdating,
 }: TagSelectorProps) {
   const handleTagToggle = (tagId: string, isActive: boolean) => {
     if (isActive) {
@@ -43,7 +47,7 @@ export function TagSelector({
             <div className="flex flex-col gap-2">
               <CardTitle>All Tags</CardTitle>
               <CardDescription>
-                Select any number of tags and items to tag selected items, dont forget to save!{' '}
+                Select any number of tags and items to tag selected items, dont forget to save!
               </CardDescription>
             </div>
 
@@ -51,21 +55,17 @@ export function TagSelector({
               <Button
                 size="sm"
                 variant="ghost"
-                // onClick={handleCancel}
-                // disabled={isUpdating}
+                onClick={onCancel}
+                disabled={isUpdating}
                 className="hover:bg-contrast-accent"
               >
                 Cancel
               </Button>
               <Button
                 onClick={onSave}
-                disabled={
-                  // isUpdating ||
-                  selectedTagIds.length === 0 || selectedItemIds.size === 0
-                }
+                disabled={isUpdating || selectedTagIds.length === 0 || selectedItemIds.size === 0}
               >
-                Save Changes
-                {/* {isUpdating ? 'Saving...' : 'Save Changes'} */}
+                {isUpdating ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
           </div>

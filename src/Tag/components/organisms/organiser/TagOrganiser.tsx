@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { useSearch } from '@/Global/queries/search'
 import { useItems } from '@/Item/queries'
-import { useUpdateItemTags } from '@/Tag/queries'
+import { useBulkAssignTags } from '@/Tag/queries'
 import { Tag } from '@/Tag/types'
 import { TagSelector, ItemList } from './sections'
 
@@ -24,7 +24,7 @@ export function TagOrganiser({
   const { data: searchResults, isLoading: isSearching } = useSearch(searchQuery, {
     enabled: searchQuery.length > 0,
   })
-  const updateItemTags = useUpdateItemTags()
+  const bulkAssignMutation = useBulkAssignTags()
 
   const displayedItems = searchQuery ? searchResults?.items || [] : items || []
   const isLoading = isTagsPropLoading || isItemsLoading || isSearching
@@ -46,12 +46,21 @@ export function TagOrganiser({
   }
 
   const handleSave = async () => {
-    const tagIds = selectedTagIds.map(Number)
-    const promises = Array.from(selectedItemIds).map((itemId) =>
-      updateItemTags.mutateAsync({ itemId, tagIds }),
-    )
+    try {
+      await bulkAssignMutation.mutateAsync({
+        tagIds: selectedTagIds.map(Number),
+        itemIds: Array.from(selectedItemIds),
+      })
 
-    await Promise.all(promises)
+      setSelectedItemIds(new Set())
+      setSelectedTagIds([])
+    } catch (error) {
+      //todo toast error
+      console.error('Failed to assign tags:', error)
+    }
+  }
+
+  const handleCancel = () => {
     setSelectedItemIds(new Set())
     setSelectedTagIds([])
   }
@@ -60,10 +69,12 @@ export function TagOrganiser({
     <div className="flex flex-col gap-6">
       <TagSelector
         onSave={handleSave}
+        onCancel={handleCancel}
         tags={tags}
         selectedTagIds={selectedTagIds}
         selectedItemIds={selectedItemIds}
         onTagToggle={handleTagToggle}
+        isUpdating={bulkAssignMutation.isPending}
       />
 
       <ItemList
