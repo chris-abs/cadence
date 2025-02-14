@@ -97,8 +97,7 @@ export function useAssignTags() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: { tagIds: number[]; itemIds: number[] }) =>
-      api.post<void>('/tags/assign', data),
+    mutationFn: (data: BulkAssignTagsData) => api.post<void>('/tags/assign', data),
     onSuccess: (_, variables) => {
       variables.tagIds.forEach((tagId) => {
         queryClient.invalidateQueries({

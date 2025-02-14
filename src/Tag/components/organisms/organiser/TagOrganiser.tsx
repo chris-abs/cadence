@@ -2,8 +2,9 @@ import { useState } from 'react'
 
 import { useSearch } from '@/Global/queries/search'
 import { useItems } from '@/Item/queries'
-import { useBulkAssignTags } from '@/Tag/queries'
+import { useAssignTags } from '@/Tag/queries'
 import { Tag } from '@/Tag/types'
+import { BulkAssignTagsData } from '@/Tag/schemas'
 import { TagSelector, ItemList } from './sections'
 
 interface TagOrganiserProps {
@@ -24,7 +25,7 @@ export function TagOrganiser({
   const { data: searchResults, isLoading: isSearching } = useSearch(searchQuery, {
     enabled: searchQuery.length > 0,
   })
-  const bulkAssignMutation = useBulkAssignTags()
+  const assignTags = useAssignTags()
 
   const displayedItems = searchQuery ? searchResults?.items || [] : items || []
   const isLoading = isTagsPropLoading || isItemsLoading || isSearching
@@ -47,15 +48,15 @@ export function TagOrganiser({
 
   const handleSave = async () => {
     try {
-      await bulkAssignMutation.mutateAsync({
+      const assignData: BulkAssignTagsData = {
         tagIds: selectedTagIds.map(Number),
         itemIds: Array.from(selectedItemIds),
-      })
+      }
 
+      await assignTags.mutateAsync(assignData)
       setSelectedItemIds(new Set())
       setSelectedTagIds([])
     } catch (error) {
-      //todo toast error
       console.error('Failed to assign tags:', error)
     }
   }
@@ -74,7 +75,7 @@ export function TagOrganiser({
         selectedTagIds={selectedTagIds}
         selectedItemIds={selectedItemIds}
         onTagToggle={handleTagToggle}
-        isUpdating={bulkAssignMutation.isPending}
+        isUpdating={assignTags.isPending}
       />
 
       <ItemList
