@@ -1,9 +1,9 @@
-import { SearchResponse, SearchResult, SearchType } from '../types/search'
+import { BaseSearchResult, SearchResponse, SearchType } from '../types/search'
 
 export function getSearchResultsByEntityType(
   data: SearchResponse | undefined,
   type: SearchType,
-): SearchResult[] {
+): BaseSearchResult[] {
   if (!data) return []
 
   const resultMap: Record<SearchType, keyof SearchResponse> = {

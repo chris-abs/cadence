@@ -17,7 +17,7 @@ import { ContainerForm } from '@/Container/components/molecules/forms'
 interface CreateContainerModalProps {
   isOpen: boolean
   onClose: () => void
-  workspaceId: number
+  workspaceId?: number
 }
 
 export function CreateContainerModal({ isOpen, onClose, workspaceId }: CreateContainerModalProps) {
