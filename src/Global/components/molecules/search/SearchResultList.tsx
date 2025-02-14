@@ -1,9 +1,9 @@
 import { Box } from 'lucide-react'
-import type { SearchResult, SearchType } from '@/Global/types/search'
+import type { BaseSearchResult, SearchType } from '@/Global/types/search'
 import { SearchResultCard } from './SearchResultCard'
 
 interface ResultsListProps {
-  results: SearchResult[]
+  results: BaseSearchResult[]
   type: SearchType
   Icon: typeof Box
   onClose?: () => void
