@@ -1,6 +1,6 @@
 import { Box } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import type { SearchResult } from '@/Global/types/search'
+import type { BaseSearchResult } from '@/Global/types/search'
 import { H3, Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
 
@@ -13,7 +13,7 @@ const typeToRoute = {
 } as const
 
 interface SearchResultCardProps {
-  result: SearchResult
+  result: BaseSearchResult
   Icon: typeof Box
   onClose?: () => void
 }
