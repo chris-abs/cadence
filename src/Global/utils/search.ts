@@ -10,6 +10,7 @@ export function getSearchResultsByEntityType(
     workspace: 'workspaces',
     container: 'containers',
     item: 'items',
+    tagged_item: 'taggedItems',
     tag: 'tags',
   }
 
