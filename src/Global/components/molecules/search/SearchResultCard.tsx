@@ -1,8 +1,14 @@
 import { Box } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import type { BaseSearchResult } from '@/Global/types/search'
+import type { RankedEntity } from '@/Global/types/search'
 import { H3, Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
+
+interface SearchCardProps {
+  result: RankedEntity
+  Icon: typeof Box
+  onClose?: () => void
+}
 
 const typeToRoute = {
   workspace: (id: number) => `/workspaces/${id}`,
@@ -12,13 +18,7 @@ const typeToRoute = {
   tag: (id: number) => `/tags/${id}`,
 } as const
 
-interface SearchResultCardProps {
-  result: BaseSearchResult
-  Icon: typeof Box
-  onClose?: () => void
-}
-
-export function SearchResultCard({ result, Icon, onClose }: SearchResultCardProps) {
+export function SearchResultCard({ result, Icon, onClose }: SearchCardProps) {
   const renderExtraInfo = () => {
     switch (result.type) {
       case 'item':
@@ -26,23 +26,22 @@ export function SearchResultCard({ result, Icon, onClose }: SearchResultCardProp
         return (
           <Muted className="truncate">
             Container:{' '}
-            {result.containerName
-              ? `${result.containerName}${result.containerLocation ? `, ${result.containerLocation}` : ''}`
+            {result.container
+              ? `${result.container.name}${result.container.location ? `, ${result.container.location}` : ''}`
               : 'unassigned'}
           </Muted>
         )
-
       case 'container':
         return (
           <Muted className="truncate">
-            Workspace: {result.workspaceName || 'unassigned'}
+            Workspace: {result.workspace?.name || 'unassigned'}
             {result.location && ` • ${result.location}`}
           </Muted>
         )
       case 'tag':
-        return <Muted className="truncate">{result.itemCount || 0} items</Muted>
+        return <Muted className="truncate">{result.items?.length || 0} items</Muted>
       case 'workspace':
-        return <Muted className="truncate">{result.containerCount || 0} containers</Muted>
+        return <Muted className="truncate">{result.containers?.length || 0} containers</Muted>
     }
   }
 

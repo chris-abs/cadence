@@ -1,6 +1,7 @@
 import { LucideIcon } from 'lucide-react'
 import { SearchResultCard } from './SearchResultCard'
-import { RankedEntity, SearchType } from '@/Global/utils/search'
+import { RankedEntity } from '@/Global/types/search'
+import { SearchType } from '@/Global/utils/search'
 
 interface ResultsListProps {
   results: RankedEntity[]
@@ -9,10 +10,12 @@ interface ResultsListProps {
   onClose?: () => void
 }
 
-export function ResultsList({ results, Icon, onClose }: ResultsListProps) {
+export function ResultsList({ results, type, Icon, onClose }: ResultsListProps) {
+  const filteredResults = results.filter((result) => result.type === type)
+
   return (
     <div className="grid grid-cols-1 gap-2">
-      {results.map((result) => (
+      {filteredResults.map((result) => (
         <SearchResultCard key={result.id} result={result} Icon={Icon} onClose={onClose} />
       ))}
     </div>
