@@ -1,11 +1,11 @@
-import { Box } from 'lucide-react'
-import type { BaseSearchResult, SearchType } from '@/Global/types/search'
+import { LucideIcon } from 'lucide-react'
 import { SearchResultCard } from './SearchResultCard'
+import { RankedEntity, SearchType } from '@/Global/utils/search'
 
 interface ResultsListProps {
-  results: BaseSearchResult[]
+  results: RankedEntity[]
   type: SearchType
-  Icon: typeof Box
+  Icon: LucideIcon
   onClose?: () => void
 }
 

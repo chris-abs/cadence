@@ -4,8 +4,8 @@ import { Link } from '@tanstack/react-router'
 
 import { useDebounce } from '@/Global/hooks/useDebounce'
 import { useSearch } from '@/Global/queries/search'
-import type { SearchType } from '@/Global/types/search'
 import { cn } from '@/Global/lib'
+import { SearchType } from '@/Global/utils/search'
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -20,10 +20,10 @@ import { H3, Muted } from '../Typography'
 import { ResultsList, NoResults } from './'
 
 const searchTypes = [
-  { type: 'workspace', icon: Box, label: 'Workspaces' },
-  { type: 'container', icon: FolderOpen, label: 'Containers' },
-  { type: 'item', icon: Package, label: 'Items' },
-  { type: 'tagged_item', icon: Tag, label: 'Tagged Items' },
+  { type: 'workspace' as const, icon: Box, label: 'Workspaces' },
+  { type: 'container' as const, icon: FolderOpen, label: 'Containers' },
+  { type: 'item' as const, icon: Package, label: 'Items' },
+  { type: 'tagged_item' as const, icon: Tag, label: 'Tagged Items' },
 ] as const
 
 interface SearchResultsProps {

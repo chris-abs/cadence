@@ -1,12 +1,17 @@
-import { BaseSearchResult, SearchResponse, SearchType } from '../types/search'
+import { FederatedSearchResponse } from '../types/search'
+import type { RankedWorkspace, RankedContainer, RankedItem, RankedTag } from '../types/search'
+
+export type RankedEntity = RankedWorkspace | RankedContainer | RankedItem | RankedTag
+
+export type SearchType = 'workspace' | 'container' | 'item' | 'tagged_item' | 'tag'
 
 export function getSearchResultsByEntityType(
-  data: SearchResponse | undefined,
+  data: FederatedSearchResponse | undefined,
   type: SearchType,
-): BaseSearchResult[] {
+): RankedEntity[] {
   if (!data) return []
 
-  const resultMap: Record<SearchType, keyof SearchResponse> = {
+  const resultMap: Record<SearchType, keyof FederatedSearchResponse> = {
     workspace: 'workspaces',
     container: 'containers',
     item: 'items',
