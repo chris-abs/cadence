@@ -11,6 +11,10 @@ export interface RegisterCredentials {
   imageUrl?: string
 }
 
+export interface FamilyRoles {
+  role: 'PARENT' | 'CHILD'
+}
+
 export interface AuthResponse {
   token: string
   user: {
@@ -19,5 +23,7 @@ export interface AuthResponse {
     firstName: string
     lastName: string
     imageUrl?: string
+    familyId: number
+    role: FamilyRoles
   }
 }

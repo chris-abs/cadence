@@ -6,6 +6,7 @@ export interface Tag {
   items: Item[]
   colour: string
   description: string
+  familyId: number
   createdAt: string
   updatedAt: string
 }
