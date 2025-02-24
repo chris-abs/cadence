@@ -1,6 +1,12 @@
-// /Global/types/family.ts
+export type ModuleID = 'storage' | 'chores' | 'meals' | 'services'
+export type FamilyStatus = 'ACTIVE' | 'INACTIVE'
+
+export interface FamilyRoles {
+  role: 'PARENT' | 'CHILD'
+}
+
 export interface Module {
-  id: string
+  id: ModuleID
   isEnabled: boolean
 }
 
@@ -8,7 +14,7 @@ export interface Family {
   id: number
   name: string
   ownerId: number
-  status: 'ACTIVE' | 'INACTIVE'
+  status: FamilyStatus
   modules: Module[]
   createdAt: string
   updatedAt: string
@@ -16,25 +22,23 @@ export interface Family {
 
 export interface CreateFamilyRequest {
   name: string
-  modules?: string[]
-}
-
-export interface FamilyRoles {
-  role: 'PARENT' | 'CHILD'
+  modules?: ModuleID[]
 }
 
 export interface FamilyInvite {
   id: number
   familyId: number
   email: string
-  role: 'PARENT' | 'CHILD'
+  role: FamilyRoles['role']
   token: string
   expiresAt: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface CreateInviteRequest {
   email: string
-  role: FamilyRoles
+  role: FamilyRoles['role']
 }
 
 export interface JoinFamilyRequest {
