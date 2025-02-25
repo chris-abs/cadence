@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { PlusIcon, UserPlusIcon, HomeIcon } from 'lucide-react'
+
 import {
   Card,
   CardContent,
@@ -7,10 +10,10 @@ import {
   CardTitle,
   Button,
 } from '@/Global/components/atoms'
+import { CreateFamilyModal, JoinFamilyModal } from '@/Global/components/organisms/modals'
+import { FamilyPanel, ModuleGrid } from '@/Global/components/organisms/family'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
-import { PlusIcon, UserPlusIcon, HomeIcon } from 'lucide-react'
-import { FamilyPanel, ModuleGrid } from '@/Global/components/organisms/family'
 
 export const Route = createFileRoute('/_authenticated/cadence/')({
   component: CadenceDashboard,
@@ -76,24 +79,37 @@ function LoadingState() {
 }
 
 function NoFamilyView() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false)
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Get Started with Cadence</CardTitle>
-        <CardDescription>
-          Create or join a family to start using Cadence's organization modules.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex gap-4">
-        <Button className="flex items-center gap-2">
-          <PlusIcon className="h-4 w-4" />
-          Create a Family
-        </Button>
-        <Button variant="outline" className="flex items-center gap-2">
-          <UserPlusIcon className="h-4 w-4" />
-          Join a Family
-        </Button>
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Get Started with Cadence</CardTitle>
+          <CardDescription>
+            Create or join a family to start using Cadence's organization modules.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex gap-4">
+          <Button className="flex items-center gap-2" onClick={() => setIsCreateModalOpen(true)}>
+            <PlusIcon className="h-4 w-4" />
+            Create a Family
+          </Button>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => setIsJoinModalOpen(true)}
+          >
+            <UserPlusIcon className="h-4 w-4" />
+            Join a Family
+          </Button>
+        </CardContent>
+      </Card>
+
+      <CreateFamilyModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+
+      <JoinFamilyModal isOpen={isJoinModalOpen} onClose={() => setIsJoinModalOpen(false)} />
+    </>
   )
 }
