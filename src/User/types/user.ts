@@ -1,4 +1,4 @@
-import { FamilyRoles } from '@/Global/types'
+import { FamilyRoles } from '@/Family/types'
 
 export interface User {
   id: number
@@ -6,8 +6,8 @@ export interface User {
   firstName: string
   lastName: string
   imageUrl: string
-  role: FamilyRoles['role']
-  familyId: number
+  role?: FamilyRoles['role']
+  familyId?: number
   createdAt: string
   updatedAt: string
 }

@@ -36,6 +36,8 @@ export function useCreateFamily() {
     onSuccess: (family) => {
       queryClient.setQueryData(queryKeys.family.detail(family.id), family)
 
+      queryClient.setQueryData(queryKeys.family.current, family)
+
       queryClient.invalidateQueries({
         queryKey: queryKeys.user,
       })
@@ -89,8 +91,26 @@ export function useUpdateModule() {
 }
 
 export function useCurrentFamilyId(): number | undefined {
-  const queryClient = useQueryClient()
-  const user = queryClient.getQueryData<User>(queryKeys.user)
+  const { data: user } = useQuery<User>({
+    queryKey: queryKeys.user,
+  })
 
   return user?.familyId
+}
+
+export function useCurrentFamily() {
+  const queryClient = useQueryClient()
+  const familyId = useCurrentFamilyId()
+
+  const result = useQuery<Family>({
+    queryKey: queryKeys.family.current,
+    queryFn: () => api.get<Family>(`/families/${familyId}`),
+    enabled: !!familyId,
+  })
+
+  if (result.data && familyId) {
+    queryClient.setQueryData(queryKeys.family.detail(familyId), result.data)
+  }
+
+  return result
 }
