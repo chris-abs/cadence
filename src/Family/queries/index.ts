@@ -2,14 +2,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
+import { User } from '@/User/types'
 import {
   Family,
-  FamilyInvite,
   CreateFamilyRequest,
   JoinFamilyRequest,
   CreateInviteRequest,
-  ModuleID,
-} from '@/Family/types'
+  FamilyInvite,
+  Module,
+} from '../types'
 
 export function useFamily(id: number) {
   return useQuery({
@@ -22,7 +23,7 @@ export function useFamily(id: number) {
 export function useFamilyModules(familyId: number) {
   return useQuery({
     queryKey: queryKeys.family.modules(familyId),
-    queryFn: () => api.get<Family['modules']>(`/families/${familyId}/modules`),
+    queryFn: () => api.get<Module[]>(`/families/${familyId}/modules`),
     enabled: familyId > 0,
   })
 }
@@ -32,8 +33,8 @@ export function useCreateFamily() {
 
   return useMutation({
     mutationFn: (data: CreateFamilyRequest) => api.post<Family>('/families', data),
-    onSuccess: (newFamily) => {
-      queryClient.setQueryData(queryKeys.family.detail(newFamily.id), newFamily)
+    onSuccess: (family) => {
+      queryClient.setQueryData(queryKeys.family.detail(family.id), family)
 
       queryClient.invalidateQueries({
         queryKey: queryKeys.user,
@@ -46,7 +47,7 @@ export function useJoinFamily() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: JoinFamilyRequest) => api.post<{ success: boolean }>('/families/join', data),
+    mutationFn: (data: JoinFamilyRequest) => api.post('/families/join', data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.user,
@@ -56,33 +57,25 @@ export function useJoinFamily() {
 }
 
 export function useCreateInvite() {
-  const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: ({ familyId, data }: { familyId: number; data: CreateInviteRequest }) =>
       api.post<FamilyInvite>(`/families/${familyId}/invites`, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.family.invites(variables.familyId),
-      })
-    },
   })
-}
-
-interface UpdateModuleParams {
-  familyId: number
-  moduleId: ModuleID
-  isEnabled: boolean
 }
 
 export function useUpdateModule() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (params: UpdateModuleParams) =>
-      api.put(`/families/${params.familyId}/modules/${params.moduleId}`, {
-        isEnabled: params.isEnabled,
-      }),
+    mutationFn: ({
+      familyId,
+      moduleId,
+      isEnabled,
+    }: {
+      familyId: number
+      moduleId: string
+      isEnabled: boolean
+    }) => api.put(`/families/${familyId}/modules/${moduleId}`, { isEnabled }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.family.detail(variables.familyId),
@@ -93,4 +86,11 @@ export function useUpdateModule() {
       })
     },
   })
+}
+
+export function useCurrentFamilyId(): number | undefined {
+  const queryClient = useQueryClient()
+  const user = queryClient.getQueryData<User>(queryKeys.user)
+
+  return user?.familyId
 }
