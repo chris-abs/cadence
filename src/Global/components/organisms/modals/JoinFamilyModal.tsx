@@ -10,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
+import { FamilyJoinForm } from '@/Global/components/molecules'
 import { useJoinFamily } from '@/Global/queries/family'
 import { JoinFamilyData } from '@/Global/schemas/family'
-import { FamilyJoinForm } from '../../molecules'
 
 interface JoinFamilyModalProps {
   isOpen: boolean
