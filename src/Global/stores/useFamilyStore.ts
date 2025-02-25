@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { Family, Module } from '../types'
+
+import { Family, Module } from '@/Family/types'
 
 interface FamilyState {
   currentFamily: Family | null

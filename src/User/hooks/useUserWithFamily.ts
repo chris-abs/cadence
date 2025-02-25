@@ -1,5 +1,5 @@
 import { useUser } from '../queries/user'
-import { useFamily } from '@/Global/queries/family'
+import { useFamily } from '@/Family/queries'
 
 export function useUserWithFamily() {
   const { data: user, isLoading: isUserLoading } = useUser()

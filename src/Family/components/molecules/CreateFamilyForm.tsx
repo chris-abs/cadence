@@ -17,7 +17,7 @@ import {
   Checkbox,
 } from '@/Global/components/atoms'
 import { CreateFamilyData, CreateFamilySchema } from '@/Family/schemas'
-import { modulesList } from '@/Global/constants'
+import { modulesList } from '@/Family/constants'
 
 interface CreateFamilyFormProps {
   onSubmit: (data: CreateFamilyData) => Promise<void>

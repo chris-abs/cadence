@@ -13,10 +13,10 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
+import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { ModuleID } from '@/Family/types'
 import { SidebarPopover } from './SidebarPopover'
 import { navigationConfig } from './SidebarConfig'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
-import { ModuleID } from '@/Global/types/family'
 
 export function SidebarCore() {
   const { state } = useSidebar()

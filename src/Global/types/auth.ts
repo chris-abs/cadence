@@ -1,4 +1,4 @@
-import { FamilyRoles } from './family'
+import { FamilyRoles } from '@/Family/types'
 
 export interface LoginCredentials {
   email: string

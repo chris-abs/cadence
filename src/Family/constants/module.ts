@@ -1,5 +1,5 @@
 import { PackageIcon, UtensilsIcon, ClipboardCheckIcon, CreditCardIcon } from 'lucide-react'
-import { ModuleID } from '@/Global/types/family'
+import { ModuleID } from '@/Family/types'
 
 export const moduleDefinitions = {
   storage: {

@@ -1,4 +1,6 @@
+import { type ElementType } from 'react'
 import {
+  type LucideIcon,
   HomeIcon,
   PackageIcon,
   FolderOpenIcon,
@@ -9,9 +11,8 @@ import {
   CreditCardIcon,
   GalleryVerticalEndIcon,
 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
-import { type ElementType } from 'react'
-import { ModuleID } from '@/Global/types/family'
+
+import { ModuleID } from '@/Family/types'
 
 interface TeamConfig {
   name: string
