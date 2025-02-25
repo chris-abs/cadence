@@ -1,14 +1,18 @@
-import {
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
-  Box,
-  FolderOpen,
-  Package,
-  Tags,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
 import { type ElementType } from 'react'
+import {
+  type LucideIcon,
+  HomeIcon,
+  PackageIcon,
+  FolderOpenIcon,
+  BoxIcon,
+  TagsIcon,
+  UtensilsIcon,
+  ClipboardCheckIcon,
+  CreditCardIcon,
+  GalleryVerticalEndIcon,
+} from 'lucide-react'
+
+import { ModuleID } from '@/Family/types'
 
 interface TeamConfig {
   name: string
@@ -21,6 +25,7 @@ interface NavigationItem {
   title: string
   url: string
   icon?: LucideIcon
+  moduleId?: ModuleID
   items?: {
     title: string
     url: string
@@ -30,88 +35,105 @@ interface NavigationItem {
 interface NavigationConfig {
   teams: TeamConfig[]
   navMain: {
-    entities: NavigationItem[]
+    dashboard: NavigationItem
+    modules: Record<ModuleID, NavigationItem[]>
   }
 }
 
 export const navigationConfig: NavigationConfig = {
   teams: [
     {
-      name: 'Storage',
-      logo: GalleryVerticalEnd,
-      plan: 'Collections',
-      disabled: true,
-    },
-    {
-      name: 'Core',
-      logo: AudioWaveform,
-      plan: 'Startup',
-      disabled: true,
-    },
-    {
-      name: 'Corporate',
-      logo: Command,
-      plan: 'Free',
+      name: 'Cadence',
+      logo: HomeIcon,
+      plan: 'Family Platform',
       disabled: true,
     },
   ],
   navMain: {
-    entities: [
-      {
-        title: 'Dashboard',
-        url: '/',
-        icon: GalleryVerticalEnd,
-      },
-      {
-        title: 'Workspaces',
-        url: '/workspaces',
-        icon: Box,
-      },
-      {
-        title: 'Containers',
-        url: '/containers',
-        icon: FolderOpen,
-        items: [
-          {
-            title: 'List',
-            url: '/containers',
-          },
-          {
-            title: 'Assign',
-            url: '/containers/assign',
-          },
-        ],
-      },
-      {
-        title: 'Items',
-        url: '/items',
-        icon: Package,
-        items: [
-          {
-            title: 'List',
-            url: '/items',
-          },
-          {
-            title: 'Assign',
-            url: '/items/assign',
-          },
-        ],
-      },
-      {
-        title: 'Tags',
-        url: '/tags',
-        icon: Tags,
-        items: [
-          {
-            title: 'List',
-            url: '/tags',
-          },
-          {
-            title: 'Assign',
-            url: '/tags/assign',
-          },
-        ],
-      },
-    ],
+    dashboard: {
+      title: 'Dashboard',
+      url: '/cadence',
+      icon: HomeIcon,
+    },
+    modules: {
+      storage: [
+        {
+          title: 'Collections',
+          url: '/cadence/storage',
+          icon: GalleryVerticalEndIcon,
+        },
+        {
+          title: 'Workspaces',
+          url: '/cadence/storage/workspaces',
+          icon: BoxIcon,
+        },
+        {
+          title: 'Containers',
+          url: '/cadence/storage/containers',
+          icon: FolderOpenIcon,
+          items: [
+            {
+              title: 'List',
+              url: '/cadence/storage/containers',
+            },
+            {
+              title: 'Assign',
+              url: '/cadence/storage/containers/assign',
+            },
+          ],
+        },
+        {
+          title: 'Items',
+          url: '/cadence/storage/items',
+          icon: PackageIcon,
+          items: [
+            {
+              title: 'List',
+              url: '/cadence/storage/items',
+            },
+            {
+              title: 'Assign',
+              url: '/cadence/storage/items/assign',
+            },
+          ],
+        },
+        {
+          title: 'Tags',
+          url: '/cadence/storage/tags',
+          icon: TagsIcon,
+          items: [
+            {
+              title: 'List',
+              url: '/cadence/storage/tags',
+            },
+            {
+              title: 'Assign',
+              url: '/cadence/storage/tags/assign',
+            },
+          ],
+        },
+      ],
+      meals: [
+        {
+          title: 'Meal Planning',
+          url: '/cadence/meals',
+          icon: UtensilsIcon,
+        },
+      ],
+      chores: [
+        {
+          title: 'Chore Dashboard',
+          url: '/cadence/chores',
+          icon: ClipboardCheckIcon,
+        },
+      ],
+      services: [
+        {
+          title: 'Subscriptions',
+          url: '/cadence/services',
+          icon: CreditCardIcon,
+        },
+      ],
+    },
   },
 }

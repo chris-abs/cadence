@@ -11,6 +11,7 @@ export interface Container {
   qrCodeImage: string
   workspaceId?: number
   workspace?: Workspace
+  familyId: number
   items: Item[]
   createdAt: string
   updatedAt: string

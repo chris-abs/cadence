@@ -18,6 +18,7 @@ export interface Item {
   container?: Container
   images: ItemImage[]
   tags: Tag[]
+  familyId: number
   createdAt: string
   updatedAt: string
 }

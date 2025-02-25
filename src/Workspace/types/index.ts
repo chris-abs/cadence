@@ -5,6 +5,7 @@ export interface Workspace {
   name: string
   description: string
   containers: Container[]
+  familyId: number
   createdAt: string
   updatedAt: string
 }

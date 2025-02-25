@@ -1,3 +1,5 @@
+import { FamilyRoles } from '@/Family/types'
+
 export interface LoginCredentials {
   email: string
   password: string
@@ -19,5 +21,7 @@ export interface AuthResponse {
     firstName: string
     lastName: string
     imageUrl?: string
+    familyId: number
+    role: FamilyRoles
   }
 }

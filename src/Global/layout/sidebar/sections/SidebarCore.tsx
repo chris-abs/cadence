@@ -1,4 +1,4 @@
-import { type LucideIcon, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/Global/components/atoms'
@@ -13,30 +13,64 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
+import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { ModuleID } from '@/Family/types'
 import { SidebarPopover } from './SidebarPopover'
+import { navigationConfig } from './SidebarConfig'
 
-export function SidebarCore({
-  config,
-}: {
-  config: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-}) {
+export function SidebarCore() {
   const { state } = useSidebar()
   const isCollapsed = state === 'collapsed'
+  const { family } = useUserWithFamily()
+
+  const enabledModules = family?.modules.filter((m) => m.isEnabled).map((m) => m.id) || []
+
+  return (
+    <>
+      <SidebarGroup>
+        <SidebarGroupLabel>Cadence</SidebarGroupLabel>
+        <SidebarMenu>
+          <Link to={navigationConfig.navMain.dashboard.url}>
+            <SidebarMenuItem>
+              <SidebarMenuButton tooltip={navigationConfig.navMain.dashboard.title}>
+                {navigationConfig.navMain.dashboard.icon && (
+                  <navigationConfig.navMain.dashboard.icon />
+                )}
+                <span>{navigationConfig.navMain.dashboard.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </Link>
+        </SidebarMenu>
+      </SidebarGroup>
+
+      {enabledModules.map((moduleId) => (
+        <ModuleSection key={moduleId} moduleId={moduleId as ModuleID} isCollapsed={isCollapsed} />
+      ))}
+    </>
+  )
+}
+
+interface ModuleSectionProps {
+  moduleId: ModuleID
+  isCollapsed: boolean
+}
+
+function ModuleSection({ moduleId, isCollapsed }: ModuleSectionProps) {
+  const moduleConfig = navigationConfig.navMain.modules[moduleId]
+  if (!moduleConfig || moduleConfig.length === 0) return null
+
+  const moduleLabels: Record<ModuleID, string> = {
+    storage: 'Storage',
+    meals: 'Meals',
+    chores: 'Chores',
+    services: 'Services',
+  }
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>{moduleLabels[moduleId]}</SidebarGroupLabel>
       <SidebarMenu>
-        {config.map((entry) => {
+        {moduleConfig.map((entry) => {
           if (entry.items && isCollapsed) {
             return (
               <SidebarPopover
@@ -53,7 +87,7 @@ export function SidebarCore({
               <Collapsible
                 key={entry.title}
                 asChild
-                defaultOpen={entry.isActive}
+                defaultOpen={false}
                 className="group/collapsible"
               >
                 <SidebarMenuItem>
