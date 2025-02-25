@@ -11,8 +11,8 @@ import {
   Button,
 } from '@/Global/components/atoms'
 import { useCreateFamily } from '@/Family/queries'
-import { CreateFamilyData } from '@/Family/schemas'
 import { CreateFamilyForm } from '@/Family/components/molecules/CreateFamilyForm'
+import { CreateFamilyData } from '@/Family/schemas'
 
 interface CreateFamilyModalProps {
   isOpen: boolean
@@ -26,9 +26,14 @@ export function CreateFamilyModal({ isOpen, onClose }: CreateFamilyModalProps) {
 
   const handleSubmit = async (data: CreateFamilyData) => {
     try {
+      await createFamily.mutateAsync({
+        name: data.name,
+        modules: data.modules,
+      })
+
       onClose()
 
-      toast.success('Family created', {
+      toast.success('Family created successfully', {
         description: (
           <div className="flex justify-between items-center">
             <span>{data.name} has been created</span>
@@ -38,9 +43,13 @@ export function CreateFamilyModal({ isOpen, onClose }: CreateFamilyModalProps) {
           </div>
         ),
       })
+
+      navigate({ to: '/cadence' })
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to create family'))
-      toast.error('Failed to create family')
+      toast.error('Failed to create family', {
+        description: err instanceof Error ? err.message : 'Please try again',
+      })
     }
   }
 
