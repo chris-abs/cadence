@@ -28,11 +28,12 @@
       "@/*": ["./src/*"],
       "@collection/*": ["./src/Collection/*"],
       "@container/*": ["./src/Container/*"],
-      "@pending/*": ["./src/PENDING/*"],
+      "@family/*": ["./src/Family/*"],
       "@global/*": ["src/Global/*"],
       "@item/*": ["./src/Item/*"],
       "@tag/*": ["./src/Tag/*"],
-      "@workspace/*": ["./src/Workspace/*"]
+      "@workspace/*": ["./src/Workspace/*"],
+      "@user/*": ["./src/User/*"]
     }
   },
   "include": ["src", "src/routes/_authenticated/containers/$containerId.tsx"]

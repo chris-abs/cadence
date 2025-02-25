@@ -9,11 +9,12 @@ export default defineConfig({
       { find: '@', replacement: '/src' },
       { find: '@collection', replacement: '/src/Collection' },
       { find: '@container', replacement: '/src/Container' },
+      { find: '@family', replacement: '/src/Family' },
       { find: '@global', replacement: '/src/Global' },
-      { find: '@PENDING', replacement: './src/PENDING' },
       { find: '@item', replacement: '/src/Item' },
       { find: '@tag', replacement: '/src/Tag' },
       { find: '@workspace', replacement: '/src/Workspace' },
+      { find: '@user', replacement: '/src/User' },
     ],
   },
 })
