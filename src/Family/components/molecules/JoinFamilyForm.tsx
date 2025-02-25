@@ -15,17 +15,17 @@ import {
   AlertDescription,
   Button,
 } from '@/Global/components/atoms'
-import { JoinFamilyData, joinFamilySchema } from '@/Global/schemas/family'
+import { JoinFamilyData, JoinFamilySchema } from '@/Family/schemas'
 
-interface FamilyJoinFormProps {
+interface JoinFamilyFormProps {
   onSubmit: (data: JoinFamilyData) => Promise<void>
   error?: Error | null
   isLoading?: boolean
 }
 
-export function FamilyJoinForm({ onSubmit, error, isLoading }: FamilyJoinFormProps) {
+export function JoinFamilyForm({ onSubmit, error, isLoading }: JoinFamilyFormProps) {
   const form = useForm<JoinFamilyData>({
-    resolver: zodResolver(joinFamilySchema),
+    resolver: zodResolver(JoinFamilySchema),
     defaultValues: {
       token: '',
     },

@@ -16,18 +16,18 @@ import {
   Button,
   Checkbox,
 } from '@/Global/components/atoms'
-import { CreateFamilyData, createFamilySchema } from '@/Global/schemas'
+import { CreateFamilyData, CreateFamilySchema } from '@/Family/schemas'
 import { modulesList } from '@/Global/constants'
 
-interface FamilyFormProps {
+interface CreateFamilyFormProps {
   onSubmit: (data: CreateFamilyData) => Promise<void>
   error?: Error | null
   isLoading?: boolean
 }
 
-export function FamilyForm({ onSubmit, error, isLoading }: FamilyFormProps) {
+export function CreateFamilyForm({ onSubmit, error, isLoading }: CreateFamilyFormProps) {
   const form = useForm<CreateFamilyData>({
-    resolver: zodResolver(createFamilySchema),
+    resolver: zodResolver(CreateFamilySchema),
     defaultValues: {
       name: '',
       modules: ['storage'],

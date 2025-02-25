@@ -10,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { FamilyJoinForm } from '@/Global/components/molecules'
-import { useJoinFamily } from '@/Global/queries/family'
-import { JoinFamilyData } from '@/Global/schemas/family'
+import { JoinFamilyForm } from '@/Family/components/molecules'
+import { useJoinFamily } from '@/Family/queries'
+import { JoinFamilyData } from '@/Family/schemas'
 
 interface JoinFamilyModalProps {
   isOpen: boolean
@@ -56,7 +56,7 @@ export function JoinFamilyModal({ isOpen, onClose }: JoinFamilyModalProps) {
             Enter the invitation token you received to join a family.
           </DialogDescription>
         </DialogHeader>
-        <FamilyJoinForm onSubmit={handleSubmit} error={error} isLoading={joinFamily.isPending} />
+        <JoinFamilyForm onSubmit={handleSubmit} error={error} isLoading={joinFamily.isPending} />
       </DialogContent>
     </Dialog>
   )

@@ -10,22 +10,22 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { FamilyInviteForm } from '@/Global/components/molecules/forms'
-import { useCreateInvite } from '@/Global/queries/family'
-import { CreateInviteData } from '@/Global/schemas/family'
+import { CreateFamilyInviteForm } from '@/Family/components/molecules'
+import { useCreateInvite } from '@/Family/queries'
+import { CreateFamilyInviteData } from '@/Family/schemas'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
 
-interface CreateInviteModalProps {
+interface CreateFamilyInviteModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-export function CreateInviteModal({ isOpen, onClose }: CreateInviteModalProps) {
+export function CreateFamilyInviteModal({ isOpen, onClose }: CreateFamilyInviteModalProps) {
   const [error, setError] = useState<Error | null>(null)
   const { family } = useUserWithFamily()
   const createInvite = useCreateInvite()
 
-  const handleSubmit = async (data: CreateInviteData) => {
+  const handleSubmit = async (data: CreateFamilyInviteData) => {
     if (!family) {
       setError(new Error('No family selected'))
       return
@@ -77,7 +77,7 @@ export function CreateInviteModal({ isOpen, onClose }: CreateInviteModalProps) {
             Send an invitation to add a new member to your family.
           </DialogDescription>
         </DialogHeader>
-        <FamilyInviteForm
+        <CreateFamilyInviteForm
           onSubmit={handleSubmit}
           error={error}
           isLoading={createInvite.isPending}

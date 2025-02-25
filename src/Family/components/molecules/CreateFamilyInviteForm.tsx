@@ -20,17 +20,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/Global/components/atoms'
-import { CreateInviteData, createInviteSchema } from '@/Global/schemas/family'
+import { CreateFamilyInviteData, CreateFamilyInviteSchema } from '@/Family/schemas'
 
-interface InviteFormProps {
-  onSubmit: (data: CreateInviteData) => Promise<void>
+interface CreateFamilyInviteFormProps {
+  onSubmit: (data: CreateFamilyInviteData) => Promise<void>
   error?: Error | null
   isLoading?: boolean
 }
 
-export function FamilyInviteForm({ onSubmit, error, isLoading }: InviteFormProps) {
-  const form = useForm<CreateInviteData>({
-    resolver: zodResolver(createInviteSchema),
+export function CreateFamilyInviteForm({
+  onSubmit,
+  error,
+  isLoading,
+}: CreateFamilyInviteFormProps) {
+  const form = useForm<CreateFamilyInviteData>({
+    resolver: zodResolver(CreateFamilyInviteSchema),
     defaultValues: {
       email: '',
       role: 'CHILD',

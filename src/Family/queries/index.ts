@@ -9,7 +9,7 @@ import {
   JoinFamilyRequest,
   CreateInviteRequest,
   ModuleID,
-} from '@/Global/types/family'
+} from '@/Family/types'
 
 export function useFamily(id: number) {
   return useQuery({

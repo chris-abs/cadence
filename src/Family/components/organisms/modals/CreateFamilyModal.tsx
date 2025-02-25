@@ -10,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { useCreateFamily } from '@/Global/queries/family'
-import { CreateFamilyData } from '@/Global/schemas/family'
-import { FamilyForm } from '@/Global/components/molecules/forms/FamilyForm'
+import { useCreateFamily } from '@/Family/queries'
+import { CreateFamilyData } from '@/Family/schemas'
+import { CreateFamilyForm } from '@/Family/components/molecules/CreateFamilyForm'
 
 interface CreateFamilyModalProps {
   isOpen: boolean
@@ -53,7 +53,11 @@ export function CreateFamilyModal({ isOpen, onClose }: CreateFamilyModalProps) {
             Set up your family on Cadence and choose which modules you'd like to enable.
           </DialogDescription>
         </DialogHeader>
-        <FamilyForm onSubmit={handleSubmit} error={error} isLoading={createFamily.isPending} />
+        <CreateFamilyForm
+          onSubmit={handleSubmit}
+          error={error}
+          isLoading={createFamily.isPending}
+        />
       </DialogContent>
     </Dialog>
   )
