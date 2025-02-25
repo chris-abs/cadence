@@ -21,6 +21,7 @@ import { Route as AuthenticatedWorkspacesIndexImport } from './routes/_authentic
 import { Route as AuthenticatedTagsIndexImport } from './routes/_authenticated/tags/index'
 import { Route as AuthenticatedItemsIndexImport } from './routes/_authenticated/items/index'
 import { Route as AuthenticatedContainersIndexImport } from './routes/_authenticated/containers/index'
+import { Route as AuthenticatedCadenceIndexImport } from './routes/_authenticated/cadence/index'
 import { Route as AuthenticatedWorkspacesWorkspaceIdImport } from './routes/_authenticated/workspaces/$workspaceId'
 import { Route as AuthenticatedTagsTagIdImport } from './routes/_authenticated/tags/$tagId'
 import { Route as AuthenticatedItemsItemIdImport } from './routes/_authenticated/items/$itemId'
@@ -91,6 +92,12 @@ const AuthenticatedContainersIndexRoute =
     path: '/containers/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+
+const AuthenticatedCadenceIndexRoute = AuthenticatedCadenceIndexImport.update({
+  id: '/cadence/',
+  path: '/cadence/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 const AuthenticatedWorkspacesWorkspaceIdRoute =
   AuthenticatedWorkspacesWorkspaceIdImport.update({
@@ -213,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/cadence/': {
+      id: '/_authenticated/cadence/'
+      path: '/cadence'
+      fullPath: '/cadence'
+      preLoaderRoute: typeof AuthenticatedCadenceIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/containers/': {
       id: '/_authenticated/containers/'
       path: '/containers'
@@ -275,6 +289,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedTagsTagIdRoute: typeof AuthenticatedTagsTagIdRoute
   AuthenticatedWorkspacesWorkspaceIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
+  AuthenticatedCadenceIndexRoute: typeof AuthenticatedCadenceIndexRoute
   AuthenticatedContainersIndexRoute: typeof AuthenticatedContainersIndexRoute
   AuthenticatedItemsIndexRoute: typeof AuthenticatedItemsIndexRoute
   AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
@@ -294,6 +309,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedTagsTagIdRoute: AuthenticatedTagsTagIdRoute,
   AuthenticatedWorkspacesWorkspaceIdRoute:
     AuthenticatedWorkspacesWorkspaceIdRoute,
+  AuthenticatedCadenceIndexRoute: AuthenticatedCadenceIndexRoute,
   AuthenticatedContainersIndexRoute: AuthenticatedContainersIndexRoute,
   AuthenticatedItemsIndexRoute: AuthenticatedItemsIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
@@ -319,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
+  '/cadence': typeof AuthenticatedCadenceIndexRoute
   '/containers': typeof AuthenticatedContainersIndexRoute
   '/items': typeof AuthenticatedItemsIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
@@ -338,6 +355,7 @@ export interface FileRoutesByTo {
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
+  '/cadence': typeof AuthenticatedCadenceIndexRoute
   '/containers': typeof AuthenticatedContainersIndexRoute
   '/items': typeof AuthenticatedItemsIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
@@ -359,6 +377,7 @@ export interface FileRoutesById {
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
+  '/_authenticated/cadence/': typeof AuthenticatedCadenceIndexRoute
   '/_authenticated/containers/': typeof AuthenticatedContainersIndexRoute
   '/_authenticated/items/': typeof AuthenticatedItemsIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
@@ -381,6 +400,7 @@ export interface FileRouteTypes {
     | '/items/$itemId'
     | '/tags/$tagId'
     | '/workspaces/$workspaceId'
+    | '/cadence'
     | '/containers'
     | '/items'
     | '/tags'
@@ -399,6 +419,7 @@ export interface FileRouteTypes {
     | '/items/$itemId'
     | '/tags/$tagId'
     | '/workspaces/$workspaceId'
+    | '/cadence'
     | '/containers'
     | '/items'
     | '/tags'
@@ -418,6 +439,7 @@ export interface FileRouteTypes {
     | '/_authenticated/items/$itemId'
     | '/_authenticated/tags/$tagId'
     | '/_authenticated/workspaces/$workspaceId'
+    | '/_authenticated/cadence/'
     | '/_authenticated/containers/'
     | '/_authenticated/items/'
     | '/_authenticated/tags/'
@@ -465,6 +487,7 @@ export const routeTree = rootRoute
         "/_authenticated/items/$itemId",
         "/_authenticated/tags/$tagId",
         "/_authenticated/workspaces/$workspaceId",
+        "/_authenticated/cadence/",
         "/_authenticated/containers/",
         "/_authenticated/items/",
         "/_authenticated/tags/",
@@ -506,6 +529,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/workspaces/$workspaceId": {
       "filePath": "_authenticated/workspaces/$workspaceId.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/": {
+      "filePath": "_authenticated/cadence/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/containers/": {

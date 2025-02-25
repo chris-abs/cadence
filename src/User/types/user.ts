@@ -1,9 +1,13 @@
+import { FamilyRoles } from '@/Global/types'
+
 export interface User {
   id: number
   email: string
   firstName: string
   lastName: string
   imageUrl: string
+  role: FamilyRoles['role']
+  familyId: number
   createdAt: string
   updatedAt: string
 }
