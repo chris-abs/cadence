@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@/Global/components/atoms'
 import { LoginForm } from '@/Global/components/molecules'
+import { LoginCredentials } from '@/Global/types'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -20,7 +21,7 @@ function LoginPage() {
   const { authentication: auth } = Route.useRouteContext()
   const [loginError, setLoginError] = useState<string | null>(null)
 
-  const handleLogin = async (credentials: { email: string; password: string }) => {
+  const handleLogin = async (credentials: LoginCredentials) => {
     try {
       setLoginError(null)
       await auth.login(credentials)

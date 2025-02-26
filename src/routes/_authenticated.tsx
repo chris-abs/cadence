@@ -16,10 +16,6 @@ export const Route = createFileRoute('/_authenticated')({
         queryKey: queryKeys.user,
         queryFn: () => api.get('/user'),
       }),
-      queryClient.prefetchQuery({
-        queryKey: queryKeys.recent,
-        queryFn: () => api.get('/recent'),
-      }),
     ])
   },
   component: AuthenticatedLayout,
