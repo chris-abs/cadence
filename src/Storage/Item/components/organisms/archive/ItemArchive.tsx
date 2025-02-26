@@ -10,7 +10,7 @@ import { Section, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { useItemSearch } from '@/Global/queries/search'
 import { cn } from '@/Global/lib'
-import { useItems } from '@/Item/queries'
+import { useItems } from '@/Storage/Item/queries'
 import { ItemCard } from '../../atoms/card'
 
 interface ItemArchiveProps {

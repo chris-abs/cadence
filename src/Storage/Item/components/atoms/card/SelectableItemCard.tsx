@@ -1,6 +1,6 @@
 import { cn } from '@/Global/lib'
+import { Item } from '@/Storage/Item/types'
 import { ItemCardContent } from './ItemCardContent'
-import { Item } from '@/Item/types'
 
 interface SelectableItemCardProps {
   item: Item | null

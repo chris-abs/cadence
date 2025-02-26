@@ -13,8 +13,8 @@ import {
   CommandGroup,
   CommandItem,
 } from '@/Global/components/atoms'
-import { Tag } from '@/Tag/types'
-import { useTags } from '@/Tag/queries'
+import { Tag } from '@/Storage/Tag/types'
+import { useTags } from '@/Storage/Tag/queries'
 
 interface TagSelectorProps {
   selectedTags: Tag[]

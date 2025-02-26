@@ -1,10 +1,11 @@
 import { Clock, Package } from 'lucide-react'
+
 import { Badge, PlaceholderImage, ScrollArea, ScrollBar } from '@/Global/components/atoms'
 import { H4, Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
-import { Item } from '@/Item/types'
+import { Item } from '@/Storage/Item/types'
 
 interface ItemCardContentProps {
   item: Item | null

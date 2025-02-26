@@ -10,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { Tag } from '@/Tag/types'
-import { useCreateItem } from '@/Item/queries'
-import { CreateItemData } from '@/Item/schemas'
+import { Tag } from '@/Storage/Tag/types'
+import { useCreateItem } from '@/Storage/Item/queries'
+import { CreateItemData } from '@/Storage/Item/schemas'
 import { ItemForm } from '../../molecules/forms'
 
 interface CreateItemModalProps {

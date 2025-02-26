@@ -1,8 +1,8 @@
 import { Input, Label } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib/utils'
-import { UpdateItemData } from '@/Item/schemas'
-import { Item } from '@/Item/types'
-import { Tag } from '@/Tag/types'
+import { UpdateItemData } from '@/Storage/Item/schemas'
+import { Item } from '@/Storage/Item/types'
+import { Tag } from '@/Storage/Tag/types'
 import { TagManagement } from '../../organisms/detail/sections'
 
 interface ItemDetailFormProps {

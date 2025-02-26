@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { Badge } from '@/Global/components/atoms'
-import { Tag } from '@/Tag/types'
+import { Tag } from '@/Storage/Tag/types'
 import { TagSelector } from './TagSelector'
 
 interface TagManagementProps {

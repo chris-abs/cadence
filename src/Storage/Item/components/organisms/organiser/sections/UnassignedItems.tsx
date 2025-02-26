@@ -16,8 +16,8 @@ import {
 import { Section, Muted, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
-import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
-import { Item } from '@/Item/types'
+import { SortableItemCard } from '@/Storage/Item/components/atoms/card/SortableItemCard'
+import { Item } from '@/Storage/Item/types'
 
 interface UnassignedItemsSectionProps {
   items: Item[]

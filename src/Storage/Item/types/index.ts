@@ -1,5 +1,5 @@
-import { Container } from '@/Container/types'
-import { Tag } from '@/Tag/types'
+import { Container } from '@/Storage/Container/types'
+import { Tag } from '@/Storage/Tag/types'
 
 export interface ItemImage {
   id: number

@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
-import { Item } from '@/Item/types'
+import { Item } from '@/Storage/Item/types'
 import { ItemCardContent } from './ItemCardContent'
 interface ItemCardProps {
   item: Item | null

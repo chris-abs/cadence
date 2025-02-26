@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { X, Upload } from 'lucide-react'
+
 import {
   Button,
   Carousel,
@@ -11,7 +12,7 @@ import {
   PlaceholderImage,
 } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib/utils'
-import { Item } from '@/Item/types'
+import { Item } from '@/Storage/Item/types'
 
 interface ItemDetailsCarouselProps {
   item: Item

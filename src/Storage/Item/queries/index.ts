@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { invalidateQueries } from '@/Global/utils/queryInvalidation'
-import { Tag } from '@/Tag/types'
+import { Tag } from '@/Storage/Tag/types'
 import { Item } from '../types'
 import { CreateItemData, UpdateItemData } from '../schemas'
 

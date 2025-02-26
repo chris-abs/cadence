@@ -16,7 +16,7 @@ import {
   Input,
   Textarea,
 } from '@/Global/components/atoms'
-import { CreateItemData, createItemSchema } from '@/Item/schemas'
+import { CreateItemData, createItemSchema } from '@/Storage/Item/schemas'
 
 interface ItemFormProps {
   onSubmit: (data: CreateItemData) => Promise<void>

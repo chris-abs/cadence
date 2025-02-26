@@ -12,10 +12,10 @@ import {
 
 import { Section } from '@/Global/components/molecules'
 import { WorkspaceListSection } from '@/Global/components/organisms/organiser/sections'
-import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
-import { Item } from '@/Item/types'
-import { Workspace } from '@/Workspace/types'
-import { Container } from '@/Container/types'
+import { SortableItemCard } from '@/Storage/Item/components/atoms/card/SortableItemCard'
+import { Item } from '@/Storage/Item/types'
+import { Workspace } from '@/Storage/Workspace/types'
+import { Container } from '@/Storage/Container/types'
 import { UnassignedItemsSection } from './sections'
 
 interface ItemOrganiserProps {

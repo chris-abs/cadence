@@ -1,7 +1,7 @@
-import { UpdateContainerData } from '@/Container/schemas'
-import { Container } from '@/Container/types'
 import { Input, Label } from '@/Global/components/atoms'
 import { cn } from '@/Global/lib'
+import { UpdateContainerData } from '@/Storage/Container/schemas'
+import { Container } from '@/Storage/Container/types'
 
 interface ContainerDetailFormProps {
   container: Container

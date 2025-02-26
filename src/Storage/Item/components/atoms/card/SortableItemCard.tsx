@@ -1,5 +1,5 @@
 import { SortableEntityCard } from '@/Global/components/molecules'
-import { Item } from '@/Item/types'
+import { Item } from '@/Storage/Item/types'
 import { ItemCard } from './ItemCard'
 
 export function SortableItemCard({ item }: { item: Item | null }) {

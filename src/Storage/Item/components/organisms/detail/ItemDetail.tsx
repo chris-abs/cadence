@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { useUpdateItem } from '@/Item/queries'
 import { EntityHeader } from '@/Global/components/molecules/headers'
-import { ContainerSelectionModal } from '@/Container/components/organisms/modals'
-import { useUpdateContainer } from '@/Container/queries'
-import { UpdateContainerData } from '@/Container/schemas'
-import { CreateTagModal } from '@/Tag/components/organisms/modals'
-import { UpdateItemData } from '@/Item/schemas'
-import { Item } from '@/Item/types'
+import { useUpdateItem } from '@/Storage/Item/queries'
+import { ContainerSelectionModal } from '@/Storage/Container/components/organisms/modals'
+import { useUpdateContainer } from '@/Storage/Container/queries'
+import { UpdateContainerData } from '@/Storage/Container/schemas'
+import { CreateTagModal } from '@/Storage/Tag/components/organisms/modals'
+import { UpdateItemData } from '@/Storage/Item/schemas'
+import { Item } from '@/Storage/Item/types'
 import { ContainerDetailsSection, ItemDetailsSection } from './sections'
 
 interface ItemDetailProps {

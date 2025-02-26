@@ -16,9 +16,9 @@ import {
   CardContent,
 } from '@/Global/components/atoms'
 import { NotAssignedSection, Section, Muted } from '@/Global/components/molecules'
-import { DeleteModal } from '@/Collection/components/organisms/modals'
-import { Container } from '@/Container/types'
-import { UpdateContainerData } from '@/Container/schemas'
+import { DeleteModal } from '@/Storage/Collection/components/organisms/modals'
+import { Container } from '@/Storage/Container/types'
+import { UpdateContainerData } from '@/Storage/Container/schemas'
 import { ContainerDetailForm } from './ContainerDetailForm'
 
 interface ContainerDetailsSectionProps {
