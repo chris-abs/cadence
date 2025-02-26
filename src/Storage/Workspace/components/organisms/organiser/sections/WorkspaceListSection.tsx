@@ -7,8 +7,8 @@ import {
   ScrollArea,
   Accordion,
 } from '@/Global/components/atoms'
-import { Workspace } from '@/Workspace/types'
-import { Container } from '@/Container/types'
+import { Workspace } from '@/Storage/Workspace/types'
+import { Container } from '@/Storage/Container/types'
 import { WorkspaceRow } from './WorkspaceRow'
 
 interface WorkspaceListSectionProps {

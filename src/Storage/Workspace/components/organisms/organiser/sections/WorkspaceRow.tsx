@@ -1,5 +1,6 @@
 import { useDroppable } from '@dnd-kit/core'
 import { FolderOpen } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 import {
   Card,
@@ -15,10 +16,9 @@ import {
 } from '@/Global/components/atoms'
 import { NoContent, Muted } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib'
-import { Workspace } from '@/Workspace/types'
-import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
-import { Container } from '@/Container/types'
-import { Link } from '@tanstack/react-router'
+import { Workspace } from '@/Storage/Workspace/types'
+import { SortableContainerCard } from '@/Storage/Container/components/atoms/card/SortableContainerCard'
+import { Container } from '@/Storage/Container/types'
 
 interface WorkspaceRowProps {
   workspace: Workspace

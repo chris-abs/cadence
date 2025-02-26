@@ -7,8 +7,8 @@ import {
   ScrollArea,
 } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
-import { useWorkspaces } from '@/Workspace/queries'
 import { useWorkspaceSearch } from '@/Global/queries/search'
+import { useWorkspaces } from '@/Storage/Workspace/queries'
 import { WorkspaceCard } from '../../atoms/card'
 
 interface WorkspaceArchiveProps {

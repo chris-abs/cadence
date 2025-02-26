@@ -13,12 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/Global/components/atoms'
-import { useWorkspaces } from '@/Workspace/queries'
+import { useWorkspaces } from '@/Storage/Workspace/queries'
 
 interface WorkspaceSelectionModalProps {
   isOpen: boolean
   onClose: () => void
-  onSelect: (workspaceId: number | undefined) => void // Changed to allow undefined
+  onSelect: (workspaceId: number | undefined) => void
   currentWorkspaceId?: number
 }
 

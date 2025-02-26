@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { Clock, Layout, Box } from 'lucide-react'
-import { formatRelativeTime } from '@/Global/utils/dateFormat'
-import { Workspace } from '@/Workspace/types'
+
 import { H4, Muted } from '@/Global/components/molecules/Typography'
+import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { cn } from '@/Global/lib'
+import { Workspace } from '@/Storage/Workspace/types'
 
 interface WorkspaceCardProps {
   workspace: Workspace

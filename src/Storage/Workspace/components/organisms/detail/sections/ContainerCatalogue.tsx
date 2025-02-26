@@ -13,8 +13,8 @@ import {
   ScrollArea,
 } from '@/Global/components/atoms'
 import { Muted, Section } from '@/Global/components/molecules'
-import { ContainerCard } from '@/Container/components/atoms/card'
-import { Container } from '@/Container/types'
+import { ContainerCard } from '@/Storage/Container/components/atoms/card'
+import { Container } from '@/Storage/Container/types'
 
 interface ContainerCatalogueProps {
   containers: Container[]

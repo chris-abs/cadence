@@ -17,9 +17,9 @@ import {
 } from '@/Global/components/atoms'
 import { NotAssignedSection, Section } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib/utils'
-import { DeleteModal } from '@/Collection/components/organisms/modals'
-import { Workspace } from '@/Workspace/types'
-import { UpdateWorkspaceData } from '@/Workspace/schemas'
+import { DeleteModal } from '@/Storage/Collection/components/organisms/modals'
+import { Workspace } from '@/Storage/Workspace/types'
+import { UpdateWorkspaceData } from '@/Storage/Workspace/schemas'
 
 interface WorkspaceDetailsSectionProps {
   workspace: Workspace | null

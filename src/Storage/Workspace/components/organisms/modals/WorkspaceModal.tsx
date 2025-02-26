@@ -10,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { useCreateWorkspace } from '@/Workspace/queries'
-import { CreateWorkspaceData } from '@/Workspace/schemas'
-import { WorkspaceForm } from '@/Workspace/components/molecules/forms'
+import { useCreateWorkspace } from '@/Storage/Workspace/queries'
+import { CreateWorkspaceData } from '@/Storage/Workspace/schemas'
+import { WorkspaceForm } from '@/Storage/Workspace/components/molecules/forms'
 
 interface CreateWorkspaceModalProps {
   isOpen: boolean

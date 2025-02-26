@@ -16,7 +16,7 @@ import {
   Input,
   Textarea,
 } from '@/Global/components/atoms'
-import { CreateWorkspaceData, createWorkspaceSchema } from '@/Workspace/schemas'
+import { CreateWorkspaceData, createWorkspaceSchema } from '@/Storage/Workspace/schemas'
 
 interface WorkspaceFormProps {
   onSubmit: (data: CreateWorkspaceData) => Promise<void>

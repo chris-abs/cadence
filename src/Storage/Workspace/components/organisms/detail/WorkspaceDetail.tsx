@@ -3,10 +3,10 @@ import { toast } from 'sonner'
 
 import { NotAssignedSection } from '@/Global/components/molecules'
 import { EntityHeader } from '@/Global/components/molecules/headers'
-import { useUpdateWorkspace } from '@/Workspace/queries'
-import { UpdateWorkspaceData } from '@/Workspace/schemas'
-import { CreateContainerModal } from '@/Container/components/organisms/modals'
-import { Workspace } from '@/Workspace/types'
+import { useUpdateWorkspace } from '@/Storage/Workspace/queries'
+import { UpdateWorkspaceData } from '@/Storage/Workspace/schemas'
+import { CreateContainerModal } from '@/Storage/Container/components/organisms/modals'
+import { Workspace } from '@/Storage/Workspace/types'
 import { WorkspaceDetailsSection, ContainerCatalogue } from './sections'
 
 interface WorkspaceDetailProps {
