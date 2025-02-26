@@ -1,4 +1,4 @@
-import { EntityType } from '@/Collection/types'
+import { EntityType } from '@/Storage/Collection/types'
 
 export interface BaseEntityHeaderProps {
   title: string

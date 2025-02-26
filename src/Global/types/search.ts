@@ -1,7 +1,7 @@
-import type { Container } from '@/Container/types'
-import type { Item } from '@/Item/types'
-import type { Tag } from '@/Tag/types'
-import type { Workspace } from '@/Workspace/types'
+import type { Workspace } from '@/Storage/Workspace/types'
+import type { Container } from '@/Storage/Container/types'
+import type { Item } from '@/Storage/Item/types'
+import type { Tag } from '@/Storage/Tag/types'
 
 export type SearchType = 'workspace' | 'container' | 'item' | 'tagged_item' | 'tag'
 

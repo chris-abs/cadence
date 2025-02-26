@@ -17,18 +17,22 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
-import { Route as AuthenticatedWorkspacesIndexImport } from './routes/_authenticated/workspaces/index'
-import { Route as AuthenticatedTagsIndexImport } from './routes/_authenticated/tags/index'
-import { Route as AuthenticatedItemsIndexImport } from './routes/_authenticated/items/index'
-import { Route as AuthenticatedContainersIndexImport } from './routes/_authenticated/containers/index'
 import { Route as AuthenticatedCadenceIndexImport } from './routes/_authenticated/cadence/index'
-import { Route as AuthenticatedWorkspacesWorkspaceIdImport } from './routes/_authenticated/workspaces/$workspaceId'
-import { Route as AuthenticatedTagsTagIdImport } from './routes/_authenticated/tags/$tagId'
-import { Route as AuthenticatedItemsItemIdImport } from './routes/_authenticated/items/$itemId'
-import { Route as AuthenticatedContainersContainerIdImport } from './routes/_authenticated/containers/$containerId'
-import { Route as AuthenticatedTagsAssignIndexImport } from './routes/_authenticated/tags/assign/index'
-import { Route as AuthenticatedItemsAssignIndexImport } from './routes/_authenticated/items/assign/index'
-import { Route as AuthenticatedContainersAssignIndexImport } from './routes/_authenticated/containers/assign/index'
+import { Route as AuthenticatedCadenceStorageIndexImport } from './routes/_authenticated/cadence/storage/index'
+import { Route as AuthenticatedCadenceServicesIndexImport } from './routes/_authenticated/cadence/services/index'
+import { Route as AuthenticatedCadenceMealsIndexImport } from './routes/_authenticated/cadence/meals/index'
+import { Route as AuthenticatedCadenceChoresIndexImport } from './routes/_authenticated/cadence/chores/index'
+import { Route as AuthenticatedCadenceStorageWorkspacesIndexImport } from './routes/_authenticated/cadence/storage/workspaces/index'
+import { Route as AuthenticatedCadenceStorageTagsIndexImport } from './routes/_authenticated/cadence/storage/tags/index'
+import { Route as AuthenticatedCadenceStorageItemsIndexImport } from './routes/_authenticated/cadence/storage/items/index'
+import { Route as AuthenticatedCadenceStorageContainersIndexImport } from './routes/_authenticated/cadence/storage/containers/index'
+import { Route as AuthenticatedCadenceStorageWorkspacesWorkspaceIdImport } from './routes/_authenticated/cadence/storage/workspaces/$workspaceId'
+import { Route as AuthenticatedCadenceStorageTagsTagIdImport } from './routes/_authenticated/cadence/storage/tags/$tagId'
+import { Route as AuthenticatedCadenceStorageItemsItemIdImport } from './routes/_authenticated/cadence/storage/items/$itemId'
+import { Route as AuthenticatedCadenceStorageContainersContainerIdImport } from './routes/_authenticated/cadence/storage/containers/$containerId'
+import { Route as AuthenticatedCadenceStorageTagsAssignIndexImport } from './routes/_authenticated/cadence/storage/tags/assign/index'
+import { Route as AuthenticatedCadenceStorageItemsAssignIndexImport } from './routes/_authenticated/cadence/storage/items/assign/index'
+import { Route as AuthenticatedCadenceStorageContainersAssignIndexImport } from './routes/_authenticated/cadence/storage/containers/assign/index'
 
 // Create/Update Routes
 
@@ -67,82 +71,114 @@ const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedWorkspacesIndexRoute =
-  AuthenticatedWorkspacesIndexImport.update({
-    id: '/workspaces/',
-    path: '/workspaces/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
-const AuthenticatedTagsIndexRoute = AuthenticatedTagsIndexImport.update({
-  id: '/tags/',
-  path: '/tags/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-
-const AuthenticatedItemsIndexRoute = AuthenticatedItemsIndexImport.update({
-  id: '/items/',
-  path: '/items/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-
-const AuthenticatedContainersIndexRoute =
-  AuthenticatedContainersIndexImport.update({
-    id: '/containers/',
-    path: '/containers/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
 const AuthenticatedCadenceIndexRoute = AuthenticatedCadenceIndexImport.update({
   id: '/cadence/',
   path: '/cadence/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedWorkspacesWorkspaceIdRoute =
-  AuthenticatedWorkspacesWorkspaceIdImport.update({
-    id: '/workspaces/$workspaceId',
-    path: '/workspaces/$workspaceId',
+const AuthenticatedCadenceStorageIndexRoute =
+  AuthenticatedCadenceStorageIndexImport.update({
+    id: '/cadence/storage/',
+    path: '/cadence/storage/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const AuthenticatedTagsTagIdRoute = AuthenticatedTagsTagIdImport.update({
-  id: '/tags/$tagId',
-  path: '/tags/$tagId',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-
-const AuthenticatedItemsItemIdRoute = AuthenticatedItemsItemIdImport.update({
-  id: '/items/$itemId',
-  path: '/items/$itemId',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-
-const AuthenticatedContainersContainerIdRoute =
-  AuthenticatedContainersContainerIdImport.update({
-    id: '/containers/$containerId',
-    path: '/containers/$containerId',
+const AuthenticatedCadenceServicesIndexRoute =
+  AuthenticatedCadenceServicesIndexImport.update({
+    id: '/cadence/services/',
+    path: '/cadence/services/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const AuthenticatedTagsAssignIndexRoute =
-  AuthenticatedTagsAssignIndexImport.update({
-    id: '/tags/assign/',
-    path: '/tags/assign/',
+const AuthenticatedCadenceMealsIndexRoute =
+  AuthenticatedCadenceMealsIndexImport.update({
+    id: '/cadence/meals/',
+    path: '/cadence/meals/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const AuthenticatedItemsAssignIndexRoute =
-  AuthenticatedItemsAssignIndexImport.update({
-    id: '/items/assign/',
-    path: '/items/assign/',
+const AuthenticatedCadenceChoresIndexRoute =
+  AuthenticatedCadenceChoresIndexImport.update({
+    id: '/cadence/chores/',
+    path: '/cadence/chores/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const AuthenticatedContainersAssignIndexRoute =
-  AuthenticatedContainersAssignIndexImport.update({
-    id: '/containers/assign/',
-    path: '/containers/assign/',
+const AuthenticatedCadenceStorageWorkspacesIndexRoute =
+  AuthenticatedCadenceStorageWorkspacesIndexImport.update({
+    id: '/cadence/storage/workspaces/',
+    path: '/cadence/storage/workspaces/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageTagsIndexRoute =
+  AuthenticatedCadenceStorageTagsIndexImport.update({
+    id: '/cadence/storage/tags/',
+    path: '/cadence/storage/tags/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageItemsIndexRoute =
+  AuthenticatedCadenceStorageItemsIndexImport.update({
+    id: '/cadence/storage/items/',
+    path: '/cadence/storage/items/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageContainersIndexRoute =
+  AuthenticatedCadenceStorageContainersIndexImport.update({
+    id: '/cadence/storage/containers/',
+    path: '/cadence/storage/containers/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute =
+  AuthenticatedCadenceStorageWorkspacesWorkspaceIdImport.update({
+    id: '/cadence/storage/workspaces/$workspaceId',
+    path: '/cadence/storage/workspaces/$workspaceId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageTagsTagIdRoute =
+  AuthenticatedCadenceStorageTagsTagIdImport.update({
+    id: '/cadence/storage/tags/$tagId',
+    path: '/cadence/storage/tags/$tagId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageItemsItemIdRoute =
+  AuthenticatedCadenceStorageItemsItemIdImport.update({
+    id: '/cadence/storage/items/$itemId',
+    path: '/cadence/storage/items/$itemId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageContainersContainerIdRoute =
+  AuthenticatedCadenceStorageContainersContainerIdImport.update({
+    id: '/cadence/storage/containers/$containerId',
+    path: '/cadence/storage/containers/$containerId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageTagsAssignIndexRoute =
+  AuthenticatedCadenceStorageTagsAssignIndexImport.update({
+    id: '/cadence/storage/tags/assign/',
+    path: '/cadence/storage/tags/assign/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageItemsAssignIndexRoute =
+  AuthenticatedCadenceStorageItemsAssignIndexImport.update({
+    id: '/cadence/storage/items/assign/',
+    path: '/cadence/storage/items/assign/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceStorageContainersAssignIndexRoute =
+  AuthenticatedCadenceStorageContainersAssignIndexImport.update({
+    id: '/cadence/storage/containers/assign/',
+    path: '/cadence/storage/containers/assign/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -192,34 +228,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/containers/$containerId': {
-      id: '/_authenticated/containers/$containerId'
-      path: '/containers/$containerId'
-      fullPath: '/containers/$containerId'
-      preLoaderRoute: typeof AuthenticatedContainersContainerIdImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/items/$itemId': {
-      id: '/_authenticated/items/$itemId'
-      path: '/items/$itemId'
-      fullPath: '/items/$itemId'
-      preLoaderRoute: typeof AuthenticatedItemsItemIdImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/tags/$tagId': {
-      id: '/_authenticated/tags/$tagId'
-      path: '/tags/$tagId'
-      fullPath: '/tags/$tagId'
-      preLoaderRoute: typeof AuthenticatedTagsTagIdImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/workspaces/$workspaceId': {
-      id: '/_authenticated/workspaces/$workspaceId'
-      path: '/workspaces/$workspaceId'
-      fullPath: '/workspaces/$workspaceId'
-      preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdImport
-      parentRoute: typeof AuthenticatedImport
-    }
     '/_authenticated/cadence/': {
       id: '/_authenticated/cadence/'
       path: '/cadence'
@@ -227,53 +235,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCadenceIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/containers/': {
-      id: '/_authenticated/containers/'
-      path: '/containers'
-      fullPath: '/containers'
-      preLoaderRoute: typeof AuthenticatedContainersIndexImport
+    '/_authenticated/cadence/chores/': {
+      id: '/_authenticated/cadence/chores/'
+      path: '/cadence/chores'
+      fullPath: '/cadence/chores'
+      preLoaderRoute: typeof AuthenticatedCadenceChoresIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/items/': {
-      id: '/_authenticated/items/'
-      path: '/items'
-      fullPath: '/items'
-      preLoaderRoute: typeof AuthenticatedItemsIndexImport
+    '/_authenticated/cadence/meals/': {
+      id: '/_authenticated/cadence/meals/'
+      path: '/cadence/meals'
+      fullPath: '/cadence/meals'
+      preLoaderRoute: typeof AuthenticatedCadenceMealsIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/tags/': {
-      id: '/_authenticated/tags/'
-      path: '/tags'
-      fullPath: '/tags'
-      preLoaderRoute: typeof AuthenticatedTagsIndexImport
+    '/_authenticated/cadence/services/': {
+      id: '/_authenticated/cadence/services/'
+      path: '/cadence/services'
+      fullPath: '/cadence/services'
+      preLoaderRoute: typeof AuthenticatedCadenceServicesIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/workspaces/': {
-      id: '/_authenticated/workspaces/'
-      path: '/workspaces'
-      fullPath: '/workspaces'
-      preLoaderRoute: typeof AuthenticatedWorkspacesIndexImport
+    '/_authenticated/cadence/storage/': {
+      id: '/_authenticated/cadence/storage/'
+      path: '/cadence/storage'
+      fullPath: '/cadence/storage'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/containers/assign/': {
-      id: '/_authenticated/containers/assign/'
-      path: '/containers/assign'
-      fullPath: '/containers/assign'
-      preLoaderRoute: typeof AuthenticatedContainersAssignIndexImport
+    '/_authenticated/cadence/storage/containers/$containerId': {
+      id: '/_authenticated/cadence/storage/containers/$containerId'
+      path: '/cadence/storage/containers/$containerId'
+      fullPath: '/cadence/storage/containers/$containerId'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageContainersContainerIdImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/items/assign/': {
-      id: '/_authenticated/items/assign/'
-      path: '/items/assign'
-      fullPath: '/items/assign'
-      preLoaderRoute: typeof AuthenticatedItemsAssignIndexImport
+    '/_authenticated/cadence/storage/items/$itemId': {
+      id: '/_authenticated/cadence/storage/items/$itemId'
+      path: '/cadence/storage/items/$itemId'
+      fullPath: '/cadence/storage/items/$itemId'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageItemsItemIdImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/tags/assign/': {
-      id: '/_authenticated/tags/assign/'
-      path: '/tags/assign'
-      fullPath: '/tags/assign'
-      preLoaderRoute: typeof AuthenticatedTagsAssignIndexImport
+    '/_authenticated/cadence/storage/tags/$tagId': {
+      id: '/_authenticated/cadence/storage/tags/$tagId'
+      path: '/cadence/storage/tags/$tagId'
+      fullPath: '/cadence/storage/tags/$tagId'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageTagsTagIdImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/workspaces/$workspaceId': {
+      id: '/_authenticated/cadence/storage/workspaces/$workspaceId'
+      path: '/cadence/storage/workspaces/$workspaceId'
+      fullPath: '/cadence/storage/workspaces/$workspaceId'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageWorkspacesWorkspaceIdImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/containers/': {
+      id: '/_authenticated/cadence/storage/containers/'
+      path: '/cadence/storage/containers'
+      fullPath: '/cadence/storage/containers'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageContainersIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/items/': {
+      id: '/_authenticated/cadence/storage/items/'
+      path: '/cadence/storage/items'
+      fullPath: '/cadence/storage/items'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageItemsIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/tags/': {
+      id: '/_authenticated/cadence/storage/tags/'
+      path: '/cadence/storage/tags'
+      fullPath: '/cadence/storage/tags'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageTagsIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/workspaces/': {
+      id: '/_authenticated/cadence/storage/workspaces/'
+      path: '/cadence/storage/workspaces'
+      fullPath: '/cadence/storage/workspaces'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageWorkspacesIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/containers/assign/': {
+      id: '/_authenticated/cadence/storage/containers/assign/'
+      path: '/cadence/storage/containers/assign'
+      fullPath: '/cadence/storage/containers/assign'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageContainersAssignIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/items/assign/': {
+      id: '/_authenticated/cadence/storage/items/assign/'
+      path: '/cadence/storage/items/assign'
+      fullPath: '/cadence/storage/items/assign'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageItemsAssignIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/cadence/storage/tags/assign/': {
+      id: '/_authenticated/cadence/storage/tags/assign/'
+      path: '/cadence/storage/tags/assign'
+      fullPath: '/cadence/storage/tags/assign'
+      preLoaderRoute: typeof AuthenticatedCadenceStorageTagsAssignIndexImport
       parentRoute: typeof AuthenticatedImport
     }
   }
@@ -285,39 +349,56 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedContainersContainerIdRoute: typeof AuthenticatedContainersContainerIdRoute
-  AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
-  AuthenticatedTagsTagIdRoute: typeof AuthenticatedTagsTagIdRoute
-  AuthenticatedWorkspacesWorkspaceIdRoute: typeof AuthenticatedWorkspacesWorkspaceIdRoute
   AuthenticatedCadenceIndexRoute: typeof AuthenticatedCadenceIndexRoute
-  AuthenticatedContainersIndexRoute: typeof AuthenticatedContainersIndexRoute
-  AuthenticatedItemsIndexRoute: typeof AuthenticatedItemsIndexRoute
-  AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
-  AuthenticatedWorkspacesIndexRoute: typeof AuthenticatedWorkspacesIndexRoute
-  AuthenticatedContainersAssignIndexRoute: typeof AuthenticatedContainersAssignIndexRoute
-  AuthenticatedItemsAssignIndexRoute: typeof AuthenticatedItemsAssignIndexRoute
-  AuthenticatedTagsAssignIndexRoute: typeof AuthenticatedTagsAssignIndexRoute
+  AuthenticatedCadenceChoresIndexRoute: typeof AuthenticatedCadenceChoresIndexRoute
+  AuthenticatedCadenceMealsIndexRoute: typeof AuthenticatedCadenceMealsIndexRoute
+  AuthenticatedCadenceServicesIndexRoute: typeof AuthenticatedCadenceServicesIndexRoute
+  AuthenticatedCadenceStorageIndexRoute: typeof AuthenticatedCadenceStorageIndexRoute
+  AuthenticatedCadenceStorageContainersContainerIdRoute: typeof AuthenticatedCadenceStorageContainersContainerIdRoute
+  AuthenticatedCadenceStorageItemsItemIdRoute: typeof AuthenticatedCadenceStorageItemsItemIdRoute
+  AuthenticatedCadenceStorageTagsTagIdRoute: typeof AuthenticatedCadenceStorageTagsTagIdRoute
+  AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute: typeof AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute
+  AuthenticatedCadenceStorageContainersIndexRoute: typeof AuthenticatedCadenceStorageContainersIndexRoute
+  AuthenticatedCadenceStorageItemsIndexRoute: typeof AuthenticatedCadenceStorageItemsIndexRoute
+  AuthenticatedCadenceStorageTagsIndexRoute: typeof AuthenticatedCadenceStorageTagsIndexRoute
+  AuthenticatedCadenceStorageWorkspacesIndexRoute: typeof AuthenticatedCadenceStorageWorkspacesIndexRoute
+  AuthenticatedCadenceStorageContainersAssignIndexRoute: typeof AuthenticatedCadenceStorageContainersAssignIndexRoute
+  AuthenticatedCadenceStorageItemsAssignIndexRoute: typeof AuthenticatedCadenceStorageItemsAssignIndexRoute
+  AuthenticatedCadenceStorageTagsAssignIndexRoute: typeof AuthenticatedCadenceStorageTagsAssignIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedContainersContainerIdRoute:
-    AuthenticatedContainersContainerIdRoute,
-  AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
-  AuthenticatedTagsTagIdRoute: AuthenticatedTagsTagIdRoute,
-  AuthenticatedWorkspacesWorkspaceIdRoute:
-    AuthenticatedWorkspacesWorkspaceIdRoute,
   AuthenticatedCadenceIndexRoute: AuthenticatedCadenceIndexRoute,
-  AuthenticatedContainersIndexRoute: AuthenticatedContainersIndexRoute,
-  AuthenticatedItemsIndexRoute: AuthenticatedItemsIndexRoute,
-  AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
-  AuthenticatedWorkspacesIndexRoute: AuthenticatedWorkspacesIndexRoute,
-  AuthenticatedContainersAssignIndexRoute:
-    AuthenticatedContainersAssignIndexRoute,
-  AuthenticatedItemsAssignIndexRoute: AuthenticatedItemsAssignIndexRoute,
-  AuthenticatedTagsAssignIndexRoute: AuthenticatedTagsAssignIndexRoute,
+  AuthenticatedCadenceChoresIndexRoute: AuthenticatedCadenceChoresIndexRoute,
+  AuthenticatedCadenceMealsIndexRoute: AuthenticatedCadenceMealsIndexRoute,
+  AuthenticatedCadenceServicesIndexRoute:
+    AuthenticatedCadenceServicesIndexRoute,
+  AuthenticatedCadenceStorageIndexRoute: AuthenticatedCadenceStorageIndexRoute,
+  AuthenticatedCadenceStorageContainersContainerIdRoute:
+    AuthenticatedCadenceStorageContainersContainerIdRoute,
+  AuthenticatedCadenceStorageItemsItemIdRoute:
+    AuthenticatedCadenceStorageItemsItemIdRoute,
+  AuthenticatedCadenceStorageTagsTagIdRoute:
+    AuthenticatedCadenceStorageTagsTagIdRoute,
+  AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute:
+    AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute,
+  AuthenticatedCadenceStorageContainersIndexRoute:
+    AuthenticatedCadenceStorageContainersIndexRoute,
+  AuthenticatedCadenceStorageItemsIndexRoute:
+    AuthenticatedCadenceStorageItemsIndexRoute,
+  AuthenticatedCadenceStorageTagsIndexRoute:
+    AuthenticatedCadenceStorageTagsIndexRoute,
+  AuthenticatedCadenceStorageWorkspacesIndexRoute:
+    AuthenticatedCadenceStorageWorkspacesIndexRoute,
+  AuthenticatedCadenceStorageContainersAssignIndexRoute:
+    AuthenticatedCadenceStorageContainersAssignIndexRoute,
+  AuthenticatedCadenceStorageItemsAssignIndexRoute:
+    AuthenticatedCadenceStorageItemsAssignIndexRoute,
+  AuthenticatedCadenceStorageTagsAssignIndexRoute:
+    AuthenticatedCadenceStorageTagsAssignIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -331,18 +412,22 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
-  '/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
-  '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
-  '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
-  '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/cadence': typeof AuthenticatedCadenceIndexRoute
-  '/containers': typeof AuthenticatedContainersIndexRoute
-  '/items': typeof AuthenticatedItemsIndexRoute
-  '/tags': typeof AuthenticatedTagsIndexRoute
-  '/workspaces': typeof AuthenticatedWorkspacesIndexRoute
-  '/containers/assign': typeof AuthenticatedContainersAssignIndexRoute
-  '/items/assign': typeof AuthenticatedItemsAssignIndexRoute
-  '/tags/assign': typeof AuthenticatedTagsAssignIndexRoute
+  '/cadence/chores': typeof AuthenticatedCadenceChoresIndexRoute
+  '/cadence/meals': typeof AuthenticatedCadenceMealsIndexRoute
+  '/cadence/services': typeof AuthenticatedCadenceServicesIndexRoute
+  '/cadence/storage': typeof AuthenticatedCadenceStorageIndexRoute
+  '/cadence/storage/containers/$containerId': typeof AuthenticatedCadenceStorageContainersContainerIdRoute
+  '/cadence/storage/items/$itemId': typeof AuthenticatedCadenceStorageItemsItemIdRoute
+  '/cadence/storage/tags/$tagId': typeof AuthenticatedCadenceStorageTagsTagIdRoute
+  '/cadence/storage/workspaces/$workspaceId': typeof AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute
+  '/cadence/storage/containers': typeof AuthenticatedCadenceStorageContainersIndexRoute
+  '/cadence/storage/items': typeof AuthenticatedCadenceStorageItemsIndexRoute
+  '/cadence/storage/tags': typeof AuthenticatedCadenceStorageTagsIndexRoute
+  '/cadence/storage/workspaces': typeof AuthenticatedCadenceStorageWorkspacesIndexRoute
+  '/cadence/storage/containers/assign': typeof AuthenticatedCadenceStorageContainersAssignIndexRoute
+  '/cadence/storage/items/assign': typeof AuthenticatedCadenceStorageItemsAssignIndexRoute
+  '/cadence/storage/tags/assign': typeof AuthenticatedCadenceStorageTagsAssignIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -351,18 +436,22 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
-  '/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
-  '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
-  '/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
-  '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/cadence': typeof AuthenticatedCadenceIndexRoute
-  '/containers': typeof AuthenticatedContainersIndexRoute
-  '/items': typeof AuthenticatedItemsIndexRoute
-  '/tags': typeof AuthenticatedTagsIndexRoute
-  '/workspaces': typeof AuthenticatedWorkspacesIndexRoute
-  '/containers/assign': typeof AuthenticatedContainersAssignIndexRoute
-  '/items/assign': typeof AuthenticatedItemsAssignIndexRoute
-  '/tags/assign': typeof AuthenticatedTagsAssignIndexRoute
+  '/cadence/chores': typeof AuthenticatedCadenceChoresIndexRoute
+  '/cadence/meals': typeof AuthenticatedCadenceMealsIndexRoute
+  '/cadence/services': typeof AuthenticatedCadenceServicesIndexRoute
+  '/cadence/storage': typeof AuthenticatedCadenceStorageIndexRoute
+  '/cadence/storage/containers/$containerId': typeof AuthenticatedCadenceStorageContainersContainerIdRoute
+  '/cadence/storage/items/$itemId': typeof AuthenticatedCadenceStorageItemsItemIdRoute
+  '/cadence/storage/tags/$tagId': typeof AuthenticatedCadenceStorageTagsTagIdRoute
+  '/cadence/storage/workspaces/$workspaceId': typeof AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute
+  '/cadence/storage/containers': typeof AuthenticatedCadenceStorageContainersIndexRoute
+  '/cadence/storage/items': typeof AuthenticatedCadenceStorageItemsIndexRoute
+  '/cadence/storage/tags': typeof AuthenticatedCadenceStorageTagsIndexRoute
+  '/cadence/storage/workspaces': typeof AuthenticatedCadenceStorageWorkspacesIndexRoute
+  '/cadence/storage/containers/assign': typeof AuthenticatedCadenceStorageContainersAssignIndexRoute
+  '/cadence/storage/items/assign': typeof AuthenticatedCadenceStorageItemsAssignIndexRoute
+  '/cadence/storage/tags/assign': typeof AuthenticatedCadenceStorageTagsAssignIndexRoute
 }
 
 export interface FileRoutesById {
@@ -373,18 +462,22 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/containers/$containerId': typeof AuthenticatedContainersContainerIdRoute
-  '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
-  '/_authenticated/tags/$tagId': typeof AuthenticatedTagsTagIdRoute
-  '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/_authenticated/cadence/': typeof AuthenticatedCadenceIndexRoute
-  '/_authenticated/containers/': typeof AuthenticatedContainersIndexRoute
-  '/_authenticated/items/': typeof AuthenticatedItemsIndexRoute
-  '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
-  '/_authenticated/workspaces/': typeof AuthenticatedWorkspacesIndexRoute
-  '/_authenticated/containers/assign/': typeof AuthenticatedContainersAssignIndexRoute
-  '/_authenticated/items/assign/': typeof AuthenticatedItemsAssignIndexRoute
-  '/_authenticated/tags/assign/': typeof AuthenticatedTagsAssignIndexRoute
+  '/_authenticated/cadence/chores/': typeof AuthenticatedCadenceChoresIndexRoute
+  '/_authenticated/cadence/meals/': typeof AuthenticatedCadenceMealsIndexRoute
+  '/_authenticated/cadence/services/': typeof AuthenticatedCadenceServicesIndexRoute
+  '/_authenticated/cadence/storage/': typeof AuthenticatedCadenceStorageIndexRoute
+  '/_authenticated/cadence/storage/containers/$containerId': typeof AuthenticatedCadenceStorageContainersContainerIdRoute
+  '/_authenticated/cadence/storage/items/$itemId': typeof AuthenticatedCadenceStorageItemsItemIdRoute
+  '/_authenticated/cadence/storage/tags/$tagId': typeof AuthenticatedCadenceStorageTagsTagIdRoute
+  '/_authenticated/cadence/storage/workspaces/$workspaceId': typeof AuthenticatedCadenceStorageWorkspacesWorkspaceIdRoute
+  '/_authenticated/cadence/storage/containers/': typeof AuthenticatedCadenceStorageContainersIndexRoute
+  '/_authenticated/cadence/storage/items/': typeof AuthenticatedCadenceStorageItemsIndexRoute
+  '/_authenticated/cadence/storage/tags/': typeof AuthenticatedCadenceStorageTagsIndexRoute
+  '/_authenticated/cadence/storage/workspaces/': typeof AuthenticatedCadenceStorageWorkspacesIndexRoute
+  '/_authenticated/cadence/storage/containers/assign/': typeof AuthenticatedCadenceStorageContainersAssignIndexRoute
+  '/_authenticated/cadence/storage/items/assign/': typeof AuthenticatedCadenceStorageItemsAssignIndexRoute
+  '/_authenticated/cadence/storage/tags/assign/': typeof AuthenticatedCadenceStorageTagsAssignIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -396,18 +489,22 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/'
-    | '/containers/$containerId'
-    | '/items/$itemId'
-    | '/tags/$tagId'
-    | '/workspaces/$workspaceId'
     | '/cadence'
-    | '/containers'
-    | '/items'
-    | '/tags'
-    | '/workspaces'
-    | '/containers/assign'
-    | '/items/assign'
-    | '/tags/assign'
+    | '/cadence/chores'
+    | '/cadence/meals'
+    | '/cadence/services'
+    | '/cadence/storage'
+    | '/cadence/storage/containers/$containerId'
+    | '/cadence/storage/items/$itemId'
+    | '/cadence/storage/tags/$tagId'
+    | '/cadence/storage/workspaces/$workspaceId'
+    | '/cadence/storage/containers'
+    | '/cadence/storage/items'
+    | '/cadence/storage/tags'
+    | '/cadence/storage/workspaces'
+    | '/cadence/storage/containers/assign'
+    | '/cadence/storage/items/assign'
+    | '/cadence/storage/tags/assign'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -415,18 +512,22 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/'
-    | '/containers/$containerId'
-    | '/items/$itemId'
-    | '/tags/$tagId'
-    | '/workspaces/$workspaceId'
     | '/cadence'
-    | '/containers'
-    | '/items'
-    | '/tags'
-    | '/workspaces'
-    | '/containers/assign'
-    | '/items/assign'
-    | '/tags/assign'
+    | '/cadence/chores'
+    | '/cadence/meals'
+    | '/cadence/services'
+    | '/cadence/storage'
+    | '/cadence/storage/containers/$containerId'
+    | '/cadence/storage/items/$itemId'
+    | '/cadence/storage/tags/$tagId'
+    | '/cadence/storage/workspaces/$workspaceId'
+    | '/cadence/storage/containers'
+    | '/cadence/storage/items'
+    | '/cadence/storage/tags'
+    | '/cadence/storage/workspaces'
+    | '/cadence/storage/containers/assign'
+    | '/cadence/storage/items/assign'
+    | '/cadence/storage/tags/assign'
   id:
     | '__root__'
     | '/_authenticated'
@@ -435,18 +536,22 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/_authenticated/'
-    | '/_authenticated/containers/$containerId'
-    | '/_authenticated/items/$itemId'
-    | '/_authenticated/tags/$tagId'
-    | '/_authenticated/workspaces/$workspaceId'
     | '/_authenticated/cadence/'
-    | '/_authenticated/containers/'
-    | '/_authenticated/items/'
-    | '/_authenticated/tags/'
-    | '/_authenticated/workspaces/'
-    | '/_authenticated/containers/assign/'
-    | '/_authenticated/items/assign/'
-    | '/_authenticated/tags/assign/'
+    | '/_authenticated/cadence/chores/'
+    | '/_authenticated/cadence/meals/'
+    | '/_authenticated/cadence/services/'
+    | '/_authenticated/cadence/storage/'
+    | '/_authenticated/cadence/storage/containers/$containerId'
+    | '/_authenticated/cadence/storage/items/$itemId'
+    | '/_authenticated/cadence/storage/tags/$tagId'
+    | '/_authenticated/cadence/storage/workspaces/$workspaceId'
+    | '/_authenticated/cadence/storage/containers/'
+    | '/_authenticated/cadence/storage/items/'
+    | '/_authenticated/cadence/storage/tags/'
+    | '/_authenticated/cadence/storage/workspaces/'
+    | '/_authenticated/cadence/storage/containers/assign/'
+    | '/_authenticated/cadence/storage/items/assign/'
+    | '/_authenticated/cadence/storage/tags/assign/'
   fileRoutesById: FileRoutesById
 }
 
@@ -483,18 +588,22 @@ export const routeTree = rootRoute
         "/_authenticated/profile",
         "/_authenticated/settings",
         "/_authenticated/",
-        "/_authenticated/containers/$containerId",
-        "/_authenticated/items/$itemId",
-        "/_authenticated/tags/$tagId",
-        "/_authenticated/workspaces/$workspaceId",
         "/_authenticated/cadence/",
-        "/_authenticated/containers/",
-        "/_authenticated/items/",
-        "/_authenticated/tags/",
-        "/_authenticated/workspaces/",
-        "/_authenticated/containers/assign/",
-        "/_authenticated/items/assign/",
-        "/_authenticated/tags/assign/"
+        "/_authenticated/cadence/chores/",
+        "/_authenticated/cadence/meals/",
+        "/_authenticated/cadence/services/",
+        "/_authenticated/cadence/storage/",
+        "/_authenticated/cadence/storage/containers/$containerId",
+        "/_authenticated/cadence/storage/items/$itemId",
+        "/_authenticated/cadence/storage/tags/$tagId",
+        "/_authenticated/cadence/storage/workspaces/$workspaceId",
+        "/_authenticated/cadence/storage/containers/",
+        "/_authenticated/cadence/storage/items/",
+        "/_authenticated/cadence/storage/tags/",
+        "/_authenticated/cadence/storage/workspaces/",
+        "/_authenticated/cadence/storage/containers/assign/",
+        "/_authenticated/cadence/storage/items/assign/",
+        "/_authenticated/cadence/storage/tags/assign/"
       ]
     },
     "/login": {
@@ -515,52 +624,68 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/containers/$containerId": {
-      "filePath": "_authenticated/containers/$containerId.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/items/$itemId": {
-      "filePath": "_authenticated/items/$itemId.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/tags/$tagId": {
-      "filePath": "_authenticated/tags/$tagId.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/workspaces/$workspaceId": {
-      "filePath": "_authenticated/workspaces/$workspaceId.tsx",
-      "parent": "/_authenticated"
-    },
     "/_authenticated/cadence/": {
       "filePath": "_authenticated/cadence/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/containers/": {
-      "filePath": "_authenticated/containers/index.tsx",
+    "/_authenticated/cadence/chores/": {
+      "filePath": "_authenticated/cadence/chores/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/items/": {
-      "filePath": "_authenticated/items/index.tsx",
+    "/_authenticated/cadence/meals/": {
+      "filePath": "_authenticated/cadence/meals/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/tags/": {
-      "filePath": "_authenticated/tags/index.tsx",
+    "/_authenticated/cadence/services/": {
+      "filePath": "_authenticated/cadence/services/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/workspaces/": {
-      "filePath": "_authenticated/workspaces/index.tsx",
+    "/_authenticated/cadence/storage/": {
+      "filePath": "_authenticated/cadence/storage/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/containers/assign/": {
-      "filePath": "_authenticated/containers/assign/index.tsx",
+    "/_authenticated/cadence/storage/containers/$containerId": {
+      "filePath": "_authenticated/cadence/storage/containers/$containerId.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/items/assign/": {
-      "filePath": "_authenticated/items/assign/index.tsx",
+    "/_authenticated/cadence/storage/items/$itemId": {
+      "filePath": "_authenticated/cadence/storage/items/$itemId.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/tags/assign/": {
-      "filePath": "_authenticated/tags/assign/index.tsx",
+    "/_authenticated/cadence/storage/tags/$tagId": {
+      "filePath": "_authenticated/cadence/storage/tags/$tagId.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/workspaces/$workspaceId": {
+      "filePath": "_authenticated/cadence/storage/workspaces/$workspaceId.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/containers/": {
+      "filePath": "_authenticated/cadence/storage/containers/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/items/": {
+      "filePath": "_authenticated/cadence/storage/items/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/tags/": {
+      "filePath": "_authenticated/cadence/storage/tags/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/workspaces/": {
+      "filePath": "_authenticated/cadence/storage/workspaces/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/containers/assign/": {
+      "filePath": "_authenticated/cadence/storage/containers/assign/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/items/assign/": {
+      "filePath": "_authenticated/cadence/storage/items/assign/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/cadence/storage/tags/assign/": {
+      "filePath": "_authenticated/cadence/storage/tags/assign/index.tsx",
       "parent": "/_authenticated"
     }
   }

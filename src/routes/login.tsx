@@ -24,7 +24,7 @@ function LoginPage() {
     try {
       setLoginError(null)
       await auth.login(credentials)
-      router.navigate({ to: '/' })
+      router.navigate({ to: '/cadence' })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setLoginError(errorMessage)

@@ -20,10 +20,7 @@ export const Route = createFileRoute('/_authenticated/cadence/')({
 })
 
 function CadenceDashboard() {
-  const { user, hasFamily, isParent, isLoading } = useUserWithFamily()
-
-  console.log('Dashboard - hasFamily:', hasFamily)
-  console.log('Dashboard - user:', user)
+  const { hasFamily, isParent, isLoading } = useUserWithFamily()
 
   if (isLoading) {
     return <LoadingState />

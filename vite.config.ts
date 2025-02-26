@@ -7,14 +7,14 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@', replacement: '/src' },
-      { find: '@collection', replacement: '/src/Collection' },
-      { find: '@container', replacement: '/src/Container' },
       { find: '@family', replacement: '/src/Family' },
       { find: '@global', replacement: '/src/Global' },
-      { find: '@item', replacement: '/src/Item' },
-      { find: '@tag', replacement: '/src/Tag' },
-      { find: '@workspace', replacement: '/src/Workspace' },
       { find: '@user', replacement: '/src/User' },
+
+      { find: '@chores', replacement: '/src/Chores' },
+      { find: '@meals', replacement: '/src/Meals' },
+      { find: '@storage', replacement: '/src/Storage' },
+      { find: '@services', replacement: '/src/Services' },
     ],
   },
 })

@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { CollectionOrganiser } from '@/Collection/components/organisms/organiser'
-import { CreateModal } from '@/Collection/components/organisms/modals'
-import { EntityType } from '@/Collection/types'
+import { CollectionOrganiser } from '@/Storage/Collection/components/organisms/organiser'
+import { CreateModal } from '@/Storage/Collection/components/organisms/modals'
+import { EntityType } from '@/Storage/Collection/types'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Dashboard,
