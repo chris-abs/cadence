@@ -6,7 +6,7 @@ import { PageLayout } from '@/Global/layout/PageLayout'
 import { ContainerDetail } from '@/Storage/Container/components/organisms/detail/ContainerDetail'
 import { useContainer } from '@/Storage/Container/queries'
 
-export const Route = createFileRoute('/_authenticated/containers/$containerId')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/containers/$containerId')({
   component: ContainerPage,
 })
 

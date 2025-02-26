@@ -6,7 +6,7 @@ import { PageLayout } from '@/Global/layout/PageLayout'
 import { WorkspaceDetail } from '@/Storage/Workspace/components/organisms/detail'
 import { useWorkspace } from '@/Storage/Workspace/queries'
 
-export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/workspaces/$workspaceId')({
   component: WorkspacePage,
 })
 

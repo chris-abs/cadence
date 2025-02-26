@@ -6,7 +6,7 @@ import { PageLayout } from '@/Global/layout/PageLayout'
 import { TagDetail } from '@/Storage/Tag/components/organisms/detail'
 import { useTag } from '@/Storage/Tag/queries'
 
-export const Route = createFileRoute('/_authenticated/tags/$tagId')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/tags/$tagId')({
   component: TagPage,
 })
 

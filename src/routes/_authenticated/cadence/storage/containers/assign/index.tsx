@@ -8,7 +8,7 @@ import { useContainers, useUpdateContainer } from '@/Storage/Container/queries'
 import { ContainerOrganiser } from '@/Storage/Container/components/organisms/organiser/ContainerOrganiser'
 import { CreateContainerModal } from '@/Storage/Container/components/organisms/modals/ContainerModal'
 
-export const Route = createFileRoute('/_authenticated/containers/assign/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/containers/assign/')({
   component: ContainersPage,
 })
 

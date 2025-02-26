@@ -6,7 +6,7 @@ import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { CreateTagModal } from '@/Storage/Tag/components/organisms/modals'
 import { TagArchive } from '@/Storage/Tag/components/organisms/archive'
 
-export const Route = createFileRoute('/_authenticated/tags/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/tags/')({
   component: TagsPage,
 })
 

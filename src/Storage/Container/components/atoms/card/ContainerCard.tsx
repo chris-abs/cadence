@@ -17,7 +17,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
 
   return (
     <Link
-      to="/containers/$containerId"
+      to="/cadence/storage/containers/$containerId"
       params={{ containerId: container.id.toString() }}
       className="block w-[280px]"
     >

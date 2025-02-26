@@ -7,7 +7,7 @@ import { useTags } from '@/Storage/Tag/queries'
 import { TagOrganiser } from '@/Storage/Tag/components/organisms/organiser/TagOrganiser'
 import { CreateTagModal } from '@/Storage/Tag/components/organisms/modals'
 
-export const Route = createFileRoute('/_authenticated/tags/assign/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/tags/assign/')({
   component: TagsPage,
 })
 

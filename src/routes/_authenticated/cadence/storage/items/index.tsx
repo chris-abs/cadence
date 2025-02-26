@@ -6,7 +6,7 @@ import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { CreateItemModal } from '@/Storage/Item/components/organisms/modal'
 import { ItemArchive } from '@/Storage/Item/components/organisms/archive'
 
-export const Route = createFileRoute('/_authenticated/items/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/items/')({
   component: ItemsPage,
 })
 

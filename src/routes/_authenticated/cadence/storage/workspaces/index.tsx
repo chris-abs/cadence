@@ -6,7 +6,7 @@ import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { CreateWorkspaceModal } from '@/Storage/Workspace/components/organisms/modals'
 import { WorkspaceArchive } from '@/Storage/Workspace/components/organisms/archive'
 
-export const Route = createFileRoute('/_authenticated/workspaces/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/workspaces/')({
   component: WorkspacesPage,
 })
 

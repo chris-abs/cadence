@@ -9,7 +9,7 @@ import { ItemOrganiser } from '@/Storage/Item/components/organisms/organiser'
 import { CreateItemModal } from '@/Storage/Item/components/organisms/modal'
 import { useItems, useUpdateItem } from '@/Storage/Item/queries'
 
-export const Route = createFileRoute('/_authenticated/items/assign/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/items/assign/')({
   component: ItemsPage,
 })
 

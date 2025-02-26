@@ -6,7 +6,7 @@ import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { CreateContainerModal } from '@/Storage/Container/components/organisms/modals'
 import { ContainerArchive } from '@/Storage/Container/components/organisms/archive'
 
-export const Route = createFileRoute('/_authenticated/containers/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/containers/')({
   component: ContainersPage,
 })
 

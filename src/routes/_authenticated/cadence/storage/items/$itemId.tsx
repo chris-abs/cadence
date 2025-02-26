@@ -6,7 +6,7 @@ import { PageLayout } from '@/Global/layout/PageLayout'
 import { ItemDetail } from '@/Storage/Item/components/organisms/detail'
 import { useItem } from '@/Storage/Item/queries'
 
-export const Route = createFileRoute('/_authenticated/items/$itemId')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/items/$itemId')({
   component: ItemPage,
 })
 
