@@ -3,8 +3,8 @@ import { FolderOpen } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { ContainerDetail } from '@/Container/components/organisms/detail/ContainerDetail'
-import { useContainer } from '@/Container/queries'
+import { ContainerDetail } from '@/Storage/Container/components/organisms/detail/ContainerDetail'
+import { useContainer } from '@/Storage/Container/queries'
 
 export const Route = createFileRoute('/_authenticated/containers/$containerId')({
   component: ContainerPage,

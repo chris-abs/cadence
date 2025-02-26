@@ -3,8 +3,8 @@ import { Package } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { ItemDetail } from '@/Item/components/organisms/detail'
-import { useItem } from '@/Item/queries'
+import { ItemDetail } from '@/Storage/Item/components/organisms/detail'
+import { useItem } from '@/Storage/Item/queries'
 
 export const Route = createFileRoute('/_authenticated/items/$itemId')({
   component: ItemPage,

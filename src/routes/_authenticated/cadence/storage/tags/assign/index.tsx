@@ -3,9 +3,9 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { SearchEntityHeader } from '@/Global/components/molecules/headers'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { useTags } from '@/Tag/queries'
-import { TagOrganiser } from '@/Tag/components/organisms/organiser/TagOrganiser'
-import { CreateTagModal } from '@/Tag/components/organisms/modals'
+import { useTags } from '@/Storage/Tag/queries'
+import { TagOrganiser } from '@/Storage/Tag/components/organisms/organiser/TagOrganiser'
+import { CreateTagModal } from '@/Storage/Tag/components/organisms/modals'
 
 export const Route = createFileRoute('/_authenticated/tags/assign/')({
   component: TagsPage,

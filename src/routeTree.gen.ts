@@ -17,18 +17,18 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
-import { Route as AuthenticatedWorkspacesIndexImport } from './routes/_authenticated/workspaces/index'
-import { Route as AuthenticatedTagsIndexImport } from './routes/_authenticated/tags/index'
-import { Route as AuthenticatedItemsIndexImport } from './routes/_authenticated/items/index'
-import { Route as AuthenticatedContainersIndexImport } from './routes/_authenticated/containers/index'
+import { Route as AuthenticatedWorkspacesIndexImport } from './routes/_authenticated/cadence/storage/workspaces/index'
+import { Route as AuthenticatedTagsIndexImport } from './routes/_authenticated/cadence/storage/tags/index'
+import { Route as AuthenticatedItemsIndexImport } from './routes/_authenticated/cadence/storage/items/index'
+import { Route as AuthenticatedContainersIndexImport } from './routes/_authenticated/cadence/storage/containers/index'
 import { Route as AuthenticatedCadenceIndexImport } from './routes/_authenticated/cadence/index'
-import { Route as AuthenticatedWorkspacesWorkspaceIdImport } from './routes/_authenticated/workspaces/$workspaceId'
-import { Route as AuthenticatedTagsTagIdImport } from './routes/_authenticated/tags/$tagId'
-import { Route as AuthenticatedItemsItemIdImport } from './routes/_authenticated/items/$itemId'
-import { Route as AuthenticatedContainersContainerIdImport } from './routes/_authenticated/containers/$containerId'
-import { Route as AuthenticatedTagsAssignIndexImport } from './routes/_authenticated/tags/assign/index'
-import { Route as AuthenticatedItemsAssignIndexImport } from './routes/_authenticated/items/assign/index'
-import { Route as AuthenticatedContainersAssignIndexImport } from './routes/_authenticated/containers/assign/index'
+import { Route as AuthenticatedWorkspacesWorkspaceIdImport } from './routes/_authenticated/cadence/storage/workspaces/$workspaceId'
+import { Route as AuthenticatedTagsTagIdImport } from './routes/_authenticated/cadence/storage/tags/$tagId'
+import { Route as AuthenticatedItemsItemIdImport } from './routes/_authenticated/cadence/storage/items/$itemId'
+import { Route as AuthenticatedContainersContainerIdImport } from './routes/_authenticated/cadence/storage/containers/$containerId'
+import { Route as AuthenticatedTagsAssignIndexImport } from './routes/_authenticated/cadence/storage/tags/assign/index'
+import { Route as AuthenticatedItemsAssignIndexImport } from './routes/_authenticated/cadence/storage/items/assign/index'
+import { Route as AuthenticatedContainersAssignIndexImport } from './routes/_authenticated/cadence/storage/containers/assign/index'
 
 // Create/Update Routes
 
@@ -67,12 +67,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedWorkspacesIndexRoute =
-  AuthenticatedWorkspacesIndexImport.update({
-    id: '/workspaces/',
-    path: '/workspaces/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedWorkspacesIndexRoute = AuthenticatedWorkspacesIndexImport.update({
+  id: '/workspaces/',
+  path: '/workspaces/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 const AuthenticatedTagsIndexRoute = AuthenticatedTagsIndexImport.update({
   id: '/tags/',
@@ -86,12 +85,11 @@ const AuthenticatedItemsIndexRoute = AuthenticatedItemsIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedContainersIndexRoute =
-  AuthenticatedContainersIndexImport.update({
-    id: '/containers/',
-    path: '/containers/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedContainersIndexRoute = AuthenticatedContainersIndexImport.update({
+  id: '/containers/',
+  path: '/containers/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 const AuthenticatedCadenceIndexRoute = AuthenticatedCadenceIndexImport.update({
   id: '/cadence/',
@@ -99,12 +97,11 @@ const AuthenticatedCadenceIndexRoute = AuthenticatedCadenceIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedWorkspacesWorkspaceIdRoute =
-  AuthenticatedWorkspacesWorkspaceIdImport.update({
-    id: '/workspaces/$workspaceId',
-    path: '/workspaces/$workspaceId',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedWorkspacesWorkspaceIdRoute = AuthenticatedWorkspacesWorkspaceIdImport.update({
+  id: '/workspaces/$workspaceId',
+  path: '/workspaces/$workspaceId',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 const AuthenticatedTagsTagIdRoute = AuthenticatedTagsTagIdImport.update({
   id: '/tags/$tagId',
@@ -118,33 +115,29 @@ const AuthenticatedItemsItemIdRoute = AuthenticatedItemsItemIdImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedContainersContainerIdRoute =
-  AuthenticatedContainersContainerIdImport.update({
-    id: '/containers/$containerId',
-    path: '/containers/$containerId',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedContainersContainerIdRoute = AuthenticatedContainersContainerIdImport.update({
+  id: '/containers/$containerId',
+  path: '/containers/$containerId',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
-const AuthenticatedTagsAssignIndexRoute =
-  AuthenticatedTagsAssignIndexImport.update({
-    id: '/tags/assign/',
-    path: '/tags/assign/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedTagsAssignIndexRoute = AuthenticatedTagsAssignIndexImport.update({
+  id: '/tags/assign/',
+  path: '/tags/assign/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
-const AuthenticatedItemsAssignIndexRoute =
-  AuthenticatedItemsAssignIndexImport.update({
-    id: '/items/assign/',
-    path: '/items/assign/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedItemsAssignIndexRoute = AuthenticatedItemsAssignIndexImport.update({
+  id: '/items/assign/',
+  path: '/items/assign/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
-const AuthenticatedContainersAssignIndexRoute =
-  AuthenticatedContainersAssignIndexImport.update({
-    id: '/containers/assign/',
-    path: '/containers/assign/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedContainersAssignIndexRoute = AuthenticatedContainersAssignIndexImport.update({
+  id: '/containers/assign/',
+  path: '/containers/assign/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -303,19 +296,16 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedContainersContainerIdRoute:
-    AuthenticatedContainersContainerIdRoute,
+  AuthenticatedContainersContainerIdRoute: AuthenticatedContainersContainerIdRoute,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedTagsTagIdRoute: AuthenticatedTagsTagIdRoute,
-  AuthenticatedWorkspacesWorkspaceIdRoute:
-    AuthenticatedWorkspacesWorkspaceIdRoute,
+  AuthenticatedWorkspacesWorkspaceIdRoute: AuthenticatedWorkspacesWorkspaceIdRoute,
   AuthenticatedCadenceIndexRoute: AuthenticatedCadenceIndexRoute,
   AuthenticatedContainersIndexRoute: AuthenticatedContainersIndexRoute,
   AuthenticatedItemsIndexRoute: AuthenticatedItemsIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
   AuthenticatedWorkspacesIndexRoute: AuthenticatedWorkspacesIndexRoute,
-  AuthenticatedContainersAssignIndexRoute:
-    AuthenticatedContainersAssignIndexRoute,
+  AuthenticatedContainersAssignIndexRoute: AuthenticatedContainersAssignIndexRoute,
   AuthenticatedItemsAssignIndexRoute: AuthenticatedItemsAssignIndexRoute,
   AuthenticatedTagsAssignIndexRoute: AuthenticatedTagsAssignIndexRoute,
 }

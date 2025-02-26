@@ -3,8 +3,8 @@ import { Tags } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { TagDetail } from '@/Tag/components/organisms/detail'
-import { useTag } from '@/Tag/queries'
+import { TagDetail } from '@/Storage/Tag/components/organisms/detail'
+import { useTag } from '@/Storage/Tag/queries'
 
 export const Route = createFileRoute('/_authenticated/tags/$tagId')({
   component: TagPage,

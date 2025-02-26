@@ -6,7 +6,7 @@ import { CollectionOrganiser } from '@/Storage/Collection/components/organisms/o
 import { CreateModal } from '@/Storage/Collection/components/organisms/modals'
 import { EntityType } from '@/Storage/Collection/types'
 
-export const Route = createFileRoute('/_authenticated/')({
+export const Route = createFileRoute('/_authenticated/cadence/storage/')({
   component: Dashboard,
 })
 

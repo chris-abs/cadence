@@ -3,8 +3,8 @@ import { Box } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { WorkspaceDetail } from '@/Workspace/components/organisms/detail'
-import { useWorkspace } from '@/Workspace/queries'
+import { WorkspaceDetail } from '@/Storage/Workspace/components/organisms/detail'
+import { useWorkspace } from '@/Storage/Workspace/queries'
 
 export const Route = createFileRoute('/_authenticated/workspaces/$workspaceId')({
   component: WorkspacePage,

@@ -3,8 +3,8 @@ import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { SearchEntityHeader } from '@/Global/components/molecules/headers'
-import { CreateContainerModal } from '@/Container/components/organisms/modals'
-import { ContainerArchive } from '@/Container/components/organisms/archive'
+import { CreateContainerModal } from '@/Storage/Container/components/organisms/modals'
+import { ContainerArchive } from '@/Storage/Container/components/organisms/archive'
 
 export const Route = createFileRoute('/_authenticated/containers/')({
   component: ContainersPage,

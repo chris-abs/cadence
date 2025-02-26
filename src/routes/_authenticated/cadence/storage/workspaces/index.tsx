@@ -3,14 +3,14 @@ import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { SearchEntityHeader } from '@/Global/components/molecules/headers'
-import { CreateItemModal } from '@/Item/components/organisms/modal'
-import { ItemArchive } from '@/Item/components/organisms/archive'
+import { CreateWorkspaceModal } from '@/Storage/Workspace/components/organisms/modals'
+import { WorkspaceArchive } from '@/Storage/Workspace/components/organisms/archive'
 
-export const Route = createFileRoute('/_authenticated/items/')({
-  component: ItemsPage,
+export const Route = createFileRoute('/_authenticated/workspaces/')({
+  component: WorkspacesPage,
 })
 
-function ItemsPage() {
+function WorkspacesPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -23,17 +23,20 @@ function ItemsPage() {
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
           <SearchEntityHeader
-            title="Items"
-            entityType="item"
-            addEntity="item"
+            title="Workspaces"
+            entityType="workspace"
+            addEntity="workspace"
             onAdd={handleAdd}
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <ItemArchive searchQuery={searchQuery} />
+          <WorkspaceArchive searchQuery={searchQuery} />
         </div>
       </div>
-      <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateWorkspaceModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </PageLayout>
   )
 }

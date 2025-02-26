@@ -1,17 +1,16 @@
-// pages/TagsPage.tsx
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { SearchEntityHeader } from '@/Global/components/molecules/headers'
-import { CreateTagModal } from '@/Tag/components/organisms/modals'
-import { TagArchive } from '@/Tag/components/organisms/archive'
+import { CreateItemModal } from '@/Storage/Item/components/organisms/modal'
+import { ItemArchive } from '@/Storage/Item/components/organisms/archive'
 
-export const Route = createFileRoute('/_authenticated/tags/')({
-  component: TagsPage,
+export const Route = createFileRoute('/_authenticated/items/')({
+  component: ItemsPage,
 })
 
-function TagsPage() {
+function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -24,17 +23,17 @@ function TagsPage() {
       <div className="flex flex-1 flex-col h-full">
         <div className="flex flex-1 flex-col gap-4 min-h-0 p-4">
           <SearchEntityHeader
-            title="Tags"
-            entityType="tag"
-            addEntity="tag"
+            title="Items"
+            entityType="item"
+            addEntity="item"
             onAdd={handleAdd}
             searchValue={searchQuery}
             onSearch={setSearchQuery}
           />
-          <TagArchive searchQuery={searchQuery} />
+          <ItemArchive searchQuery={searchQuery} />
         </div>
       </div>
-      <CreateTagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreateItemModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </PageLayout>
   )
 }
