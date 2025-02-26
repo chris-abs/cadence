@@ -4,7 +4,7 @@ import { Clock, Tag as TagIcon } from 'lucide-react'
 import { H4 } from '@/Global/components/molecules/Typography'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { cn } from '@/Global/lib'
-import { Tag } from '@/Tag/types'
+import { Tag } from '@/Storage/Tag/types'
 
 interface TagCardProps {
   tag: Tag

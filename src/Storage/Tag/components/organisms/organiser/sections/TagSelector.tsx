@@ -10,7 +10,7 @@ import {
   ScrollBar,
 } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
-import { SimplifiedTag, Tag } from '@/Tag/types'
+import { SimplifiedTag, Tag } from '@/Storage/Tag/types'
 
 interface TagSelectorProps {
   tags: Tag[]

@@ -12,10 +12,10 @@ import {
 } from '@/Global/components/atoms'
 import { ColourSelector, H3 } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib/utils'
-import { DeleteModal } from '@/Collection/components/organisms/modals'
-import { Tag } from '@/Tag/types'
-import { UpdateTagData } from '@/Tag/schemas'
 import { ColourOption } from '@/Global/types'
+import { DeleteModal } from '@/Storage/Collection/components/organisms/modals'
+import { Tag } from '@/Storage/Tag/types'
+import { UpdateTagData } from '@/Storage/Tag/schemas'
 
 interface TagSectionProps {
   tag: Tag | null

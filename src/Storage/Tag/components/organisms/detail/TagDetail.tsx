@@ -3,10 +3,10 @@ import { toast } from 'sonner'
 
 import { NotAssignedSection } from '@/Global/components/molecules'
 import { EntityHeader } from '@/Global/components/molecules/headers'
-import { CreateItemModal } from '@/Item/components/organisms/modal'
-import { useUpdateTag } from '@/Tag/queries'
-import { UpdateTagData } from '@/Tag/schemas'
-import { Tag } from '@/Tag/types'
+import { CreateItemModal } from '@/Storage/Item/components/organisms/modal'
+import { useUpdateTag } from '@/Storage/Tag/queries'
+import { UpdateTagData } from '@/Storage/Tag/schemas'
+import { Tag } from '@/Storage/Tag/types'
 import { ItemCatalogue, TagSection } from './sections'
 
 interface TagDetailProps {

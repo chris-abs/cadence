@@ -1,4 +1,4 @@
-import { Item } from '@/Item/types'
+import { Item } from '@/Storage/Item/types'
 
 export interface Tag {
   id: number

@@ -3,9 +3,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { invalidateQueries } from '@/Global/utils/queryInvalidation'
-import { Item } from '@/Item/types'
-import { Tag } from '../types'
+import { Item } from '@/Storage/Item/types'
 import { CreateTagData, UpdateTagData, UpdateItemTagsData, BulkAssignTagsData } from '../schemas'
+import { Tag } from '../types'
 
 export function useTag(id: number) {
   return useQuery({

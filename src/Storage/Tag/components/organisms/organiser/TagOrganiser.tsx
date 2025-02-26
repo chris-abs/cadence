@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
 import { useSearch } from '@/Global/queries/search'
-import { useItems } from '@/Item/queries'
-import { useAssignTags } from '@/Tag/queries'
-import { Tag } from '@/Tag/types'
-import { BulkAssignTagsData } from '@/Tag/schemas'
+import { useItems } from '@/Storage/Item/queries'
+import { useAssignTags } from '@/Storage/Tag/queries'
+import { Tag } from '@/Storage/Tag/types'
+import { BulkAssignTagsData } from '@/Storage/Tag/schemas'
 import { TagSelector, ItemList } from './sections'
 
 interface TagOrganiserProps {

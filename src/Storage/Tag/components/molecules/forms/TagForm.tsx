@@ -15,7 +15,7 @@ import {
   Button,
   Input,
 } from '@/Global/components/atoms'
-import { CreateTagData, createTagSchema } from '@/Tag/schemas'
+import { CreateTagData, createTagSchema } from '@/Storage/Tag/schemas'
 import { COLOURS } from '@/Global/types/colours'
 
 interface TagFormProps {

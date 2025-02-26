@@ -9,8 +9,8 @@ import {
 import { Section, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
-import { SelectableItemCard } from '@/Item/components/atoms/card'
-import { Item } from '@/Item/types'
+import { SelectableItemCard } from '@/Storage/Item/components/atoms/card'
+import { Item } from '@/Storage/Item/types'
 
 interface ItemListProps {
   items: Item[]

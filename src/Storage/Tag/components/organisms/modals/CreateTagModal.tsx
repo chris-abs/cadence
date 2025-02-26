@@ -10,10 +10,10 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { TagForm } from '@/Tag/components/molecules/forms/TagForm'
-import { useCreateTag } from '@/Tag/queries'
-import { CreateTagData } from '@/Tag/schemas'
-import { Item } from '@/Item/types'
+import { TagForm } from '@/Storage/Tag/components/molecules/forms/TagForm'
+import { useCreateTag } from '@/Storage/Tag/queries'
+import { CreateTagData } from '@/Storage/Tag/schemas'
+import { Item } from '@/Storage/Item/types'
 
 interface CreateTagModalProps {
   isOpen: boolean

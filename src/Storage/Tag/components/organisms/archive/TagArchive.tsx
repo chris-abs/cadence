@@ -7,8 +7,8 @@ import {
   ScrollArea,
 } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
-import { useTags } from '@/Tag/queries'
 import { useTagSearch } from '@/Global/queries/search'
+import { useTags } from '@/Storage/Tag/queries'
 import { TagCard } from '../../atoms/card'
 
 interface TagArchiveProps {
