@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
-import { SimplifiedTag } from '@/Tag/types'
+
+import { SimplifiedTag } from '@/Storage/Tag/types'
 import { cn } from '@/Global/lib/utils'
 
 interface BadgeProps {

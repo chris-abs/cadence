@@ -1,5 +1,5 @@
 import { cn } from '@/Global/lib'
-import { SimplifiedTag } from '@/Tag/types'
+import { SimplifiedTag } from '@/Storage/Tag/types'
 import { ToggleGroup, ToggleGroupItem } from './ToggleGroup'
 
 interface BadgeToggleProps {

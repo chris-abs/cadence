@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import type { NavigateOptions } from '@tanstack/react-router'
 
 import { capitalise } from '@/Global/utils/capitalise'
-import { EntityType } from '@/Collection/types'
+import { EntityType } from '@/Storage/Collection/types'
 
 interface EntityActionToastProps {
   actionType: 'create' | 'delete'

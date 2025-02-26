@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import type {
@@ -8,7 +9,7 @@ import type {
   TagSearchResponse,
   WorkspaceSearchResponse,
 } from '@/Global/types/search'
-import type { Container } from '@/Container/types'
+import type { Container } from '@/Storage/Container/types'
 
 export function useSearch(query: string, options?: { enabled?: boolean }) {
   return useQuery({
