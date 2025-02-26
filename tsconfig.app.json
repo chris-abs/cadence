@@ -26,14 +26,15 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@collection/*": ["./src/Collection/*"],
-      "@container/*": ["./src/Container/*"],
-      "@family/*": ["./src/Family/*"],
-      "@global/*": ["src/Global/*"],
-      "@item/*": ["./src/Item/*"],
-      "@tag/*": ["./src/Tag/*"],
-      "@workspace/*": ["./src/Workspace/*"],
-      "@user/*": ["./src/User/*"]
+      "@user/*": ["./src/User/*"],
+      "@family": ["./src/Family/*"],
+      "@global": ["./src/Global/*"],
+      "@user": ["./src/User/*"],
+
+      "@chores": ["./src/Chores/*"],
+      "@meals": ["./src/Meals/*"],
+      "@storage": ["./src/Storage/*"],
+      "@services": ["./src/Services/*"]
     }
   },
   "include": ["src", "src/routes/_authenticated/containers/$containerId.tsx"]
