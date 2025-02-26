@@ -10,8 +10,8 @@ import {
   ScrollArea,
 } from '@/Global/components/atoms'
 import { Muted } from '@/Global/components/molecules'
-import { EntityType } from '@/Collection/types'
 import { EntityEntry } from './EntityEntry'
+import { EntityType } from '@/Storage/Collection/types'
 
 interface EntityCardProps {
   type: EntityType

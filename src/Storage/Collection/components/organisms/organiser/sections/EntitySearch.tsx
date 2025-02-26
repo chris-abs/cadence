@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import { EntityType } from '@/Collection/types'
+import { EntityType } from '@/Storage/Collection/types'
 import { SearchInput, SearchResults } from '@/Global/components/molecules/search'
 
 interface EntitySearchProps {

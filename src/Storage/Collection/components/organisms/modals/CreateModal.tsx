@@ -5,8 +5,8 @@ import { toast } from 'sonner'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Global/components/atoms'
 import { showEntityActionToast } from '@/Global/components/molecules/EntityActionToast'
-import { EntityType } from '@/Collection/types'
-import { createCollectionEntity } from '@/Collection/queries/collection'
+import { createCollectionEntity } from '@/Storage/Collection/queries'
+import { EntityType } from '@/Storage/Collection/types'
 import { CreateEntityForm } from '../../molecules/forms'
 
 interface CreateModalProps {
