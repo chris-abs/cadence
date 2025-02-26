@@ -5,7 +5,7 @@ import { H4, Muted } from '@/Global/components/molecules/Typography'
 import { formatRelativeTime } from '@/Global/utils/dateFormat'
 import { COLOURS } from '@/Global/types'
 import { cn } from '@/Global/lib'
-import { Container } from '@/Container/types'
+import { Container } from '@/Storage/Container/types'
 
 interface ContainerCardProps {
   container: Container

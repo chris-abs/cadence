@@ -7,8 +7,8 @@ import {
   ScrollArea,
 } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
-import { useContainers } from '@/Container/queries'
 import { useContainerSearch } from '@/Global/queries/search'
+import { useContainers } from '@/Storage/Container/queries'
 import { ContainerCard } from '../../atoms/card'
 
 interface ContainerArchiveProps {

@@ -17,8 +17,8 @@ import {
 import { Section } from '@/Global/components/molecules'
 import { Muted } from '@/Global/components/molecules/Typography'
 import { cn } from '@/Global/lib'
-import { SortableContainerCard } from '@/Container/components/atoms/card/SortableContainerCard'
-import { Container } from '@/Container/types'
+import { SortableContainerCard } from '@/Storage/Container/components/atoms/card/SortableContainerCard'
+import { Container } from '@/Storage/Container/types'
 
 interface UnassignedContainersSectionProps {
   containers: Container[]

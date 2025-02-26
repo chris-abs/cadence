@@ -15,8 +15,8 @@ import {
 import { Muted, Section, ViewToggle } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 import { cn } from '@/Global/lib'
-import { ItemCard } from '@/Item/components/atoms/card'
-import { Item } from '@/Item/types'
+import { ItemCard } from '@/Storage/Item/components/atoms/card'
+import { Item } from '@/Storage/Item/types'
 
 interface ItemCatalogueProps {
   items: Item[]

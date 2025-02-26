@@ -10,9 +10,9 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { useCreateContainer } from '@/Container/queries'
-import { CreateContainerData } from '@/Container/schemas'
-import { ContainerForm } from '@/Container/components/molecules/forms'
+import { useCreateContainer } from '@/Storage/Container/queries'
+import { CreateContainerData } from '@/Storage/Container/schemas'
+import { ContainerForm } from '@/Storage/Container/components/molecules/forms'
 
 interface CreateContainerModalProps {
   isOpen: boolean

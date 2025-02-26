@@ -12,11 +12,11 @@ import {
   AccordionContent,
 } from '@/Global/components/atoms'
 import { Muted, NoContent } from '@/Global/components/molecules'
-import { cn } from '@/Global/lib'
-import { Container } from '@/Container/types'
-import { SortableItemCard } from '@/Item/components/atoms/card/SortableItemCard'
-import { Item } from '@/Item/types'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
+import { cn } from '@/Global/lib'
+import { Container } from '@/Storage/Container/types'
+import { SortableItemCard } from '@/Storage/Item/components/atoms/card/SortableItemCard'
+import { Item } from '@/Storage/Item/types'
 
 interface ContainerRowProps {
   container: Container

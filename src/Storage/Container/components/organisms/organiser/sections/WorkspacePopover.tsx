@@ -1,4 +1,5 @@
 import { Box } from 'lucide-react'
+
 import {
   Button,
   Popover,
@@ -10,7 +11,7 @@ import {
 } from '@/Global/components/atoms'
 import { Muted } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib'
-import { Workspace } from '@/Workspace/types'
+import { Workspace } from '@/Storage/Workspace/types'
 
 interface WorkspacePopoverProps {
   workspaces: Workspace[]

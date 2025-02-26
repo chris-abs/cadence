@@ -1,5 +1,5 @@
 import { SortableEntityCard } from '@/Global/components/molecules'
-import { Container } from '@/Container/types'
+import { Container } from '@/Storage/Container/types'
 import { ContainerCard } from './ContainerCard'
 
 export function SortableContainerCard({ container }: { container: Container | null }) {

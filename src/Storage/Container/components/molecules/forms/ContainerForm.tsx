@@ -12,7 +12,7 @@ import {
   FormDescription,
 } from '@/Global/components/atoms/Form'
 import { Alert, AlertDescription, Button, Input } from '@/Global/components/atoms'
-import { CreateContainerData, createContainerSchema } from '@/Container/schemas'
+import { CreateContainerData, createContainerSchema } from '@/Storage/Container/schemas'
 
 interface ContainerFormProps {
   onSubmit: (data: CreateContainerData) => Promise<void>

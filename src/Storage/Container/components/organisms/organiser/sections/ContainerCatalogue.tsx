@@ -11,9 +11,9 @@ import {
   SelectValue,
 } from '@/Global/components/atoms'
 import { NoContent } from '@/Global/components/molecules'
-import { Container } from '@/Container/types'
-import { Workspace } from '@/Workspace/types'
-import { useUpdateContainer } from '@/Container/queries'
+import { Container } from '@/Storage/Container/types'
+import { Workspace } from '@/Storage/Workspace/types'
+import { useUpdateContainer } from '@/Storage/Container/queries'
 
 interface ContainerCatalogueProps {
   containers: Container[]

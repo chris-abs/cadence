@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/Global/components/atoms'
-import { useContainers } from '@/Container/queries'
+import { useContainers } from '@/Storage/Container/queries'
 
 interface ContainerSelectionModalProps {
   isOpen: boolean

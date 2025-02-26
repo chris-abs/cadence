@@ -1,5 +1,5 @@
-import { Item } from '@/Item/types'
-import { Workspace } from '@/Workspace/types'
+import { Item } from '@/Storage/Item/types'
+import { Workspace } from '@/Storage/Workspace/types'
 
 export interface Container {
   id: number
