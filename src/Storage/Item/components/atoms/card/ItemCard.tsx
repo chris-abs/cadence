@@ -17,7 +17,7 @@ export function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Link
-      to="/items/$itemId"
+      to="/cadence/storage/items/$itemId"
       params={{ itemId: item.id.toString() }}
       className={cn('block', isCompact ? 'w-[200px]' : 'w-[280px]')}
     >

@@ -13,7 +13,7 @@ interface WorkspaceCardProps {
 export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
   return (
     <Link
-      to="/workspaces/$workspaceId"
+      to="/cadence/storage/workspaces/$workspaceId"
       params={{ workspaceId: workspace.id.toString() }}
       className="block w-full"
     >

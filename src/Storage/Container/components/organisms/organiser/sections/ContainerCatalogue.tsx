@@ -82,7 +82,7 @@ export function ContainerCatalogue({ containers, workspaces, isLoading }: Contai
             <li key={container.id}>
               <div className="flex flex-col rounded-md border bg-contrast-accent hover:bg-contrast-accent-hover">
                 <Link
-                  to="/containers/$containerId"
+                  to="/cadence/storage/containers/$containerId"
                   params={{ containerId: container.id.toString() }}
                   className="flex items-center justify-between p-4"
                   aria-labelledby={`container-${container.id}-name`}

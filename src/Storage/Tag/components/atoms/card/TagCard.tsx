@@ -15,7 +15,7 @@ export function TagCard({ tag }: TagCardProps) {
 
   return (
     <Link
-      to="/tags/$tagId"
+      to="/cadence/storage/tags/$tagId"
       params={{ tagId: tag.id.toString() }}
       className="block w-full"
       style={{ '--tag-color': baseColor } as React.CSSProperties}

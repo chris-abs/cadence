@@ -54,7 +54,7 @@ export function ContainerRow({ container, items }: ContainerRowProps) {
                 <span className="text-xs text-muted-foreground">({items.length} items)</span>
               </div>
               <Link
-                to="/containers/$containerId"
+                to="/cadence/storage/containers/$containerId"
                 params={{ containerId: container.id.toString() }}
                 className="hover:text-primary"
               >

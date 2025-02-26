@@ -51,7 +51,7 @@ export function WorkspaceRow({ workspace, containers }: WorkspaceRowProps) {
                 </div>
                 <div className="flex flex-col gap-1">
                   <Link
-                    to="/workspaces/$workspaceId"
+                    to="/cadence/storage/workspaces/$workspaceId"
                     params={{ workspaceId: workspace.id.toString() }}
                     className="hover:text-primary"
                   >
