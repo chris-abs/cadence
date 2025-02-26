@@ -194,7 +194,7 @@ export function SearchResults({ query, onClose }: SearchResultsProps) {
                 {data.tags.map((searchTag) => (
                   <Link
                     key={searchTag.id}
-                    to="/tags/$tagId"
+                    to="/cadence/storage/tags/$tagId"
                     params={{ tagId: searchTag.id.toString() }}
                     onClick={onClose}
                   >

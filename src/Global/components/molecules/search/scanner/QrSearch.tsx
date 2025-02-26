@@ -34,7 +34,7 @@ export function QrSearch() {
       stopMediaTracks()
       setIsOpen(false)
       navigate({
-        to: '/containers/$containerId',
+        to: '/cadence/storage/containers/$containerId',
         params: { containerId: container.id.toString() },
       })
     }

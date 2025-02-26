@@ -44,7 +44,7 @@ export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardP
       </ScrollArea>
 
       <CardFooter className="justify-end align-middle pt-4">
-        <Link to={`/${type}s`}>
+        <Link to={`/cadence/storage/${type}s`}>
           <Muted className="hover:text-foreground">View all {type}s →</Muted>
         </Link>
       </CardFooter>
