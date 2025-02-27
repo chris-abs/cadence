@@ -12,6 +12,7 @@ import {
 } from '@/Global/components/atoms'
 import { CreateFamilyModal, JoinFamilyModal } from '@/Family/components/organisms/modals'
 import { FamilyPanel, ModuleGrid } from '@/Family/components/atoms'
+import { ManageFamilyModal } from '@/Family/components/organisms/modals'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
 
@@ -20,7 +21,19 @@ export const Route = createFileRoute('/_authenticated/cadence/')({
 })
 
 function CadenceDashboard() {
+  const [isManageFamilyOpen, setIsManageFamilyOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState<'members' | 'modules'>('modules')
   const { hasFamily, isParent, isLoading } = useUserWithFamily()
+
+  const handleOpenManageFamily = () => {
+    setActiveTab('modules')
+    setIsManageFamilyOpen(true)
+  }
+
+  const handleOpenInvite = () => {
+    setActiveTab('members')
+    setIsManageFamilyOpen(true)
+  }
 
   if (isLoading) {
     return <LoadingState />
@@ -45,11 +58,17 @@ function CadenceDashboard() {
               <ModuleGrid />
             </div>
             <div>
-              <FamilyPanel />
+              <FamilyPanel onManage={handleOpenManageFamily} onInvite={handleOpenInvite} />{' '}
             </div>
           </div>
         )}
       </div>
+      <ManageFamilyModal
+        isOpen={isManageFamilyOpen}
+        onClose={() => setIsManageFamilyOpen(false)}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
     </PageLayout>
   )
 }

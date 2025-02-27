@@ -10,7 +10,12 @@ import {
 import { Button } from '@/Global/components/atoms'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
 
-export function FamilyPanel() {
+interface FamilyPanelProps {
+  onManage?: () => void
+  onInvite: () => void
+}
+
+export function FamilyPanel({ onManage, onInvite }: FamilyPanelProps) {
   const { family, isParent } = useUserWithFamily()
 
   if (!family) {
@@ -39,11 +44,16 @@ export function FamilyPanel() {
 
         {isParent && (
           <div className="space-y-2">
-            <Button variant="outline" size="sm" className="w-full flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full flex items-center gap-2"
+              onClick={onInvite}
+            >
               <UserPlusIcon className="h-4 w-4" />
               Invite Member
             </Button>
-            <Button variant="secondary" size="sm" className="w-full">
+            <Button variant="secondary" size="sm" className="w-full" onClick={onManage}>
               Manage Family
             </Button>
           </div>
