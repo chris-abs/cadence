@@ -14,8 +14,6 @@ import {
 import { ApiError } from '@/Global/types'
 
 export function useFamily(id: number | undefined) {
-  console.log('useFamily called with id:', id)
-
   return useQuery({
     queryKey: queryKeys.family.detail(id || 0),
     queryFn: () => api.get<Family>(`/families/${id}`),
@@ -103,9 +101,6 @@ export function useCurrentFamilyId(): number | undefined {
   const { data: user } = useQuery<User>({
     queryKey: queryKeys.user,
   })
-
-  console.log('useCurrentFamilyId - user:', user)
-  console.log('useCurrentFamilyId - familyId:', user?.familyId)
 
   return user?.familyId
 }
