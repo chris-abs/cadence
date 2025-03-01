@@ -51,7 +51,7 @@ function RegisterPage() {
           <RegisterForm
             onSubmit={handleRegister}
             error={registerError}
-            isLoading={auth.isLoading}
+            isLoading={auth.isRegisterLoading}
           />
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{' '}

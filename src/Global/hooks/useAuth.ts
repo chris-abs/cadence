@@ -81,6 +81,9 @@ export const useAuth = () => {
 
       return { token: data.token, user }
     },
+    onSuccess: () => {
+      registerMutation.reset()
+    },
   })
 
   const login = async (credentials: LoginCredentials) => {
@@ -88,7 +91,9 @@ export const useAuth = () => {
   }
 
   const register = async (credentials: RegisterCredentials) => {
-    return registerMutation.mutateAsync(credentials)
+    const result = await registerMutation.mutateAsync(credentials)
+    registerMutation.reset()
+    return result
   }
 
   const logout = () => {
@@ -103,6 +108,8 @@ export const useAuth = () => {
     logout,
     register,
     isLogged,
+    isLoginLoading: loginMutation.isPending,
+    isRegisterLoading: registerMutation.isPending,
     isLoading: loginMutation.isPending || registerMutation.isPending,
     error: loginMutation.error || registerMutation.error,
   }

@@ -45,7 +45,7 @@ function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm onSubmit={handleLogin} error={loginError} isLoading={auth.isLoading} />
+          <LoginForm onSubmit={handleLogin} error={loginError} isLoading={auth.isLoginLoading} />
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{' '}
             <Link to="/register" className="text-primary underline-offset-4 hover:underline">
