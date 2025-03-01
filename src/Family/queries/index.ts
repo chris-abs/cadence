@@ -11,12 +11,21 @@ import {
   FamilyInvite,
   Module,
 } from '../types'
+import { ApiError } from '@/Global/types'
 
-export function useFamily(id: number) {
+export function useFamily(id: number | undefined) {
+  console.log('useFamily called with id:', id)
+
   return useQuery({
-    queryKey: queryKeys.family.detail(id),
+    queryKey: queryKeys.family.detail(id || 0),
     queryFn: () => api.get<Family>(`/families/${id}`),
-    enabled: id > 0,
+    enabled: id !== undefined && id > 0,
+    retry: (failureCount, error) => {
+      if ((error as ApiError)?.statusCode === 404) {
+        return false
+      }
+      return failureCount < 3
+    },
   })
 }
 
@@ -95,6 +104,9 @@ export function useCurrentFamilyId(): number | undefined {
     queryKey: queryKeys.user,
   })
 
+  console.log('useCurrentFamilyId - user:', user)
+  console.log('useCurrentFamilyId - familyId:', user?.familyId)
+
   return user?.familyId
 }
 
@@ -106,6 +118,12 @@ export function useCurrentFamily() {
     queryKey: queryKeys.family.current,
     queryFn: () => api.get<Family>(`/families/${familyId}`),
     enabled: !!familyId,
+    retry: (failureCount, error) => {
+      if ((error as ApiError)?.statusCode === 404) {
+        return false
+      }
+      return failureCount < 3
+    },
   })
 
   if (result.data && familyId) {

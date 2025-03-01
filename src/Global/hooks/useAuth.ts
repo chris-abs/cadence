@@ -1,4 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
+import { User } from '@/User/types'
+import { FamilyRoles } from '@/Family/types'
 
 interface LoginCredentials {
   email: string
@@ -9,6 +11,13 @@ interface RegisterCredentials extends LoginCredentials {
   firstName: string
   lastName: string
   imageUrl?: string
+}
+
+interface AuthResponseFromAPI {
+  token: string
+  user: Omit<User, 'familyId' | 'role'>
+  familyId?: number
+  role?: FamilyRoles['role']
 }
 
 export const useAuth = () => {
@@ -27,9 +36,19 @@ export const useAuth = () => {
         throw new Error(error.error || 'Login failed')
       }
 
-      const data = await response.json()
+      const data = (await response.json()) as AuthResponseFromAPI
+
       localStorage.setItem('token', data.token)
-      return data
+
+      const user: User = {
+        ...data.user,
+        familyId: data.familyId,
+        role: data.role,
+      }
+
+      localStorage.setItem('user', JSON.stringify(user))
+
+      return { token: data.token, user }
     },
   })
 
@@ -48,20 +67,33 @@ export const useAuth = () => {
         throw new Error(error.error || 'Registration failed')
       }
 
-      return response.json()
+      const data = (await response.json()) as AuthResponseFromAPI
+
+      localStorage.setItem('token', data.token)
+
+      const user: User = {
+        ...data.user,
+        familyId: data.familyId,
+        role: data.role,
+      }
+
+      localStorage.setItem('user', JSON.stringify(user))
+
+      return { token: data.token, user }
     },
   })
 
   const login = async (credentials: LoginCredentials) => {
-    await loginMutation.mutateAsync(credentials)
+    return loginMutation.mutateAsync(credentials)
   }
 
   const register = async (credentials: RegisterCredentials) => {
-    await registerMutation.mutateAsync(credentials)
+    return registerMutation.mutateAsync(credentials)
   }
 
   const logout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
   }
 
   const isLogged = () => Boolean(localStorage.getItem('token'))

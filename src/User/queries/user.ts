@@ -2,12 +2,27 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { api } from '@/Global/utils/api'
+import { FamilyRoles } from '@/Family/types'
 import { UpdateUserData, User } from '../types'
 
 export function useUser() {
   return useQuery({
     queryKey: queryKeys.user,
-    queryFn: () => api.get<User>('/user'),
+    queryFn: async () => {
+      const response = await api.get<{
+        User: Omit<User, 'familyId' | 'role'>
+        familyId?: number
+        role?: FamilyRoles['role']
+      }>('/user')
+
+      const user: User = {
+        ...response.User,
+        familyId: response.familyId,
+        role: response.role,
+      }
+
+      return user
+    },
     staleTime: Infinity,
     retry: false,
   })
@@ -26,7 +41,19 @@ export function useUpdateUser() {
         formData.append('image', data.image)
       }
 
-      return api.put<User>(`/users/${data.id}`, formData)
+      const response = await api.put<{
+        User: Omit<User, 'familyId' | 'role'>
+        familyId?: number
+        role?: FamilyRoles['role']
+      }>(`/users/${data.id}`, formData)
+
+      const user: User = {
+        ...response.User,
+        familyId: response.familyId,
+        role: response.role,
+      }
+
+      return user
     },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(queryKeys.user, updatedUser)

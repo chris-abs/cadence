@@ -7,12 +7,21 @@ interface FamilyState {
   setCurrentFamily: (family: Family | null) => void
   updateModuleStatus: (moduleId: string, isEnabled: boolean) => void
   isModuleEnabled: (moduleId: string) => boolean
+  hasFamily: boolean
+  setHasFamily: (hasFamily: boolean) => void
 }
 
 export const useFamilyStore = create<FamilyState>((set, get) => ({
   currentFamily: null,
+  hasFamily: false,
 
-  setCurrentFamily: (family) => set({ currentFamily: family }),
+  setCurrentFamily: (family) =>
+    set({
+      currentFamily: family,
+      hasFamily: !!family,
+    }),
+
+  setHasFamily: (hasFamily) => set({ hasFamily }),
 
   updateModuleStatus: (moduleId, isEnabled) => {
     const { currentFamily } = get()
