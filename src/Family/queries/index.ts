@@ -35,6 +35,14 @@ export function useFamilyModules(familyId: number) {
   })
 }
 
+export function useFamilyMembers(familyId: number) {
+  return useQuery({
+    queryKey: queryKeys.family.members(familyId),
+    queryFn: () => api.get<User[]>(`/families/${familyId}/members`),
+    enabled: !!familyId && familyId > 0,
+  })
+}
+
 export function useCreateFamily() {
   const queryClient = useQueryClient()
 

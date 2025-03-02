@@ -3,6 +3,7 @@ export const queryKeys = {
   family: {
     detail: (id: number) => ['family', id] as const,
     current: ['family', 'current'] as const,
+    members: (id: number) => ['family', id, 'members'] as const,
     modules: (id: number) => ['family', id, 'modules'] as const,
     invites: (id: number) => ['family', id, 'invites'] as const,
   },

@@ -11,6 +11,7 @@ export function useUserWithFamily() {
     isLoading: isFamilyLoading,
     isError: isFamilyError,
   } = useFamily(hasFamily ? user?.familyId : undefined)
+  console.log('🚀 ~ useUserWithFamily ~ family:', family)
 
   return {
     user,
