@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Plus, Users, UserPlus, Settings, Home, Crown } from 'lucide-react'
+import { ChevronsUpDown, Plus, Settings, Home, Crown } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 
 import {
@@ -67,16 +67,12 @@ export function SidebarFamilyManager() {
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Family Options
-            </DropdownMenuLabel>
-
-            <DropdownMenuItem className="gap-2 p-2 cursor-default">
+            <div className="gap-2 p-2 cursor-default">
               <div className="flex flex-col">
                 <span className="font-medium">{family?.name}</span>
                 <span className="text-xs text-muted-foreground">ID: {family?.id}</span>
               </div>
-            </DropdownMenuItem>
+            </div>
 
             <DropdownMenuSeparator />
 
