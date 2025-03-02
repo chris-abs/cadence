@@ -37,7 +37,12 @@ import {
 } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { H2, Section } from '@/Global/components/molecules'
-import { useCurrentFamily, useUpdateModule, useCreateInvite } from '@/Family/queries'
+import {
+  useCurrentFamily,
+  useUpdateModule,
+  useCreateInvite,
+  useFamilyMembers,
+} from '@/Family/queries'
 import { moduleDefinitions } from '@/Family/constants'
 import { ModuleID, FamilyRoles } from '@/Family/types'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
@@ -48,7 +53,8 @@ export const Route = createFileRoute('/_authenticated/family/settings')({
 
 function FamilySettingsPage() {
   const { data: family, isLoading } = useCurrentFamily()
-  const { isParent } = useUserWithFamily()
+  const { data: familyMembers, isLoading: isMembersLoading } = useFamilyMembers(family?.id)
+  const { isParent, user } = useUserWithFamily()
   const updateModule = useUpdateModule()
   const createInvite = useCreateInvite()
   const navigate = useNavigate()
@@ -277,20 +283,54 @@ function FamilySettingsPage() {
                     <div className="text-right">Actions</div>
                   </div>
 
-                  <div className="grid grid-cols-4 p-3 items-center border-t text-sm">
-                    <div className="font-medium">Chris Abbott</div>
-                    <div className="text-muted-foreground">c.abbott96@outlook.com</div>
-                    <div>
-                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                        Parent
-                      </span>
+                  {isMembersLoading ? (
+                    <div className="p-6 text-center">
+                      <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full mx-auto"></div>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Loading family members...
+                      </p>
                     </div>
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" disabled>
-                        <UserCog className="h-4 w-4" />
-                      </Button>
+                  ) : !familyMembers || familyMembers.length === 0 ? (
+                    <div className="p-6 text-center text-muted-foreground">
+                      <p>No family members found</p>
+                      <p className="text-sm">This should not happen. Please contact support.</p>
                     </div>
-                  </div>
+                  ) : (
+                    familyMembers.map((member) => (
+                      <div
+                        key={member.id}
+                        className="grid grid-cols-4 p-3 items-center border-t text-sm"
+                      >
+                        <div className="font-medium">{`${member.firstName} ${member.lastName}`}</div>
+                        <div className="text-muted-foreground">{member.email}</div>
+                        <div>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                              member.role === 'PARENT'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                                : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100'
+                            }`}
+                          >
+                            {member.role === 'PARENT' ? 'Parent' : 'Child'}
+                          </span>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={member.id === user?.id || !isParent}
+                            title={
+                              member.id === user?.id
+                                ? 'You cannot modify your own role'
+                                : 'Manage member'
+                            }
+                          >
+                            <UserCog className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>

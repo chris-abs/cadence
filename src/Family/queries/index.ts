@@ -35,9 +35,9 @@ export function useFamilyModules(familyId: number) {
   })
 }
 
-export function useFamilyMembers(familyId: number) {
+export function useFamilyMembers(familyId: number | undefined) {
   return useQuery({
-    queryKey: queryKeys.family.members(familyId),
+    queryKey: queryKeys.family.members(familyId ?? 0),
     queryFn: () => api.get<User[]>(`/families/${familyId}/members`),
     enabled: !!familyId && familyId > 0,
   })
