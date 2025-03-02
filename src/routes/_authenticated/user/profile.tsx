@@ -4,9 +4,12 @@ import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { User } from '@/User/types'
 import { useUpdateUser, useUser } from '@/User/queries/user'
-import { UserEmailSection, UserProfileSection } from '@/User/components/organisms/detail/sections'
+import {
+  UserEmailSection,
+  UserProfileSection,
+} from '@/User/components/organisms/detail/sections'
 
-export const Route = createFileRoute('/_authenticated/profile')({
+export const Route = createFileRoute('/_authenticated/user/profile')({
   component: UserPage,
 })
 
@@ -35,8 +38,16 @@ function UserPage() {
     <PageLayout>
       <div className="max-w-2xl mx-auto">
         <div className="flex flex-col gap-6 p-4">
-          <UserProfileSection user={user} onUpdate={handleUpdateProfile} isUpdating={isUpdating} />
-          <UserEmailSection user={user} onUpdate={handleUpdateProfile} isUpdating={isUpdating} />
+          <UserProfileSection
+            user={user}
+            onUpdate={handleUpdateProfile}
+            isUpdating={isUpdating}
+          />
+          <UserEmailSection
+            user={user}
+            onUpdate={handleUpdateProfile}
+            isUpdating={isUpdating}
+          />
         </div>
       </div>
     </PageLayout>

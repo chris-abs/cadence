@@ -13,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/Global/components/atoms'
-import {} from '@/Global/components/atoms/DropDownMenu'
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -88,7 +87,7 @@ export function SidebarUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link to="/profile">
+              <Link to="/user/profile">
                 <DropdownMenuItem>
                   <BadgeCheck className="mr-2 h-4 w-4" />
                   Account
@@ -98,7 +97,7 @@ export function SidebarUser() {
                 <Bell className="mr-2 h-4 w-4" />
                 Notifications
               </DropdownMenuItem>
-              <Link to="/settings">
+              <Link to="/user/settings">
                 <DropdownMenuItem>
                   <Settings2 className="mr-2 h-4 w-4" />
                   Settings

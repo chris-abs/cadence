@@ -19,7 +19,7 @@ import { PageLayout } from '@/Global/layout/PageLayout'
 import { H2, Section } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
-export const Route = createFileRoute('/_authenticated/settings')({
+export const Route = createFileRoute('/_authenticated/user/settings')({
   component: SettingsPage,
 })
 
@@ -53,13 +53,17 @@ function SettingsPage() {
                   <Palette className="h-5 w-5" />
                   Appearance
                 </CardTitle>
-                <CardDescription>Customize how the application looks and feels</CardDescription>
+                <CardDescription>
+                  Customize how the application looks and feels
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <span className="text-sm font-medium">Theme</span>
-                    <p className="text-sm text-muted-foreground">Choose your preferred theme</p>
+                    <p className="text-sm text-muted-foreground">
+                      Choose your preferred theme
+                    </p>
                   </div>
                   <Select value={theme} onValueChange={applyTheme}>
                     <SelectTrigger className="w-[180px]">
@@ -77,7 +81,9 @@ function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Compact Entity View</span>
+                    <span className="text-sm font-medium">
+                      Compact Entity View
+                    </span>
                     <p className="text-sm text-muted-foreground">
                       Use a condensed layout for items and containers
                     </p>
@@ -89,10 +95,17 @@ function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Compact Sidebar View</span>
-                    <p className="text-sm text-muted-foreground">Use a condensed sidebar</p>
+                    <span className="text-sm font-medium">
+                      Compact Sidebar View
+                    </span>
+                    <p className="text-sm text-muted-foreground">
+                      Use a condensed sidebar
+                    </p>
                   </div>
-                  <Switch checked={sidebarCollapsed} onCheckedChange={setSidebarCollapsed} />
+                  <Switch
+                    checked={sidebarCollapsed}
+                    onCheckedChange={setSidebarCollapsed}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -103,25 +116,41 @@ function SettingsPage() {
                   <Bell className="h-5 w-5" />
                   Notifications
                 </CardTitle>
-                <CardDescription>Manage your notification preferences</CardDescription>
+                <CardDescription>
+                  Manage your notification preferences
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Email Notifications</span>
-                    <p className="text-sm text-muted-foreground">Receive updates via email</p>
+                    <span className="text-sm font-medium">
+                      Email Notifications
+                    </span>
+                    <p className="text-sm text-muted-foreground">
+                      Receive updates via email
+                    </p>
                   </div>
-                  <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
+                  <Switch
+                    checked={emailNotifications}
+                    onCheckedChange={setEmailNotifications}
+                  />
                 </div>
 
                 <Separator />
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Push Notifications</span>
-                    <p className="text-sm text-muted-foreground">Receive browser notifications</p>
+                    <span className="text-sm font-medium">
+                      Push Notifications
+                    </span>
+                    <p className="text-sm text-muted-foreground">
+                      Receive browser notifications
+                    </p>
                   </div>
-                  <Switch checked={pushNotifications} onCheckedChange={setPushNotifications} />
+                  <Switch
+                    checked={pushNotifications}
+                    onCheckedChange={setPushNotifications}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -133,21 +162,29 @@ function SettingsPage() {
                   <Clock className="h-5 w-5" />
                   Date & Time
                 </CardTitle>
-                <CardDescription>Configure date and time display preferences</CardDescription>
+                <CardDescription>
+                  Configure date and time display preferences
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <span className="text-sm font-medium">Date Format</span>
-                    <p className="text-sm text-muted-foreground">Choose how dates are displayed</p>
+                    <p className="text-sm text-muted-foreground">
+                      Choose how dates are displayed
+                    </p>
                   </div>
                   <Select value={dateFormat} onValueChange={setDateFormat}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="relative">Relative (2 hours ago)</SelectItem>
-                      <SelectItem value="absolute">Absolute (Jan 23, 2024)</SelectItem>
+                      <SelectItem value="relative">
+                        Relative (2 hours ago)
+                      </SelectItem>
+                      <SelectItem value="absolute">
+                        Absolute (Jan 23, 2024)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

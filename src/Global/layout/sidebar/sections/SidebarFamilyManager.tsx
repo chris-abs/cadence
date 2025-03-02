@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Plus, Users, UserPlus, Settings, Home } from 'lucide-react'
+import { ChevronsUpDown, Plus, Users, UserPlus, Settings, Home, Crown } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 
 import {
@@ -50,7 +50,7 @@ export function SidebarFamilyManager() {
               className="data-[state=open]:bg-contrast-accent data-[state=open]:text-contrast-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Users className="size-4" />
+                <Crown className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{family?.name || 'My Family'}</span>
@@ -91,20 +91,10 @@ export function SidebarFamilyManager() {
               <>
                 <DropdownMenuItem
                   className="gap-2 p-2"
-                  // onClick={() => navigate({ to: '/cadence/family/settings' })}
-                  onClick={() => navigate({ to: '/' })}
+                  onClick={() => navigate({ to: '/family/settings' })}
                 >
                   <Settings className="size-4" />
                   <span>Family Settings</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  className="gap-2 p-2"
-                  // onClick={() => navigate({ to: '/cadence/family/invite' })}
-                  onClick={() => navigate({ to: '/' })}
-                >
-                  <UserPlus className="size-4" />
-                  <span>Invite Members</span>
                 </DropdownMenuItem>
               </>
             )}
