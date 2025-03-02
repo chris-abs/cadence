@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
+import { ApiError } from '@/Global/types'
 import { User } from '@/User/types'
 import {
   Family,
@@ -11,7 +12,6 @@ import {
   FamilyInvite,
   Module,
 } from '../types'
-import { ApiError } from '@/Global/types'
 
 export function useFamily(id: number | undefined) {
   return useQuery({

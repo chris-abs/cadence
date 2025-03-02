@@ -17,6 +17,7 @@ import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedFamilySettingsImport } from './routes/_authenticated/family-settings'
 import { Route as AuthenticatedCadenceIndexImport } from './routes/_authenticated/cadence/index'
 import { Route as AuthenticatedCadenceStorageIndexImport } from './routes/_authenticated/cadence/storage/index'
 import { Route as AuthenticatedCadenceServicesIndexImport } from './routes/_authenticated/cadence/services/index'
@@ -70,6 +71,13 @@ const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedFamilySettingsRoute =
+  AuthenticatedFamilySettingsImport.update({
+    id: '/family-settings',
+    path: '/family-settings',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 const AuthenticatedCadenceIndexRoute = AuthenticatedCadenceIndexImport.update({
   id: '/cadence/',
@@ -206,6 +214,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/register'
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/family-settings': {
+      id: '/_authenticated/family-settings'
+      path: '/family-settings'
+      fullPath: '/family-settings'
+      preLoaderRoute: typeof AuthenticatedFamilySettingsImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
@@ -346,6 +361,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedFamilySettingsRoute: typeof AuthenticatedFamilySettingsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -368,6 +384,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedFamilySettingsRoute: AuthenticatedFamilySettingsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
@@ -409,6 +426,7 @@ export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/family-settings': typeof AuthenticatedFamilySettingsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
@@ -433,6 +451,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/family-settings': typeof AuthenticatedFamilySettingsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
@@ -459,6 +478,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/_authenticated/family-settings': typeof AuthenticatedFamilySettingsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -486,6 +506,7 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/register'
+    | '/family-settings'
     | '/profile'
     | '/settings'
     | '/'
@@ -509,6 +530,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/register'
+    | '/family-settings'
     | '/profile'
     | '/settings'
     | '/'
@@ -533,6 +555,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/register'
+    | '/_authenticated/family-settings'
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/_authenticated/'
@@ -585,6 +608,7 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/family-settings",
         "/_authenticated/profile",
         "/_authenticated/settings",
         "/_authenticated/",
@@ -611,6 +635,10 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/_authenticated/family-settings": {
+      "filePath": "_authenticated/family-settings.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/profile": {
       "filePath": "_authenticated/profile.tsx",
