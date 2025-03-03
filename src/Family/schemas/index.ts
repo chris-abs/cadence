@@ -12,6 +12,7 @@ export const CreateFamilySchema = z.object({
 export const UpdateFamilySchema = z.object({
   id: z.number(),
   name: z.string().min(2, { message: 'Family name must be at least 2 characters' }),
+  status: z.enum(['ACTIVE', 'INACTIVE'] as const).optional(),
 })
 
 export const CreateFamilyInviteSchema = z.object({
