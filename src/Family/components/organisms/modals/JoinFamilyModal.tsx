@@ -10,7 +10,7 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { JoinFamilyForm } from '@/Family/components/molecules'
+import { JoinFamilyForm } from '@/Family/components/molecules/forms'
 import { useJoinFamily } from '@/Family/queries'
 import { JoinFamilyData } from '@/Family/schemas'
 

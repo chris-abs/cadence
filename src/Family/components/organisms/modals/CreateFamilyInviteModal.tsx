@@ -10,7 +10,7 @@ import {
   DialogDescription,
   Button,
 } from '@/Global/components/atoms'
-import { CreateFamilyInviteForm } from '@/Family/components/molecules'
+import { CreateFamilyInviteForm } from '@/Family/components/molecules/forms'
 import { useCreateInvite } from '@/Family/queries'
 import { CreateFamilyInviteData } from '@/Family/schemas'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'

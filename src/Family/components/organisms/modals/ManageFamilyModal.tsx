@@ -21,7 +21,7 @@ import {
 } from '@/Global/components/atoms'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
 import { useCreateInvite, useUpdateModule } from '@/Family/queries'
-import { CreateFamilyInviteForm } from '../../molecules'
+import { CreateFamilyInviteForm } from '../../molecules/forms'
 import { moduleDefinitions } from '@/Family/constants'
 import { Family, ModuleID } from '@/Family/types'
 import { CreateFamilyInviteData } from '@/Family/schemas'

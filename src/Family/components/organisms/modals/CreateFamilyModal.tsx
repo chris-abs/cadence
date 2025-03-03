@@ -11,7 +11,7 @@ import {
   Button,
 } from '@/Global/components/atoms'
 import { useCreateFamily } from '@/Family/queries'
-import { CreateFamilyForm } from '@/Family/components/molecules/CreateFamilyForm'
+import { CreateFamilyForm } from '@/Family/components/molecules/forms'
 import { CreateFamilyData } from '@/Family/schemas'
 
 interface CreateFamilyModalProps {
