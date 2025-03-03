@@ -11,6 +11,7 @@ import {
   CreateInviteRequest,
   FamilyInvite,
   Module,
+  UpdateFamilyRequest,
 } from '../types'
 
 export function useFamily(id: number | undefined) {
@@ -77,6 +78,24 @@ export function useCreateInvite() {
   return useMutation({
     mutationFn: ({ familyId, data }: { familyId: number; data: CreateInviteRequest }) =>
       api.post<FamilyInvite>(`/families/${familyId}/invites`, data),
+  })
+}
+
+export function useUpdateFamily() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ familyId, data }: { familyId: number; data: UpdateFamilyRequest }) =>
+      api.put<Family>(`/families/${familyId}`, data),
+    onSuccess: (updatedFamily) => {
+      queryClient.setQueryData(queryKeys.family.detail(updatedFamily.id), updatedFamily)
+
+      queryClient.setQueryData(queryKeys.family.current, updatedFamily)
+
+      queryClient.invalidateQueries({
+        queryKey: ['family'],
+      })
+    },
   })
 }
 

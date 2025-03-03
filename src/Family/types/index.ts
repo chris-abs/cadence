@@ -41,6 +41,11 @@ export interface CreateInviteRequest {
   role: FamilyRoles['role']
 }
 
+export interface UpdateFamilyRequest {
+  name: string
+  status: FamilyStatus
+}
+
 export interface JoinFamilyRequest {
   token: string
 }
