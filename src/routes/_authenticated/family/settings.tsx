@@ -42,25 +42,42 @@ import {
   useUpdateModule,
   useCreateInvite,
   useFamilyMembers,
+  useUpdateFamily,
 } from '@/Family/queries'
 import { moduleDefinitions } from '@/Family/constants'
 import { ModuleID, FamilyRoles } from '@/Family/types'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useForm } from 'react-hook-form'
 
 export const Route = createFileRoute('/_authenticated/family/settings')({
   component: FamilySettingsPage,
 })
 
 function FamilySettingsPage() {
+  const navigate = useNavigate()
   const { data: family, isLoading } = useCurrentFamily()
-  const { data: familyMembers, isLoading: isMembersLoading } = useFamilyMembers(family?.id)
   const { isParent, user } = useUserWithFamily()
+  const updateFamily = useUpdateFamily()
+  const { data: familyMembers, isLoading: isMembersLoading } = useFamilyMembers(family?.id)
   const updateModule = useUpdateModule()
   const createInvite = useCreateInvite()
-  const navigate = useNavigate()
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState<FamilyRoles['role']>('CHILD')
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+    setValue,
+    watch,
+  } = useForm({
+    defaultValues: {
+      name: family?.name || '',
+      status: family?.status || 'ACTIVE',
+    },
+  })
 
   const handleModuleToggle = (moduleId: ModuleID, isEnabled: boolean) => {
     if (!family) return
@@ -101,6 +118,37 @@ function FamilySettingsPage() {
         },
       },
     )
+  }
+
+  const onSubmit = (data) => {
+    if (!family) return
+
+    updateFamily.mutate(
+      {
+        familyId: family.id,
+        data: {
+          name: data.name,
+          status: data.status,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Family settings updated')
+        },
+        onError: (error) => {
+          toast.error('Failed to update family settings', {
+            description: error instanceof Error ? error.message : 'Please try again',
+          })
+        },
+      },
+    )
+  }
+
+  const handleCancel = () => {
+    reset({
+      name: family?.name || '',
+      status: family?.status || 'ACTIVE',
+    })
   }
 
   const handleInviteMember = () => {
@@ -169,64 +217,99 @@ function FamilySettingsPage() {
           </Section>
 
           <Section className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <HomeIcon className="h-5 w-5" />
-                  Family Information
-                </CardTitle>
-                <CardDescription>Basic information about your family</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Family Name</span>
-                    <p className="text-sm text-muted-foreground">{family.name}</p>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <HomeIcon className="h-5 w-5" />
+                    Family Information
+                  </CardTitle>
+                  <CardDescription>Basic information about your family</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 space-y-0.5">
+                      <span className="text-sm font-medium">Family Name</span>
+                      {isParent ? (
+                        <div>
+                          <Input
+                            {...register('name', { required: 'Name is required' })}
+                            disabled={!isParent || updateFamily.isPending}
+                            className={!isParent ? 'opacity-80' : ''}
+                          />
+                          {errors.name && (
+                            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">{family.name}</p>
+                      )}
+                    </div>
                   </div>
-                  {isParent && (
-                    <Button variant="outline" size="sm" disabled={!isParent}>
-                      Edit
-                    </Button>
-                  )}
-                </div>
 
-                <Separator />
+                  <Separator />
 
-                <div className="space-y-0.5">
-                  <span className="text-sm font-medium">Family ID</span>
-                  <p className="text-sm text-muted-foreground">{family.id}</p>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-0.5">
-                  <span className="text-sm font-medium">Created On</span>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(family.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-sm font-medium">Family Status</span>
-                    <p className="text-sm text-muted-foreground">{family.status}</p>
+                    <span className="text-sm font-medium">Family ID</span>
+                    <p className="text-sm text-muted-foreground">{family.id}</p>
                   </div>
-                  {isParent && (
-                    <Select disabled={!isParent} defaultValue={family.status}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ACTIVE">Active</SelectItem>
-                        <SelectItem value="INACTIVE">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
+
+                  <Separator />
+
+                  <div className="space-y-0.5">
+                    <span className="text-sm font-medium">Created On</span>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(family.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 space-y-0.5">
+                      <span className="text-sm font-medium">Family Status</span>
+                      {isParent ? (
+                        <div>
+                          <Select
+                            value={watch('status')}
+                            onValueChange={(value) =>
+                              setValue('status', value, { shouldDirty: true })
+                            }
+                            disabled={!isParent || updateFamily.isPending}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="ACTIVE">Active</SelectItem>
+                              <SelectItem value="INACTIVE">Inactive</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">{family.status}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {isParent && isDirty && (
+                    <div className="flex justify-end gap-2 pt-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCancel}
+                        disabled={updateFamily.isPending}
+                      >
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={!isDirty || updateFamily.isPending}>
+                        {updateFamily.isPending ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </form>
 
             <Card>
               <CardHeader>
