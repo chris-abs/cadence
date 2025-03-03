@@ -11,8 +11,8 @@ import {
   CreateInviteRequest,
   FamilyInvite,
   Module,
-  UpdateFamilyRequest,
 } from '../types'
+import { UpdateFamilyData } from '../schemas'
 
 export function useFamily(id: number | undefined) {
   return useQuery({
@@ -85,7 +85,7 @@ export function useUpdateFamily() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ familyId, data }: { familyId: number; data: UpdateFamilyRequest }) =>
+    mutationFn: ({ familyId, data }: { familyId: number; data: UpdateFamilyData }) =>
       api.put<Family>(`/families/${familyId}`, data),
     onSuccess: (updatedFamily) => {
       queryClient.setQueryData(queryKeys.family.detail(updatedFamily.id), updatedFamily)
