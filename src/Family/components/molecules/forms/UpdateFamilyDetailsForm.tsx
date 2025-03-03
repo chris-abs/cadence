@@ -44,17 +44,6 @@ export function UpdateFamilyDetailsForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="family-id">Family ID</Label>
-        <Input
-          id="family-id"
-          value={family.id.toString()}
-          readOnly
-          className="cursor-default focus:outline-none"
-          aria-label="Family ID"
-        />
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="family-status">Family Status</Label>
         {isEditing ? (
           <Select
@@ -78,6 +67,17 @@ export function UpdateFamilyDetailsForm({
             aria-label="Family status"
           />
         )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="family-id">Family ID</Label>
+        <Input
+          id="family-id"
+          value={family.id.toString()}
+          readOnly
+          className="cursor-default focus:outline-none"
+          aria-label="Family ID"
+        />
       </div>
 
       <div className="space-y-2">

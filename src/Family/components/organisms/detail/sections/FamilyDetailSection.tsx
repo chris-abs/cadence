@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { toast } from 'sonner'
 import { HomeIcon, Pencil, MoreVertical } from 'lucide-react'
 
 import {
@@ -17,18 +16,23 @@ import {
 import { Section } from '@/Global/components/molecules'
 import { Family, FamilyStatus } from '@/Family/types'
 import { UpdateFamilyData } from '@/Family/schemas'
-import { useUpdateFamily } from '@/Family/queries'
 import { UpdateFamilyDetailsForm } from '@/Family/components/molecules/forms'
 
 interface FamilyDetailSectionProps {
   family: Family
   isParent: boolean
+  onUpdate: (data: UpdateFamilyData) => Promise<void>
+  isUpdating: boolean
 }
 
-export function FamilyDetailSection({ family, isParent }: FamilyDetailSectionProps) {
+export function FamilyDetailSection({
+  family,
+  isParent,
+  onUpdate,
+  isUpdating,
+}: FamilyDetailSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<Partial<UpdateFamilyData> | null>(null)
-  const updateFamily = useUpdateFamily()
 
   const handleEdit = () => {
     setFormData({
@@ -70,25 +74,12 @@ export function FamilyDetailSection({ family, isParent }: FamilyDetailSectionPro
       status: formData.status || family.status,
     }
 
-    updateFamily.mutate(
-      {
-        familyId: family.id,
-        data: updateData,
-      },
-      {
-        onSuccess: () => {
-          toast.success('Family settings updated', {
-            description: 'Your changes have been saved successfully.',
-          })
-          setIsEditing(false)
-        },
-        onError: (error) => {
-          toast.error('Failed to update family settings', {
-            description: error instanceof Error ? error.message : 'Please try again',
-          })
-        },
-      },
-    )
+    try {
+      await onUpdate(updateData)
+      setIsEditing(false)
+    } catch (error) {
+      console.error('Failed to update family:', error)
+    }
   }
 
   return (
@@ -119,11 +110,11 @@ export function FamilyDetailSection({ family, isParent }: FamilyDetailSectionPro
               </DropdownMenu>
             ) : isEditing ? (
               <div className="flex gap-2">
-                <Button variant="ghost" onClick={handleCancel} disabled={updateFamily.isPending}>
+                <Button variant="ghost" onClick={handleCancel} disabled={isUpdating}>
                   Cancel
                 </Button>
-                <Button onClick={handleSubmit} disabled={updateFamily.isPending}>
-                  {updateFamily.isPending ? 'Saving...' : 'Save Changes'}
+                <Button onClick={handleSubmit} disabled={isUpdating}>
+                  {isUpdating ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
             ) : null}
