@@ -1,15 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { useUpdateFamily, useCreateInvite, useFamilyMembers } from '@/Family/queries'
-import { FamilyInvite, FamilyRoles, Family } from '@/Family/types'
-import { UpdateFamilyData } from '@/Family/schemas'
-import {
-  FamilyDetailSection,
-  FamilyInvitesSection,
-  FamilyMembersSection,
-  FamilyModulesSection,
-} from '@/Family/components/organisms/detail/sections'
 import {
   Dialog,
   DialogContent,
@@ -25,6 +16,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/Global/components/atoms'
+import {
+  FamilyDetailSection,
+  FamilyInvitesSection,
+  FamilyMembersSection,
+  FamilyModulesSection,
+} from '@/Family/components/organisms/detail/sections'
+import { useUpdateFamily, useCreateInvite, useFamilyMembers } from '@/Family/queries'
+import { FamilyInvite, FamilyRoles, Family } from '@/Family/types'
+import { UpdateFamilyData } from '@/Family/schemas'
 
 interface FamilyDetailProps {
   family: Family
