@@ -21,6 +21,7 @@ interface EntityCardProps {
 }
 
 export function EntityCard({ type, icon: Icon, count, recentItems }: EntityCardProps) {
+  console.log('here')
   return (
     <Card className="flex flex-col h-[475px]">
       <CardHeader>
