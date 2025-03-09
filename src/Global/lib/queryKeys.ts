@@ -9,6 +9,7 @@ export const queryKeys = {
   },
   search: (query: string) => ['search', query] as const,
   recent: ['recent'] as const,
+  // todo: we need to modularise this
   containers: {
     list: ['containers'] as const,
     detail: (id: number) => ['containers', id] as const,
@@ -32,5 +33,25 @@ export const queryKeys = {
   },
   taggedItems: {
     search: (query: string) => ['tagged-items', 'search', query] as const,
+  },
+  chores: {
+    list: ['chores'],
+    detail: (id: number) => ['chores', id],
+    byAssignee: (assigneeId: number) => ['chores', 'assignee', assigneeId],
+    instances: (queryString: string) => ['chores', 'instances', queryString],
+    instanceDetail: (id: number) => ['chores', 'instances', id],
+    verification: (date: string, assigneeId: number) => [
+      'chores',
+      'verification',
+      date,
+      assigneeId,
+    ],
+    stats: (userId: number, startDate: string, endDate: string) => [
+      'chores',
+      'stats',
+      userId,
+      startDate,
+      endDate,
+    ],
   },
 }
