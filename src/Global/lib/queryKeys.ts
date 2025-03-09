@@ -35,11 +35,15 @@ export const queryKeys = {
     search: (query: string) => ['tagged-items', 'search', query] as const,
   },
   chores: {
-    list: ['chores'],
-    detail: (id: number) => ['chores', id],
-    byAssignee: (assigneeId: number) => ['chores', 'assignee', assigneeId],
-    instances: (queryString: string) => ['chores', 'instances', queryString],
-    instanceDetail: (id: number) => ['chores', 'instances', id],
+    tasks: {
+      list: ['chores', 'tasks'],
+      detail: (id: number) => ['chores', 'tasks', id],
+      byAssignee: (assigneeId: number) => ['chores', 'tasks', 'assignee', assigneeId],
+    },
+    instances: {
+      list: (queryString: string) => ['chores', 'instances', queryString],
+      detail: (id: number) => ['chores', 'instances', id],
+    },
     verification: (date: string, assigneeId: number) => [
       'chores',
       'verification',
