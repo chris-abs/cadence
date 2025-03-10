@@ -12,10 +12,10 @@ interface EntityEntryProps {
 }
 
 const typeToRoute = {
-  workspace: (id: number) => `/workspaces/${id}`,
-  container: (id: number) => `/containers/${id}`,
-  item: (id: number) => `/items/${id}`,
-  tag: (id: number) => `/tags/${id}`,
+  workspace: (id: number) => `/cadence/storage/workspaces/${id}`,
+  container: (id: number) => `/cadence/storage/containers/${id}`,
+  item: (id: number) => `/cadence/storage/items/${id}`,
+  tag: (id: number) => `/cadence/storage/tags/${id}`,
 } as const
 
 export function EntityEntry({ id, name, type, icon: Icon, onClick }: EntityEntryProps) {
