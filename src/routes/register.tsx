@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { toast } from 'sonner'
+import { Crown } from 'lucide-react'
 
 import {
   Card,
@@ -9,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/Global/components/atoms'
-import { RegisterForm } from '@/Global/components/molecules'
+import { AuthPageWrapper, RegisterForm } from '@/Global/components/molecules'
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage,
@@ -41,26 +42,37 @@ function RegisterPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center px-4">
-      <Card className="w-full max-w-[400px]">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <CardDescription>Enter your details below to create your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RegisterForm
-            onSubmit={handleRegister}
-            error={registerError}
-            isLoading={auth.isRegisterLoading}
-          />
-          <div className="mt-4 text-center text-sm text-muted-foreground">
-            Already have an account?{' '}
-            <Link to="/login" className="text-primary underline-offset-4 hover:underline">
-              Sign in here
-            </Link>
+    <AuthPageWrapper>
+      <div className="w-full max-w-[420px]">
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sidebar-primary text-background">
+            <Crown />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+
+        <Card className="border-border/30 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+            <CardDescription>Enter your details below to create your account</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RegisterForm
+              onSubmit={handleRegister}
+              error={registerError}
+              isLoading={auth.isRegisterLoading}
+            />
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                className="font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Sign in here
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </AuthPageWrapper>
   )
 }
