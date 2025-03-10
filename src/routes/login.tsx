@@ -11,6 +11,7 @@ import {
 } from '@/Global/components/atoms'
 import { AuthPageWrapper, LoginForm } from '@/Global/components/molecules'
 import { LoginCredentials } from '@/Global/types'
+import { Crown } from 'lucide-react'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -40,18 +41,7 @@ function LoginPage() {
       <div className="w-full max-w-[420px]">
         <div className="mb-6 flex justify-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sidebar-primary text-background">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 36 36"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M18 3L22 8L27 6L24 13L30 16H21L18 23L15 16H6L12 13L9 6L14 8L18 3Z"
-                fill="currentColor"
-              />
-            </svg>
+            <Crown />
           </div>
         </div>
 
