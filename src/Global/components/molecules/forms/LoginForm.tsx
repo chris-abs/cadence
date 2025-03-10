@@ -54,8 +54,9 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
               <FormControl>
                 <Input
                   type="email"
+                  placeholder="your@email.com"
+                  className="border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary"
                   {...field}
-                  className={form.formState.errors.email ? 'border-destructive' : ''}
                 />
               </FormControl>
             </FormItem>
@@ -71,15 +72,24 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
               <FormControl>
                 <Input
                   type="password"
+                  placeholder="••••••••"
                   {...field}
-                  className={form.formState.errors.password ? 'border-destructive' : ''}
+                  className={
+                    form.formState.errors.password
+                      ? 'border-destructive'
+                      : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
+                  }
                 />
               </FormControl>
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 transition-all duration-200"
+          disabled={isLoading}
+        >
           {isLoading ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
