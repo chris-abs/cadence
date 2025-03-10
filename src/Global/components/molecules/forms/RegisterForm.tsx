@@ -38,7 +38,10 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {error && (
-          <Alert variant="destructive">
+          <Alert
+            variant="destructive"
+            className="border-destructive/30 bg-destructive/10 text-destructive"
+          >
             <AlertDescription className="capitalize">{error}</AlertDescription>
           </Alert>
         )}
@@ -54,7 +57,11 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
                   <Input
                     placeholder="John"
                     {...field}
-                    className={form.formState.errors.firstName ? 'border-destructive' : ''}
+                    className={
+                      form.formState.errors.firstName
+                        ? 'border-destructive'
+                        : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
+                    }
                   />
                 </FormControl>
               </FormItem>
@@ -71,7 +78,11 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
                   <Input
                     placeholder="Doe"
                     {...field}
-                    className={form.formState.errors.lastName ? 'border-destructive' : ''}
+                    className={
+                      form.formState.errors.lastName
+                        ? 'border-destructive'
+                        : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
+                    }
                   />
                 </FormControl>
               </FormItem>
@@ -89,7 +100,11 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
                 <Input
                   placeholder="email@example.com"
                   {...field}
-                  className={form.formState.errors.email ? 'border-destructive' : ''}
+                  className={
+                    form.formState.errors.email
+                      ? 'border-destructive'
+                      : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
+                  }
                 />
               </FormControl>
             </FormItem>
@@ -107,14 +122,22 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
                   type="password"
                   placeholder="••••••"
                   {...field}
-                  className={form.formState.errors.password ? 'border-destructive' : ''}
+                  className={
+                    form.formState.errors.password
+                      ? 'border-destructive'
+                      : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
+                  }
                 />
               </FormControl>
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 transition-all duration-200"
+          disabled={isLoading}
+        >
           {isLoading ? 'Creating account...' : 'Create Account'}
         </Button>
       </form>
