@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { useRouter } from '@tanstack/react-router'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { AlertTriangle, CheckCircle } from 'lucide-react'
 
@@ -10,39 +8,24 @@ import {
   AlertDescription,
   AlertTitle,
   Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
   FormLabel,
-  FormMessage,
   Input,
 } from '@/Global/components/atoms'
 import { useAuth } from '@/Global/hooks/useAuth'
 import { useInviteDetails, useJoinFamily } from '@/Family/queries'
-import { AcceptInviteSchema } from '@/Family/schemas'
 
 interface InviteFormProps {
   token?: string
 }
 
 export function InviteForm({ token }: InviteFormProps) {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [isProcessing, setIsProcessing] = useState(false)
   const auth = useAuth()
 
   const { data: invite, isError, error: inviteError } = useInviteDetails(token)
 
   const joinFamily = useJoinFamily()
-
-  const form = useForm({
-    resolver: zodResolver(AcceptInviteSchema),
-    defaultValues: {
-      token: token || '',
-      password: '',
-      confirmPassword: '',
-    },
-  })
 
   if (!token) {
     return (
@@ -70,7 +53,7 @@ export function InviteForm({ token }: InviteFormProps) {
     )
   }
 
-  const handleSubmit = async (data: { password?: string }) => {
+  const handleSubmit = async () => {
     if (!token) return
 
     setIsProcessing(true)
@@ -79,15 +62,18 @@ export function InviteForm({ token }: InviteFormProps) {
       if (auth.isLogged()) {
         await joinFamily.mutateAsync({ token })
         toast.success('You have joined the family successfully')
-        router.navigate({ to: '/cadence' })
+        navigate({ to: '/cadence' })
       } else {
-        await auth.acceptInvite({
-          token,
-          password: data.password || '',
+        toast.info('Please log in to accept this invitation', {
+          description: 'You need an account to join a family',
         })
-
-        toast.success('Account created and family joined successfully')
-        router.navigate({ to: '/cadence' })
+        navigate({
+          to: '/login',
+          search: {
+            redirectTo: '/invite',
+            token,
+          },
+        })
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process invitation'
@@ -118,45 +104,23 @@ export function InviteForm({ token }: InviteFormProps) {
       </div>
 
       {auth.isLogged() ? (
-        <Button className="w-full" onClick={() => handleSubmit({})} disabled={isProcessing}>
+        <Button className="w-full" onClick={() => handleSubmit()} disabled={isProcessing}>
           {isProcessing ? 'Processing...' : 'Accept Invitation'}
         </Button>
       ) : (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Create Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Enter a secure password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Confirm your password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button type="submit" className="w-full" disabled={isProcessing}>
-              {isProcessing ? 'Creating Account...' : 'Create Account & Join Family'}
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            You need to log in or create an account to join this family.
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <Button variant="outline" onClick={() => navigate({ to: '/register' })}>
+              Create Account
             </Button>
-          </form>
-        </Form>
+            <Button onClick={() => handleSubmit()} disabled={isProcessing}>
+              Sign In
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   )
