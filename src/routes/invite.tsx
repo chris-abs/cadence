@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Crown } from 'lucide-react'
-
 import {
   Card,
   CardContent,
@@ -9,10 +8,19 @@ import {
   CardTitle,
 } from '@/Global/components/atoms'
 import { AuthPageWrapper } from '@/Global/components/molecules'
-import { InviteForm } from '@/Family/components/molecules/forms'
+import { InviteForm } from '@/Family/components/molecules/forms/InviteForm'
+
+interface InviteSearchParams {
+  token?: string
+}
 
 export const Route = createFileRoute('/invite')({
   component: InvitePage,
+  validateSearch: (search: Record<string, unknown>): InviteSearchParams => {
+    return {
+      token: search.token as string | undefined,
+    }
+  },
 })
 
 function InvitePage() {
