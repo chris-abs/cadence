@@ -18,7 +18,9 @@ import {
   FormMessage,
   Input,
 } from '@/Global/components/atoms'
-import { useJoinFamily, useInviteDetails } from '@/Family/queries'
+import { useAuth } from '@/Global/hooks/useAuth'
+import { useInviteDetails } from '@/Family/queries'
+import { useJoinFamily } from '@/Family/queries'
 import { AcceptInviteSchema } from '@/Family/schemas'
 
 interface InviteFormProps {
@@ -28,7 +30,7 @@ interface InviteFormProps {
 export function InviteForm({ token }: InviteFormProps) {
   const router = useRouter()
   const [isProcessing, setIsProcessing] = useState(false)
-  const { authentication: auth } = router.useRouteContext()
+  const auth = useAuth()
 
   const { data: invite, isError, error: inviteError } = useInviteDetails(token)
 
