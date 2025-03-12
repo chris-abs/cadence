@@ -81,6 +81,15 @@ export function useCreateInvite() {
   })
 }
 
+export function useInviteDetails(token?: string) {
+  return useQuery({
+    queryKey: ['family', 'invite', token],
+    queryFn: () => api.get<FamilyInvite>(`/families/invites/${token}`),
+    enabled: !!token,
+    retry: false,
+  })
+}
+
 export function useUpdateFamily() {
   const queryClient = useQueryClient()
 

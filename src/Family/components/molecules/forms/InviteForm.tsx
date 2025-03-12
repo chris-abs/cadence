@@ -18,8 +18,7 @@ import {
   FormMessage,
   Input,
 } from '@/Global/components/atoms'
-import { useInviteDetails } from '@/Family/queries/invites'
-import { useJoinFamily } from '@/Family/queries'
+import { useJoinFamily, useInviteDetails } from '@/Family/queries'
 import { AcceptInviteSchema } from '@/Family/schemas'
 
 interface InviteFormProps {
