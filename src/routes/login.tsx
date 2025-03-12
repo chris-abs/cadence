@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 
 import {
@@ -12,21 +12,42 @@ import {
 import { AuthPageWrapper, LoginForm } from '@/Global/components/molecules'
 import { LoginCredentials } from '@/Global/types'
 import { Crown } from 'lucide-react'
+import { useAuth } from '@/Global/hooks/useAuth'
+
+interface LoginSearchParams {
+  redirectTo?: string
+  token?: string
+}
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
+  validateSearch: (search: Record<string, unknown>): LoginSearchParams => {
+    return {
+      redirectTo: search.redirectTo as string | undefined,
+      token: search.token as string | undefined,
+    }
+  },
 })
 
 function LoginPage() {
-  const router = useRouter()
-  const { authentication: auth } = Route.useRouteContext()
+  const navigate = useNavigate()
+  const auth = useAuth()
+  const { redirectTo, token } = Route.useSearch()
   const [loginError, setLoginError] = useState<string | null>(null)
 
   const handleLogin = async (credentials: LoginCredentials) => {
     try {
       setLoginError(null)
       await auth.login(credentials)
-      router.navigate({ to: '/cadence' })
+
+      if (redirectTo === '/invite' && token) {
+        navigate({
+          to: redirectTo,
+          search: { token },
+        })
+      } else {
+        navigate({ to: '/cadence' })
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setLoginError(errorMessage)
@@ -49,7 +70,9 @@ function LoginPage() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Sign in to Cadence</CardTitle>
             <CardDescription>
-              Enter your credentials to access your family dashboard
+              {redirectTo === '/invite' && token
+                ? 'Sign in to accept your family invitation'
+                : 'Enter your credentials to access your family dashboard'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -58,6 +81,7 @@ function LoginPage() {
               Don't have an account?{' '}
               <Link
                 to="/register"
+                search={token ? { redirectTo: '/invite', token } : undefined}
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 Register here
