@@ -70,6 +70,10 @@ export function useJoinFamily() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.user,
       })
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.family.current,
+      })
     },
   })
 }
