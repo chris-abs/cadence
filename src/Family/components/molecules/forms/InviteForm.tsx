@@ -19,8 +19,7 @@ import {
   Input,
 } from '@/Global/components/atoms'
 import { useAuth } from '@/Global/hooks/useAuth'
-import { useInviteDetails } from '@/Family/queries'
-import { useJoinFamily } from '@/Family/queries'
+import { useInviteDetails, useJoinFamily } from '@/Family/queries'
 import { AcceptInviteSchema } from '@/Family/schemas'
 
 interface InviteFormProps {
