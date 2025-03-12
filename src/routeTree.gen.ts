@@ -13,8 +13,8 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
+import { Route as InviteImport } from './routes/invite'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
-import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedCadenceIndexImport } from './routes/_authenticated/cadence/index'
 import { Route as AuthenticatedUserSettingsImport } from './routes/_authenticated/user/settings'
 import { Route as AuthenticatedUserProfileImport } from './routes/_authenticated/user/profile'
@@ -49,15 +49,15 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedRoute = AuthenticatedImport.update({
-  id: '/_authenticated',
+const InviteRoute = InviteImport.update({
+  id: '/invite',
+  path: '/invite',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedRoute,
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthenticatedCadenceIndexRoute = AuthenticatedCadenceIndexImport.update({
@@ -201,6 +201,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
+    '/invite': {
+      id: '/invite'
+      path: '/invite'
+      fullPath: '/invite'
+      preLoaderRoute: typeof InviteImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -214,13 +221,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/register'
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
-    }
-    '/_authenticated/': {
-      id: '/_authenticated/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexImport
-      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/family/settings': {
       id: '/_authenticated/family/settings'
@@ -361,7 +361,6 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedFamilySettingsRoute: typeof AuthenticatedFamilySettingsRoute
   AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
   AuthenticatedUserSettingsRoute: typeof AuthenticatedUserSettingsRoute
@@ -384,7 +383,6 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedFamilySettingsRoute: AuthenticatedFamilySettingsRoute,
   AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
   AuthenticatedUserSettingsRoute: AuthenticatedUserSettingsRoute,
@@ -424,9 +422,9 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
+  '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/': typeof AuthenticatedIndexRoute
   '/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
   '/user/settings': typeof AuthenticatedUserSettingsRoute
@@ -449,9 +447,10 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '': typeof AuthenticatedRouteWithChildren
+  '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/': typeof AuthenticatedIndexRoute
   '/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
   '/user/settings': typeof AuthenticatedUserSettingsRoute
@@ -476,9 +475,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/invite': typeof InviteRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/_authenticated/user/profile': typeof AuthenticatedUserProfileRoute
   '/_authenticated/user/settings': typeof AuthenticatedUserSettingsRoute
@@ -504,9 +503,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/invite'
     | '/login'
     | '/register'
-    | '/'
     | '/family/settings'
     | '/user/profile'
     | '/user/settings'
@@ -528,9 +527,10 @@ export interface FileRouteTypes {
     | '/cadence/storage/tags/assign'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | ''
+    | '/invite'
     | '/login'
     | '/register'
-    | '/'
     | '/family/settings'
     | '/user/profile'
     | '/user/settings'
@@ -553,9 +553,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
+    | '/invite'
     | '/login'
     | '/register'
-    | '/_authenticated/'
     | '/_authenticated/family/settings'
     | '/_authenticated/user/profile'
     | '/_authenticated/user/settings'
@@ -580,12 +580,14 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  InviteRoute: typeof InviteRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  InviteRoute: InviteRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
 }
@@ -601,6 +603,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_authenticated",
+        "/invite",
         "/login",
         "/register"
       ]
@@ -608,7 +611,6 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/",
         "/_authenticated/family/settings",
         "/_authenticated/user/profile",
         "/_authenticated/user/settings",
@@ -630,15 +632,14 @@ export const routeTree = rootRoute
         "/_authenticated/cadence/storage/tags/assign/"
       ]
     },
+    "/invite": {
+      "filePath": "invite.tsx"
+    },
     "/login": {
       "filePath": "login.tsx"
     },
     "/register": {
       "filePath": "register.tsx"
-    },
-    "/_authenticated/": {
-      "filePath": "_authenticated/index.tsx",
-      "parent": "/_authenticated"
     },
     "/_authenticated/family/settings": {
       "filePath": "_authenticated/family/settings.tsx",
