@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { Crown } from 'lucide-react'
 
@@ -11,14 +11,27 @@ import {
   CardTitle,
 } from '@/Global/components/atoms'
 import { AuthPageWrapper, RegisterForm } from '@/Global/components/molecules'
+import { useAuth } from '@/Global/hooks/useAuth'
+
+interface RegisterSearchParams {
+  redirectTo?: string
+  token?: string
+}
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage,
+  validateSearch: (search: Record<string, unknown>): RegisterSearchParams => {
+    return {
+      redirectTo: search.redirectTo as string | undefined,
+      token: search.token as string | undefined,
+    }
+  },
 })
 
 function RegisterPage() {
-  const router = useRouter()
-  const { authentication: auth } = Route.useRouteContext()
+  const navigate = useNavigate()
+  const auth = useAuth()
+  const { redirectTo, token } = Route.useSearch()
   const [registerError, setRegisterError] = useState<string | null>(null)
 
   const handleRegister = async (credentials: {
@@ -30,8 +43,17 @@ function RegisterPage() {
     try {
       setRegisterError(null)
       await auth.register(credentials)
+
       toast.success('Account created successfully')
-      router.navigate({ to: '/login' })
+
+      if (redirectTo === '/invite' && token) {
+        navigate({
+          to: redirectTo,
+          search: { token },
+        })
+      } else {
+        navigate({ to: '/login' })
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Registration failed'
       setRegisterError(errorMessage)
@@ -53,7 +75,11 @@ function RegisterPage() {
         <Card className="border-border/30 bg-card/80 backdrop-blur-sm">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-            <CardDescription>Enter your details below to create your account</CardDescription>
+            <CardDescription>
+              {redirectTo === '/invite' && token
+                ? 'Create an account to accept your family invitation'
+                : 'Enter your details below to create your account'}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <RegisterForm
@@ -65,6 +91,7 @@ function RegisterPage() {
               Already have an account?{' '}
               <Link
                 to="/login"
+                search={token ? { redirectTo: '/invite', token } : undefined}
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 Sign in here
