@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/Global/components/atoms'
 import { AuthPageWrapper } from '@/Global/components/molecules'
-import { InviteForm } from '@/Family/components/molecules/forms/InviteForm'
+import { InviteForm } from '@/Family/components/molecules/forms'
 
 export const Route = createFileRoute('/invite')({
   component: InvitePage,
