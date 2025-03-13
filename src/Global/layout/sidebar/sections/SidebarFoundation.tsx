@@ -5,8 +5,6 @@ import { Slot } from '@radix-ui/react-slot'
 import { VariantProps, cva } from 'class-variance-authority'
 import { PanelLeft } from 'lucide-react'
 
-import { useIsMobile } from '@/Global/hooks/useMobile'
-import { cn } from '@/Global/lib/utils'
 import {
   Button,
   Input,
@@ -19,6 +17,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/Global/components/atoms'
+import { useIsMobile } from '@/Global/hooks/useMobile'
+import { cn } from '@/Global/lib/utils'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
 const SIDEBAR_WIDTH = '16rem'
