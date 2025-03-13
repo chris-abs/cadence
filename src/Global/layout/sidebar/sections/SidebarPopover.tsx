@@ -1,12 +1,13 @@
 import { type LucideIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
+
+import { Popover, PopoverContent, PopoverTrigger } from '@/Global/components/atoms'
+import { Muted } from '@/Global/components/molecules'
 import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
-import { Popover, PopoverContent, PopoverTrigger } from '@/Global/components/atoms'
-import { Muted } from '@/Global/components/molecules'
 
 interface SidebarPopoverProps {
   title: string
