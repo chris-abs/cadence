@@ -8,8 +8,8 @@ import {
   AlertDescription,
   AlertTitle,
   Button,
-  FormLabel,
   Input,
+  Label,
 } from '@/Global/components/atoms'
 import { useAuth } from '@/Global/hooks/useAuth'
 import { useInviteDetails, useJoinFamily } from '@/Family/queries'
@@ -96,15 +96,15 @@ export function InviteForm({ token }: InviteFormProps) {
       </Alert>
 
       <div className="space-y-2">
-        <FormLabel>Email</FormLabel>
-        <Input readOnly value={invite.email} className="bg-muted" />
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" readOnly value={invite.email} className="bg-muted" />
         <p className="text-xs text-muted-foreground">
           This invitation was sent to this email address
         </p>
       </div>
 
       {auth.isLogged() ? (
-        <Button className="w-full" onClick={() => handleSubmit()} disabled={isProcessing}>
+        <Button className="w-full" onClick={handleSubmit} disabled={isProcessing}>
           {isProcessing ? 'Processing...' : 'Accept Invitation'}
         </Button>
       ) : (
@@ -113,10 +113,21 @@ export function InviteForm({ token }: InviteFormProps) {
             You need to log in or create an account to join this family.
           </p>
           <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" onClick={() => navigate({ to: '/register' })}>
+            <Button
+              variant="outline"
+              onClick={() =>
+                navigate({
+                  to: '/register',
+                  search: {
+                    redirectTo: '/invite',
+                    token,
+                  },
+                })
+              }
+            >
               Create Account
             </Button>
-            <Button onClick={() => handleSubmit()} disabled={isProcessing}>
+            <Button onClick={handleSubmit} disabled={isProcessing}>
               Sign In
             </Button>
           </div>

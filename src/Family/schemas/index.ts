@@ -26,27 +26,7 @@ export const JoinFamilySchema = z.object({
   token: z.string().min(1, { message: 'Invitation token is required' }),
 })
 
-export const AcceptInviteSchema = z
-  .object({
-    token: z.string().min(1, { message: 'Invitation token is required' }),
-    password: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional(),
-    confirmPassword: z.string().optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.password && data.password !== data.confirmPassword) {
-        return false
-      }
-      return true
-    },
-    {
-      message: "Passwords don't match",
-      path: ['confirmPassword'],
-    },
-  )
-
 export type CreateFamilyData = z.infer<typeof CreateFamilySchema>
 export type UpdateFamilyData = z.infer<typeof UpdateFamilySchema>
 export type CreateFamilyInviteData = z.infer<typeof CreateFamilyInviteSchema>
 export type JoinFamilyData = z.infer<typeof JoinFamilySchema>
-export type AcceptInviteData = z.infer<typeof AcceptInviteSchema>
