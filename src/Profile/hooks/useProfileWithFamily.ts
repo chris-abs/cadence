@@ -1,5 +1,5 @@
 import { useCurrentFamily } from '@/Family/queries'
-import { useActiveProfile } from '../queries'
+import { useActiveProfile } from '../queries/profile'
 
 export function useProfileWithFamily() {
   const { data: profile, isLoading: isProfileLoading } = useActiveProfile()
