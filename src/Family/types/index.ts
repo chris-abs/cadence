@@ -12,14 +12,13 @@ export interface Module {
 
 export interface Family {
   id: number
-  name: string
-  ownerId: number
-  status: FamilyStatus
-  modules: Module[]
+  email: string
+  familyName: string
   createdAt: string
   updatedAt: string
+  modules: Module[]
+  status: FamilyStatus
 }
-
 export interface CreateFamilyRequest {
   name: string
   modules?: ModuleID[]
