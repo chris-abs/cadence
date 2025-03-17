@@ -40,10 +40,6 @@ export const useAuth = () => {
 
       localStorage.setItem('token', data.token)
 
-      if (data.profiles.length > 0) {
-        localStorage.setItem('activeProfile', JSON.stringify(data.profiles[0]))
-      }
-
       return data
     },
   })
