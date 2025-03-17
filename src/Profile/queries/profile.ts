@@ -116,7 +116,7 @@ export function useRestoreProfile() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: number) => api.put<Profile>(`/profiles/${id}/restore`, { id }),
+    mutationFn: (id: number) => api.put<Profile>(`/profiles/${id}/restore`, {}),
     onSuccess: (restoredProfile) => {
       queryClient.setQueryData(queryKeys.profile.detail(restoredProfile.id), restoredProfile)
       queryClient.invalidateQueries({
