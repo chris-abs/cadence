@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query'
-
 import { Profile } from '@/Profile/types'
 import { Family } from '@/Family/types'
 
@@ -40,9 +39,6 @@ export const useAuth = () => {
       const data = (await response.json()) as FamilyAuthResponse
 
       localStorage.setItem('token', data.token)
-      localStorage.setItem('family', JSON.stringify(data.family))
-
-      localStorage.setItem('profiles', JSON.stringify(data.profiles))
 
       if (data.profiles.length > 0) {
         localStorage.setItem('activeProfile', JSON.stringify(data.profiles[0]))
@@ -70,15 +66,15 @@ export const useAuth = () => {
       const data = (await response.json()) as FamilyAuthResponse
 
       localStorage.setItem('token', data.token)
-      localStorage.setItem('family', JSON.stringify(data.family))
-
-      localStorage.setItem('profiles', JSON.stringify(data.profiles))
 
       if (data.profiles.length > 0) {
         localStorage.setItem('activeProfile', JSON.stringify(data.profiles[0]))
       }
 
       return data
+    },
+    onSuccess: () => {
+      registerMutation.reset()
     },
   })
 
@@ -88,13 +84,12 @@ export const useAuth = () => {
 
   const register = async (credentials: RegisterCredentials) => {
     const result = await registerMutation.mutateAsync(credentials)
+    registerMutation.reset()
     return result
   }
 
   const logout = () => {
     localStorage.removeItem('token')
-    localStorage.removeItem('family')
-    localStorage.removeItem('profiles')
     localStorage.removeItem('activeProfile')
   }
 
