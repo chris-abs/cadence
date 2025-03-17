@@ -15,7 +15,6 @@ export interface CreateProfileRequest {
   name: string
   role: ProfileRole
   pin?: string
-  imageUrl?: string
 }
 
 export interface UpdateProfileRequest {
@@ -24,10 +23,24 @@ export interface UpdateProfileRequest {
   role?: ProfileRole
   pin?: string
   currentPin?: string
-  imageUrl?: string
+  image?: File
+}
+
+export interface SelectProfileRequest {
+  profileId: number
+  pin?: string
 }
 
 export interface VerifyPinRequest {
   profileId: number
   pin: string
+}
+
+export interface ProfilesList {
+  profiles: Profile[]
+}
+
+export interface ProfileResponse {
+  profile: Profile
+  token?: string
 }
