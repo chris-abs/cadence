@@ -11,10 +11,6 @@ export interface Profile {
   updatedAt: string
 }
 
-export interface ProfileWithPin extends Omit<Profile, 'pin'> {
-  pin?: string
-}
-
 export interface CreateProfileRequest {
   name: string
   role: ProfileRole
@@ -31,7 +27,7 @@ export interface UpdateProfileRequest {
   imageUrl?: string
 }
 
-export interface SwitchProfileRequest {
+export interface VerifyPinRequest {
   profileId: number
-  pin?: string
+  pin: string
 }
