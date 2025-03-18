@@ -27,7 +27,7 @@ export function FamilyPanel({ onManage }: FamilyPanelProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HomeIcon className="h-5 w-5 text-primary" />
-            <CardTitle>{family.name}</CardTitle>
+            <CardTitle>{family.familyName}</CardTitle>
           </div>
           <UsersIcon className="h-5 w-5 text-muted-foreground" />
         </div>

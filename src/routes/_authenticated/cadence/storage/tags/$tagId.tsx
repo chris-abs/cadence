@@ -24,7 +24,7 @@ function TagPage() {
             <AlertTitle>No Tags have been found...</AlertTitle>
             <AlertDescription>
               You can create tags in the{' '}
-              <Link className="underline" to="/">
+              <Link className="underline" to="/cadence/storage">
                 Dashboard
               </Link>{' '}
               and add them to Items for better organising!

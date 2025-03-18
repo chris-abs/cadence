@@ -24,7 +24,7 @@ function WorkspacePage() {
             <AlertTitle>No Workspaces have been found...</AlertTitle>
             <AlertDescription>
               You can create Workspaces in the{' '}
-              <Link className="underline" to="/">
+              <Link className="underline" to="/cadence/storage">
                 Dashboard
               </Link>{' '}
               and use them to store Containers for better organising!

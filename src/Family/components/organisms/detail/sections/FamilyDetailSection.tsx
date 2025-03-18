@@ -37,7 +37,7 @@ export function FamilyDetailSection({
   const handleEdit = () => {
     setFormData({
       id: family.id,
-      name: family.name,
+      name: family.familyName,
       status: family.status,
     })
     setIsEditing(true)
@@ -70,7 +70,7 @@ export function FamilyDetailSection({
 
     const updateData: UpdateFamilyData = {
       id: family.id,
-      name: formData.name || family.name,
+      name: formData.name || family.familyName,
       status: formData.status || family.status,
     }
 

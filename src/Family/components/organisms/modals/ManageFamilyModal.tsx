@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import { toast } from 'sonner'
 import { Users, Settings, Home } from 'lucide-react'
 
 import {
@@ -55,7 +53,7 @@ export function ManageFamilyModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Home className="h-5 w-5" />
-            {family.name} Family Settings
+            {family.familyName} Family Settings
           </DialogTitle>
           <DialogDescription>Manage your family members and module subscriptions</DialogDescription>
         </DialogHeader>

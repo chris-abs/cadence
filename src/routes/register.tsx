@@ -36,8 +36,8 @@ function RegisterPage() {
   const handleRegister = async (credentials: {
     email: string
     password: string
-    firstName: string
-    lastName: string
+    familyName: string
+    ownerName: string
   }) => {
     try {
       setRegisterError(null)

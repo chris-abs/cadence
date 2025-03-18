@@ -28,7 +28,7 @@ function ItemPage() {
             <AlertTitle>No Items have been found...</AlertTitle>
             <AlertDescription>
               You can create Items in the{' '}
-              <Link className="underline" to="/">
+              <Link className="underline" to="/cadence/storage">
                 Dashboard
               </Link>{' '}
               and store them in Containers for better organising!
