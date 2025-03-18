@@ -2,16 +2,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { ApiError } from '@/Global/types'
-import { Profile } from '@/Profile/types'
-import { Family, CreateFamilyRequest, Module } from '../types'
-import { UpdateFamilyData } from '../schemas'
+import { ApiError } from '@/Global/types/api'
+import { Family, Module, UpdateFamilyData } from '../types'
+import { useActiveProfile } from '@/Profile/queries'
 
-export function useFamily(id: number | undefined) {
+export function useFamily() {
   return useQuery({
-    queryKey: queryKeys.family.detail(id || 0),
-    queryFn: () => api.get<Family>(`/families/${id}`),
-    enabled: id !== undefined && id > 0,
+    queryKey: queryKeys.family.detail,
+    queryFn: () => api.get<Family>('/family'),
     retry: (failureCount, error) => {
       if ((error as ApiError)?.statusCode === 404) {
         return false
@@ -21,36 +19,10 @@ export function useFamily(id: number | undefined) {
   })
 }
 
-export function useFamilyModules(familyId: number) {
+export function useFamilyModules() {
   return useQuery({
-    queryKey: queryKeys.family.modules(familyId),
-    queryFn: () => api.get<Module[]>(`/families/${familyId}/modules`),
-    enabled: familyId > 0,
-  })
-}
-
-export function useFamilyMembers(familyId: number | undefined) {
-  return useQuery({
-    queryKey: queryKeys.family.members(familyId ?? 0),
-    queryFn: () => api.get<Profile[]>(`/families/${familyId}/members`),
-    enabled: !!familyId && familyId > 0,
-  })
-}
-
-export function useCreateFamily() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: CreateFamilyRequest) => api.post<Family>('/families', data),
-    onSuccess: (family) => {
-      queryClient.setQueryData(queryKeys.family.detail(family.id), family)
-
-      queryClient.setQueryData(queryKeys.family.current, family)
-
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.profile,
-      })
-    },
+    queryKey: queryKeys.family.modules,
+    queryFn: () => api.get<Module[]>('/family/modules'),
   })
 }
 
@@ -58,15 +30,12 @@ export function useUpdateFamily() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ familyId, data }: { familyId: number; data: UpdateFamilyData }) =>
-      api.put<Family>(`/families/${familyId}`, data),
+    mutationFn: (data: UpdateFamilyData) => api.put<Family>('/family', data),
     onSuccess: (updatedFamily) => {
-      queryClient.setQueryData(queryKeys.family.detail(updatedFamily.id), updatedFamily)
-
-      queryClient.setQueryData(queryKeys.family.current, updatedFamily)
+      queryClient.setQueryData(queryKeys.family.detail, updatedFamily)
 
       queryClient.invalidateQueries({
-        queryKey: ['family'],
+        queryKey: queryKeys.family.modules,
       })
     },
   })
@@ -76,43 +45,56 @@ export function useUpdateModule() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({
-      familyId,
-      moduleId,
-      isEnabled,
-    }: {
-      familyId: number
-      moduleId: string
-      isEnabled: boolean
-    }) => api.put(`/families/${familyId}/modules/${moduleId}`, { isEnabled }),
-    onSuccess: (_, variables) => {
+    mutationFn: ({ moduleId, isEnabled }: { moduleId: string; isEnabled: boolean }) =>
+      api.put(`/family/modules/${moduleId}`, { isEnabled }),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.family.detail(variables.familyId),
+        queryKey: queryKeys.family.modules,
       })
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.family.modules(variables.familyId),
+        queryKey: queryKeys.family.detail,
       })
     },
   })
 }
 
-export function useCurrentFamilyId(): number | undefined {
-  const { data: profile } = useQuery<Profile>({
-    queryKey: queryKeys.profile.current,
-  })
+export function useDeleteFamily() {
+  const queryClient = useQueryClient()
 
-  return profile?.familyId
+  return useMutation({
+    mutationFn: () => api.delete<{ message: string }>('/family/delete'),
+    onSuccess: () => {
+      queryClient.removeQueries({
+        queryKey: queryKeys.family.detail,
+      })
+      queryClient.removeQueries({
+        queryKey: queryKeys.family.modules,
+      })
+    },
+  })
+}
+
+export function useRestoreFamily() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () => api.put<{ message: string }>('/family/restore', {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.family,
+      })
+    },
+  })
 }
 
 export function useCurrentFamily() {
-  const queryClient = useQueryClient()
-  const familyId = useCurrentFamilyId()
+  const { data: activeProfile } = useActiveProfile()
 
-  const result = useQuery<Family>({
-    queryKey: queryKeys.family.current,
-    queryFn: () => api.get<Family>(`/families/${familyId}`),
-    enabled: !!familyId,
+  return useQuery({
+    queryKey: queryKeys.family.detail,
+    queryFn: () => api.get<Family>('/family'),
+    enabled: !!activeProfile,
     retry: (failureCount, error) => {
       if ((error as ApiError)?.statusCode === 404) {
         return false
@@ -120,10 +102,4 @@ export function useCurrentFamily() {
       return failureCount < 3
     },
   })
-
-  if (result.data && familyId) {
-    queryClient.setQueryData(queryKeys.family.detail(familyId), result.data)
-  }
-
-  return result
 }

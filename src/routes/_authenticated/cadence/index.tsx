@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { PlusIcon, HomeIcon } from 'lucide-react'
+import { HomeIcon } from 'lucide-react'
 
 import {
   Card,
@@ -10,7 +10,6 @@ import {
   CardTitle,
   Button,
 } from '@/Global/components/atoms'
-import { CreateFamilyModal } from '@/Family/components/organisms/modals'
 import { FamilyPanel, ModuleGrid } from '@/Family/components/atoms'
 import { ManageFamilyModal } from '@/Family/components/organisms/modals'
 import { PageLayout } from '@/Global/layout/PageLayout'
@@ -40,18 +39,14 @@ function CadenceDashboard() {
           {hasFamily && isParent && <Button variant="outline">Manage Family</Button>}
         </div>
 
-        {!hasFamily ? (
-          <NoFamilyView />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <ModuleGrid />
-            </div>
-            <div>
-              <FamilyPanel />
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <ModuleGrid />
           </div>
-        )}
+          <div>
+            <FamilyPanel />
+          </div>
+        </div>
       </div>
       <ManageFamilyModal
         isOpen={isManageFamilyOpen}
@@ -84,30 +79,5 @@ function LoadingState() {
         </Card>
       </div>
     </PageLayout>
-  )
-}
-
-function NoFamilyView() {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-
-  return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Get Started with Cadence</CardTitle>
-          <CardDescription>
-            Create or join a family to start using Cadence's organization modules.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex gap-4">
-          <Button className="flex items-center gap-2" onClick={() => setIsCreateModalOpen(true)}>
-            <PlusIcon className="h-4 w-4" />
-            Create a Family
-          </Button>
-        </CardContent>
-      </Card>
-
-      <CreateFamilyModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
-    </>
   )
 }

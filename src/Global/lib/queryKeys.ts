@@ -1,15 +1,16 @@
 export const queryKeys = {
   user: ['user'] as const,
   family: {
-    detail: (id: number) => ['family', id] as const,
-    current: ['family', 'current'] as const,
-    members: (id: number) => ['family', id, 'members'] as const,
-    modules: (id: number) => ['family', id, 'modules'] as const,
+    all: ['family'] as const,
+    detail: ['family', 'detail'] as const,
+    modules: ['family', 'modules'] as const,
   },
   profile: {
-    list: ['profiles'] as const,
+    all: ['profile'] as const,
+    list: ['profile', 'list'] as const,
+    detail: (id: number) => ['profile', 'detail', id] as const,
     current: ['profile', 'current'] as const,
-    detail: (id: number) => ['profile', id] as const,
+    validate: ['profile', 'validate'] as const,
   },
   search: (query: string) => ['search', query] as const,
   recent: ['recent'] as const,

@@ -19,7 +19,18 @@ export interface Family {
   modules: Module[]
   status: FamilyStatus
 }
+
 export interface CreateFamilyRequest {
   name: string
   modules?: ModuleID[]
+}
+
+export interface UpdateFamilyData {
+  familyName: string
+  status?: FamilyStatus
+}
+
+export interface UpdateModuleRequest {
+  moduleId: ModuleID
+  isEnabled: boolean
 }

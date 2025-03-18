@@ -1,8 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-
-import { api } from '@/Global/utils/api'
-import { queryClient, queryKeys } from '@/Global/lib'
-import { useActiveProfile } from '@/Profile/queries'
+import { useActiveProfile } from '@/Profile/queries/profile'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ context }) => {
@@ -10,25 +7,18 @@ export const Route = createFileRoute('/_authenticated')({
     if (!isLogged()) {
       throw redirect({ to: '/login' })
     }
-
-    await Promise.all([
-      queryClient.prefetchQuery({
-        queryKey: queryKeys.profile.current,
-        queryFn: () => api.get('/profile'),
-      }),
-    ])
   },
   component: AuthenticatedLayout,
 })
 
 function AuthenticatedLayout() {
-  const { data: activeProfile, isError } = useActiveProfile()
+  const { data: activeProfile, isError, isLoading } = useActiveProfile()
 
-  if (isError) {
-    throw redirect({ to: '/login' })
+  if (isError && location.pathname !== '/cadence/profile-select') {
+    throw redirect({ to: '/cadence/profile-select' })
   }
 
-  if (!activeProfile && location.pathname !== '/cadence/profile-select') {
+  if (!isLoading && !activeProfile && location.pathname !== '/cadence/profile-select') {
     throw redirect({ to: '/cadence/profile-select' })
   }
 

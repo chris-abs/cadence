@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { Profile, CreateProfileRequest, UpdateProfileRequest } from '../types'
+import { Profile, UpdateProfileRequest } from '../types'
+import { ApiError } from '@/Global/types/api'
 
 export function useProfiles() {
   return useQuery({
@@ -16,6 +17,12 @@ export function useProfile(id: number) {
     queryKey: queryKeys.profile.detail(id),
     queryFn: () => api.get<Profile>(`/profiles/${id}`),
     enabled: !!id,
+    retry: (failureCount, error) => {
+      if ((error as ApiError)?.statusCode === 404) {
+        return false
+      }
+      return failureCount < 3
+    },
   })
 }
 
@@ -30,19 +37,6 @@ export function useActiveProfile() {
       return JSON.parse(profileJson) as Profile
     },
     staleTime: Infinity,
-  })
-}
-
-export function useCreateProfile() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: CreateProfileRequest) => api.post<Profile>('/profiles', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.profile.list,
-      })
-    },
   })
 }
 
@@ -91,7 +85,7 @@ export function useDeleteProfile() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: number) => api.delete(`/profiles/${id}`),
+    mutationFn: (id: number) => api.delete<void>(`/profiles/${id}`),
     onSuccess: (_, deletedId) => {
       queryClient.removeQueries({
         queryKey: queryKeys.profile.detail(deletedId),
@@ -106,6 +100,9 @@ export function useDeleteProfile() {
         const parsed = JSON.parse(activeProfile)
         if (parsed.id === deletedId) {
           localStorage.removeItem('activeProfile')
+          queryClient.removeQueries({
+            queryKey: queryKeys.profile.current,
+          })
         }
       }
     },

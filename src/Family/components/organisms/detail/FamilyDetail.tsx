@@ -5,33 +5,29 @@ import {
   FamilyMembersSection,
   FamilyModulesSection,
 } from '@/Family/components/organisms/detail/sections'
-import { useUpdateFamily, useFamilyMembers } from '@/Family/queries'
-import { Family } from '@/Family/types'
-import { UpdateFamilyData } from '@/Family/schemas'
+import { useUpdateFamily } from '@/Family/queries'
+import { useProfiles } from '@/Profile/queries'
+import { Family, UpdateFamilyData } from '@/Family/types'
 
 interface FamilyDetailProps {
   family: Family
-  currentUserId: number
+  currentProfileId: number
   isParent: boolean
 }
 
-export function FamilyDetail({ family, currentUserId, isParent }: FamilyDetailProps) {
+export function FamilyDetail({ family, currentProfileId, isParent }: FamilyDetailProps) {
   const updateFamily = useUpdateFamily()
-  const { data: familyMembers, isLoading: isMembersLoading } = useFamilyMembers(family?.id)
+  const { data: profiles, isLoading: isProfilesLoading } = useProfiles()
 
   const handleUpdateFamily = async (data: UpdateFamilyData) => {
     try {
       await updateFamily.mutateAsync({
-        familyId: family.id,
-        data: {
-          id: family.id,
-          name: data.name,
-          status: data.status,
-        },
+        familyName: data.familyName,
+        status: data.status,
       })
 
       toast.success('Family updated', {
-        description: `${data.name} has been updated successfully`,
+        description: `${data.familyName} has been updated successfully`,
       })
     } catch (err) {
       toast.error('Failed to update family', {
@@ -55,10 +51,10 @@ export function FamilyDetail({ family, currentUserId, isParent }: FamilyDetailPr
         <FamilyModulesSection family={family} isParent={isParent} />
 
         <FamilyMembersSection
-          members={familyMembers}
+          profiles={profiles || []}
           isParent={isParent}
-          currentUserId={currentUserId}
-          isLoading={isMembersLoading}
+          currentProfileId={currentProfileId}
+          isLoading={isProfilesLoading}
         />
       </div>
     </div>

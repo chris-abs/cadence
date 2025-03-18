@@ -46,7 +46,7 @@ function FamilySettingsPage() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col p-4 overflow-y-auto">
-        <FamilyDetail family={family} currentUserId={profile.id} isParent={isParent} />
+        <FamilyDetail family={family} currentProfileId={profile.id} isParent={isParent} />
       </div>
     </PageLayout>
   )
