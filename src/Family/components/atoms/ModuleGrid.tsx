@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/Global/components/atoms'
 import { Button, Switch } from '@/Global/components/atoms'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 import { useUpdateModule } from '@/Family/queries'
 import { moduleDefinitions } from '@/Family/constants'
 import { Module, ModuleID } from '@/Family/types'
@@ -21,7 +21,7 @@ function isValidModuleId(id: string): id is ModuleID {
 
 export function ModuleGrid() {
   const router = useRouter()
-  const { family, isParent } = useUserWithFamily()
+  const { family, isParent } = useProfileWithFamily()
   const updateModule = useUpdateModule()
 
   if (!family) {

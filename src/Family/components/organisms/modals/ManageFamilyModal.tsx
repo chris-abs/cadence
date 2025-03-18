@@ -17,7 +17,7 @@ import {
   CardTitle,
   Switch,
 } from '@/Global/components/atoms'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 import { useUpdateModule } from '@/Family/queries'
 import { moduleDefinitions } from '@/Family/constants'
 import { Family, ModuleID } from '@/Family/types'
@@ -35,7 +35,7 @@ export function ManageFamilyModal({
   activeTab,
   onTabChange,
 }: ManageFamilyModalProps) {
-  const { family, isParent } = useUserWithFamily()
+  const { family, isParent } = useProfileWithFamily()
 
   if (!family || !isParent) {
     return null

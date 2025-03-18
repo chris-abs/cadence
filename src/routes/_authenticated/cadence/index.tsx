@@ -14,7 +14,7 @@ import { CreateFamilyModal } from '@/Family/components/organisms/modals'
 import { FamilyPanel, ModuleGrid } from '@/Family/components/atoms'
 import { ManageFamilyModal } from '@/Family/components/organisms/modals'
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 
 export const Route = createFileRoute('/_authenticated/cadence/')({
   component: CadenceDashboard,
@@ -23,7 +23,7 @@ export const Route = createFileRoute('/_authenticated/cadence/')({
 function CadenceDashboard() {
   const [isManageFamilyOpen, setIsManageFamilyOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'members' | 'modules'>('modules')
-  const { hasFamily, isParent, isLoading } = useUserWithFamily()
+  const { hasFamily, isParent, isLoading } = useProfileWithFamily()
 
   const handleOpenManageFamily = () => {
     setActiveTab('modules')

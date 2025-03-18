@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { FamilyDetail } from '@/Family/components/organisms/detail/FamilyDetail'
 import { useCurrentFamily } from '@/Family/queries'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 
 export const Route = createFileRoute('/_authenticated/family/settings')({
   component: FamilySettingsPage,
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_authenticated/family/settings')({
 
 function FamilySettingsPage() {
   const { data: family, isLoading: isFamilyLoading } = useCurrentFamily()
-  const { user, isParent, isLoading: isUserLoading } = useUserWithFamily()
+  const { profile, isParent, isLoading: isUserLoading } = useProfileWithFamily()
 
   const isLoading = isFamilyLoading || isUserLoading
 
@@ -27,7 +27,7 @@ function FamilySettingsPage() {
     )
   }
 
-  if (!family || !user) {
+  if (!family || !profile) {
     return (
       <PageLayout>
         <div className="flex flex-1 flex-col gap-4 p-4">
@@ -46,7 +46,7 @@ function FamilySettingsPage() {
   return (
     <PageLayout>
       <div className="flex flex-1 flex-col p-4 overflow-y-auto">
-        <FamilyDetail family={family} currentUserId={user.id} isParent={isParent} />
+        <FamilyDetail family={family} currentUserId={profile.id} isParent={isParent} />
       </div>
     </PageLayout>
   )

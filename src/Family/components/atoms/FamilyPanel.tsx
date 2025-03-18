@@ -7,10 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/Global/components/atoms'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 
 export function FamilyPanel() {
-  const { family } = useUserWithFamily()
+  const { family } = useProfileWithFamily()
 
   if (!family) {
     return null

@@ -13,7 +13,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 import { ModuleID } from '@/Family/types'
 import { SidebarPopover } from './SidebarPopover'
 import { navigationConfig } from './SidebarConfig'
@@ -21,7 +21,7 @@ import { navigationConfig } from './SidebarConfig'
 export function SidebarCore() {
   const { state } = useSidebar()
   const isCollapsed = state === 'collapsed'
-  const { family } = useUserWithFamily()
+  const { family } = useProfileWithFamily()
 
   const enabledModules = family?.modules.filter((m) => m.isEnabled).map((m) => m.id) || []
 
