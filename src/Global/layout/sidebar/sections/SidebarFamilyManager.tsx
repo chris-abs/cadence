@@ -52,7 +52,7 @@ export function SidebarFamilyManager() {
                 <Crown className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{family?.name || 'My Family'}</span>
+                <span className="truncate font-semibold">{family?.familyName || 'My Family'}</span>
                 <span className="truncate text-xs capitalize">
                   {user?.role?.toLowerCase() || 'Member'}
                 </span>
@@ -68,7 +68,7 @@ export function SidebarFamilyManager() {
           >
             <div className="gap-2 p-2 cursor-default">
               <div className="flex flex-col">
-                <span className="font-medium">{family?.name}</span>
+                <span className="font-medium">{family?.familyName}</span>
                 <span className="text-xs text-muted-foreground">ID: {family?.id}</span>
               </div>
             </div>

@@ -4,7 +4,7 @@ import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { ApiError } from '@/Global/types'
 import { User } from '@/User/types'
-import { Family, CreateFamilyRequest, JoinFamilyRequest, Module } from '../types'
+import { Family, CreateFamilyRequest, Module } from '../types'
 import { UpdateFamilyData } from '../schemas'
 
 export function useFamily(id: number | undefined) {
@@ -49,23 +49,6 @@ export function useCreateFamily() {
 
       queryClient.invalidateQueries({
         queryKey: queryKeys.user,
-      })
-    },
-  })
-}
-
-export function useJoinFamily() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: JoinFamilyRequest) => api.post('/families/join', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.user,
-      })
-
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.family.current,
       })
     },
   })

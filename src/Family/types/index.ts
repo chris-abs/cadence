@@ -23,6 +23,3 @@ export interface CreateFamilyRequest {
   name: string
   modules?: ModuleID[]
 }
-export interface JoinFamilyRequest {
-  token: string
-}
