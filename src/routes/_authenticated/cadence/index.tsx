@@ -25,11 +25,6 @@ function CadenceDashboard() {
   const [activeTab, setActiveTab] = useState<'members' | 'modules'>('modules')
   const { hasFamily, isParent, isLoading } = useProfileWithFamily()
 
-  const handleOpenManageFamily = () => {
-    setActiveTab('modules')
-    setIsManageFamilyOpen(true)
-  }
-
   if (isLoading) {
     return <LoadingState />
   }
@@ -53,7 +48,7 @@ function CadenceDashboard() {
               <ModuleGrid />
             </div>
             <div>
-              <FamilyPanel onManage={handleOpenManageFamily} />
+              <FamilyPanel />
             </div>
           </div>
         )}

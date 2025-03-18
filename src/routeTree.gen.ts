@@ -19,6 +19,7 @@ import { Route as AuthenticatedUserSettingsImport } from './routes/_authenticate
 import { Route as AuthenticatedUserProfileImport } from './routes/_authenticated/user/profile'
 import { Route as AuthenticatedFamilySettingsImport } from './routes/_authenticated/family/settings'
 import { Route as AuthenticatedCadenceProfileSelectImport } from './routes/_authenticated/cadence/profile-select'
+import { Route as AuthenticatedCadenceProfileImport } from './routes/_authenticated/cadence/profile'
 import { Route as AuthenticatedCadenceStorageIndexImport } from './routes/_authenticated/cadence/storage/index'
 import { Route as AuthenticatedCadenceServicesIndexImport } from './routes/_authenticated/cadence/services/index'
 import { Route as AuthenticatedCadenceMealsIndexImport } from './routes/_authenticated/cadence/meals/index'
@@ -83,6 +84,13 @@ const AuthenticatedCadenceProfileSelectRoute =
   AuthenticatedCadenceProfileSelectImport.update({
     id: '/cadence/profile-select',
     path: '/cadence/profile-select',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedCadenceProfileRoute =
+  AuthenticatedCadenceProfileImport.update({
+    id: '/cadence/profile',
+    path: '/cadence/profile',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -215,6 +223,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/register'
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/cadence/profile': {
+      id: '/_authenticated/cadence/profile'
+      path: '/cadence/profile'
+      fullPath: '/cadence/profile'
+      preLoaderRoute: typeof AuthenticatedCadenceProfileImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/cadence/profile-select': {
       id: '/_authenticated/cadence/profile-select'
@@ -362,6 +377,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedCadenceProfileRoute: typeof AuthenticatedCadenceProfileRoute
   AuthenticatedCadenceProfileSelectRoute: typeof AuthenticatedCadenceProfileSelectRoute
   AuthenticatedFamilySettingsRoute: typeof AuthenticatedFamilySettingsRoute
   AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute
@@ -385,6 +401,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedCadenceProfileRoute: AuthenticatedCadenceProfileRoute,
   AuthenticatedCadenceProfileSelectRoute:
     AuthenticatedCadenceProfileSelectRoute,
   AuthenticatedFamilySettingsRoute: AuthenticatedFamilySettingsRoute,
@@ -428,6 +445,7 @@ export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/cadence/profile': typeof AuthenticatedCadenceProfileRoute
   '/cadence/profile-select': typeof AuthenticatedCadenceProfileSelectRoute
   '/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
@@ -454,6 +472,7 @@ export interface FileRoutesByTo {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/cadence/profile': typeof AuthenticatedCadenceProfileRoute
   '/cadence/profile-select': typeof AuthenticatedCadenceProfileSelectRoute
   '/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
@@ -481,6 +500,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/_authenticated/cadence/profile': typeof AuthenticatedCadenceProfileRoute
   '/_authenticated/cadence/profile-select': typeof AuthenticatedCadenceProfileSelectRoute
   '/_authenticated/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/_authenticated/user/profile': typeof AuthenticatedUserProfileRoute
@@ -509,6 +529,7 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/register'
+    | '/cadence/profile'
     | '/cadence/profile-select'
     | '/family/settings'
     | '/user/profile'
@@ -534,6 +555,7 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/register'
+    | '/cadence/profile'
     | '/cadence/profile-select'
     | '/family/settings'
     | '/user/profile'
@@ -559,6 +581,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/register'
+    | '/_authenticated/cadence/profile'
     | '/_authenticated/cadence/profile-select'
     | '/_authenticated/family/settings'
     | '/_authenticated/user/profile'
@@ -612,6 +635,7 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/cadence/profile",
         "/_authenticated/cadence/profile-select",
         "/_authenticated/family/settings",
         "/_authenticated/user/profile",
@@ -639,6 +663,10 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/_authenticated/cadence/profile": {
+      "filePath": "_authenticated/cadence/profile.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/cadence/profile-select": {
       "filePath": "_authenticated/cadence/profile-select.tsx",

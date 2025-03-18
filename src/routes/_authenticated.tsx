@@ -2,8 +2,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 import { api } from '@/Global/utils/api'
 import { queryClient, queryKeys } from '@/Global/lib'
-import { useUser } from '@/User/queries/user'
-import { useActiveProfile } from '@/Profile/queries/profile'
+import { useActiveProfile } from '@/Profile/queries'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ context }) => {
@@ -23,10 +22,9 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function AuthenticatedLayout() {
-  const { isError: isUserError } = useUser()
-  const { data: activeProfile } = useActiveProfile()
+  const { data: activeProfile, isError } = useActiveProfile()
 
-  if (isUserError) {
+  if (isError) {
     throw redirect({ to: '/login' })
   }
 
