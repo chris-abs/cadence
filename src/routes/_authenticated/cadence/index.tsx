@@ -10,7 +10,7 @@ import {
   CardTitle,
   Button,
 } from '@/Global/components/atoms'
-import { CreateFamilyModal, JoinFamilyModal } from '@/Family/components/organisms/modals'
+import { CreateFamilyModal } from '@/Family/components/organisms/modals'
 import { FamilyPanel, ModuleGrid } from '@/Family/components/atoms'
 import { ManageFamilyModal } from '@/Family/components/organisms/modals'
 import { PageLayout } from '@/Global/layout/PageLayout'
@@ -122,8 +122,6 @@ function NoFamilyView() {
       </Card>
 
       <CreateFamilyModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
-
-      <JoinFamilyModal isOpen={isJoinModalOpen} onClose={() => setIsJoinModalOpen(false)} />
     </>
   )
 }

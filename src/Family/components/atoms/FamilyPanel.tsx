@@ -1,4 +1,4 @@
-import { HomeIcon, UsersIcon, UserPlusIcon } from 'lucide-react'
+import { HomeIcon, UsersIcon } from 'lucide-react'
 
 import {
   Card,
@@ -7,15 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/Global/components/atoms'
-import { Button } from '@/Global/components/atoms'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
 
-interface FamilyPanelProps {
-  onManage?: () => void
-}
-
-export function FamilyPanel({ onManage }: FamilyPanelProps) {
-  const { family, isParent } = useUserWithFamily()
+export function FamilyPanel() {
+  const { family } = useUserWithFamily()
 
   if (!family) {
     return null
