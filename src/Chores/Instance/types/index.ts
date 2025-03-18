@@ -1,5 +1,5 @@
-import { User } from '@/User/types'
 import { Task } from '@/Chores/Task/types'
+import { Profile } from '@/Profile/types'
 
 export type ChoreStatus = 'pending' | 'completed' | 'verified' | 'rejected' | 'missed'
 
@@ -17,8 +17,8 @@ export interface ChoreInstance {
   updatedAt: string
 
   chore?: Task
-  assignee?: User
-  verifier?: User
+  assignee?: Profile
+  verifier?: Profile
 }
 
 export interface ChoreStats {

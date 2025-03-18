@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { PageLayout } from '@/Global/layout/PageLayout'
-import { Profile } from '@/Profile/types'
+import { UpdateProfileRequest } from '@/Profile/types'
 import { useUpdateProfile, useActiveProfile } from '@/Profile/queries/profile'
 import {
   ProfileDetailsSection,
   ProfilePinSection,
-} from '@/Profile/components/organisms/detail/sections'
+} from '@/Profile/components/organisms/manage/sections'
 
 export const Route = createFileRoute('/_authenticated/cadence/profile')({
   component: ProfileManagePage,
@@ -18,21 +18,12 @@ function ProfileManagePage() {
   const updateProfile = useUpdateProfile()
   const [isUpdating, setIsUpdating] = useState(false)
 
-  const handleUpdateProfile = async (
-    data: Partial<Profile> & {
-      image?: File
-      pin?: string
-      currentPin?: string
-    },
-  ) => {
+  const handleUpdateProfile = async (data: UpdateProfileRequest) => {
     if (!profile) return
 
     setIsUpdating(true)
     try {
-      await updateProfile.mutateAsync({
-        id: profile.id,
-        ...data,
-      })
+      await updateProfile.mutateAsync(data)
     } finally {
       setIsUpdating(false)
     }

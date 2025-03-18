@@ -11,11 +11,11 @@ import {
 } from '@/Global/components/atoms'
 import { H3, Section } from '@/Global/components/molecules'
 import { cn } from '@/Global/lib'
-import { Profile } from '@/Profile/types'
+import { Profile, UpdateProfileRequest } from '@/Profile/types'
 
 interface ProfileDetailsSectionProps {
   profile: Profile
-  onUpdate: (data: Partial<Profile> & { image?: File }) => Promise<void>
+  onUpdate: (data: UpdateProfileRequest) => Promise<void>
   isUpdating: boolean
 }
 

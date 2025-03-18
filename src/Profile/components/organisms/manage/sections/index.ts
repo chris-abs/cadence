@@ -1,2 +1,2 @@
 export * from './ProfileDetailsSection'
-export 
+export * from './ProfilePinSection'
