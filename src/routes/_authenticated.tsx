@@ -3,6 +3,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { api } from '@/Global/utils/api'
 import { queryClient, queryKeys } from '@/Global/lib'
 import { useUser } from '@/User/queries/user'
+import { useActiveProfile } from '@/Profile/queries/profile'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ context }) => {
@@ -22,10 +23,15 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function AuthenticatedLayout() {
-  const { isError } = useUser()
+  const { isError: isUserError } = useUser()
+  const { data: activeProfile, isError: isProfileError } = useActiveProfile()
 
-  if (isError) {
+  if (isUserError) {
     throw redirect({ to: '/login' })
+  }
+
+  if (!activeProfile && !isProfileError && location.pathname !== '/cadence/profile-select') {
+    throw redirect({ to: '/cadence/profile-select' })
   }
 
   return <Outlet />
