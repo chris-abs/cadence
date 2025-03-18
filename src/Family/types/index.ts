@@ -23,22 +23,6 @@ export interface CreateFamilyRequest {
   name: string
   modules?: ModuleID[]
 }
-
-export interface FamilyInvite {
-  id: number
-  familyId: number
-  email: string
-  role: FamilyRoles['role']
-  token: string
-  expiresAt: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface CreateInviteRequest {
-  email: string
-  role: FamilyRoles['role']
-}
 export interface JoinFamilyRequest {
   token: string
 }

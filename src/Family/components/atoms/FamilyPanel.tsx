@@ -12,10 +12,9 @@ import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
 
 interface FamilyPanelProps {
   onManage?: () => void
-  onInvite: () => void
 }
 
-export function FamilyPanel({ onManage, onInvite }: FamilyPanelProps) {
+export function FamilyPanel({ onManage }: FamilyPanelProps) {
   const { family, isParent } = useUserWithFamily()
 
   if (!family) {
@@ -41,23 +40,6 @@ export function FamilyPanel({ onManage, onInvite }: FamilyPanelProps) {
             Created: {new Date(family.createdAt).toLocaleDateString()}
           </p>
         </div>
-
-        {isParent && (
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full flex items-center gap-2"
-              onClick={onInvite}
-            >
-              <UserPlusIcon className="h-4 w-4" />
-              Invite Member
-            </Button>
-            <Button variant="secondary" size="sm" className="w-full" onClick={onManage}>
-              Manage Family
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   )

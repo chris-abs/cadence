@@ -4,14 +4,7 @@ import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { ApiError } from '@/Global/types'
 import { User } from '@/User/types'
-import {
-  Family,
-  CreateFamilyRequest,
-  JoinFamilyRequest,
-  CreateInviteRequest,
-  FamilyInvite,
-  Module,
-} from '../types'
+import { Family, CreateFamilyRequest, JoinFamilyRequest, Module } from '../types'
 import { UpdateFamilyData } from '../schemas'
 
 export function useFamily(id: number | undefined) {
@@ -75,22 +68,6 @@ export function useJoinFamily() {
         queryKey: queryKeys.family.current,
       })
     },
-  })
-}
-
-export function useCreateInvite() {
-  return useMutation({
-    mutationFn: ({ familyId, data }: { familyId: number; data: CreateInviteRequest }) =>
-      api.post<FamilyInvite>(`/families/${familyId}/invites`, data),
-  })
-}
-
-export function useInviteDetails(token?: string) {
-  return useQuery({
-    queryKey: ['family', 'invite', token],
-    queryFn: () => api.get<FamilyInvite>(`/families/invites/${token}`),
-    enabled: !!token,
-    retry: false,
   })
 }
 

@@ -20,11 +20,9 @@ import {
   Switch,
 } from '@/Global/components/atoms'
 import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
-import { useCreateInvite, useUpdateModule } from '@/Family/queries'
-import { CreateFamilyInviteForm } from '../../molecules/forms'
+import { useUpdateModule } from '@/Family/queries'
 import { moduleDefinitions } from '@/Family/constants'
 import { Family, ModuleID } from '@/Family/types'
-import { CreateFamilyInviteData } from '@/Family/schemas'
 
 interface ManageFamilyModalProps {
   isOpen: boolean
@@ -87,49 +85,9 @@ export function ManageFamilyModal({
   )
 }
 
-interface FamilyMembersTabProps {
-  family: Family
-}
-
-function FamilyMembersTab({ family }: FamilyMembersTabProps) {
-  const [formError, setFormError] = useState<Error | null>(null)
-  const createInvite = useCreateInvite()
-
-  const handleInvite = async (data: CreateFamilyInviteData) => {
-    try {
-      setFormError(null)
-      const response = await createInvite.mutateAsync({
-        familyId: family.id,
-        data,
-      })
-
-      navigator.clipboard.writeText(response.token)
-
-      toast.success('Invitation created', {
-        description: `An invitation has been sent to ${data.email}. The token has been copied to your clipboard.`,
-      })
-    } catch (err) {
-      setFormError(err instanceof Error ? err : new Error('Failed to create invitation'))
-      toast.error('Failed to create invitation')
-    }
-  }
-
+function FamilyMembersTab() {
   return (
     <div className="grid gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Invite New Members</CardTitle>
-          <CardDescription>Send an invitation to add someone to your family</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CreateFamilyInviteForm
-            onSubmit={handleInvite}
-            error={formError}
-            isLoading={createInvite.isPending}
-          />
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Family Members</CardTitle>

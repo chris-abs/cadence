@@ -30,11 +30,6 @@ function CadenceDashboard() {
     setIsManageFamilyOpen(true)
   }
 
-  const handleOpenInvite = () => {
-    setActiveTab('members')
-    setIsManageFamilyOpen(true)
-  }
-
   if (isLoading) {
     return <LoadingState />
   }
@@ -58,7 +53,7 @@ function CadenceDashboard() {
               <ModuleGrid />
             </div>
             <div>
-              <FamilyPanel onManage={handleOpenManageFamily} onInvite={handleOpenInvite} />{' '}
+              <FamilyPanel onManage={handleOpenManageFamily} />
             </div>
           </div>
         )}
