@@ -13,8 +13,8 @@ export const Route = createFileRoute('/_authenticated')({
 
     await Promise.all([
       queryClient.prefetchQuery({
-        queryKey: queryKeys.user,
-        queryFn: () => api.get('/user'),
+        queryKey: queryKeys.profile.current,
+        queryFn: () => api.get('/profile'),
       }),
     ])
   },

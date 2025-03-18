@@ -1,5 +1,5 @@
-import { User } from '@/User/types'
 import { ChoreInstance } from '@/Chores/Instance/types'
+import { Profile } from '@/Profile/types'
 
 export type OccurrenceType = 'daily' | 'weekly' | 'monthly' | 'custom'
 
@@ -25,7 +25,7 @@ export interface Task {
   createdAt: string
   updatedAt: string
 
-  assignee?: User
-  creator?: User
+  assignee?: Profile
+  creator?: Profile
   instances?: ChoreInstance[]
 }

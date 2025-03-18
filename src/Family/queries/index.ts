@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { ApiError } from '@/Global/types'
-import { User } from '@/User/types'
+import { Profile } from '@/Profile/types'
 import { Family, CreateFamilyRequest, Module } from '../types'
 import { UpdateFamilyData } from '../schemas'
 
@@ -32,7 +32,7 @@ export function useFamilyModules(familyId: number) {
 export function useFamilyMembers(familyId: number | undefined) {
   return useQuery({
     queryKey: queryKeys.family.members(familyId ?? 0),
-    queryFn: () => api.get<User[]>(`/families/${familyId}/members`),
+    queryFn: () => api.get<Profile[]>(`/families/${familyId}/members`),
     enabled: !!familyId && familyId > 0,
   })
 }
@@ -48,7 +48,7 @@ export function useCreateFamily() {
       queryClient.setQueryData(queryKeys.family.current, family)
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.user,
+        queryKey: queryKeys.profile,
       })
     },
   })
@@ -98,11 +98,11 @@ export function useUpdateModule() {
 }
 
 export function useCurrentFamilyId(): number | undefined {
-  const { data: user } = useQuery<User>({
-    queryKey: queryKeys.user,
+  const { data: profile } = useQuery<Profile>({
+    queryKey: queryKeys.profile.current,
   })
 
-  return user?.familyId
+  return profile?.familyId
 }
 
 export function useCurrentFamily() {

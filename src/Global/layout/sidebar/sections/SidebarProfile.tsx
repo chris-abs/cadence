@@ -96,7 +96,7 @@ export function SidebarProfile() {
                 <UserCircle2 className="mr-2 h-4 w-4" />
                 Switch Profile
               </DropdownMenuItem>
-              <Link to="/user/profile">
+              <Link to="/cadence/profile">
                 <DropdownMenuItem>
                   <BadgeCheck className="mr-2 h-4 w-4" />
                   Account

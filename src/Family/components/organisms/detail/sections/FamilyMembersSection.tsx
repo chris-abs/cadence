@@ -9,19 +9,19 @@ import {
   CardTitle,
 } from '@/Global/components/atoms'
 import { Section } from '@/Global/components/molecules'
-import { User } from '@/User/types'
+import { Profile } from '@/Profile/types'
 
 interface FamilyMembersSectionProps {
-  members: User[] | undefined
+  members: Profile[] | undefined
   isParent: boolean
-  currentUserId: number
+  currentProfileId: number
   isLoading: boolean
 }
 
 export function FamilyMembersSection({
   members,
   isParent,
-  currentUserId,
+  currentProfileId,
   isLoading,
 }: FamilyMembersSectionProps) {
   return (
@@ -56,8 +56,7 @@ export function FamilyMembersSection({
             ) : (
               members.map((member) => (
                 <div key={member.id} className="grid grid-cols-4 p-3 items-center border-t text-sm">
-                  <div className="font-medium">{`${member.firstName} ${member.lastName}`}</div>
-                  <div className="text-muted-foreground">{member.email}</div>
+                  <div className="font-medium">{`${member.name}`}</div>
                   <div>
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -73,9 +72,9 @@ export function FamilyMembersSection({
                     <Button
                       variant="ghost"
                       size="icon"
-                      disabled={member.id === currentUserId || !isParent}
+                      disabled={member.id === currentProfileId || !isParent}
                       title={
-                        member.id === currentUserId
+                        member.id === currentProfileId
                           ? 'You cannot modify your own role'
                           : 'Manage member'
                       }
