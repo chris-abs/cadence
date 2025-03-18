@@ -32,7 +32,6 @@ export const Route = createFileRoute('/login')({
 function LoginPage() {
   const navigate = useNavigate()
   const auth = useAuth()
-  const { redirectTo, token } = Route.useSearch()
   const [loginError, setLoginError] = useState<string | null>(null)
 
   const handleLogin = async (credentials: LoginCredentials) => {
@@ -40,14 +39,7 @@ function LoginPage() {
       setLoginError(null)
       await auth.login(credentials)
 
-      if (redirectTo === '/invite' && token) {
-        navigate({
-          to: redirectTo,
-          search: { token },
-        })
-      } else {
-        navigate({ to: '/cadence' })
-      }
+      navigate({ to: '/cadence/profile-select' })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setLoginError(errorMessage)
@@ -70,9 +62,7 @@ function LoginPage() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Sign in to Cadence</CardTitle>
             <CardDescription>
-              {redirectTo === '/invite' && token
-                ? 'Sign in to accept your family invitation'
-                : 'Enter your credentials to access your family dashboard'}
+              Enter your credentials to access your family dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -81,7 +71,6 @@ function LoginPage() {
               Don't have an account?{' '}
               <Link
                 to="/register"
-                search={token ? { redirectTo: '/invite', token } : undefined}
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 Register here
