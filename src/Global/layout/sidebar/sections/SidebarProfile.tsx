@@ -1,5 +1,6 @@
-import { Link, useRouter } from '@tanstack/react-router'
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Settings2 } from 'lucide-react'
+// src/Global/layout/sidebar/sections/SidebarUser.tsx
+import { Link, useNavigate } from '@tanstack/react-router'
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Settings2, UserCircle2 } from 'lucide-react'
 
 import {
   Avatar,
@@ -20,21 +21,25 @@ import {
   useSidebar,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
 import { useAuth } from '@/Global/hooks/useAuth'
-import { useUser } from '@/User/queries/user'
+import { useActiveProfile } from '@/Profile/queries/profile'
 
-export function SidebarUser() {
-  const { data: user, isLoading } = useUser()
+export function SidebarProfile() {
+  const { data: profile, isLoading } = useActiveProfile()
   const { isMobile } = useSidebar()
   const { logout } = useAuth()
-  const router = useRouter()
+  const navigate = useNavigate()
 
-  if (isLoading || !user) return null
+  if (isLoading || !profile) return null
 
-  const userInitials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+  const profileInitial = profile.name.charAt(0).toUpperCase()
 
   const handleLogout = () => {
     logout()
-    router.navigate({ to: '/login' })
+    navigate({ to: '/login' })
+  }
+
+  const handleSwitchProfile = () => {
+    navigate({ to: '/cadence/profile-select' })
   }
 
   return (
@@ -47,17 +52,17 @@ export function SidebarUser() {
               className="data-[state=open]:bg-contrast-accent data-[state=open]:text-contrast-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                {user.imageUrl ? (
-                  <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
+                {profile.imageUrl ? (
+                  <AvatarImage src={profile.imageUrl} alt={profile.name} />
                 ) : (
                   <AvatarFallback className="rounded-lg bg-contrast-accent">
-                    {userInitials}
+                    {profileInitial}
                   </AvatarFallback>
                 )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate capitalize font-semibold">{`${user.firstName} ${user.lastName}`}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate capitalize font-semibold">{profile.name}</span>
+                <span className="truncate text-xs capitalize">{profile.role.toLowerCase()}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -71,22 +76,26 @@ export function SidebarUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  {user.imageUrl ? (
-                    <AvatarImage src={user.imageUrl} alt={`${user.firstName} ${user.lastName}`} />
+                  {profile.imageUrl ? (
+                    <AvatarImage src={profile.imageUrl} alt={profile.name} />
                   ) : (
                     <AvatarFallback className="rounded-lg bg-contrast-accent">
-                      {userInitials}
+                      {profileInitial}
                     </AvatarFallback>
                   )}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate capitalize font-semibold">{`${user.firstName} ${user.lastName}`}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate capitalize font-semibold">{profile.name}</span>
+                  <span className="truncate text-xs capitalize">{profile.role.toLowerCase()}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuItem onClick={handleSwitchProfile}>
+                <UserCircle2 className="mr-2 h-4 w-4" />
+                Switch Profile
+              </DropdownMenuItem>
               <Link to="/user/profile">
                 <DropdownMenuItem>
                   <BadgeCheck className="mr-2 h-4 w-4" />

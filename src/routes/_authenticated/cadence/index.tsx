@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { PlusIcon, UserPlusIcon, HomeIcon } from 'lucide-react'
+import { PlusIcon, HomeIcon } from 'lucide-react'
 
 import {
   Card,
@@ -94,7 +94,6 @@ function LoadingState() {
 
 function NoFamilyView() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false)
 
   return (
     <>
@@ -109,14 +108,6 @@ function NoFamilyView() {
           <Button className="flex items-center gap-2" onClick={() => setIsCreateModalOpen(true)}>
             <PlusIcon className="h-4 w-4" />
             Create a Family
-          </Button>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2"
-            onClick={() => setIsJoinModalOpen(true)}
-          >
-            <UserPlusIcon className="h-4 w-4" />
-            Join a Family
           </Button>
         </CardContent>
       </Card>
