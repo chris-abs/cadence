@@ -5,6 +5,7 @@ export interface Profile {
   familyId: number
   name: string
   role: ProfileRole
+  hasPin: boolean
   imageUrl: string
   isOwner: boolean
   createdAt: string

@@ -24,13 +24,13 @@ export const Route = createFileRoute('/_authenticated')({
 
 function AuthenticatedLayout() {
   const { isError: isUserError } = useUser()
-  const { data: activeProfile, isError: isProfileError } = useActiveProfile()
+  const { data: activeProfile } = useActiveProfile()
 
   if (isUserError) {
     throw redirect({ to: '/login' })
   }
 
-  if (!activeProfile && !isProfileError && location.pathname !== '/cadence/profile-select') {
+  if (!activeProfile && location.pathname !== '/cadence/profile-select') {
     throw redirect({ to: '/cadence/profile-select' })
   }
 
