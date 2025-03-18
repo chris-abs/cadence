@@ -46,8 +46,6 @@ export function ProfileSwitcher({
     if (profile.hasPin) {
       setSelectedProfile(profile)
       setIsPinDialogOpen(true)
-      setPin('')
-      setError(null)
     } else {
       handleSelectProfile(profile)
     }
@@ -64,6 +62,7 @@ export function ProfileSwitcher({
         onProfileSelected(profile)
       }
     } catch (err) {
+      console.log(err)
       setError('Failed to select profile')
     }
   }
@@ -86,6 +85,7 @@ export function ProfileSwitcher({
         setError('Incorrect PIN')
       }
     } catch (err) {
+      console.log(err)
       setError('Failed to verify PIN')
     }
   }

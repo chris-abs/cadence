@@ -5,10 +5,14 @@ import { queryKeys } from '@/Global/lib/queryKeys'
 import { Profile, UpdateProfileRequest } from '../types'
 import { ApiError } from '@/Global/types/api'
 
+interface ProfilesResponse {
+  profiles: Profile[]
+}
+
 export function useProfiles() {
   return useQuery({
     queryKey: queryKeys.profile.list,
-    queryFn: () => api.get<Profile[]>('/profiles'),
+    queryFn: () => api.get<ProfilesResponse>('/profiles'),
   })
 }
 
