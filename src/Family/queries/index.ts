@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { ApiError } from '@/Global/types/api'
-import { Family, Module, UpdateFamilyData } from '../types'
+import { Family, Module, UpdateFamilyData, UpdateModuleRequest } from '../types'
 import { useActiveProfile } from '@/Profile/queries'
 
 export function useFamily() {
@@ -45,7 +45,7 @@ export function useUpdateModule() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ moduleId, isEnabled }: { moduleId: string; isEnabled: boolean }) =>
+    mutationFn: ({ moduleId, isEnabled }: UpdateModuleRequest) =>
       api.put(`/family/modules/${moduleId}`, { isEnabled }),
     onSuccess: () => {
       queryClient.invalidateQueries({

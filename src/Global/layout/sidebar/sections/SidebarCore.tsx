@@ -23,7 +23,7 @@ export function SidebarCore() {
   const isCollapsed = state === 'collapsed'
   const { family } = useProfileWithFamily()
 
-  const enabledModules = family?.modules.filter((m) => m.isEnabled).map((m) => m.id) || []
+  const enabledModules = family?.modules?.filter((m) => m.isEnabled)?.map((m) => m.id) || []
 
   return (
     <>

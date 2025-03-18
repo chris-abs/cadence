@@ -30,7 +30,6 @@ export function ModuleGrid() {
 
   const handleToggleModule = (moduleId: ModuleID, currentStatus: boolean) => {
     updateModule.mutate({
-      familyId: family.id,
       moduleId,
       isEnabled: !currentStatus,
     })
