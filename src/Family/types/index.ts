@@ -1,3 +1,5 @@
+import { LucideIcon } from 'lucide-react'
+
 export type ModuleID = 'storage' | 'chores' | 'meals' | 'services'
 export type FamilyStatus = 'ACTIVE' | 'INACTIVE'
 
@@ -18,6 +20,14 @@ export interface Family {
   updatedAt: string
   modules: Module[]
   status: FamilyStatus
+}
+
+export interface ModuleDefinition {
+  id: ModuleID
+  name: string
+  description: string
+  isAvailable: boolean
+  icon: LucideIcon
 }
 
 export interface CreateFamilyRequest {

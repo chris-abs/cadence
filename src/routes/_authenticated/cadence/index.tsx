@@ -10,7 +10,7 @@ import {
   CardTitle,
   Button,
 } from '@/Global/components/atoms'
-import { FamilyPanel } from '@/Family/components/atoms'
+import { FamilyPanel, ModuleGrid } from '@/Family/components/atoms'
 import { ManageFamilyModal } from '@/Family/components/organisms/modals'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
@@ -40,7 +40,9 @@ function CadenceDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">{/* <ModuleGrid /> */}</div>
+          <div className="md:col-span-2">
+            <ModuleGrid />
+          </div>
           <div>
             <FamilyPanel />
           </div>

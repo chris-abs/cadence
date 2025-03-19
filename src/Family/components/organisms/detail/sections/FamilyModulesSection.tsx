@@ -12,7 +12,7 @@ import {
 import { Section } from '@/Global/components/molecules'
 import { Family, ModuleID } from '@/Family/types'
 import { moduleDefinitions } from '@/Family/constants'
-import { useUpdateModule, useFamilyModules } from '@/Family/queries'
+import { useUpdateModule } from '@/Family/queries'
 
 interface FamilyModulesSectionProps {
   family: Family
@@ -20,15 +20,11 @@ interface FamilyModulesSectionProps {
 }
 
 export function FamilyModulesSection({ family, isParent }: FamilyModulesSectionProps) {
-  const { data: modules } = useFamilyModules(family.id)
   const updateModule = useUpdateModule()
-
-  const displayModules = modules || family.modules
 
   const handleModuleToggle = (moduleId: ModuleID, isEnabled: boolean) => {
     updateModule.mutate(
       {
-        familyId: family.id,
         moduleId,
         isEnabled: !isEnabled,
       },
@@ -64,7 +60,7 @@ export function FamilyModulesSection({ family, isParent }: FamilyModulesSectionP
           <CardDescription>Manage which modules are enabled for your family</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {displayModules.map((module) => {
+          {family.modules.map((module) => {
             if (!moduleDefinitions[module.id]) return null
 
             const ModuleIcon = moduleDefinitions[module.id].icon

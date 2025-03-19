@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { ApiError } from '@/Global/types/api'
-import { Family, Module, UpdateFamilyData, UpdateModuleRequest } from '../types'
+import { Family, UpdateFamilyData, UpdateModuleRequest } from '../types'
 import { useActiveProfile } from '@/Profile/queries'
 
 export function useFamily() {
@@ -16,13 +16,6 @@ export function useFamily() {
       }
       return failureCount < 3
     },
-  })
-}
-
-export function useFamilyModules() {
-  return useQuery({
-    queryKey: queryKeys.family.modules,
-    queryFn: () => api.get<Module[]>('/family/modules'),
   })
 }
 
