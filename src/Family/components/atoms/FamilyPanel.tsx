@@ -10,10 +10,10 @@ import {
 import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 
 export function FamilyPanel() {
-  const { family } = useProfileWithFamily()
+  const { family, isLoading } = useProfileWithFamily()
 
-  if (!family) {
-    return null
+  if (isLoading) {
+    return <p>Loading...</p>
   }
 
   return (
@@ -22,7 +22,7 @@ export function FamilyPanel() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HomeIcon className="h-5 w-5 text-primary" />
-            <CardTitle>{family.familyName}</CardTitle>
+            <CardTitle>{family?.familyName}</CardTitle>
           </div>
           <UsersIcon className="h-5 w-5 text-muted-foreground" />
         </div>
@@ -30,10 +30,7 @@ export function FamilyPanel() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-sm">
-          <p className="text-muted-foreground">Family ID: {family.id}</p>
-          <p className="text-muted-foreground">
-            Created: {new Date(family.createdAt).toLocaleDateString()}
-          </p>
+          <p className="text-muted-foreground">Family ID: {family?.id}</p>
         </div>
       </CardContent>
     </Card>

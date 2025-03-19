@@ -3,12 +3,12 @@ import { useCurrentFamily } from '@/Family/queries'
 import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 
 export function FamilySettingsSection() {
-  const { data: family } = useCurrentFamily()
-  const { profile, isParent } = useProfileWithFamily()
+  const { data: family, isLoading: isFamilyLoading } = useCurrentFamily()
+  const { profile, isParent, isLoading: isProfileLoading } = useProfileWithFamily()
 
-  return (
-    <div className="flex flex-1 flex-col p-4 overflow-y-auto">
-      <FamilyDetail family={family} currentProfileId={profile.id} isParent={isParent} />
-    </div>
-  )
+  if (isProfileLoading || isFamilyLoading) {
+    return <p>Loading...</p>
+  }
+
+  return <FamilyDetail family={family} currentProfileId={profile?.id} isParent={isParent} />
 }

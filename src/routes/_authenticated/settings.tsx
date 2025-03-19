@@ -44,27 +44,31 @@ function SettingsPage() {
 
   return (
     <PageLayout>
-      <div className="container py-6 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-6">Settings</h1>
+      <div className="flex flex-col flex-1 p-6">
+        <div className="flex items-center mb-6">
+          <h1 className="text-3xl font-bold">Settings</h1>
+        </div>
 
-        <Tabs value={tab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs value={tab} onValueChange={handleTabChange} className="flex-1 flex flex-col">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="preferences">Preferences</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="family">Family</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="preferences" className="mt-6">
-            <ProfilePreferencesSection />
-          </TabsContent>
+          <div className="flex-1 overflow-auto">
+            <TabsContent value="preferences" className="h-full">
+              <ProfilePreferencesSection />
+            </TabsContent>
 
-          <TabsContent value="profile" className="mt-6">
-            <ProfileSettingsSection />
-          </TabsContent>
+            <TabsContent value="profile" className="h-full">
+              <ProfileSettingsSection />
+            </TabsContent>
 
-          <TabsContent value="family" className="mt-6">
-            <FamilySettingsSection />
-          </TabsContent>
+            <TabsContent value="family" className="h-full">
+              <FamilySettingsSection />
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </PageLayout>

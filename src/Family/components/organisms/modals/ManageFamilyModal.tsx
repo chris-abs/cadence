@@ -110,7 +110,6 @@ function ModulesTab({ family }: ModulesTabProps) {
 
   const handleToggleModule = (moduleId: ModuleID, currentEnabled: boolean) => {
     updateModule.mutate({
-      familyId: family.id,
       moduleId,
       isEnabled: !currentEnabled,
     })

@@ -1,5 +1,13 @@
 import { useState } from 'react'
+import { Lock, Upload } from 'lucide-react'
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/Global/components/atoms'
 import {
   ProfileDetailsSection,
   ProfilePinSection,
@@ -24,20 +32,42 @@ export function ProfileSettingsSection() {
   }
 
   if (!profile) return null
+
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex flex-col gap-6 p-4">
-        <ProfileDetailsSection
-          profile={profile}
-          onUpdate={handleUpdateProfile}
-          isUpdating={isUpdating}
-        />
-        <ProfilePinSection
-          profile={profile}
-          onUpdate={handleUpdateProfile}
-          isUpdating={isUpdating}
-        />
-      </div>
+    <div className="flex flex-1 flex-col gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Upload className="h-5 w-5" />
+            Profile Information
+          </CardTitle>
+          <CardDescription>Manage your profile details</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ProfileDetailsSection
+            profile={profile}
+            onUpdate={handleUpdateProfile}
+            isUpdating={isUpdating}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Lock className="h-5 w-5" />
+            Security Settings
+          </CardTitle>
+          <CardDescription>Manage your PIN and security preferences</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ProfilePinSection
+            profile={profile}
+            onUpdate={handleUpdateProfile}
+            isUpdating={isUpdating}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
