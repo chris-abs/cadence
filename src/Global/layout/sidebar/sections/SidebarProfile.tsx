@@ -96,7 +96,7 @@ export function SidebarProfile() {
                 <UserCircle2 className="mr-2 h-4 w-4" />
                 Switch Profile
               </DropdownMenuItem>
-              <Link to="/profile/preferences">
+              <Link to="/settings" search={{ tab: 'preferences' }}>
                 <DropdownMenuItem>
                   <BadgeCheck className="mr-2 h-4 w-4" />
                   Preferences
@@ -106,7 +106,7 @@ export function SidebarProfile() {
                 <Bell className="mr-2 h-4 w-4" />
                 Notifications
               </DropdownMenuItem>
-              <Link to="/profile/settings">
+              <Link to="/settings" search={{ tab: 'profile' }}>
                 <DropdownMenuItem>
                   <Settings2 className="mr-2 h-4 w-4" />
                   Profile Settings

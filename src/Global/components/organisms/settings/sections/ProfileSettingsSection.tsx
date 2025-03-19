@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import { PageLayout } from '@/Global/layout/PageLayout'
 import {
   ProfileDetailsSection,
   ProfilePinSection,
@@ -26,21 +25,19 @@ export function ProfileSettingsSection() {
 
   if (!profile) return null
   return (
-    <PageLayout>
-      <div className="max-w-2xl mx-auto">
-        <div className="flex flex-col gap-6 p-4">
-          <ProfileDetailsSection
-            profile={profile}
-            onUpdate={handleUpdateProfile}
-            isUpdating={isUpdating}
-          />
-          <ProfilePinSection
-            profile={profile}
-            onUpdate={handleUpdateProfile}
-            isUpdating={isUpdating}
-          />
-        </div>
+    <div className="max-w-2xl mx-auto">
+      <div className="flex flex-col gap-6 p-4">
+        <ProfileDetailsSection
+          profile={profile}
+          onUpdate={handleUpdateProfile}
+          isUpdating={isUpdating}
+        />
+        <ProfilePinSection
+          profile={profile}
+          onUpdate={handleUpdateProfile}
+          isUpdating={isUpdating}
+        />
       </div>
-    </PageLayout>
+    </div>
   )
 }

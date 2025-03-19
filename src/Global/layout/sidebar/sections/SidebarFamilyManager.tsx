@@ -86,7 +86,7 @@ export function SidebarFamilyManager() {
               <>
                 <DropdownMenuItem
                   className="gap-2 p-2"
-                  onClick={() => navigate({ to: '/family/settings' })}
+                  onClick={() => navigate({ to: '/settings', search: { tab: 'family' } })}
                 >
                   <Settings className="size-4" />
                   <span>Family Settings</span>
