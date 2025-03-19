@@ -39,7 +39,7 @@ function LoginPage() {
       setLoginError(null)
       await auth.login(credentials)
 
-      navigate({ to: '/cadence/profile-select' })
+      navigate({ to: '/profile/select' })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setLoginError(errorMessage)

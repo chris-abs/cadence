@@ -39,7 +39,7 @@ export function SidebarProfile() {
   }
 
   const handleSwitchProfile = () => {
-    navigate({ to: '/cadence/profile-select' })
+    navigate({ to: '/profile/select' })
   }
 
   return (
@@ -96,20 +96,20 @@ export function SidebarProfile() {
                 <UserCircle2 className="mr-2 h-4 w-4" />
                 Switch Profile
               </DropdownMenuItem>
-              <Link to="/cadence/profile">
+              <Link to="/profile/preferences">
                 <DropdownMenuItem>
                   <BadgeCheck className="mr-2 h-4 w-4" />
-                  Account
+                  Preferences
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem disabled>
                 <Bell className="mr-2 h-4 w-4" />
                 Notifications
               </DropdownMenuItem>
-              <Link to="/user/settings">
+              <Link to="/profile/settings">
                 <DropdownMenuItem>
                   <Settings2 className="mr-2 h-4 w-4" />
-                  Settings
+                  Profile Settings
                 </DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>

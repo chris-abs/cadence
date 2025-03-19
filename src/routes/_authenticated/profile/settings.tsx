@@ -9,7 +9,7 @@ import {
   ProfilePinSection,
 } from '@/Profile/components/organisms/manage/sections'
 
-export const Route = createFileRoute('/_authenticated/cadence/profile')({
+export const Route = createFileRoute('/_authenticated/profile/settings')({
   component: ProfileManagePage,
 })
 

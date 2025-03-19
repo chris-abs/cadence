@@ -14,8 +14,8 @@ export function useRequireProfile() {
       return
     }
 
-    if (!isLoading && !profile && window.location.pathname !== '/cadence/profile-select') {
-      navigate({ to: '/cadence/profile-select' })
+    if (!isLoading && !profile && window.location.pathname !== '/profile/select') {
+      navigate({ to: '/profile/select' })
     }
   }, [isLogged, profile, isLoading, navigate])
 

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useProfiles } from '@/Profile/queries'
 import { ProfileSwitcher } from '@/Profile/components/organisms/detail'
 
-export const Route = createFileRoute('/_authenticated/cadence/profile-select')({
+export const Route = createFileRoute('/_authenticated/profile/select')({
   component: ProfileSelectPage,
 })
 
@@ -15,10 +15,19 @@ function ProfileSelectPage() {
   }
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading profiles...</div>
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading profiles...
+      </div>
+    )
   }
 
   const profiles = data?.profiles || []
 
-  return <ProfileSwitcher profiles={profiles} onProfileSelected={handleProfileSelected} />
+  return (
+    <ProfileSwitcher
+      profiles={profiles}
+      onProfileSelected={handleProfileSelected}
+    />
+  )
 }

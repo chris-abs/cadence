@@ -19,7 +19,7 @@ import { PageLayout } from '@/Global/layout/PageLayout'
 import { H2, Section } from '@/Global/components/molecules'
 import { useSettingsStore } from '@/Global/stores/useSettingsStore'
 
-export const Route = createFileRoute('/_authenticated/user/settings')({
+export const Route = createFileRoute('/_authenticated/profile/preferences')({
   component: SettingsPage,
 })
 

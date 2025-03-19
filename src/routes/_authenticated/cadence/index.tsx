@@ -10,7 +10,7 @@ import {
   CardTitle,
   Button,
 } from '@/Global/components/atoms'
-import { FamilyPanel, ModuleGrid } from '@/Family/components/atoms'
+import { FamilyPanel } from '@/Family/components/atoms'
 import { ManageFamilyModal } from '@/Family/components/organisms/modals'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
