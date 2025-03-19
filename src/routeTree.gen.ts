@@ -16,9 +16,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedCadenceIndexImport } from './routes/_authenticated/cadence/index'
-import { Route as AuthenticatedProfileSettingsImport } from './routes/_authenticated/profile/settings'
 import { Route as AuthenticatedProfileSelectImport } from './routes/_authenticated/profile/select'
-import { Route as AuthenticatedFamilySettingsImport } from './routes/_authenticated/family/settings'
 import { Route as AuthenticatedCadenceStorageIndexImport } from './routes/_authenticated/cadence/storage/index'
 import { Route as AuthenticatedCadenceServicesIndexImport } from './routes/_authenticated/cadence/services/index'
 import { Route as AuthenticatedCadenceMealsIndexImport } from './routes/_authenticated/cadence/meals/index'
@@ -66,13 +64,6 @@ const AuthenticatedCadenceIndexRoute = AuthenticatedCadenceIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedProfileSettingsRoute =
-  AuthenticatedProfileSettingsImport.update({
-    id: '/profile/settings',
-    path: '/profile/settings',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
 const AuthenticatedProfileSelectRoute = AuthenticatedProfileSelectImport.update(
   {
     id: '/profile/select',
@@ -80,13 +71,6 @@ const AuthenticatedProfileSelectRoute = AuthenticatedProfileSelectImport.update(
     getParentRoute: () => AuthenticatedRoute,
   } as any,
 )
-
-const AuthenticatedFamilySettingsRoute =
-  AuthenticatedFamilySettingsImport.update({
-    id: '/family/settings',
-    path: '/family/settings',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 
 const AuthenticatedCadenceStorageIndexRoute =
   AuthenticatedCadenceStorageIndexImport.update({
@@ -225,25 +209,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/family/settings': {
-      id: '/_authenticated/family/settings'
-      path: '/family/settings'
-      fullPath: '/family/settings'
-      preLoaderRoute: typeof AuthenticatedFamilySettingsImport
-      parentRoute: typeof AuthenticatedImport
-    }
     '/_authenticated/profile/select': {
       id: '/_authenticated/profile/select'
       path: '/profile/select'
       fullPath: '/profile/select'
       preLoaderRoute: typeof AuthenticatedProfileSelectImport
-      parentRoute: typeof AuthenticatedImport
-    }
-    '/_authenticated/profile/settings': {
-      id: '/_authenticated/profile/settings'
-      path: '/profile/settings'
-      fullPath: '/profile/settings'
-      preLoaderRoute: typeof AuthenticatedProfileSettingsImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/cadence/': {
@@ -365,9 +335,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedFamilySettingsRoute: typeof AuthenticatedFamilySettingsRoute
   AuthenticatedProfileSelectRoute: typeof AuthenticatedProfileSelectRoute
-  AuthenticatedProfileSettingsRoute: typeof AuthenticatedProfileSettingsRoute
   AuthenticatedCadenceIndexRoute: typeof AuthenticatedCadenceIndexRoute
   AuthenticatedCadenceChoresIndexRoute: typeof AuthenticatedCadenceChoresIndexRoute
   AuthenticatedCadenceMealsIndexRoute: typeof AuthenticatedCadenceMealsIndexRoute
@@ -388,9 +356,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedFamilySettingsRoute: AuthenticatedFamilySettingsRoute,
   AuthenticatedProfileSelectRoute: AuthenticatedProfileSelectRoute,
-  AuthenticatedProfileSettingsRoute: AuthenticatedProfileSettingsRoute,
   AuthenticatedCadenceIndexRoute: AuthenticatedCadenceIndexRoute,
   AuthenticatedCadenceChoresIndexRoute: AuthenticatedCadenceChoresIndexRoute,
   AuthenticatedCadenceMealsIndexRoute: AuthenticatedCadenceMealsIndexRoute,
@@ -430,9 +396,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/profile/select': typeof AuthenticatedProfileSelectRoute
-  '/profile/settings': typeof AuthenticatedProfileSettingsRoute
   '/cadence': typeof AuthenticatedCadenceIndexRoute
   '/cadence/chores': typeof AuthenticatedCadenceChoresIndexRoute
   '/cadence/meals': typeof AuthenticatedCadenceMealsIndexRoute
@@ -456,9 +420,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/profile/select': typeof AuthenticatedProfileSelectRoute
-  '/profile/settings': typeof AuthenticatedProfileSettingsRoute
   '/cadence': typeof AuthenticatedCadenceIndexRoute
   '/cadence/chores': typeof AuthenticatedCadenceChoresIndexRoute
   '/cadence/meals': typeof AuthenticatedCadenceMealsIndexRoute
@@ -483,9 +445,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/family/settings': typeof AuthenticatedFamilySettingsRoute
   '/_authenticated/profile/select': typeof AuthenticatedProfileSelectRoute
-  '/_authenticated/profile/settings': typeof AuthenticatedProfileSettingsRoute
   '/_authenticated/cadence/': typeof AuthenticatedCadenceIndexRoute
   '/_authenticated/cadence/chores/': typeof AuthenticatedCadenceChoresIndexRoute
   '/_authenticated/cadence/meals/': typeof AuthenticatedCadenceMealsIndexRoute
@@ -511,9 +471,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
-    | '/family/settings'
     | '/profile/select'
-    | '/profile/settings'
     | '/cadence'
     | '/cadence/chores'
     | '/cadence/meals'
@@ -536,9 +494,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/settings'
-    | '/family/settings'
     | '/profile/select'
-    | '/profile/settings'
     | '/cadence'
     | '/cadence/chores'
     | '/cadence/meals'
@@ -561,9 +517,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_authenticated/settings'
-    | '/_authenticated/family/settings'
     | '/_authenticated/profile/select'
-    | '/_authenticated/profile/settings'
     | '/_authenticated/cadence/'
     | '/_authenticated/cadence/chores/'
     | '/_authenticated/cadence/meals/'
@@ -614,9 +568,7 @@ export const routeTree = rootRoute
       "filePath": "_authenticated.tsx",
       "children": [
         "/_authenticated/settings",
-        "/_authenticated/family/settings",
         "/_authenticated/profile/select",
-        "/_authenticated/profile/settings",
         "/_authenticated/cadence/",
         "/_authenticated/cadence/chores/",
         "/_authenticated/cadence/meals/",
@@ -645,16 +597,8 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/settings.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/family/settings": {
-      "filePath": "_authenticated/family/settings.tsx",
-      "parent": "/_authenticated"
-    },
     "/_authenticated/profile/select": {
       "filePath": "_authenticated/profile/select.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/profile/settings": {
-      "filePath": "_authenticated/profile/settings.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/cadence/": {
