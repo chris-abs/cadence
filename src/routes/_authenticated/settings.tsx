@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Global/components/atoms'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import {
@@ -22,7 +23,6 @@ function SettingsPage() {
   const { tab } = useSearch<{ tab: SettingsTab }>()
   const navigate = useNavigate()
 
-  // Update URL when tab changes, no useEffect needed
   const handleTabChange = (value: string) => {
     navigate({ search: { tab: value } }, { replace: true })
   }
