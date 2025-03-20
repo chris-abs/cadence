@@ -72,6 +72,7 @@ export function ProfileSwitcher({
 
     try {
       setError(null)
+
       await verifyPin.mutateAsync({
         profileId: selectedProfile.id,
         pin,
