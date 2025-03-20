@@ -3,11 +3,13 @@ import { LockIcon, ShieldAlertIcon, Unlock } from 'lucide-react'
 
 import {
   Button,
-  Input,
   Label,
   Alert,
   AlertDescription,
   AlertTitle,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
 } from '@/Global/components/atoms'
 import { H3, Muted, Section } from '@/Global/components/molecules'
 import { Profile, UpdateProfileRequest } from '@/Profile/types'
@@ -138,15 +140,26 @@ export function ProfilePinSection({ profile, onUpdate, isUpdating }: ProfilePinS
               {profile.hasPin && (
                 <div className="space-y-2">
                   <Label htmlFor="current-pin">Current PIN</Label>
-                  <Input
-                    id="current-pin"
-                    type="password"
-                    placeholder="Enter current PIN"
-                    value={currentPin}
-                    onChange={(e) => setCurrentPin(e.target.value)}
+                  <InputOTP
                     maxLength={6}
-                    inputMode="numeric"
-                    pattern="[0-9]*"
+                    value={pin}
+                    onChange={setPin}
+                    render={({ slots }) => {
+                      console.log('Render props 1:', { slots }) // Debug log
+
+                      // Safety check
+                      if (!slots) {
+                        return <InputOTPGroup>Loading...</InputOTPGroup>
+                      }
+
+                      return (
+                        <InputOTPGroup>
+                          {Array.from({ length: 6 }).map((_, i) => (
+                            <InputOTPSlot key={i} index={i} />
+                          ))}
+                        </InputOTPGroup>
+                      )
+                    }}
                   />
                 </div>
               )}
@@ -155,30 +168,52 @@ export function ProfilePinSection({ profile, onUpdate, isUpdating }: ProfilePinS
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="new-pin">{profile.hasPin ? 'New PIN' : 'PIN'}</Label>
-                    <Input
-                      id="new-pin"
-                      type="password"
-                      placeholder="Enter new PIN"
-                      value={pin}
-                      onChange={(e) => setPin(e.target.value)}
+                    <InputOTP
                       maxLength={6}
-                      inputMode="numeric"
-                      pattern="[0-9]*"
+                      value={pin}
+                      onChange={setPin}
+                      render={({ slots }) => {
+                        console.log('Render props 2:', { slots }) // Debug log
+
+                        // Safety check
+                        if (!slots) {
+                          return <InputOTPGroup>Loading...</InputOTPGroup>
+                        }
+
+                        return (
+                          <InputOTPGroup>
+                            {Array.from({ length: 6 }).map((_, i) => (
+                              <InputOTPSlot key={i} index={i} />
+                            ))}
+                          </InputOTPGroup>
+                        )
+                      }}
                     />
-                    <p className="text-sm text-muted-foreground">PIN must be 4-6 digits</p>
+                    <p className="text-sm text-muted-foreground">PIN must be 6 digits</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="confirm-pin">Confirm PIN</Label>
-                    <Input
-                      id="confirm-pin"
-                      type="password"
-                      placeholder="Confirm PIN"
-                      value={confirmPin}
-                      onChange={(e) => setConfirmPin(e.target.value)}
+                    <InputOTP
                       maxLength={6}
-                      inputMode="numeric"
-                      pattern="[0-9]*"
+                      value={pin}
+                      onChange={setPin}
+                      render={({ slots }) => {
+                        console.log('Render props 3:', { slots }) // Debug log
+
+                        // Safety check
+                        if (!slots) {
+                          return <InputOTPGroup>Loading...</InputOTPGroup>
+                        }
+
+                        return (
+                          <InputOTPGroup>
+                            {Array.from({ length: 6 }).map((_, i) => (
+                              <InputOTPSlot key={i} index={i} />
+                            ))}
+                          </InputOTPGroup>
+                        )
+                      }}
                     />
                   </div>
                 </>
