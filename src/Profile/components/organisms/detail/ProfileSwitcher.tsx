@@ -72,21 +72,16 @@ export function ProfileSwitcher({
 
     try {
       setError(null)
-
-      const result = await verifyPin.mutateAsync({
+      await verifyPin.mutateAsync({
         profileId: selectedProfile.id,
         pin,
       })
 
-      if (result.verified) {
-        await handleSelectProfile(selectedProfile, pin)
-        setIsPinDialogOpen(false)
-      } else {
-        setError('Incorrect PIN')
-      }
-    } catch (err) {
-      console.log(err)
-      setError('Failed to verify PIN')
+      await handleSelectProfile(selectedProfile, pin)
+      setIsPinDialogOpen(false)
+    } catch {
+      setError('Incorrect PIN')
+      setPin('')
     }
   }
 

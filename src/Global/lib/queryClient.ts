@@ -3,11 +3,18 @@ import { QueryClient } from '@tanstack/react-query'
 import { ApiError } from '../types'
 
 function handleAuthError(error: unknown) {
-  if ((error as ApiError)?.statusCode === 401) {
+  const apiError = error as ApiError
+
+  if (apiError?.statusCode === 401 && apiError.isPinVerificationError) {
+    return true
+  }
+
+  if (apiError?.statusCode === 401) {
     localStorage.removeItem('token')
     window.location.href = '/login'
     return false
   }
+
   return true
 }
 

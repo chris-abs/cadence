@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
 import { Profile, SelectProfileRequest, VerifyPinRequest } from '../types'
+import { ApiError } from '@/Global/types'
 
 export interface ProfileResponse {
   token: string
@@ -26,7 +27,17 @@ export function useSelectProfile() {
 
 export function useVerifyPin() {
   return useMutation({
-    mutationFn: (data: VerifyPinRequest) =>
-      api.post<{ verified: boolean }>('/profiles/verify', data),
+    mutationFn: async (data: VerifyPinRequest) => {
+      try {
+        return await api.post<{ token: string; profile: Profile }>('/profiles/verify', data)
+      } catch (error) {
+        if ((error as ApiError)?.statusCode === 401) {
+          const pinError = error as ApiError
+          pinError.isPinVerificationError = true
+          throw pinError
+        }
+        throw error
+      }
+    },
   })
 }

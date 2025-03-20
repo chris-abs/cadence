@@ -2,6 +2,7 @@ export type ApiError = {
   statusCode: number
   message: string
   data?: unknown
+  isPinVerificationError?: boolean
 } & Error
 
 export function createApiError(statusCode: number, message: string, data?: unknown): ApiError {
@@ -9,5 +10,6 @@ export function createApiError(statusCode: number, message: string, data?: unkno
     statusCode,
     data,
     name: 'ApiError',
+    isPinVerificationError: false,
   })
 }

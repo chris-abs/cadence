@@ -37,11 +37,11 @@ export interface VerifyPinRequest {
   pin: string
 }
 
-export interface ProfilesList {
-  profiles: Profile[]
+export interface ProfileResponse {
+  token: string
+  profile: Profile
 }
 
-export interface ProfileResponse {
-  profile: Profile
-  token?: string
+export interface ProfilesList {
+  profiles: Profile[]
 }
