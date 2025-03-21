@@ -15,9 +15,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
+  PinInput,
 } from '@/Global/components/atoms'
 import { AuthPageWrapper } from '@/Global/components/molecules'
 import { Profile } from '@/Profile/types'
@@ -162,26 +160,13 @@ export function ProfileSwitcher({
             </div>
 
             <div className="space-y-2">
-              <InputOTP
-                maxLength={6}
+              <PinInput
                 value={pin}
                 onChange={setPin}
-                render={({ slots }) => {
-                  console.log('Render props 4:', { slots }) // Debug log
-
-                  // Safety check
-                  if (!slots) {
-                    return <InputOTPGroup>Loading...</InputOTPGroup>
-                  }
-
-                  return (
-                    <InputOTPGroup>
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <InputOTPSlot key={i} index={i} />
-                      ))}
-                    </InputOTPGroup>
-                  )
-                }}
+                length={6}
+                description="Enter your current PIN"
+                error={!!error && error.includes('current PIN')}
+                autoFocus
               />
               {error && <div className="text-center text-sm text-destructive">{error}</div>}
             </div>

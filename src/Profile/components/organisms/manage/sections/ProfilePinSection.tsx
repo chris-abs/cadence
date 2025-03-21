@@ -7,9 +7,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
+  PinInput,
 } from '@/Global/components/atoms'
 import { H3, Muted, Section } from '@/Global/components/molecules'
 import { Profile, UpdateProfileRequest } from '@/Profile/types'
@@ -51,8 +49,8 @@ export function ProfilePinSection({ profile, onUpdate, isUpdating }: ProfilePinS
       return
     }
 
-    if (!/^\d{4,6}$/.test(pin)) {
-      setError('PIN must be 4-6 digits')
+    if (!/^\d{6}$/.test(pin)) {
+      setError('PIN must be 6 digits')
       return
     }
 
@@ -137,29 +135,16 @@ export function ProfilePinSection({ profile, onUpdate, isUpdating }: ProfilePinS
                 </Alert>
               )}
 
-              {profile.hasPin && (
+              {profile.hasPin && !showRemovePin && (
                 <div className="space-y-2">
                   <Label htmlFor="current-pin">Current PIN</Label>
-                  <InputOTP
-                    maxLength={6}
-                    value={pin}
-                    onChange={setPin}
-                    render={({ slots }) => {
-                      console.log('Render props 1:', { slots }) // Debug log
-
-                      // Safety check
-                      if (!slots) {
-                        return <InputOTPGroup>Loading...</InputOTPGroup>
-                      }
-
-                      return (
-                        <InputOTPGroup>
-                          {Array.from({ length: 6 }).map((_, i) => (
-                            <InputOTPSlot key={i} index={i} />
-                          ))}
-                        </InputOTPGroup>
-                      )
-                    }}
+                  <PinInput
+                    value={currentPin}
+                    onChange={setCurrentPin}
+                    length={6}
+                    description="Enter your current PIN"
+                    error={!!error && error.includes('current PIN')}
+                    autoFocus
                   />
                 </div>
               )}
@@ -168,52 +153,26 @@ export function ProfilePinSection({ profile, onUpdate, isUpdating }: ProfilePinS
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="new-pin">{profile.hasPin ? 'New PIN' : 'PIN'}</Label>
-                    <InputOTP
-                      maxLength={6}
+                    <PinInput
                       value={pin}
                       onChange={setPin}
-                      render={({ slots }) => {
-                        console.log('Render props 2:', { slots }) // Debug log
-
-                        // Safety check
-                        if (!slots) {
-                          return <InputOTPGroup>Loading...</InputOTPGroup>
-                        }
-
-                        return (
-                          <InputOTPGroup>
-                            {Array.from({ length: 6 }).map((_, i) => (
-                              <InputOTPSlot key={i} index={i} />
-                            ))}
-                          </InputOTPGroup>
-                        )
-                      }}
+                      length={6}
+                      description="PIN must be 6 digits"
+                      error={
+                        !!error &&
+                        (error.includes('must be 6 digits') || error.includes('do not match'))
+                      }
+                      autoFocus={!profile.hasPin}
                     />
-                    <p className="text-sm text-muted-foreground">PIN must be 6 digits</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="confirm-pin">Confirm PIN</Label>
-                    <InputOTP
-                      maxLength={6}
-                      value={pin}
-                      onChange={setPin}
-                      render={({ slots }) => {
-                        console.log('Render props 3:', { slots }) // Debug log
-
-                        // Safety check
-                        if (!slots) {
-                          return <InputOTPGroup>Loading...</InputOTPGroup>
-                        }
-
-                        return (
-                          <InputOTPGroup>
-                            {Array.from({ length: 6 }).map((_, i) => (
-                              <InputOTPSlot key={i} index={i} />
-                            ))}
-                          </InputOTPGroup>
-                        )
-                      }}
+                    <PinInput
+                      value={confirmPin}
+                      onChange={setConfirmPin}
+                      length={6}
+                      error={!!error && error.includes('do not match')}
                     />
                   </div>
                 </>
