@@ -16,6 +16,7 @@ export interface CreateProfileRequest {
   name: string
   role: ProfileRole
   pin?: string
+  image?: File
 }
 
 export interface UpdateProfileRequest {

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { Profile, UpdateProfileRequest } from '../types'
+import { CreateProfileRequest, Profile, UpdateProfileRequest } from '../types'
 import { ApiError } from '@/Global/types/api'
 
 interface ProfilesResponse {
@@ -13,6 +13,35 @@ export function useProfiles() {
   return useQuery({
     queryKey: queryKeys.profile.list,
     queryFn: () => api.get<ProfilesResponse>('/profiles'),
+  })
+}
+
+export function useCreateProfile() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: CreateProfileRequest) => {
+      const formData = new FormData()
+
+      if (data.image) {
+        formData.append('image', data.image)
+      }
+
+      const profileData = {
+        name: data.name,
+        role: data.role,
+        pin: data.pin || '',
+      }
+
+      formData.append('profileData', JSON.stringify(profileData))
+
+      return api.post<Profile>('/profiles', formData)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.profile.list,
+      })
+    },
   })
 }
 
