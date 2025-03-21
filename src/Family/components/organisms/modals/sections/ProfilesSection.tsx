@@ -1,4 +1,4 @@
-import { UserPlus, UserCog, Crown } from 'lucide-react'
+import { UserCog, Crown } from 'lucide-react'
 
 import {
   Card,
@@ -16,24 +16,12 @@ import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 import { Profile } from '@/Profile/types'
 import { useProfiles } from '@/Profile/queries'
 
-interface ProfilesSectionProps {
-  onCreateProfile: () => void
-}
-
-export function ProfilesSection({ onCreateProfile }: ProfilesSectionProps) {
+export function ProfilesSection() {
   const { profile: currentProfile } = useProfileWithFamily()
   const { data: profiles, isLoading: isProfilesLoading } = useProfiles()
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Family Members</h3>
-        <Button onClick={onCreateProfile} size="sm" className="flex gap-2 items-center">
-          <UserPlus className="h-4 w-4" />
-          Add Profile
-        </Button>
-      </div>
-
       <Card>
         <CardContent className="p-0">
           <div className="rounded-md">
