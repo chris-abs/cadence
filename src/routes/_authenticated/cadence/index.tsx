@@ -11,9 +11,9 @@ import {
   Button,
 } from '@/Global/components/atoms'
 import { FamilyPanel, ModuleGrid } from '@/Family/components/atoms'
-import { ManageFamilyModal } from '@/Family/components/organisms/modals'
 import { PageLayout } from '@/Global/layout/PageLayout'
 import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
+import { FamilyManagementModal } from '@/Family/components/organisms/modals'
 
 export const Route = createFileRoute('/_authenticated/cadence/')({
   component: CadenceDashboard,
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_authenticated/cadence/')({
 
 function CadenceDashboard() {
   const [isManageFamilyOpen, setIsManageFamilyOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'members' | 'modules'>('modules')
+  const [activeTab, setActiveTab] = useState<'members' | 'modules'>('members')
   const { hasFamily, isParent, isLoading } = useProfileWithFamily()
 
   if (isLoading) {
@@ -36,7 +36,11 @@ function CadenceDashboard() {
             <HomeIcon className="h-7 w-7" />
             <h1 className="text-3xl font-bold">Welcome to Cadence</h1>
           </div>
-          {hasFamily && isParent && <Button variant="outline">Manage Family</Button>}
+          {hasFamily && isParent && (
+            <Button variant="outline" onClick={() => setIsManageFamilyOpen(true)}>
+              Manage Family
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -48,7 +52,8 @@ function CadenceDashboard() {
           </div>
         </div>
       </div>
-      <ManageFamilyModal
+
+      <FamilyManagementModal
         isOpen={isManageFamilyOpen}
         onClose={() => setIsManageFamilyOpen(false)}
         activeTab={activeTab}
