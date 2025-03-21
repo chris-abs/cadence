@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/Global/utils/api'
 import { queryKeys } from '@/Global/lib/queryKeys'
-import { CreateProfileRequest, Profile, UpdateProfileRequest } from '../types'
 import { ApiError } from '@/Global/types/api'
+import { CreateProfileRequest, Profile, UpdateProfileRequest } from '../types'
 
 interface ProfilesResponse {
   profiles: Profile[]
