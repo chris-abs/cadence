@@ -61,7 +61,7 @@ export const useSettingsStore = create<SettingsState>()(
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
     }),
     {
-      name: 'user-settings',
+      name: 'profile-settings',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         theme: state.theme,

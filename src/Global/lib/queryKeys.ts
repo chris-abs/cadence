@@ -1,5 +1,4 @@
 export const queryKeys = {
-  user: ['user'] as const,
   family: {
     all: ['family'] as const,
     detail: ['family', 'detail'] as const,
@@ -55,10 +54,10 @@ export const queryKeys = {
       date,
       assigneeId,
     ],
-    stats: (userId: number, startDate: string, endDate: string) => [
+    stats: (profileId: number, startDate: string, endDate: string) => [
       'chores',
       'stats',
-      userId,
+      profileId,
       startDate,
       endDate,
     ],

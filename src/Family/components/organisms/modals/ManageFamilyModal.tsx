@@ -68,7 +68,7 @@ export function FamilyManagementModal({
             </TabsList>
 
             <TabsContent value="members" className="mt-4">
-              <ProfilesSection onCreateProfile={() => setIsCreateProfileModalOpen(true)} />
+              <ProfilesSection />
             </TabsContent>
 
             <TabsContent value="modules" className="mt-4">

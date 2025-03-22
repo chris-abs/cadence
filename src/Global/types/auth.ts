@@ -1,4 +1,5 @@
-import { FamilyRoles } from '@/Family/types'
+import { Family } from '@/Family/types'
+import { Profile } from '@/Profile/types'
 
 export interface LoginCredentials {
   email: string
@@ -8,20 +9,12 @@ export interface LoginCredentials {
 export interface RegisterCredentials {
   email: string
   password: string
-  firstName: string
-  lastName: string
-  imageUrl?: string
+  familyName: string
+  ownerName: string
 }
 
-export interface AuthResponse {
+export interface FamilyAuthResponse {
   token: string
-  user: {
-    id: number
-    email: string
-    firstName: string
-    lastName: string
-    imageUrl?: string
-    familyId: number
-    role: FamilyRoles
-  }
+  family: Family
+  profiles: Profile[]
 }
