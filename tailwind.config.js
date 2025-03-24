@@ -66,6 +66,9 @@ export default {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+      backgroundImage: {
+        'card-gradient-border': 'var(--card-gradient-border)',
+      },
       keyframes: {
         'accordion-down': {
           from: {
