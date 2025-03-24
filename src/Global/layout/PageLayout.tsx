@@ -28,7 +28,7 @@ export function PageLayout({ children }: PageLayoutProps) {
   if (!auth.isLogged()) {
     return (
       <div className="min-h-screen">
-        <header className="h-16 border-b flex items-center px-4">
+        <header className="h-16 border-b flex items-center">
           <div className="flex items-center gap-4 ml-auto">
             <Link to="/login" className="text-sm font-medium text-gray-900 hover:text-gray-700">
               Login
