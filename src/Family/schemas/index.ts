@@ -15,18 +15,5 @@ export const UpdateFamilySchema = z.object({
   status: z.enum(['ACTIVE', 'INACTIVE'] as const).optional(),
 })
 
-export const CreateFamilyInviteSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  role: z.enum(['PARENT', 'CHILD'], {
-    required_error: 'Please select a role',
-  }),
-})
-
-export const JoinFamilySchema = z.object({
-  token: z.string().min(1, { message: 'Invitation token is required' }),
-})
-
 export type CreateFamilyData = z.infer<typeof CreateFamilySchema>
 export type UpdateFamilyData = z.infer<typeof UpdateFamilySchema>
-export type CreateFamilyInviteData = z.infer<typeof CreateFamilyInviteSchema>
-export type JoinFamilyData = z.infer<typeof JoinFamilySchema>

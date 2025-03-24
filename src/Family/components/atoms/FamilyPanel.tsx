@@ -1,4 +1,4 @@
-import { HomeIcon, UsersIcon, UserPlusIcon } from 'lucide-react'
+import { HomeIcon, UsersIcon } from 'lucide-react'
 
 import {
   Card,
@@ -7,19 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/Global/components/atoms'
-import { Button } from '@/Global/components/atoms'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 
-interface FamilyPanelProps {
-  onManage?: () => void
-  onInvite: () => void
-}
+export function FamilyPanel() {
+  const { family, isLoading } = useProfileWithFamily()
 
-export function FamilyPanel({ onManage, onInvite }: FamilyPanelProps) {
-  const { family, isParent } = useUserWithFamily()
-
-  if (!family) {
-    return null
+  if (isLoading) {
+    return <p>Loading...</p>
   }
 
   return (
@@ -28,7 +22,7 @@ export function FamilyPanel({ onManage, onInvite }: FamilyPanelProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HomeIcon className="h-5 w-5 text-primary" />
-            <CardTitle>{family.name}</CardTitle>
+            <CardTitle>{family?.familyName}</CardTitle>
           </div>
           <UsersIcon className="h-5 w-5 text-muted-foreground" />
         </div>
@@ -36,28 +30,8 @@ export function FamilyPanel({ onManage, onInvite }: FamilyPanelProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-sm">
-          <p className="text-muted-foreground">Family ID: {family.id}</p>
-          <p className="text-muted-foreground">
-            Created: {new Date(family.createdAt).toLocaleDateString()}
-          </p>
+          <p className="text-muted-foreground">Family ID: {family?.id}</p>
         </div>
-
-        {isParent && (
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full flex items-center gap-2"
-              onClick={onInvite}
-            >
-              <UserPlusIcon className="h-4 w-4" />
-              Invite Member
-            </Button>
-            <Button variant="secondary" size="sm" className="w-full" onClick={onManage}>
-              Manage Family
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   )

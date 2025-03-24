@@ -1,8 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-
-import { api } from '@/Global/utils/api'
-import { queryClient, queryKeys } from '@/Global/lib'
-import { useUser } from '@/User/queries/user'
+import { useActiveProfile } from '@/Profile/queries/profile'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ context }) => {
@@ -10,22 +7,19 @@ export const Route = createFileRoute('/_authenticated')({
     if (!isLogged()) {
       throw redirect({ to: '/login' })
     }
-
-    await Promise.all([
-      queryClient.prefetchQuery({
-        queryKey: queryKeys.user,
-        queryFn: () => api.get('/user'),
-      }),
-    ])
   },
   component: AuthenticatedLayout,
 })
 
 function AuthenticatedLayout() {
-  const { isError } = useUser()
+  const { data: activeProfile, isError, isLoading } = useActiveProfile()
 
-  if (isError) {
-    throw redirect({ to: '/login' })
+  if (isError && location.pathname !== '/profile/select') {
+    throw redirect({ to: '/profile/select' })
+  }
+
+  if (!isLoading && !activeProfile && location.pathname !== '/profile/select') {
+    throw redirect({ to: '/profile/select' })
   }
 
   return <Outlet />

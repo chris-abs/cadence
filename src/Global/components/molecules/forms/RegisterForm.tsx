@@ -1,94 +1,56 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import { User, Mail, Lock, Home } from 'lucide-react'
 
 import {
-  Alert,
-  AlertDescription,
-  Button,
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
   Input,
+  Button,
+  Alert,
+  AlertDescription,
 } from '@/Global/components/atoms'
-import { registerSchema } from '@/User/schemas/auth'
 
-type FormData = z.infer<typeof registerSchema>
+const registerSchema = z.object({
+  email: z.string().email({ message: 'Please enter a valid email' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
+  familyName: z.string().min(2, { message: 'Family name must be at least 2 characters' }),
+  ownerName: z.string().min(2, { message: 'Your name must be at least 2 characters' }),
+})
+
+type RegisterFormValues = z.infer<typeof registerSchema>
 
 interface RegisterFormProps {
-  onSubmit: (credentials: FormData) => void
+  onSubmit: (data: RegisterFormValues) => Promise<void>
   error?: string | null
   isLoading?: boolean
 }
 
 export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) {
-  const form = useForm<FormData>({
+  const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
       email: '',
       password: '',
+      familyName: '',
+      ownerName: '',
     },
   })
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {error && (
-          <Alert
-            variant="destructive"
-            className="border-destructive/30 bg-destructive/10 text-destructive"
-          >
-            <AlertDescription className="capitalize">{error}</AlertDescription>
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="John"
-                    {...field}
-                    className={
-                      form.formState.errors.firstName
-                        ? 'border-destructive'
-                        : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
-                    }
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Doe"
-                    {...field}
-                    className={
-                      form.formState.errors.lastName
-                        ? 'border-destructive'
-                        : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
-                    }
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
 
         <FormField
           control={form.control}
@@ -97,16 +59,12 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="email@example.com"
-                  {...field}
-                  className={
-                    form.formState.errors.email
-                      ? 'border-destructive'
-                      : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
-                  }
-                />
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="name@example.com" {...field} />
+                </div>
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -118,27 +76,55 @@ export function RegisterForm({ onSubmit, error, isLoading }: RegisterFormProps) 
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="••••••"
-                  {...field}
-                  className={
-                    form.formState.errors.password
-                      ? 'border-destructive'
-                      : 'border-border/50 bg-background/50 transition-all duration-200 focus-visible:ring-primary'
-                  }
-                />
+                <div className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <Input type="password" placeholder="********" {...field} />
+                </div>
               </FormControl>
+              <FormDescription>At least 8 characters</FormDescription>
+              <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 transition-all duration-200"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Creating account...' : 'Create Account'}
+        <FormField
+          control={form.control}
+          name="familyName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Family Name</FormLabel>
+              <FormControl>
+                <div className="flex items-center gap-2">
+                  <Home className="h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Enter family name" {...field} />
+                </div>
+              </FormControl>
+              <FormDescription>The name for your family account</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="ownerName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Your Name</FormLabel>
+              <FormControl>
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Enter your name" {...field} />
+                </div>
+              </FormControl>
+              <FormDescription>Your name for your profile</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? 'Creating Account...' : 'Create Account'}
         </Button>
       </form>
     </Form>

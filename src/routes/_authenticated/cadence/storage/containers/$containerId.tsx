@@ -24,7 +24,7 @@ function ContainerPage() {
             <AlertTitle>No Containers have been found...</AlertTitle>
             <AlertDescription>
               You can create Containers in the{' '}
-              <Link className="underline" to="/">
+              <Link className="underline" to="/cadence/storage">
                 Dashboard
               </Link>{' '}
               and use them to store Items for better organising!

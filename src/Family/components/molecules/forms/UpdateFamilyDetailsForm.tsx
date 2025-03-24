@@ -35,7 +35,7 @@ export function UpdateFamilyDetailsForm({
         <Input
           id="family-name"
           name="name"
-          value={isEditing ? formData?.name || '' : family.name}
+          value={isEditing ? formData?.name || '' : family.familyName}
           onChange={onInputChange}
           readOnly={!isEditing}
           className={cn(!isEditing && 'cursor-default focus:outline-none')}

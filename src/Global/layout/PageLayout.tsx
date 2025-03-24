@@ -14,6 +14,7 @@ import { useAuth } from '@/Global/hooks/useAuth'
 import { useBreadcrumbs } from '@/Global/lib/breadcrumbs'
 import { AppSidebar, SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar'
 import { QrSearch } from '../components/molecules/search/scanner'
+import { useActiveProfile } from '@/Profile/queries/profile'
 
 interface PageLayoutProps {
   children: React.ReactNode
@@ -21,6 +22,7 @@ interface PageLayoutProps {
 
 export function PageLayout({ children }: PageLayoutProps) {
   const auth = useAuth()
+  const { data: activeProfile } = useActiveProfile()
   const breadcrumbs = useBreadcrumbs()
 
   if (!auth.isLogged()) {
@@ -39,6 +41,10 @@ export function PageLayout({ children }: PageLayoutProps) {
         <main>{children}</main>
       </div>
     )
+  }
+
+  if (!activeProfile && window.location.pathname === '/cadence/profile-select') {
+    return <main>{children}</main>
   }
 
   return (

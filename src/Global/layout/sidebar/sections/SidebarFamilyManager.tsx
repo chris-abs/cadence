@@ -14,11 +14,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/Global/layout/sidebar/sections/SidebarFoundation'
-import { useUserWithFamily } from '@/User/hooks/useUserWithFamily'
+import { useProfileWithFamily } from '@/Profile/hooks/useProfileWithFamily'
 
 export function SidebarFamilyManager() {
   const { isMobile } = useSidebar()
-  const { user, family, isParent, hasFamily } = useUserWithFamily()
+  const { profile, family, isParent, hasFamily } = useProfileWithFamily()
   const navigate = useNavigate()
 
   if (!hasFamily) {
@@ -52,9 +52,9 @@ export function SidebarFamilyManager() {
                 <Crown className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{family?.name || 'My Family'}</span>
+                <span className="truncate font-semibold">{family?.familyName || 'My Family'}</span>
                 <span className="truncate text-xs capitalize">
-                  {user?.role?.toLowerCase() || 'Member'}
+                  {profile?.role?.toLowerCase() || 'Member'}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -68,7 +68,7 @@ export function SidebarFamilyManager() {
           >
             <div className="gap-2 p-2 cursor-default">
               <div className="flex flex-col">
-                <span className="font-medium">{family?.name}</span>
+                <span className="font-medium">{family?.familyName}</span>
                 <span className="text-xs text-muted-foreground">ID: {family?.id}</span>
               </div>
             </div>
@@ -86,7 +86,7 @@ export function SidebarFamilyManager() {
               <>
                 <DropdownMenuItem
                   className="gap-2 p-2"
-                  onClick={() => navigate({ to: '/family/settings' })}
+                  onClick={() => navigate({ to: '/settings', search: { tab: 'family' } })}
                 >
                   <Settings className="size-4" />
                   <span>Family Settings</span>
@@ -95,11 +95,14 @@ export function SidebarFamilyManager() {
             )}
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2 opacity-50" disabled>
+            <DropdownMenuItem
+              className="gap-2 p-2"
+              onClick={() => navigate({ to: '/profile/select' })}
+            >
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
-              <div className="font-medium">Join Another Family</div>
+              <div className="font-medium">Switch Profile</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

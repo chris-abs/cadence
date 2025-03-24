@@ -31,29 +31,20 @@ export const Route = createFileRoute('/register')({
 function RegisterPage() {
   const navigate = useNavigate()
   const auth = useAuth()
-  const { redirectTo, token } = Route.useSearch()
   const [registerError, setRegisterError] = useState<string | null>(null)
 
   const handleRegister = async (credentials: {
     email: string
     password: string
-    firstName: string
-    lastName: string
+    familyName: string
+    ownerName: string
   }) => {
     try {
       setRegisterError(null)
       await auth.register(credentials)
 
       toast.success('Account created successfully')
-
-      if (redirectTo === '/invite' && token) {
-        navigate({
-          to: redirectTo,
-          search: { token },
-        })
-      } else {
-        navigate({ to: '/login' })
-      }
+      navigate({ to: '/login' })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Registration failed'
       setRegisterError(errorMessage)
@@ -75,11 +66,7 @@ function RegisterPage() {
         <Card className="border-border/30 bg-card/80 backdrop-blur-sm">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-            <CardDescription>
-              {redirectTo === '/invite' && token
-                ? 'Create an account to accept your family invitation'
-                : 'Enter your details below to create your account'}
-            </CardDescription>
+            <CardDescription>Enter your details below to create your account</CardDescription>
           </CardHeader>
           <CardContent>
             <RegisterForm
@@ -91,7 +78,6 @@ function RegisterPage() {
               Already have an account?{' '}
               <Link
                 to="/login"
-                search={token ? { redirectTo: '/invite', token } : undefined}
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 Sign in here
