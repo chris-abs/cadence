@@ -61,8 +61,7 @@ export function ProfileSwitcher({
       if (onProfileSelected) {
         onProfileSelected(profile)
       }
-    } catch (err) {
-      console.log(err)
+    } catch {
       setError('Failed to select profile')
     }
   }
