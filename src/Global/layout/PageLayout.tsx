@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
-import { Separator } from '@radix-ui/react-dropdown-menu'
 
 import {
   Breadcrumb,
@@ -12,9 +11,9 @@ import {
 } from '../components/molecules'
 import { useAuth } from '@/Global/hooks/useAuth'
 import { useBreadcrumbs } from '@/Global/lib/breadcrumbs'
+import { useActiveProfile } from '@/Profile/queries/profile'
 import { AppSidebar, SidebarInset, SidebarProvider, SidebarTrigger } from './sidebar'
 import { QrSearch } from '../components/molecules/search/scanner'
-import { useActiveProfile } from '@/Profile/queries/profile'
 
 interface PageLayoutProps {
   children: React.ReactNode
@@ -55,30 +54,31 @@ export function PageLayout({ children }: PageLayoutProps) {
           <div className="flex justify-between items-center w-full">
             <div className="flex items-center">
               <SidebarTrigger className="-ml-1" />
-              <Separator className="mx-2 h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  {breadcrumbs.map((crumb, index) => (
-                    <React.Fragment key={crumb.label}>
-                      <BreadcrumbItem className="hidden md:block">
-                        {index === breadcrumbs.length - 1 ? (
-                          <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink href={crumb.href || ''}>{crumb.label}</BreadcrumbLink>
-                        )}
-                      </BreadcrumbItem>
-                      {index < breadcrumbs.length - 1 && (
-                        <BreadcrumbSeparator className="hidden md:block" />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </BreadcrumbList>
-              </Breadcrumb>
+              <QrSearch />
             </div>
-            <QrSearch />
           </div>
         </div>
-        <main className="flex-1 bg-contrast-accent overflow-y-auto">{children}</main>
+        <main className="flex-1 bg-contrast-accent overflow-y-auto">
+          <div className="px-6 pt-4">
+            <Breadcrumb>
+              <BreadcrumbList>
+                {breadcrumbs.map((crumb, index) => (
+                  <React.Fragment key={crumb.label}>
+                    <BreadcrumbItem>
+                      {index === breadcrumbs.length - 1 ? (
+                        <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink href={crumb.href || ''}>{crumb.label}</BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+                  </React.Fragment>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   )
