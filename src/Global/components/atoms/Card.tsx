@@ -2,14 +2,18 @@ import * as React from 'react'
 
 import { cn } from '@/Global/lib/utils'
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div className="rounded-[20px] p-[1px] bg-card-gradient-border">
-      <div className="rounded-[19px] bg-background p-2">
-        <div className="rounded-[12px] p-[1px] bg-card-gradient-border">
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  middleLayerClassName?: string
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, middleLayerClassName = 'bg-muted', ...props }, ref) => (
+    <div className="rounded-[20px] p-[1px] bg-card-gradient-border bg-[length:100%_100%]">
+      <div className={`rounded-[19px] ${middleLayerClassName} p-2`}>
+        <div className="rounded-[12px] p-[1px] bg-card-gradient-border bg-[length:100%_100%]">
           <div
             ref={ref}
-            className={cn('rounded-[11px] p-3 bg-card text-card-foreground shadow', className)}
+            className={cn('rounded-[11px] p-3 bg-card text-card-foreground shadow-sm', className)}
             {...props}
           />
         </div>
