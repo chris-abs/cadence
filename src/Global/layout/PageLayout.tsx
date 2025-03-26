@@ -58,7 +58,7 @@ export function PageLayout({ children }: PageLayoutProps) {
             </div>
           </div>
         </div>
-        <main className="flex-1 bg-contrast-accent overflow-y-auto">
+        <main className="flex-1 bg-contrast-accent overflow-y-auto rounded-tl-3xl">
           <div className="px-6 pt-4">
             <Breadcrumb>
               <BreadcrumbList>

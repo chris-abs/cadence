@@ -1,4 +1,3 @@
-// src/Global/layout/sidebar/sections/SidebarUser.tsx
 import { Link, useNavigate } from '@tanstack/react-router'
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Settings2, UserCircle2 } from 'lucide-react'
 
