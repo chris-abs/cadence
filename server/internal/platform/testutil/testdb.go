@@ -30,11 +30,11 @@ const defaultTestDatabaseURL = "postgres://cadence:cadence_local_dev@localhost:5
 // applied, dropped when the test ends. pgtestdb migrates a template database
 // once per migration hash and clones it per test, so this is cheap and tests
 // using it can run in parallel.
-func NewDB(t testing.TB) *pgxpool.Pool {
+func NewDB(t testing.TB, opts ...platformdb.Option) *pgxpool.Pool {
 	t.Helper()
 	conf := pgtestdb.Custom(t, serverConfig(t), goosemigrator.New("migrations", goosemigrator.WithFS(db.Migrations)))
 
-	pool, err := platformdb.Open(t.Context(), conf.URL())
+	pool, err := platformdb.Open(t.Context(), conf.URL(), opts...)
 	if err != nil {
 		t.Fatalf("testutil: open test database: %v", err)
 	}

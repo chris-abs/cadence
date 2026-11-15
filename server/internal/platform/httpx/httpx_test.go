@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/chris-abs/cadence/server/internal/api"
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
@@ -64,6 +65,20 @@ func TestWriteErrorOmitsEmptyFields(t *testing.T) {
 	}
 	if strings.Contains(rec.Body.String(), "fields") {
 		t.Errorf("body should omit fields: %s", rec.Body)
+	}
+}
+
+func TestWriteRetryLater(t *testing.T) {
+	rec := httptest.NewRecorder()
+	if err := httpx.WriteRetryLater(rec, httpx.CodePINLocked, "Wait.", 1500*time.Millisecond); err != nil {
+		t.Fatalf("WriteRetryLater: %v", err)
+	}
+	got := assertError(t, rec, http.StatusTooManyRequests, httpx.CodePINLocked)
+	if got.Error.RetryAfterSeconds == nil || *got.Error.RetryAfterSeconds != 2 {
+		t.Errorf("retryAfterSeconds = %v, want 2 (rounded up)", got.Error.RetryAfterSeconds)
+	}
+	if rec.Header().Get("Retry-After") != "2" {
+		t.Errorf("Retry-After = %q", rec.Header().Get("Retry-After"))
 	}
 }
 
