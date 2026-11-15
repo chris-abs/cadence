@@ -4,6 +4,7 @@ import { apiUrl, health } from "@/test/handlers";
 import { server } from "@/test/server";
 import { api, unwrap } from "./client";
 import { ApiError } from "./error";
+import { passive } from "./passive";
 
 const getHealth = () => unwrap(api.GET("/healthz"));
 
@@ -59,5 +60,18 @@ describe("api", () => {
     }
 
     expect(credentials).toBe("include");
+  });
+
+  it("marks passive requests so they never renew a session", async () => {
+    const headers: (string | null)[] = [];
+    server.events.on("request:start", ({ request }) => {
+      headers.push(request.headers.get("X-Cadence-Passive"));
+    });
+
+    await unwrap(api.GET("/healthz", { ...passive }));
+    await getHealth();
+    server.events.removeAllListeners();
+
+    expect(headers).toEqual(["1", null]);
   });
 });
