@@ -19,4 +19,6 @@ afterEach(() => {
   cleanup();
   server.resetHandlers();
 });
-afterAll(() => server.close());
+afterAll(() => {
+  server.close();
+});
