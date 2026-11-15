@@ -13,9 +13,10 @@ not start until identity (M3 + M4) is done.
 
 - **oxlint + oxfmt** replace ESLint + Prettier. The owner wants to adopt the Oxc toolchain.
 - **Central reusable component layer.** Shared components live in one global layer and
-  are used across every client-facing domain. Lesson from legacy: too many bespoke
-  per-screen tweaks. Differences are expressed as named variants on the shared
-  component, not one-off overrides at the call site. Details in `client/CLAUDE.md`.
+  are used across every client-facing domain. Lesson from legacy: duplication. It had
+  several Tag components, different Buttons, and the same behaviour rebuilt per module.
+  One shared component per job; a module does not build its own version of something
+  that already exists. How this is structured and enforced is the owner's decision.
 
 ## Default recipe book (changes the meals data model)
 
