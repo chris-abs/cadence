@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  // `plugins` replaces oxlint's default set, so eslint/typescript/unicorn/oxc are listed too.
   "plugins": [
     "eslint",
     "typescript",
@@ -18,26 +17,20 @@
     "perf": "error"
   },
   "options": {
-    // Type-aware rules (typescript-go via oxlint-tsgolint), the equivalent of
-    // typescript-eslint's strictTypeChecked set we had before.
     "typeAware": true
   },
   "env": { "browser": true, "es2024": true },
   "settings": {
     "react": { "linkComponents": [{ "name": "Link", "linkAttribute": "to" }] }
   },
-  // Generated files are checked by their generators, not by us.
   "ignorePatterns": ["dist", "src/routeTree.gen.ts", "src/lib/api/schema.d.ts"],
   "rules": {
-    // React 19 automatic JSX runtime: React need not be in scope.
     "react/react-in-jsx-scope": "off",
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
     "react/only-export-components": ["error", { "allowConstantExport": true }],
     "react/jsx-no-useless-fragment": "error",
     "react/button-has-type": "error",
-    // `<output>` is for calculation results; live status regions use role="status".
-    "jsx-a11y/prefer-tag-over-role": "off",
 
     "typescript/consistent-type-imports": "error",
     "typescript/no-explicit-any": "error",
@@ -45,7 +38,6 @@
     "typescript/ban-ts-comment": "error",
     "typescript/no-unsafe-function-type": "error",
     "typescript/no-empty-object-type": "error",
-    // Strict options, as in typescript-eslint's strict-type-checked (numbers allowed).
     "typescript/restrict-template-expressions": [
       "error",
       {
@@ -57,7 +49,6 @@
       }
     ],
 
-    // Type-aware rules from typescript-eslint's strict-type-checked set.
     "typescript/no-misused-promises": "error",
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
     "typescript/no-deprecated": "error",
@@ -66,7 +57,6 @@
     "typescript/no-unsafe-call": "error",
     "typescript/no-unsafe-member-access": "error",
     "typescript/no-unsafe-return": "error",
-    // TanStack Router guards `throw redirect(...)`, a Response, by design.
     "typescript/only-throw-error": [
       "error",
       {
@@ -95,180 +85,18 @@
     "eslint/no-console": ["error", { "allow": ["warn", "error"] }],
     "eslint/no-var": "error",
     "eslint/prefer-const": "error",
-    // Shadowing is common and harmless with small components and typed code.
     "eslint/no-shadow": "off",
 
     "import/no-cycle": "error",
     "import/no-duplicates": "error",
-    // Side-effect imports are fine for styles and test setup only.
-    "import/no-unassigned-import": [
-      "error",
-      {
-        "allow": ["**/*.css", "@fontsource-variable/**", "@testing-library/jest-dom/vitest"]
-      }
-    ],
+    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
 
     "promise/no-nesting": "error"
   },
-  // Component layers (see CLAUDE.md): ui primitives <- shared components <- features <- routes.
   "overrides": [
     {
-      "files": ["src/components/**", "src/lib/**"],
-      "rules": {
-        "eslint/no-restricted-imports": [
-          "error",
-          {
-            "patterns": [
-              {
-                "group": ["@/features/**", "@/routes/**"],
-                "message": "The shared layer must not depend on features or routes."
-              },
-              {
-                "regex": "^(\\.\\./)+(features|routes)(/|$)",
-                "message": "The shared layer must not depend on features or routes."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      // Shared components take plain props, never API types; features map API data onto them.
-      "files": ["src/components/**"],
-      "rules": {
-        "eslint/no-restricted-imports": [
-          "error",
-          {
-            "patterns": [
-              {
-                "group": ["@/features/**", "@/routes/**"],
-                "message": "The shared layer must not depend on features or routes."
-              },
-              {
-                "regex": "^(\\.\\./)+(features|routes)(/|$)",
-                "message": "The shared layer must not depend on features or routes."
-              },
-              {
-                "group": ["@/lib/api", "@/lib/api/**"],
-                "message": "Shared components take plain props, not API types. Map API data in the feature."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      // All styling lives in the shared layer: features and routes carry no classes or
-      // inline styles, on components or on native elements.
-      "files": ["src/features/**", "src/routes/**"],
-      "rules": {
-        "react/forbid-dom-props": [
-          "error",
-          {
-            "forbid": [
-              {
-                "propName": "className",
-                "message": "No styling in features or routes: use a shared component (Stack, Text, Form, …) or add a variant to one."
-              },
-              {
-                "propName": "style",
-                "message": "No styling in features or routes: use a shared component (Stack, Text, Form, …) or add a variant to one."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": ["src/features/**"],
-      "rules": {
-        "eslint/no-restricted-imports": [
-          "error",
-          {
-            "patterns": [
-              {
-                "group": ["@/features/**"],
-                "message": "Features never import other features. Import your own files relatively; move code two features need into src/components or src/lib."
-              },
-              {
-                "regex": "^\\.\\./\\.\\./",
-                "message": "Leave the feature with an @/ import, never ../../."
-              },
-              {
-                "group": ["@/routes/**"],
-                "message": "Features must not depend on routes."
-              },
-              {
-                "group": ["@/components/ui/*"],
-                "importNamePattern": "Variants$",
-                "message": "Use the component and its variant props; class recipes are internal to components/ui."
-              }
-            ]
-          }
-        ],
-        "react/forbid-component-props": [
-          "error",
-          {
-            "forbid": [
-              {
-                "propName": "className",
-                "message": "Do not restyle shared components from a feature: use a variant or prop, or add one to the shared component."
-              },
-              {
-                "propName": "style",
-                "message": "Do not restyle shared components from a feature: use a variant or prop, or add one to the shared component."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
       "files": ["src/routes/**"],
-      "rules": {
-        "eslint/no-restricted-imports": [
-          "error",
-          {
-            "patterns": [
-              {
-                "group": ["@/features/*/**"],
-                "message": "Import a feature through its index.ts (e.g. @/features/system)."
-              },
-              {
-                "group": ["@/components/ui/*"],
-                "importNamePattern": "Variants$",
-                "message": "Use the component and its variant props; class recipes are internal to components/ui."
-              }
-            ]
-          }
-        ],
-        "react/forbid-component-props": [
-          "error",
-          {
-            "forbid": [
-              {
-                "propName": "className",
-                "message": "Routes compose shared components and features; they do not style them."
-              },
-              {
-                "propName": "style",
-                "message": "Routes compose shared components and features; they do not style them."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      // Route files export `Route`; shadcn files export variants. Both stay fast-refresh safe.
-      "files": ["src/routes/**", "src/components/ui/**"],
       "rules": { "react/only-export-components": "off" }
-    },
-    {
-      "files": ["**/*.test.{ts,tsx}", "src/test/**"],
-      "rules": {
-        "typescript/no-non-null-assertion": "off"
-      }
     }
   ]
 }

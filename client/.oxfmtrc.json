@@ -3,8 +3,7 @@
   "printWidth": 100,
   "sortPackageJson": false,
   "sortTailwindcss": {
-    "stylesheet": "./src/index.css",
-    "functions": ["cva", "cn"]
+    "stylesheet": "./src/index.css"
   },
   "ignorePatterns": ["dist", "src/routeTree.gen.ts", "src/lib/api/schema.d.ts"],
   "sortImports": {
