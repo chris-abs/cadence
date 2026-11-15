@@ -1,0 +1,22 @@
+# Local development and test database only. Shared data lives in Supabase.
+services:
+  postgres:
+    image: postgres:17
+    container_name: cadence-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cadence
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cadence_local_dev}
+      POSTGRES_DB: cadence
+    ports:
+      - "5433:5432"
+    volumes:
+      - cadence-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cadence -d cadence"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  cadence-db-data:

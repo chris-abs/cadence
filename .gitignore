@@ -1,0 +1,24 @@
+# Reference copies of the old repos (each has its own git history on GitHub)
+legacy/
+
+# Secrets: never commit. See env.example.
+.env
+.env.*
+!env.example
+
+# Go
+server/bin/
+*.test
+coverage.out
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
