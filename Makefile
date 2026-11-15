@@ -14,22 +14,22 @@ migrate: ## Apply database migrations to DATABASE_URL
 
 gen: ## Regenerate code (sqlc, API types)
 	@$(MAKE) -C server gen
-	@cd client && yarn -s gen
+	@cd client && yarn -s run gen
 
 dev-server: ## Run the API with local settings
 	@$(MAKE) -C server dev
 
 dev-client: ## Run the web client (Vite)
-	@cd client && yarn -s dev
+	@cd client && yarn -s run dev
 
 check-server: ## Format check, lint and tests for the server
 	@$(MAKE) -C server check
 
 check-client: ## Type-check, lint, tests and build for the client
-	@cd client && yarn -s check
+	@cd client && yarn -s run check
 
 check: check-server check-client ## The quality gate: run before every commit
 
 test: ## Run all tests
 	@$(MAKE) -C server test
-	@cd client && yarn -s test
+	@cd client && yarn -s run test
