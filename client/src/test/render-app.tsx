@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryHistory, RouterProvider } from "@tanstack/react-router";
 import { render } from "@testing-library/react";
+import { Profiler, type ProfilerOnRenderCallback } from "react";
 import { vi } from "vitest";
 import { installSessionGuard } from "@/features/auth";
 import { createAppRouter } from "@/router";
@@ -10,7 +11,7 @@ import { server } from "./server";
  * Renders the whole app (real routes, guards and session handling) at `path`,
  * against the MSW mock API. Use for flows that cross screens.
  */
-export function renderApp(path = "/") {
+export function renderApp(path = "/", { onRender }: { onRender?: ProfilerOnRenderCallback } = {}) {
   // jsdom has no scrollTo; the router calls it on navigation.
   vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
   const queryClient = new QueryClient({
@@ -18,10 +19,20 @@ export function renderApp(path = "/") {
   });
   installSessionGuard(queryClient);
   const router = createAppRouter(queryClient, createMemoryHistory({ initialEntries: [path] }));
-  const view = render(
+  const app = (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-    </QueryClientProvider>,
+    </QueryClientProvider>
+  );
+  // `onRender` counts every commit anywhere in the app, for render budgets.
+  const view = render(
+    onRender ? (
+      <Profiler id="app" onRender={onRender}>
+        {app}
+      </Profiler>
+    ) : (
+      app
+    ),
   );
   return { ...view, queryClient, router };
 }

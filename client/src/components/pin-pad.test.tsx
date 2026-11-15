@@ -4,6 +4,7 @@ import { Profiler, type ProfilerOnRenderCallback } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type * as ButtonModule from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
+import { pressKeys } from "@/test/actions";
 import { PinPad } from "./pin-pad";
 
 // Count renders of every Button (the keypad keys) without changing what they draw.
@@ -11,13 +12,6 @@ vi.mock("@/components/ui/button", async (importOriginal) => {
   const original = await importOriginal<typeof ButtonModule>();
   return { ...original, Button: vi.fn<typeof original.Button>(original.Button) };
 });
-
-function pressDigits(digits: string) {
-  return digits.split("").reduce(async (previous, digit) => {
-    await previous;
-    await userEvent.click(screen.getByRole("button", { name: digit }));
-  }, Promise.resolve());
-}
 
 const filledDots = (container: HTMLElement) =>
   container.querySelectorAll("[aria-hidden].bg-primary").length;
@@ -27,11 +21,11 @@ describe("PinPad", () => {
     const onComplete = vi.fn<(pin: string) => void>();
     const { container } = render(<PinPad label="PIN for Alex" onComplete={onComplete} />);
 
-    await pressDigits("12345");
+    await pressKeys("12345");
     expect(filledDots(container)).toBe(5);
     expect(onComplete).not.toHaveBeenCalled();
 
-    await pressDigits("6");
+    await pressKeys("6");
     expect(onComplete).toHaveBeenCalledExactlyOnceWith("123456");
     expect(filledDots(container)).toBe(0);
     expect(screen.getByLabelText("PIN for Alex")).toHaveValue("");
@@ -41,7 +35,7 @@ describe("PinPad", () => {
     const onComplete = vi.fn<(pin: string) => void>();
     const { container } = render(<PinPad label="PIN" onComplete={onComplete} />);
 
-    await pressDigits("12");
+    await pressKeys("12");
     await userEvent.click(screen.getByRole("button", { name: "Delete last digit" }));
 
     expect(filledDots(container)).toBe(1);
@@ -104,7 +98,7 @@ describe("PinPad", () => {
     const keyRenders = vi.mocked(Button).mock.calls.length;
     const commits = padCommits.mock.calls.length;
 
-    await pressDigits("1");
+    await pressKeys("1");
 
     // One commit (the dots); no key re-rendered.
     expect(padCommits.mock.calls.length - commits).toBe(1);
