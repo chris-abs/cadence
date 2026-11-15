@@ -25,10 +25,11 @@ type Config struct {
 	Env            Env
 	Registration   auth.RegistrationMode
 	TrustedProxies []netip.Prefix
+	OpenAPIPath    string
 }
 
 func LoadConfig(getenv func(string) string) (Config, error) {
-	cfg := Config{Port: 8080, Env: EnvDevelopment, Registration: auth.RegistrationFirst}
+	cfg := Config{Port: 8080, Env: EnvDevelopment, Registration: auth.RegistrationFirst, OpenAPIPath: "../api/openapi.yaml"}
 	var errs []error
 
 	if v := getenv("PORT"); v != "" {
@@ -68,6 +69,10 @@ func LoadConfig(getenv func(string) string) (Config, error) {
 			errs = append(errs, fmt.Errorf("TRUSTED_PROXY: %w", err))
 		}
 		cfg.TrustedProxies = proxies
+	}
+
+	if v := getenv("OPENAPI_PATH"); v != "" {
+		cfg.OpenAPIPath = v
 	}
 
 	if err := errors.Join(errs...); err != nil {

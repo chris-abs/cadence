@@ -42,7 +42,7 @@ func run() error {
 
 	handler, err := app.NewHandler(app.Deps{
 		Logger: logger, DB: pool, Env: cfg.Env,
-		Registration: cfg.Registration, TrustedProxies: cfg.TrustedProxies,
+		Registration: cfg.Registration, TrustedProxies: cfg.TrustedProxies, OpenAPIPath: cfg.OpenAPIPath,
 	})
 	if err != nil {
 		return err

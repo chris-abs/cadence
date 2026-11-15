@@ -26,7 +26,7 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 | `make db-up` / `make db-down` | Start / stop local Postgres (Docker, port 5433) |
 | `make migrate` | Apply migrations to `DATABASE_URL` |
 | `make gen` | Regenerate sqlc code and API types |
-| `make dev-server` / `make dev-client` | Run the API (:8080) / the web client (:5173) |
+| `make dev-server` / `make dev-client` | Run the API (:8080, contract browser at `/docs`) / the web client (:5173) |
 | `make check` | **The quality gate**: format, lint, tests, type-check, build |
 
 ## Hooks

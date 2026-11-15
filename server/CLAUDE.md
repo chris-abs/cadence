@@ -66,3 +66,4 @@ run `make gen`; `make check` fails if they are stale. Merged migrations are immu
 
 `make dev` · `make test` · `make check` (silent on success) · `make gen` · `make migrate` ·
 `make migration name=x` · `make help`. `make migrate` refuses non-local hosts.
+Outside production, `/docs` shows the contract in Scalar and `/docs/openapi.yaml` serves it raw.

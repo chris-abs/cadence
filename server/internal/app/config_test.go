@@ -18,7 +18,7 @@ func TestLoadConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := Config{Port: 8080, DatabaseURL: "postgres://u:p@h/db", Env: EnvDevelopment, Registration: auth.RegistrationFirst}
+	want := Config{Port: 8080, DatabaseURL: "postgres://u:p@h/db", Env: EnvDevelopment, Registration: auth.RegistrationFirst, OpenAPIPath: "../api/openapi.yaml"}
 	if !reflect.DeepEqual(cfg, want) {
 		t.Errorf("defaults: got %+v, want %+v", cfg, want)
 	}

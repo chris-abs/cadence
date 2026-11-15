@@ -26,6 +26,7 @@ type Deps struct {
 	TrustedProxies []netip.Prefix
 	Now            func() time.Time
 	Hasher         passhash.Hasher
+	OpenAPIPath    string
 }
 
 type Handler struct {
@@ -129,6 +130,9 @@ func NewHandler(d Deps) (*Handler, error) {
 
 	root := http.NewServeMux()
 	root.Handle("/api/", http.StripPrefix("/api", apiHandler))
+	if d.Env != EnvProduction {
+		mountDocs(root, d.OpenAPIPath, log)
+	}
 	return &Handler{
 		Handler: middleware.Chain(root,
 			middleware.SecurityHeaders(d.Env == EnvProduction),
