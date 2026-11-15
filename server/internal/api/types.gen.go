@@ -146,9 +146,12 @@ type CreateProfileRequest struct {
 	// Avatar Key of a built-in avatar; absent or null shows initials.
 	Avatar *Avatar       `json:"avatar,omitempty"`
 	Colour ProfileColour `json:"colour"`
-	Name   ProfileName   `json:"name"`
-	Pin    *Pin          `json:"pin,omitempty"`
-	Role   Role          `json:"role"`
+
+	// ContactEmail Trimmed and lower-cased by the server.
+	ContactEmail *Email      `json:"contactEmail,omitempty"`
+	Name         ProfileName `json:"name"`
+	Pin          *Pin        `json:"pin,omitempty"`
+	Role         Role        `json:"role"`
 
 	// Timezone IANA time zone name, e.g. `Europe/London`.
 	//
@@ -218,8 +221,8 @@ type Family struct {
 
 // FamilySession defines model for FamilySession.
 type FamilySession struct {
-	Family   FamilySummary `json:"family"`
-	Profiles []Profile     `json:"profiles"`
+	Family   FamilySummary    `json:"family"`
+	Profiles []ProfileSummary `json:"profiles"`
 }
 
 // FamilySummary defines model for FamilySummary.
@@ -260,9 +263,11 @@ type Me struct {
 	Permissions []string `json:"permissions"`
 
 	// PinAdvised A PARENT without a PIN in a family that has a CHILD profile.
-	PinAdvised bool               `json:"pinAdvised"`
-	Profile    Profile            `json:"profile"`
-	Session    ProfileSessionInfo `json:"session"`
+	PinAdvised bool `json:"pinAdvised"`
+
+	// Profile Full view of a profile. The contact fields are filled only when the caller is this profile or a PARENT; for anyone else they are null.
+	Profile Profile            `json:"profile"`
+	Session ProfileSessionInfo `json:"session"`
 }
 
 // Module defines model for Module.
@@ -306,14 +311,20 @@ type Password = string
 // Pin defines model for Pin.
 type Pin = string
 
-// Profile defines model for Profile.
+// Profile Full view of a profile. The contact fields are filled only when the caller is this profile or a PARENT; for anyone else they are null.
 type Profile struct {
-	Avatar    *string       `json:"avatar"`
-	Colour    ProfileColour `json:"colour"`
-	CreatedAt time.Time     `json:"createdAt"`
-	HasPin    bool          `json:"hasPin"`
-	Id        Id            `json:"id"`
-	IsOwner   bool          `json:"isOwner"`
+	Avatar *string       `json:"avatar"`
+	Colour ProfileColour `json:"colour"`
+
+	// ContactEmail Optional address for notifications only; never a sign-in credential, not unique. Nothing is sent to it until verified.
+	ContactEmail *string `json:"contactEmail"`
+
+	// ContactEmailVerifiedAt Null until verified (not in v1); reset when the address changes.
+	ContactEmailVerifiedAt *time.Time `json:"contactEmailVerifiedAt"`
+	CreatedAt              time.Time  `json:"createdAt"`
+	HasPin                 bool       `json:"hasPin"`
+	Id                     Id         `json:"id"`
+	IsOwner                bool       `json:"isOwner"`
 
 	// LockedUntil Set while wrong PINs have locked this profile.
 	LockedUntil *time.Time `json:"lockedUntil"`
@@ -328,7 +339,7 @@ type ProfileColour string
 
 // ProfileList defines model for ProfileList.
 type ProfileList struct {
-	Profiles []Profile `json:"profiles"`
+	Profiles []ProfileSummary `json:"profiles"`
 }
 
 // ProfileName defines model for ProfileName.
@@ -341,6 +352,23 @@ type ProfileSessionInfo struct {
 
 	// IdleTimeoutSeconds Server-side idle limit (backstop for the client's auto-lock).
 	IdleTimeoutSeconds int `json:"idleTimeoutSeconds"`
+}
+
+// ProfileSummary Picker view, readable with only the family session. Never carries contact details.
+type ProfileSummary struct {
+	Avatar    *string       `json:"avatar"`
+	Colour    ProfileColour `json:"colour"`
+	CreatedAt time.Time     `json:"createdAt"`
+	HasPin    bool          `json:"hasPin"`
+	Id        Id            `json:"id"`
+	IsOwner   bool          `json:"isOwner"`
+
+	// LockedUntil Set while wrong PINs have locked this profile.
+	LockedUntil *time.Time `json:"lockedUntil"`
+	Name        string     `json:"name"`
+	Role        Role       `json:"role"`
+	Timezone    string     `json:"timezone"`
+	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
 // RegisterRequest defines model for RegisterRequest.
@@ -404,11 +432,14 @@ type UpdateFamilyRequest struct {
 	Name            string `json:"name"`
 }
 
-// UpdateProfileRequest Full replacement of the display fields; `avatar` null clears it.
+// UpdateProfileRequest Full replacement of the display fields; `avatar` or `contactEmail` null clears it.
 type UpdateProfileRequest struct {
 	Avatar *string       `json:"avatar"`
 	Colour ProfileColour `json:"colour"`
-	Name   ProfileName   `json:"name"`
+
+	// ContactEmail Trimmed and lower-cased by the server.
+	ContactEmail *string     `json:"contactEmail"`
+	Name         ProfileName `json:"name"`
 
 	// Timezone IANA time zone name, e.g. `Europe/London`.
 	//

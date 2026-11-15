@@ -507,7 +507,7 @@ export interface components {
         };
         FamilySession: {
             family: components["schemas"]["FamilySummary"];
-            profiles: components["schemas"]["Profile"][];
+            profiles: components["schemas"]["ProfileSummary"][];
         };
         Family: {
             id: components["schemas"]["Id"];
@@ -542,7 +542,8 @@ export interface components {
             /** @description The family name, typed again (trimmed, case-insensitive). */
             confirmName: string;
         };
-        Profile: {
+        /** @description Picker view, readable with only the family session. Never carries contact details. */
+        ProfileSummary: {
             id: components["schemas"]["Id"];
             name: string;
             role: components["schemas"]["Role"];
@@ -561,8 +562,35 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
+        /** @description Full view of a profile. The contact fields are filled only when the caller is this profile or a PARENT; for anyone else they are null. */
+        Profile: {
+            id: components["schemas"]["Id"];
+            name: string;
+            role: components["schemas"]["Role"];
+            isOwner: boolean;
+            colour: components["schemas"]["ProfileColour"];
+            avatar: string | null;
+            timezone: string;
+            hasPin: boolean;
+            /**
+             * Format: date-time
+             * @description Set while wrong PINs have locked this profile.
+             */
+            lockedUntil: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** @description Optional address for notifications only; never a sign-in credential, not unique. Nothing is sent to it until verified. */
+            contactEmail: string | null;
+            /**
+             * Format: date-time
+             * @description Null until verified (not in v1); reset when the address changes.
+             */
+            contactEmailVerifiedAt: string | null;
+        };
         ProfileList: {
-            profiles: components["schemas"]["Profile"][];
+            profiles: components["schemas"]["ProfileSummary"][];
         };
         CreateProfileRequest: {
             name: components["schemas"]["ProfileName"];
@@ -571,13 +599,19 @@ export interface components {
             avatar?: components["schemas"]["Avatar"];
             timezone?: components["schemas"]["Timezone"];
             pin?: components["schemas"]["Pin"];
+            contactEmail?: components["schemas"]["Email"];
         };
-        /** @description Full replacement of the display fields; `avatar` null clears it. */
+        /** @description Full replacement of the display fields; `avatar` or `contactEmail` null clears it. */
         UpdateProfileRequest: {
             name: components["schemas"]["ProfileName"];
             colour: components["schemas"]["ProfileColour"];
             avatar: string | null;
             timezone: components["schemas"]["Timezone"];
+            /**
+             * Format: email
+             * @description Trimmed and lower-cased by the server.
+             */
+            contactEmail: string | null;
         };
         ChangeRoleRequest: {
             role: components["schemas"]["Role"];
