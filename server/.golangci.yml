@@ -1,0 +1,46 @@
+version: "2"
+
+linters:
+  # The standard set (errcheck, govet, ineffassign, staticcheck, unused) plus
+  # linters that catch real bugs in HTTP/DB code without style noise.
+  default: standard
+  enable:
+    - bodyclose # unclosed HTTP response bodies
+    - errorlint # error comparisons that break with wrapping
+    - gosec # common security mistakes
+    - misspell
+    - nilerr # returning nil after checking err != nil
+    - noctx # HTTP requests and DB calls without a context
+    - nolintlint # keeps //nolint directives specific and justified
+    - rowserrcheck # unchecked rows.Err()
+    - sloglint # consistent slog key/value usage
+    - sqlclosecheck # unclosed rows/statements
+    - unconvert
+    - usestdlibvars # http.MethodGet over "GET", etc.
+  settings:
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+    sloglint:
+      no-mixed-args: true
+  exclusions:
+    # sqlc and oapi-codegen output is not ours to lint.
+    generated: strict
+    presets:
+      - std-error-handling
+    rules:
+      # Tests use fixed values and short-lived requests; context plumbing and
+      # security heuristics there are noise.
+      - path: _test\.go
+        linters:
+          - gosec
+          - noctx
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/chris-abs/cadence/server
