@@ -8,11 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chris-abs/cadence/server/internal/identity"
+	"github.com/chris-abs/cadence/server/internal/auth"
 )
 
-// Env names the deployment environment. It switches behaviour that must differ
-// between a laptop and the internet, such as log format and HSTS.
 type Env string
 
 const (
@@ -21,23 +19,16 @@ const (
 	EnvProduction  Env = "production"
 )
 
-// Config is everything the API reads from the environment. It is parsed once at
-// startup and passed down explicitly; nothing else in the server reads env vars.
 type Config struct {
-	Port        int
-	DatabaseURL string
-	Env         Env
-	// Registration is ALLOW_REGISTRATION: first (default), open or closed.
-	Registration identity.RegistrationMode
-	// TrustedProxies is TRUSTED_PROXY, comma-separated IPs or CIDRs allowed to
-	// set X-Forwarded-For. Empty: rate limits key on RemoteAddr only.
+	Port           int
+	DatabaseURL    string
+	Env            Env
+	Registration   auth.RegistrationMode
 	TrustedProxies []netip.Prefix
 }
 
-// LoadConfig builds a Config from getenv (os.Getenv in main, a map in tests) and
-// reports every problem at once so a misconfigured deploy fails with one message.
 func LoadConfig(getenv func(string) string) (Config, error) {
-	cfg := Config{Port: 8080, Env: EnvDevelopment, Registration: identity.RegistrationFirst}
+	cfg := Config{Port: 8080, Env: EnvDevelopment, Registration: auth.RegistrationFirst}
 	var errs []error
 
 	if v := getenv("PORT"); v != "" {
@@ -64,7 +55,7 @@ func LoadConfig(getenv func(string) string) (Config, error) {
 	}
 
 	if v := getenv("ALLOW_REGISTRATION"); v != "" {
-		if mode := identity.RegistrationMode(v); mode.Valid() {
+		if mode := auth.RegistrationMode(v); mode.Valid() {
 			cfg.Registration = mode
 		} else {
 			errs = append(errs, fmt.Errorf("ALLOW_REGISTRATION must be one of first, open, closed, got %q", v))
@@ -85,9 +76,6 @@ func LoadConfig(getenv func(string) string) (Config, error) {
 	return cfg, nil
 }
 
-// validateDatabaseURL checks the shape only; whether the database is reachable
-// is checked by the startup ping. Messages never echo the value because it
-// carries a password.
 func validateDatabaseURL(raw string) error {
 	if raw == "" {
 		return errors.New("DATABASE_URL is required")
@@ -99,7 +87,6 @@ func validateDatabaseURL(raw string) error {
 	return nil
 }
 
-// parsePrefixes reads a comma-separated list of IPs and CIDRs.
 func parsePrefixes(raw string) ([]netip.Prefix, error) {
 	var out []netip.Prefix
 	for part := range strings.SplitSeq(raw, ",") {
@@ -120,7 +107,6 @@ func parsePrefixes(raw string) ([]netip.Prefix, error) {
 	return out, nil
 }
 
-// Addr is the listen address for the HTTP server.
 func (c Config) Addr() string {
 	return ":" + strconv.Itoa(c.Port)
 }

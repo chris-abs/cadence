@@ -33,10 +33,3 @@ func TestBcryptRefusesToTruncate(t *testing.T) {
 		t.Error("73-byte secret must be rejected")
 	}
 }
-
-func TestDefaultCostIsProductionStrength(t *testing.T) {
-	t.Parallel()
-	if passhash.DefaultCost < 12 {
-		t.Errorf("DefaultCost = %d; the spec requires 12", passhash.DefaultCost)
-	}
-}

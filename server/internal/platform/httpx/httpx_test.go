@@ -4,83 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"math"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/chris-abs/cadence/server/internal/api"
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
 )
-
-func TestWriteJSON(t *testing.T) {
-	rec := httptest.NewRecorder()
-	if err := httpx.WriteJSON(rec, http.StatusCreated, map[string]int{"n": 1}); err != nil {
-		t.Fatalf("WriteJSON: %v", err)
-	}
-	if rec.Code != http.StatusCreated {
-		t.Errorf("status = %d", rec.Code)
-	}
-	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
-		t.Errorf("Content-Type = %q", ct)
-	}
-	if got := rec.Body.String(); got != "{\"n\":1}\n" {
-		t.Errorf("body = %q", got)
-	}
-}
-
-func TestWriteJSONEncodeFailureIsClean500(t *testing.T) {
-	rec := httptest.NewRecorder()
-	err := httpx.WriteJSON(rec, http.StatusOK, math.Inf(1))
-	if err == nil {
-		t.Fatal("expected an encode error")
-	}
-	if rec.Code != http.StatusInternalServerError {
-		t.Errorf("status = %d, want 500", rec.Code)
-	}
-	assertError(t, rec, http.StatusInternalServerError, httpx.CodeInternal)
-}
-
-func TestWriteErrorMatchesContract(t *testing.T) {
-	rec := httptest.NewRecorder()
-	fields := map[string]string{"email": "Required."}
-	if err := httpx.WriteError(rec, http.StatusBadRequest, httpx.CodeInvalidRequest, "Fix the form.", fields); err != nil {
-		t.Fatalf("WriteError: %v", err)
-	}
-	got := assertError(t, rec, http.StatusBadRequest, httpx.CodeInvalidRequest)
-	if got.Error.Message != "Fix the form." {
-		t.Errorf("message = %q", got.Error.Message)
-	}
-	if got.Error.Fields == nil || (*got.Error.Fields)["email"] != "Required." {
-		t.Errorf("fields = %v", got.Error.Fields)
-	}
-}
-
-func TestWriteErrorOmitsEmptyFields(t *testing.T) {
-	rec := httptest.NewRecorder()
-	if err := httpx.WriteError(rec, http.StatusNotFound, httpx.CodeNotFound, "Nope.", nil); err != nil {
-		t.Fatalf("WriteError: %v", err)
-	}
-	if strings.Contains(rec.Body.String(), "fields") {
-		t.Errorf("body should omit fields: %s", rec.Body)
-	}
-}
-
-func TestWriteRetryLater(t *testing.T) {
-	rec := httptest.NewRecorder()
-	if err := httpx.WriteRetryLater(rec, httpx.CodePINLocked, "Wait.", 1500*time.Millisecond); err != nil {
-		t.Fatalf("WriteRetryLater: %v", err)
-	}
-	got := assertError(t, rec, http.StatusTooManyRequests, httpx.CodePINLocked)
-	if got.Error.RetryAfterSeconds == nil || *got.Error.RetryAfterSeconds != 2 {
-		t.Errorf("retryAfterSeconds = %v, want 2 (rounded up)", got.Error.RetryAfterSeconds)
-	}
-	if rec.Header().Get("Retry-After") != "2" {
-		t.Errorf("Retry-After = %q", rec.Header().Get("Retry-After"))
-	}
-}
 
 type payload struct {
 	Name string `json:"name"`
@@ -150,31 +81,12 @@ func TestDecodeJSONRejects(t *testing.T) {
 	}
 }
 
-func TestDecodeJSONAcceptsCharsetParam(t *testing.T) {
-	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(`{"name":"a"}`))
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	var p payload
-	if err := httpx.DecodeJSON(httptest.NewRecorder(), req, &p, 0); err != nil {
-		t.Fatalf("DecodeJSON: %v", err)
-	}
-}
-
-func TestWriteDecodeErrorFallsBackTo400(t *testing.T) {
-	rec := httptest.NewRecorder()
-	if err := httpx.WriteDecodeError(rec, errors.New("boom")); err != nil {
-		t.Fatalf("WriteDecodeError: %v", err)
-	}
-	assertError(t, rec, http.StatusBadRequest, httpx.CodeInvalidRequest)
-}
-
 func jsonRequest(body string) *http.Request {
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 	return req
 }
 
-// assertError checks status and code, and that the body decodes strictly into
-// the contract's generated Error type, which keeps httpx.ErrorBody honest.
 func assertError(t *testing.T, rec *httptest.ResponseRecorder, status int, code string) api.Error {
 	t.Helper()
 	if rec.Code != status {

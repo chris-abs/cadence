@@ -1,11 +1,3 @@
-// Command admin holds operator tasks that have no API, run by the owner of the
-// deployment on the server's own configuration (DATABASE_URL etc.):
-//
-//	go run ./cmd/admin reset-password -email family@example.com
-//
-// reset-password answers a forgotten family password while v1 has no email
-// reset [I7]: it sets a random password, signs every device out, and prints
-// the new password once for the operator to pass on.
 package main
 
 import (
@@ -29,14 +21,12 @@ func main() {
 	}
 }
 
-// runWithSignals keeps deferred cleanup ahead of os.Exit in main.
 func runWithSignals() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	return run(ctx, os.Args[1:], os.Stdout, os.Stderr, os.Getenv)
 }
 
-// passwordResetter is what reset-password needs from the identity service.
 type passwordResetter interface {
 	ResetPassword(ctx context.Context, email string) (string, error)
 }
@@ -60,7 +50,7 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer, getenv fu
 		return fmt.Errorf("open database: %w", err)
 	}
 	defer pool.Close()
-	svc, err := app.NewIdentityService(app.Deps{Logger: app.NewLogger(stderr, cfg.Env), DB: pool, Env: cfg.Env})
+	svc, err := app.NewAuthService(app.Deps{Logger: app.NewLogger(stderr, cfg.Env), DB: pool, Env: cfg.Env})
 	if err != nil {
 		return err
 	}

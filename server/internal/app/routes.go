@@ -2,66 +2,48 @@ package app
 
 import (
 	"context"
-	"crypto/rand"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"net/netip"
-	"slices"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/health"
-	"github.com/chris-abs/cadence/server/internal/identity"
-	"github.com/chris-abs/cadence/server/internal/meals"
+	"github.com/chris-abs/cadence/server/internal/api"
+	"github.com/chris-abs/cadence/server/internal/auth"
+	"github.com/chris-abs/cadence/server/internal/family"
+	"github.com/chris-abs/cadence/server/internal/middleware"
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
+	"github.com/chris-abs/cadence/server/internal/profile"
 )
 
-// Deps are the long-lived dependencies handlers are built from. main
-// constructs them once; tests pass real or fake ones.
 type Deps struct {
 	Logger         *slog.Logger
 	DB             *pgxpool.Pool
 	Env            Env
-	Registration   identity.RegistrationMode
+	Registration   auth.RegistrationMode
 	TrustedProxies []netip.Prefix
-
-	// Now is the clock; nil means time.Now. Tests inject a fake one.
-	Now func() time.Time
-	// Hasher hashes passwords and PINs; nil means bcrypt at
-	// passhash.DefaultCost. Tests inject a low cost, never production.
-	Hasher passhash.Hasher
+	Now            func() time.Time
+	Hasher         passhash.Hasher
 }
 
-// Handler is the whole HTTP API plus the background work that belongs to it.
 type Handler struct {
 	http.Handler
-	patterns []string
-	identity *identity.Service
+	auth *auth.Service
 }
 
-// Patterns lists every registered /api route pattern (relative to /api), for
-// the authorisation matrix's coverage check.
-func (h *Handler) Patterns() []string { return slices.Clone(h.patterns) }
-
-// RunCleanup sweeps expired sessions hourly until ctx is cancelled.
 func (h *Handler) RunCleanup(ctx context.Context) {
-	h.identity.RunCleanup(ctx, identity.CleanupInterval)
+	h.auth.RunCleanup(ctx, auth.CleanupInterval)
 }
 
-// catalogue is the v1 module catalogue. A new module adds its exported authz.Module
-// here and wraps its routes in identity's RequireProfile and
-// authz.RequireModule.
-func catalogue() (*authz.Catalogue, error) {
-	return authz.NewCatalogue(meals.Module)
+type services struct {
+	auth    *auth.Service
+	family  *family.Service
+	profile *profile.Service
 }
 
-// NewIdentityService builds the identity service from d, filling production
-// defaults for a nil clock or hasher. The server and the operator CLI share it.
-func NewIdentityService(d Deps) (*identity.Service, error) {
+func newServices(d Deps) (services, error) {
 	if d.Now == nil {
 		d.Now = time.Now
 	}
@@ -69,65 +51,108 @@ func NewIdentityService(d Deps) (*identity.Service, error) {
 		d.Hasher = passhash.NewBcrypt(passhash.DefaultCost)
 	}
 	if d.Registration == "" {
-		d.Registration = identity.RegistrationFirst
+		d.Registration = auth.RegistrationFirst
 	}
-	cat, err := catalogue()
-	if err != nil {
-		return nil, err
-	}
-	svc, err := identity.NewService(identity.Deps{
-		Pool: d.DB, Logger: d.Logger, Catalogue: cat, Hasher: d.Hasher,
-		Tokens: identity.NewTokenSource(rand.Reader), Now: d.Now, Registration: d.Registration,
+	authRepo := auth.NewRepository(d.DB)
+	families := family.NewService(d.DB, d.Hasher, d.Now, d.Logger)
+	profiles := profile.NewService(d.DB, d.Hasher, d.Now, d.Logger, families, authRepo)
+	authSvc, err := auth.NewService(auth.Deps{
+		Pool: d.DB, Repo: authRepo, Families: families, Profiles: profiles,
+		Hasher: d.Hasher, Now: d.Now, Log: d.Logger, Registration: d.Registration,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("build identity service: %w", err)
+		return services{}, err
 	}
-	return svc, nil
+	return services{auth: authSvc, family: families, profile: profiles}, nil
 }
 
-// NewHandler builds the full HTTP handler: middleware around the router. The
-// catalogue and the identity service are built once here, never per request.
+func NewAuthService(d Deps) (*auth.Service, error) {
+	s, err := newServices(d)
+	return s.auth, err
+}
+
 func NewHandler(d Deps) (*Handler, error) {
-	svc, err := NewIdentityService(d)
+	s, err := newServices(d)
 	if err != nil {
 		return nil, err
 	}
-	ident := identity.NewHandler(svc, identity.HTTPConfig{
-		SecureCookies:     d.Env != EnvDevelopment,
-		HostPrefixCookies: d.Env == EnvProduction,
-		TrustedProxies:    d.TrustedProxies,
-	}, d.Logger)
+	log := d.Logger
+	cookies := middleware.NewCookies(d.Env != EnvDevelopment, d.Env == EnvProduction)
+	sessions := middleware.NewAuth(s.auth, cookies, log)
+	authH := auth.NewHandler(s.auth, cookies, d.TrustedProxies)
+	familyH := family.NewHandler(s.family, cookies)
+	profileH := profile.NewHandler(s.profile)
 
-	// Routes are registered relative to /api, matching the contract's
-	// `servers: [{url: /api}]`, so paths here read exactly like openapi.yaml.
-	// Each domain contributes its routes the same way; a new module appends
-	// its Routes() here.
-	routes := slices.Concat(health.NewHandler(d.DB, d.Logger).Routes(), ident.Routes())
+	type handlerFunc = func(http.ResponseWriter, *http.Request) error
+	public := func(fn handlerFunc) http.Handler { return middleware.Handle(log, fn) }
+	device := func(fn handlerFunc) http.Handler { return sessions.RequireFamily(middleware.Handle(log, fn)) }
+	caller := func(fn handlerFunc) http.Handler { return sessions.RequireProfile(middleware.Handle(log, fn)) }
 
-	api := http.NewServeMux()
-	patterns := make([]string, 0, len(routes))
-	for _, rt := range routes {
-		api.Handle(rt.Pattern, rt.Handler)
-		patterns = append(patterns, rt.Pattern)
+	routes := map[string]http.Handler{
+		"GET /healthz": healthz(d.DB, log),
+
+		"GET /auth/registration":            public(authH.RegistrationStatus),
+		"POST /auth/register":               public(authH.Register),
+		"POST /auth/login":                  public(authH.Login),
+		"POST /auth/logout":                 public(authH.Logout),
+		"GET /auth/session":                 device(authH.FamilySession),
+		"POST /auth/profile-session":        device(authH.SelectProfile),
+		"DELETE /auth/profile-session":      device(authH.Lock),
+		"GET /auth/sessions":                caller(authH.Devices),
+		"DELETE /auth/sessions/{sessionId}": caller(authH.RevokeDevice),
+		"POST /auth/sessions/revoke-others": caller(authH.RevokeOtherDevices),
+		"GET /me":                           caller(authH.Me),
+		"PUT /family/password":              caller(authH.ChangePassword),
+		"GET /family":                       caller(familyH.Get),
+		"PUT /family":                       caller(familyH.Update),
+		"PUT /family/email":                 caller(familyH.ChangeEmail),
+		"POST /family/delete":               caller(familyH.Delete),
+		"GET /modules":                      caller(familyH.Modules),
+		"PUT /modules/{moduleId}":           caller(familyH.SetModule),
+		"GET /profiles":                     device(profileH.List),
+		"POST /profiles":                    caller(profileH.Create),
+		"GET /profiles/{profileId}":         caller(profileH.Get),
+		"PUT /profiles/{profileId}":         caller(profileH.Update),
+		"DELETE /profiles/{profileId}":      caller(profileH.Delete),
+		"PUT /profiles/{profileId}/role":    caller(profileH.ChangeRole),
+		"PUT /profiles/{profileId}/pin":     caller(profileH.SetPin),
+		"POST /family/owner":                caller(profileH.TransferOwnership),
+	}
+	mux := http.NewServeMux()
+	for pattern, h := range routes {
+		mux.Handle(pattern, h)
 	}
 
-	// Defence in depth on top of SameSite=Strict cookies (spec §3): refuse
-	// cross-origin unsafe requests and non-JSON bodies before any handler runs.
 	cop := http.NewCrossOriginProtection()
-	cop.SetDenyHandler(http.HandlerFunc(ident.CrossOriginDenied))
-	apiHandler := cop.Handler(requireJSONBody(d.Logger)(errorShapedFallbacks(api, d.Logger)))
+	cop.SetDenyHandler(middleware.CrossOriginDenied(log))
+	apiHandler := cop.Handler(middleware.RequireJSONBody(log)(middleware.ErrorShapedFallbacks(mux, log)))
 
 	root := http.NewServeMux()
 	root.Handle("/api/", http.StripPrefix("/api", apiHandler))
-
 	return &Handler{
-		Handler: chain(root,
-			securityHeaders(d.Env),
-			logRequests(d.Logger),
-			recoverPanic(d.Logger),
-			limitBody(httpx.DefaultMaxBodyBytes),
+		Handler: middleware.Chain(root,
+			middleware.SecurityHeaders(d.Env == EnvProduction),
+			middleware.LogRequests(log),
+			middleware.RecoverPanic(log),
+			middleware.LimitBody(httpx.DefaultMaxBodyBytes),
 		),
-		patterns: patterns,
-		identity: svc,
+		auth: s.auth,
 	}, nil
+}
+
+func healthz(pool *pgxpool.Pool, log *slog.Logger) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+		defer cancel()
+		var err error
+		if pingErr := pool.Ping(ctx); pingErr != nil {
+			log.WarnContext(r.Context(), "health check: database ping failed", "err", pingErr)
+			err = httpx.WriteError(w, http.StatusServiceUnavailable, httpx.CodeUnavailable, "The service cannot reach its database.", nil)
+		} else {
+			err = httpx.WriteJSON(w, http.StatusOK, api.Health{Status: api.HealthStatusOk})
+		}
+		if err != nil {
+			log.ErrorContext(r.Context(), "health check: write response", "err", err)
+		}
+	})
 }

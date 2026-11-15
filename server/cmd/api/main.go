@@ -1,4 +1,3 @@
-// Command api runs the Cadence HTTP API.
 package main
 
 import (
@@ -16,17 +15,12 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		// The logger may not exist yet (bad config), so report on stderr.
 		fmt.Fprintln(os.Stderr, "api:", err)
 		os.Exit(1)
 	}
 }
 
-// run holds everything main would, so deferred cleanup runs before exit.
 func run() error {
-	// ctx is cancelled on the first SIGINT/SIGTERM. Releasing the signal
-	// handler straight away means a second signal kills the process the
-	// default way, so a hung shutdown can still be interrupted.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	go func() {
@@ -55,8 +49,6 @@ func run() error {
 	}
 	srv := app.NewServer(handler, logger)
 
-	// The session sweep lives exactly as long as the server: it stops when
-	// serving ends for any reason, and run waits for it before closing the pool.
 	var background sync.WaitGroup
 	bgCtx, stopBackground := context.WithCancel(ctx)
 	background.Go(func() { handler.RunCleanup(bgCtx) })

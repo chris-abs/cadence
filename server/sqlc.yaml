@@ -1,18 +1,12 @@
 version: "2"
-# One entry per domain. Each domain's queries live in db/queries/<domain>/ and
-# generate into internal/<domain>/internal/<domain>db, which Go's internal/
-# rule makes importable only from inside that domain. Every domain reads the
-# whole migration history as its schema but may query only its own tables
-# (checked by internal/archtest). A new domain copies the identity entry and
-# changes queries, package and out; the shared options come from the anchor.
 sql:
   - engine: postgresql
     schema: db/migrations
-    queries: db/queries/identity
+    queries: db/queries/auth
     gen:
       go:
-        package: identitydb
-        out: internal/identity/internal/identitydb
+        package: authdb
+        out: internal/auth/internal/authdb
         <<: &go_options
           sql_package: pgx/v5
           output_files_suffix: .gen
@@ -20,11 +14,8 @@ sql:
           output_models_file_name: models.gen.go
           emit_interface: false
           emit_empty_slices: true
-          # Nullable columns become pointers (*string, *time.Time) rather than
-          # pgtype wrappers, so rows map onto the API types directly.
           emit_pointers_for_null_types: true
           overrides:
-            # Plain time.Time rather than pgtype.Timestamptz for NOT NULL columns.
             - db_type: timestamptz
               go_type: time.Time
             - db_type: timestamptz
@@ -32,7 +23,6 @@ sql:
               go_type:
                 type: time.Time
                 pointer: true
-            # google/uuid (UUIDv7 generation lives in Go) instead of pgtype.UUID.
             - db_type: uuid
               go_type: github.com/google/uuid.UUID
             - db_type: uuid
@@ -41,3 +31,19 @@ sql:
                 import: github.com/google/uuid
                 type: UUID
                 pointer: true
+  - engine: postgresql
+    schema: db/migrations
+    queries: db/queries/family
+    gen:
+      go:
+        package: familydb
+        out: internal/family/internal/familydb
+        <<: *go_options
+  - engine: postgresql
+    schema: db/migrations
+    queries: db/queries/profile
+    gen:
+      go:
+        package: profiledb
+        out: internal/profile/internal/profiledb
+        <<: *go_options
