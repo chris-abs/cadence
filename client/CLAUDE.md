@@ -5,15 +5,15 @@ Talks to the Go API only through `api/openapi.yaml`; never read `server/` code.
 
 ## Layout
 
-| Path                      | What                                                                            |
-| ------------------------- | ------------------------------------------------------------------------------- |
-| `src/routes/`             | TanStack file routes. Thin: wire a feature into a URL inside a `Page`.          |
-| `src/features/<feature>/` | Domain UI, query hooks and tests for one feature. `index.ts` is its public API. |
-| `src/components/`         | Shared building blocks: `AppShell`, `Page`, `SectionCard`, `StatusLine`, …      |
-| `src/components/ui/`      | shadcn primitives. Add with `yarn shadcn add <name>`.                           |
-| `src/index.css`           | Theme tokens (colours, radii, fonts) for light and dark.                        |
-| `src/lib/api/`            | `api` client, `unwrap`, `ApiError`, generated `schema.d.ts`.                    |
-| `src/test/`               | Vitest setup, MSW server, typed handlers, `renderWithQuery`.                    |
+| Path                      | What                                                                             |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| `src/routes/`             | TanStack file routes. Thin: wire a feature into a URL inside a `Page`.           |
+| `src/features/<feature>/` | Domain UI, query hooks and tests for one feature. `index.ts` is its public API.  |
+| `src/components/`         | Shared building blocks: `AppShell`, `Page`, `Stack`, `Text`, `Form`, `PinPad`, … |
+| `src/components/ui/`      | shadcn primitives. Add with `yarn shadcn add <name>`.                            |
+| `src/index.css`           | Theme tokens (colours, radii, fonts) for light and dark.                         |
+| `src/lib/api/`            | `api` client, `unwrap`, `ApiError`, generated `schema.d.ts`.                     |
+| `src/test/`               | Vitest setup, MSW server, typed handlers, `renderWithQuery`.                     |
 
 Generated, never edit (run `yarn gen`): `src/lib/api/schema.d.ts` (from the contract) and
 `src/routeTree.gen.ts` (from `src/routes/`; also refreshed by `yarn dev`/`build`).
@@ -29,8 +29,16 @@ imports and Tailwind classes). Fix a rule's cause; disable a rule only in config
 
 Dependencies point one way: `ui` ← `components` ← `features` ← `routes`.
 
+- **No styling outside the shared layer.** Features and routes contain no `className` or
+  `style` at all, on components or on native elements.* Lay out and set text with the
+  shared building blocks (`Stack`, `Text`, `VisuallyHidden`, `Form`, `Tile`, `MessageSlot`,
+  `CenteredLayout`, …). Need a new look? Add a named variant to the shared component (with a
+  test); need a new pattern? Add a shared component.
 - **Variants, not overrides.** A visual difference is a named variant (cva) or prop on the
-  shared component. Features and routes never pass `className`/`style` to a component.*
+  shared component, never a one-off class string.*
+- **Plain props.** Shared components take plain props (`name`, `colour`), never API types;
+  `src/components` may not import `@/lib/api`.* Features map API data onto them, and check
+  shared enums (e.g. profile colours) against the contract so drift fails the build.
 - **Tokens, not values.** Colours, spacing, radii come from theme tokens (`text-success`,
   `bg-muted`). No arbitrary values like `h-[475px]` in features or routes.* New design value:
   add a token to `src/index.css` (light and dark).

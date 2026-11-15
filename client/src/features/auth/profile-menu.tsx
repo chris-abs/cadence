@@ -1,5 +1,7 @@
 import { Lock } from "lucide-react";
 import { ProfileAvatar } from "@/components/profile-avatar";
+import { Stack } from "@/components/stack";
+import { Text, VisuallyHidden } from "@/components/text";
 import { Button } from "@/components/ui/button";
 import { useLock } from "./mutations";
 import type { Me } from "./queries";
@@ -11,13 +13,13 @@ export function ProfileMenu({ me }: { me: Me }) {
   const { profile } = me;
   return (
     <>
-      <span className="flex items-center gap-2">
+      <Stack direction="row" gap="sm" align="center">
         <ProfileAvatar name={profile.name} colour={profile.colour} size="sm" />
-        <span className="font-medium">
-          <span className="sr-only">Signed in as </span>
+        <Text as="span" weight="medium">
+          <VisuallyHidden>Signed in as </VisuallyHidden>
           {profile.name}
-        </span>
-      </span>
+        </Text>
+      </Stack>
       <Button
         variant="outline"
         disabled={lock.isPending}

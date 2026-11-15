@@ -5,7 +5,9 @@ import { z } from "zod";
 import { Banner } from "@/components/banner";
 import { CenteredLayout } from "@/components/centered-layout";
 import { Countdown } from "@/components/countdown";
+import { Form } from "@/components/form";
 import { TextField } from "@/components/form-field";
+import { Text } from "@/components/text";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { applyFieldErrors, errorMessage } from "@/lib/forms";
@@ -52,7 +54,7 @@ export function LoginScreen() {
       description="Use the family's email and password. This device stays signed in."
       footer={<RegisterLink />}
     >
-      <form noValidate onSubmit={(event) => void onSubmit(event)} className="grid gap-4">
+      <Form onSubmit={onSubmit}>
         {lockedUntil !== undefined ? (
           <Banner tone="error" title="Too many attempts">
             Try again in{" "}
@@ -86,7 +88,7 @@ export function LoginScreen() {
         <Button type="submit" size="touch" disabled={login.isPending || lockedUntil !== undefined}>
           {login.isPending ? "Signing in…" : "Sign in"}
         </Button>
-      </form>
+      </Form>
     </CenteredLayout>
   );
 }
@@ -100,11 +102,11 @@ function RegisterLink() {
   const { data } = useRegistrationStatus();
   if (!data?.open) return null;
   return (
-    <p className="text-sm text-muted-foreground">
+    <Text size="sm" tone="muted">
       New to Cadence?
       <Button variant="link" asChild>
         <Link to="/register">Create a family</Link>
       </Button>
-    </p>
+    </Text>
   );
 }

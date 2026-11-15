@@ -34,7 +34,7 @@ describe("profile picker", () => {
     const { router } = renderApp("/picker");
 
     const alex = await tile(/^Alex/);
-    expect(alex).toHaveAccessibleName(/PIN protected/);
+    expect(alex).toHaveAccessibleDescription(/PIN protected/);
     await userEvent.click(alex);
 
     expect(await screen.findByRole("heading", { name: "Alex" })).toBeInTheDocument();
@@ -95,6 +95,25 @@ describe("profile picker", () => {
     const alex = await tile(/^Alex/);
     expect(alex).toHaveTextContent(/Locked for 1:(30|29)/);
     expect(within(alex).getByRole("timer")).toBeInTheDocument();
+  });
+
+  it("keeps loading and ready PIN states in one frame", async () => {
+    mockApi.reset({ profiles: standardFamily(), signedIn: true, latencyMs: 100 });
+    renderApp(`/picker/${mockApi.profile("Alex").id}`);
+
+    // Loading: the card, its heading and an inert pad are already in place.
+    const loading = await screen.findByRole("heading", { name: "Enter PIN" });
+    const main = screen.getByRole("main");
+    expect(main).toContainElement(loading);
+    expect(within(main).getByRole("status")).toHaveTextContent("Loading the profile…");
+    expect(within(main).getByLabelText("PIN")).toBeDisabled();
+    expect(within(main).getAllByRole("button", { name: /^\d$/ })).toHaveLength(10);
+
+    // Ready: same frame, now Alex's live pad.
+    expect(await screen.findByRole("heading", { name: "Alex" })).toBeInTheDocument();
+    expect(screen.getByRole("main")).toBe(main);
+    expect(screen.getByLabelText("PIN for Alex")).toBeEnabled();
+    expect(screen.getAllByRole("button", { name: /^\d$/ })).toHaveLength(10);
   });
 
   it("shows a missing profile instead of a PIN pad", async () => {

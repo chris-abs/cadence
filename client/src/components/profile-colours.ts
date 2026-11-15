@@ -1,8 +1,7 @@
-import type { components } from "@/lib/api";
-
-export type ProfileColour = components["schemas"]["ProfileColour"];
-
-/** The contract's 22 profile colours, in palette order (for pickers). */
+/**
+ * The 22 profile colours (Tailwind palette names), in palette order. The shared
+ * layer owns this list; the auth feature checks it against the API contract.
+ */
 export const PROFILE_COLOURS = [
   "slate",
   "gray",
@@ -26,7 +25,9 @@ export const PROFILE_COLOURS = [
   "fuchsia",
   "pink",
   "rose",
-] as const satisfies readonly ProfileColour[];
+] as const;
+
+export type ProfileColour = (typeof PROFILE_COLOURS)[number];
 
 /**
  * Soft fill + strong text per colour: every pair keeps text readable in light

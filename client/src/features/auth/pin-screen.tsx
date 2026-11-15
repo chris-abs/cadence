@@ -1,18 +1,20 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { useId } from "react";
+import { type ReactNode, useId } from "react";
 import { Banner } from "@/components/banner";
 import { CenteredLayout } from "@/components/centered-layout";
 import { Countdown } from "@/components/countdown";
-import { ErrorState, LoadingState } from "@/components/page-states";
+import { MessageSlot } from "@/components/message-slot";
 import { PinPad } from "@/components/pin-pad";
-import { ProfileAvatar } from "@/components/profile-avatar";
+import { AvatarPlaceholder, ProfileAvatar } from "@/components/profile-avatar";
+import { Stack } from "@/components/stack";
+import { StatusLine } from "@/components/status-line";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { errorMessage } from "@/lib/forms";
 import { useSelectProfile } from "./mutations";
-import { authKeys, type ProfileSummary, useProfiles } from "./queries";
+import { authKeys, useProfiles } from "./queries";
 import { retryAt } from "./retry-after";
 
 function BackToPicker() {
@@ -26,31 +28,77 @@ function BackToPicker() {
   );
 }
 
+interface PinFrameProps {
+  title: string;
+  description: string;
+  media: ReactNode;
+  messageId: string;
+  message: ReactNode;
+  children: ReactNode;
+}
+
+/**
+ * The one frame every state of the PIN screen shares (loading, error, missing,
+ * locked, ready): same card, avatar slot, message slot and pad, so nothing
+ * moves or remounts when the state changes.
+ */
+function PinFrame({ title, description, media, messageId, message, children }: PinFrameProps) {
+  return (
+    <CenteredLayout title={title} description={description} media={media} footer={<BackToPicker />}>
+      <Stack gap="lg">
+        <MessageSlot id={messageId}>{message}</MessageSlot>
+        {children}
+      </Stack>
+    </CenteredLayout>
+  );
+}
+
 /** The PIN pad for one profile, reached from the picker. */
 export function PinScreen({ profileId }: { profileId: string }) {
   const profiles = useProfiles();
-
-  if (profiles.status === "pending") return <LoadingState label="Loading profile…" />;
-  if (profiles.status === "error") {
-    return (
-      <ErrorState message="Could not load the profile." onRetry={() => void profiles.refetch()} />
-    );
-  }
-  const profile = profiles.data.find((p) => p.id === profileId);
-  if (!profile) {
-    return (
-      <CenteredLayout title="Profile not found" footer={<BackToPicker />}>
-        <p className="text-muted-foreground">This profile is no longer on this family.</p>
-      </CenteredLayout>
-    );
-  }
-  return <PinEntry profile={profile} />;
-}
-
-function PinEntry({ profile }: { profile: ProfileSummary }) {
   const select = useSelectProfile();
   const queryClient = useQueryClient();
   const messageId = useId();
+
+  const profile =
+    profiles.status === "success" ? profiles.data.find((p) => p.id === profileId) : undefined;
+
+  if (!profile) {
+    // Loading, failed or missing: the same frame, with an inert pad in place.
+    let title = "Enter PIN";
+    let description = "Loading the profile…";
+    let message: ReactNode = <StatusLine tone="loading">Loading the profile…</StatusLine>;
+    if (profiles.status === "error") {
+      description = "The profile could not load.";
+      message = (
+        <StatusLine
+          tone="error"
+          action={
+            <Button variant="outline" onClick={() => void profiles.refetch()}>
+              Try again
+            </Button>
+          }
+        >
+          Could not load the profile.
+        </StatusLine>
+      );
+    } else if (profiles.status === "success") {
+      title = "Profile not found";
+      description = "Choose another profile.";
+      message = <Banner tone="error">This profile is no longer on this family.</Banner>;
+    }
+    return (
+      <PinFrame
+        title={title}
+        description={description}
+        media={<AvatarPlaceholder size="lg" />}
+        messageId={messageId}
+        message={message}
+      >
+        <PinPad label="PIN" describedBy={messageId} disabled onComplete={() => undefined} />
+      </PinFrame>
+    );
+  }
 
   // A lockout is known from this attempt's 429, or from the server's profile.
   const lockedUntil =
@@ -62,38 +110,39 @@ function PinEntry({ profile }: { profile: ProfileSummary }) {
     void queryClient.invalidateQueries({ queryKey: authKeys.profiles });
   }
 
+  let message: ReactNode = null;
+  if (lockedUntil !== undefined) {
+    message = (
+      <Banner tone="error" title="Too many wrong PINs">
+        Try again in <Countdown key={lockedUntil} until={lockedUntil} onEnd={endLockout} />.
+      </Banner>
+    );
+  } else if (wrongPin) {
+    message = <Banner tone="error">That PIN is not right. Try again.</Banner>;
+  } else if (select.error) {
+    message = <Banner tone="error">{errorMessage(select.error)}</Banner>;
+  }
+
   return (
-    <CenteredLayout
+    <PinFrame
       title={profile.name}
       description={
         lockedUntil === undefined ? "Enter your PIN" : "This profile is locked for a while"
       }
       media={<ProfileAvatar name={profile.name} colour={profile.colour} size="lg" />}
-      footer={<BackToPicker />}
+      messageId={messageId}
+      message={message}
     >
-      <div className="grid gap-6">
-        <div id={messageId}>
-          {lockedUntil !== undefined ? (
-            <Banner tone="error" title="Too many wrong PINs">
-              Try again in <Countdown key={lockedUntil} until={lockedUntil} onEnd={endLockout} />.
-            </Banner>
-          ) : wrongPin ? (
-            <Banner tone="error">That PIN is not right. Try again.</Banner>
-          ) : (
-            select.error && <Banner tone="error">{errorMessage(select.error)}</Banner>
-          )}
-        </div>
-        <PinPad
-          label={`PIN for ${profile.name}`}
-          describedBy={messageId}
-          invalid={wrongPin}
-          disabled={lockedUntil !== undefined}
-          busy={select.isPending}
-          onComplete={(pin) => {
-            select.mutate({ profileId: profile.id, pin });
-          }}
-        />
-      </div>
-    </CenteredLayout>
+      <PinPad
+        label={`PIN for ${profile.name}`}
+        describedBy={messageId}
+        invalid={wrongPin}
+        disabled={lockedUntil !== undefined}
+        busy={select.isPending}
+        onComplete={(pin) => {
+          select.mutate({ profileId: profile.id, pin });
+        }}
+      />
+    </PinFrame>
   );
 }

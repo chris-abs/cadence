@@ -31,6 +31,11 @@ const badgeVariants = cva(
   },
 );
 
+/** Holds an avatar's place while the profile loads, so nothing shifts when it arrives. */
+export function AvatarPlaceholder({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  return <span aria-hidden data-placeholder className={cn(avatarVariants({ size }), "bg-muted")} />;
+}
+
 /** Up to two initials: "Jo" → "J", "Mary Ann" → "MA". */
 function initials(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean);

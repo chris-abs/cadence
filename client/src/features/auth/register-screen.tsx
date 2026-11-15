@@ -8,8 +8,11 @@ import { Banner } from "@/components/banner";
 import { CenteredLayout } from "@/components/centered-layout";
 import { ColourPicker } from "@/components/colour-picker";
 import { Countdown } from "@/components/countdown";
+import { Form } from "@/components/form";
 import { TextField } from "@/components/form-field";
 import { PROFILE_COLOURS } from "@/components/profile-colours";
+import { Stack } from "@/components/stack";
+import { Text } from "@/components/text";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { applyFieldErrors, errorMessage, type FieldMap } from "@/lib/forms";
@@ -113,15 +116,15 @@ export function RegisterScreen() {
           : "Step 2 of 2: you are the family's owner and first parent."
       }
       footer={
-        <p className="text-sm text-muted-foreground">
+        <Text size="sm" tone="muted">
           Already have a family?
           <Button variant="link" asChild>
             <Link to="/login">Sign in</Link>
           </Button>
-        </p>
+        </Text>
       }
     >
-      <form noValidate onSubmit={(event) => void onSubmit(event)} className="grid gap-4">
+      <Form onSubmit={onSubmit}>
         {rateLimitedUntil !== undefined ? (
           <Banner tone="error" title="Too many attempts">
             Try again in{" "}
@@ -184,11 +187,14 @@ export function RegisterScreen() {
                 />
               )}
             />
-            <p className="text-sm text-muted-foreground">
-              Time zone: <span className="font-medium text-foreground">{timezone}</span>, from this
-              device.
-            </p>
-            <div className="flex gap-2">
+            <Text size="sm" tone="muted">
+              Time zone:{" "}
+              <Text as="span" size="sm" weight="medium">
+                {timezone}
+              </Text>
+              , from this device.
+            </Text>
+            <Stack direction="row" gap="sm">
               <Button
                 type="button"
                 variant="outline"
@@ -206,10 +212,10 @@ export function RegisterScreen() {
               >
                 {register.isPending ? "Creating…" : "Create family"}
               </Button>
-            </div>
+            </Stack>
           </>
         )}
-      </form>
+      </Form>
     </CenteredLayout>
   );
 }
