@@ -112,7 +112,7 @@ Hosting note: cookies are simplest when client and API share an origin. Dev uses
 |---|---|---|
 | Local DB | `postgres:17` in compose | Match the Supabase project's major version (check when creating it) |
 | Server tests | Real Postgres via `pgtestdb` (one cloned DB per test) | Fast, parallel-safe, no Colima socket setup that testcontainers needs |
-| Test style | Handler tests through the real router; unit tests for pure logic | Auth rules as a table-driven permission matrix |
+| Test style | Handler tests through the real router; core function only, a planned list per domain | One test per behaviour; nothing that adds no functional coverage |
 | Client tests | Vitest + Testing Library + MSW | MSW handlers typed from the contract |
 | E2E | One Playwright smoke test, added after meals slice 1 | Not before there is something to protect |
 | CI | GitHub Actions, path-filtered `server` and `client` jobs, one required `ci-ok` job | Only the changed side runs |
@@ -144,10 +144,12 @@ cadence/
 │   ├── db/{migrations,queries}/   # goose SQL, sqlc SQL
 │   ├── sqlc.yaml
 │   └── internal/
-│       ├── app/              # config, router, middleware wiring
-│       ├── identity/         # family, profile, session, PIN, authz
+│       ├── app/              # config, service wiring, every route
+│       ├── identity/{auth,family,profile}/   # each: handler, service, repository, model
 │       ├── meals/            # recipes, plan, shopping
-│       └── platform/{db,httpx,testutil}/
+│       ├── middleware/       # session, module and HTTP wrappers
+│       ├── models/           # shared types: roles, caller, permissions, errors
+│       └── platform/{audit,db,httpx,passhash,ratelimit,testutil,validate}/
 └── client/
     ├── CLAUDE.md             # React conventions, how to add a screen
     └── src/
@@ -238,7 +240,7 @@ Each milestone is one branch and one PR unless noted. "Parallel" means safe to r
 | 3.1 | Migration: `family`, `profile`, `session` with constraints | Constraint tests pass (one owner, unique email) | After 3.0 |
 | 3.2 | Register (one transaction), login, logout, current family | Tests: rollback on failure, duplicate email, bad password, closed registration | After 3.1 |
 | 3.3 | List profiles, select profile with hashed PIN and lockout | Tests: wrong PIN, lockout, family session rejected on profile routes and the reverse | After 3.2 |
-| 3.4 | Profile create/update/delete with role rules, PIN reset | Table-driven matrix covers every role × action | With 3.5 |
+| 3.4 | Profile create/update/delete with role rules, PIN reset | Planned tests: a CHILD is refused, owner and self protected, PIN reset by role | With 3.5 |
 | 3.5 | IP rate limits, body limits, timeouts, security headers | Tests show 429 after the limit | With 3.4 |
 | 3.6 | `/security-review` on the whole identity package | Findings fixed or recorded | Last |
 

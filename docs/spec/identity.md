@@ -281,20 +281,19 @@ nor a PARENT, so a CHILD cannot tell whether another profile has one.
 `family.view`, `family.edit`, `family.modules.manage`, `family.profiles.create`,
 `family.profiles.edit`, `family.profiles.role`, `family.profiles.delete`,
 `family.pins.reset_child`, `family.pins.reset_parent`, `family.sessions.manage`,
-`family.account.manage`. The server checks the same strings via `authz.Can`.
+`family.account.manage`. The server checks the same strings via `models.Caller.Can`.
 
 ### 5.2 Module permissions
 
-- **Catalogue in code.** Each module package exports one value:
-  `authz.Module{ID: "meals", Name, Description, DefaultEnabled: true, Actions: []authz.Action{
-  {ID: "recipes.edit", Roles: []Role{Parent}}, {ID: "shopping.tick", Roles: []Role{Parent, Child}}, …}}`
-  registered in `app.NewHandler`. A permission is the string `<module>.<action>`; module ids
-  match `family_module.module_id`. Adding calendar or to-dos = a new package + one register
-  call; no migration, no contract change for the catalogue (`ModuleId` is a string, not an enum).
+- **Catalogue in code.** Each module is one entry in `internal/identity/family/module_catalogue.go`:
+  `models.Module{ID: "meals", Name, Description, DefaultEnabled: true, Actions: []models.Action{
+  {ID: "recipes.edit", Roles: []models.Role{models.Parent}}, {ID: "shopping.tick", Roles: []models.Role{models.Parent, models.Child}}, …}}`. A permission is the string `<module>.<action>`; module ids
+  match `family_module.module_id`. Adding calendar or to-dos = a new package + one catalogue
+  entry; no migration, no contract change for the catalogue (`ModuleId` is a string, not an enum).
 - **v1 catalogue:** `meals` only (actions owned by `meals.md` §3). Legacy's storage, chores,
   media, services are not listed until built.
-- **Check:** module routes are wrapped `requireModule("meals")` (→ `403 module_disabled` if
-  off) and handlers call `authz.Require(ctx, "meals.recipes.edit")` (→ `403 forbidden`).
+- **Check:** module routes are wrapped `middleware.RequireModule("meals", log)` (→ `403 module_disabled` if
+  off) and handlers check `caller.Can("meals.recipes.edit")` (→ `403 forbidden`).
   `Can(profile, perm) = moduleEnabled(family, module) AND roleGrants(module, action, role)`.
   Enablement is read per request (one PK lookup); the role comes from the session query.
 - **`Me.permissions`** includes every granted `<module>.<action>` of enabled modules, so the
@@ -385,43 +384,32 @@ emails, passwords, PINs or tokens. No audit table in v1 **[I10]**.
 
 ## 8. Test plan
 
-**Matrix test** (`internal/identity/authz_test.go`, through the real router): a table of every
-endpoint × actor `{no cookie, FS only, PS only (no FS), PS + other device's FS, CHILD, PARENT,
-owner, PARENT of another family}` × target where relevant `{self, CHILD, PARENT, owner, other
-family's profile}` → expected status and code. One row per cell in §5.1; adding an endpoint
-without rows fails a coverage check that walks the registered routes.
+Core function only (root `CLAUDE.md` rule 7): a planned list per domain, one test per
+behaviour, nothing that adds no functional coverage. No endpoint × actor matrix. Tests go
+through the real router on a fresh database (`platform/testutil`).
 
-**Abuse cases that must have a test**
-1. PS cookie on every FS-only route and FS cookie on every PS route → 401 (R1).
-2. PS with another device's FS, or alone → 401 (R2). Expired idle / absolute FS and PS → 401.
-3. `X-Cadence-Passive: 1` requests do not move `idle_expires_at`.
-4. CHILD: create profile, change any role (incl. own), delete, reset another PIN → 403.
-5. PARENT: change own role, change owner's role, delete self, delete owner → 409.
-6. `PUT /profiles/{id}` with `role` or `isOwner` in the body → 400 (R9).
-7. Cross-family profile/session ids on every `{id}` route → 404 (R7).
-8. Demoted PARENT's existing PS loses rights on the next request (R3); deleted profile → 401.
-9. PIN: lockout schedule, `Retry-After`, parallel wrong guesses counted exactly once each,
-   reset clears lockout, lockout survives a server restart (row in DB).
-10. Password change / PIN change / role change delete exactly the sessions in §3's table.
-11. Login: unknown email and wrong password give identical status, code and body.
-12. Rate limits → 429 after the limit; register closed in `first` mode once a family exists;
-    two concurrent first registrations → exactly one succeeds.
-13. DB constraints: second owner, CHILD owner, duplicate email (case), duplicate profile name
-    (case), PS without FS, PS for another family's profile → constraint errors.
-14. Delete family: wrong password / wrong name → 403/422, nothing deleted; success → all
-    family rows gone (count every table) and other devices get 401.
-15. Cross-origin POST (`Sec-Fetch-Site: cross-site`) → 403 `cross_origin`.
-16. Disabled module route → 403 `module_disabled`; re-enabled → allowed.
-17. Password of 73 bytes (multibyte) → 422; never truncated.
-18. Contact email visibility: absent from `GET /profiles` and `GET /auth/session`; on `GET
-    /profiles/{id}`, `Me` and write responses filled for self and PARENT, null for a CHILD
-    viewing another profile.
-19. Contact email input: `" Sam@Example.COM "` stored as `sam@example.com`; invalid, empty or
-    255-char → 422; two profiles (or a profile and the family) may share one; CHILD setting
-    another profile's → 403; a change resets `contact_email_verified_at`; `null` clears it.
+- **auth** (`internal/identity/auth/auth_test.go`): register signs in the owner; per-field
+  validation; duplicate email (case); registration closes after the first family; rate limits
+  (register per IP, login per email); login opens a family session only; unknown email and
+  wrong password are indistinguishable; logout; profile idle expiry with renewal, passive
+  requests not renewing; absolute expiry; family-session expiry clears cookies; family- vs
+  profile-session access; a profile session works only with its own device's family session;
+  select checks the PIN; one profile session per device (lock, switch); devices list and
+  revoke; revoke others; a CHILD cannot manage devices or the password; password change signs
+  out other devices; the sweep deletes expired sessions; one end-to-end lifecycle.
+- **profile** (`internal/identity/profile/profile_test.go`): create joins the picker; unique
+  names; 20-profile cap; update self and by a PARENT, full replace; a CHILD cannot manage
+  profiles, roles or PINs; role change applies and signs the target out; owner and self
+  protected; delete; ownership transfer; own PIN set/change/remove with proof; PIN reset by
+  role signs the target out; lockout schedule with `Retry-After` and reset on success; reset
+  clears lockout; contact email optional and hidden from a CHILD; PIN advised.
+- **family** (`internal/identity/family/family_test.go`): read and update settings; a CHILD
+  cannot read or change the family; module toggle applies on the next request; email change
+  is owner-only; delete requires the owner, password and name; delete removes every row of
+  the family only; one family cannot reach another's ids (404); re-auth rate limit.
 
-Client (M4): MSW handlers per endpoint; picker with/without PIN, lockout countdown, auto-lock
-timer, 401 code routing (login vs picker), parent-only controls absent for a CHILD.
+Not covered by tests, held by the schema or by code review: concurrent registrations and
+parallel PIN guesses (advisory and row locks), the owner and profile constraints in §4.
 
 ## 9. Owner decisions (approved 2026-11-15 with these defaults)
 
@@ -430,7 +418,7 @@ timer, 401 code routing (login vs picker), parent-only controls absent for a CHI
 | I1 | Delete family: immediate or 7-day grace? | Immediate, after password + typing the name | Grace: a `deletion_scheduled_at` column, all sessions revoked, login offers "cancel deletion", plus a purge job (none exists yet) | Medium: column + job, no data change |
 | I2 | Family session lifetime on the tablet | 30 d idle, 90 d absolute | Longer/no absolute: fewer re-logins, longer exposure if the tablet walks off | Trivial (constants) |
 | I3 | Auto-lock to picker | Family setting, default 10 min (1–30); server backstop 30 min. One setting for all profiles, PIN-less ones included (they just return to the picker) | "Never" option for families without children; per-profile timeout | Low |
-| I4 | Who manages the account (email, password, ownership, delete) | Owner only | Any PARENT: drop four matrix cells | Trivial |
+| I4 | Who manages the account (email, password, ownership, delete) | Owner only | Any PARENT: drop four owner checks | Trivial |
 | I5 | May any PARENT reset their own forgotten PIN with the family password? | Yes | Owner only: other parents ask the owner | Trivial |
 | I6 | Per-profile permission overrides in v1? | Deferred; model ready (§5.2) | In v1: one table, `Can` change, a settings screen | Low now, low later |
 | I7 | No email verification / no "forgot password" in v1 (no SES yet) | Forgotten password = operator resets it via a server CLI command (added in M3) | Email reset needs SES, a token table and two screens | Medium, additive |
