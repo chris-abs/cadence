@@ -3,7 +3,7 @@
 # so formatting never needs a separate step.
 #   server/**/*.go -> gofmt -w, then golangci-lint fmt (goimports with the
 #                     repo config) when golangci-lint is installed
-#   client/**      -> Prettier with the client's config and ignore file
+#   client/**      -> oxfmt with the client's .oxfmtrc.json (incl. its ignorePatterns)
 # Silent on success. A missing tool is reported to the user as a warning and
 # never fails the edit. A formatter error (e.g. a syntax error) exits 2, which
 # shows the message to Claude so it can fix the file.
@@ -44,12 +44,13 @@ case "$rel" in
     fi
     ;;
   client/*)
-    prettier="$root/client/node_modules/.bin/prettier"
-    [ -x "$prettier" ] || warn "client/node_modules missing (run yarn install in client/); $rel left unformatted"
-    # --ignore-unknown skips files Prettier has no parser for; .prettierignore
-    # (generated files) is honoured because we run from client/.
-    out=$(cd "$root/client" && "$prettier" --write --ignore-unknown --log-level=warn "$file" 2>&1) ||
-      fail prettier "$out"
+    oxfmt="$root/client/node_modules/.bin/oxfmt"
+    [ -x "$oxfmt" ] || warn "client/node_modules missing (run yarn install in client/); $rel left unformatted"
+    # --no-error-on-unmatched-pattern skips files oxfmt has no formatter for and
+    # files its ignorePatterns exclude (generated code); running from client/
+    # picks up .oxfmtrc.json.
+    out=$(cd "$root/client" && "$oxfmt" --write --no-error-on-unmatched-pattern "$file" 2>&1) ||
+      fail oxfmt "$out"
     ;;
 esac
 exit 0

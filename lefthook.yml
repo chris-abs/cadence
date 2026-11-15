@@ -26,23 +26,23 @@ pre-commit:
         command -v golangci-lint >/dev/null || { echo 'golangci-lint not found: brew install golangci-lint'; exit 1; }
         golangci-lint run $(for f in {staged_files}; do dirname "$f"; done | sort -u)
 
-    - name: prettier
+    - name: oxfmt
       root: client/
       glob: "**/*"
       exclude: ["client/src/routeTree.gen.ts", "client/src/lib/api/schema.d.ts"]
+      # --no-error-on-unmatched-pattern: files oxfmt has no formatter for (or
+      # that .oxfmtrc.json ignores) pass quietly instead of failing the job.
       run: |
-        [ -x node_modules/.bin/prettier ] || { echo 'client/node_modules missing: run `cd client && yarn install`'; exit 1; }
-        node_modules/.bin/prettier --check --ignore-unknown --log-level=warn {staged_files}
+        [ -x node_modules/.bin/oxfmt ] || { echo 'client/node_modules missing: run `cd client && yarn install`'; exit 1; }
+        node_modules/.bin/oxfmt --check --no-error-on-unmatched-pattern {staged_files}
 
-    - name: eslint
+    - name: oxlint
       root: client/
       glob: "**/*.{ts,tsx,js}"
       exclude: ["client/src/routeTree.gen.ts", "client/src/lib/api/schema.d.ts"]
-      # --no-warn-ignored: files ignored by eslint.config.js pass quietly
-      # instead of tripping --max-warnings=0.
       run: |
-        [ -x node_modules/.bin/eslint ] || { echo 'client/node_modules missing: run `cd client && yarn install`'; exit 1; }
-        node_modules/.bin/eslint --max-warnings=0 --no-warn-ignored {staged_files}
+        [ -x node_modules/.bin/oxlint ] || { echo 'client/node_modules missing: run `cd client && yarn install`'; exit 1; }
+        node_modules/.bin/oxlint --max-warnings=0 --no-error-on-unmatched-pattern {staged_files}
 
 pre-push:
   piped: true # stop at the first failure; the cheap guard runs first

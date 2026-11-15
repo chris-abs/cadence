@@ -24,6 +24,8 @@ Talks to the Go API only through `api/openapi.yaml`; never read `server/` code.
 
 `yarn dev` (:5173, proxies `/api` to :8080) · `yarn test` · `yarn lint` · `yarn format` ·
 `yarn gen` · `yarn run check` (the gate; plain `yarn check` is a Yarn built-in).
+Lint is oxlint (type-aware, `.oxlintrc.json`); format is oxfmt (`.oxfmtrc.json`, sorts
+imports and Tailwind classes). Fix a rule's cause; disable a rule only in config, with a reason.
 
 ## Conventions
 

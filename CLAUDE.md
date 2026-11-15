@@ -29,7 +29,7 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 ## Hooks
 
 - Run `lefthook install` once per clone. pre-commit checks staged files (gofmt,
-  golangci-lint, Prettier, ESLint) without rewriting them; pre-push runs `make check`
+  golangci-lint, oxfmt, oxlint) without rewriting them; pre-push runs `make check`
   and refuses pushes to `main`.
 - `.claude/hooks/` formats each file after an edit and blocks edits to `legacy/`,
   generated files and migrations already on `main`. Fix the cause; never bypass a hook.

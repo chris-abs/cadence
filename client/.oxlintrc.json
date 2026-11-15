@@ -1,0 +1,120 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // `plugins` replaces oxlint's default set, so eslint/typescript/unicorn/oxc are listed too.
+  "plugins": [
+    "eslint",
+    "typescript",
+    "unicorn",
+    "oxc",
+    "react",
+    "jsx-a11y",
+    "import",
+    "vitest",
+    "promise"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
+  },
+  "options": {
+    // Type-aware rules (typescript-go via oxlint-tsgolint), the equivalent of
+    // typescript-eslint's strictTypeChecked set we had before.
+    "typeAware": true
+  },
+  "env": { "browser": true, "es2024": true },
+  "settings": {
+    "react": { "linkComponents": [{ "name": "Link", "linkAttribute": "to" }] }
+  },
+  // Generated files are checked by their generators, not by us.
+  "ignorePatterns": ["dist", "src/routeTree.gen.ts", "src/lib/api/schema.d.ts"],
+  "rules": {
+    // React 19 automatic JSX runtime: React need not be in scope.
+    "react/react-in-jsx-scope": "off",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/only-export-components": ["error", { "allowConstantExport": true }],
+    "react/jsx-no-useless-fragment": "error",
+    "react/button-has-type": "error",
+    // `<output>` is for calculation results; live status regions use role="status".
+    "jsx-a11y/prefer-tag-over-role": "off",
+
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/no-unsafe-function-type": "error",
+    "typescript/no-empty-object-type": "error",
+    // Strict options, as in typescript-eslint's strict-type-checked (numbers allowed).
+    "typescript/restrict-template-expressions": [
+      "error",
+      {
+        "allowNumber": true,
+        "allowAny": false,
+        "allowBoolean": false,
+        "allowNullish": false,
+        "allowRegExp": false
+      }
+    ],
+
+    // Type-aware rules from typescript-eslint's strict-type-checked set.
+    "typescript/no-misused-promises": "error",
+    "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
+    "typescript/no-deprecated": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/only-throw-error": "error",
+    "typescript/prefer-promise-reject-errors": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/prefer-optional-chain": "error",
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/require-await": "error",
+    "typescript/restrict-plus-operands": [
+      "error",
+      {
+        "allowAny": false,
+        "allowBoolean": false,
+        "allowNullish": false,
+        "allowNumberAndString": false,
+        "allowRegExp": false
+      }
+    ],
+    "typescript/return-await": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+
+    "eslint/eqeqeq": ["error", "always", { "null": "ignore" }],
+    "eslint/no-console": ["error", { "allow": ["warn", "error"] }],
+    "eslint/no-var": "error",
+    "eslint/prefer-const": "error",
+    // Shadowing is common and harmless with small components and typed code.
+    "eslint/no-shadow": "off",
+
+    "import/no-cycle": "error",
+    "import/no-duplicates": "error",
+    // Side-effect imports are fine for styles and test setup only.
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css", "@fontsource-variable/**", "@testing-library/jest-dom/vitest"]
+      }
+    ],
+
+    "promise/no-nesting": "error"
+  },
+  "overrides": [
+    {
+      // Route files export `Route`; shadcn files export variants. Both stay fast-refresh safe.
+      "files": ["src/routes/**", "src/components/ui/**"],
+      "rules": { "react/only-export-components": "off" }
+    },
+    {
+      "files": ["**/*.test.{ts,tsx}", "src/test/**"],
+      "rules": {
+        "typescript/no-non-null-assertion": "off"
+      }
+    }
+  ]
+}
