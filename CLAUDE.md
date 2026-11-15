@@ -17,6 +17,7 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 | `docs/PLAN.md` | Reviewed build plan and milestones. |
 | `docs/decisions/` | Short decision records. Add one when a choice in the plan changes. |
 | `docs/spec/` | Product specs. |
+| `docs/performance.md` | Performance budgets. Work that misses one is not done. |
 | `legacy/` | Old repos. Git-ignored. Read for reference, never edit. |
 | `.claude/skills/orchestrator/` | How a lead session plans, delegates to Opus `builder` agents and verifies. Invoke with `/orchestrator`. |
 

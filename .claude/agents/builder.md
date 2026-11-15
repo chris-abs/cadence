@@ -28,6 +28,13 @@ you to read before writing anything.
   `gh` CLI, never install global tools.
 - The API contract and merged migrations are frozen unless the brief says otherwise.
   If you find a real gap, make the smallest fix and report it prominently.
+- Performance is part of done: meet the budgets in `docs/performance.md` that apply,
+  and include the evidence (benchmark, query-count or render-count test) in your work.
+  Do not add caching or memoisation that a measurement does not justify.
+- Keep domain boundaries clean: a domain never reaches into another domain's tables
+  or internals. If the brief seems to require that, stop and report it.
+- The orchestrator reviews your work and may send it back. Rework it as asked; if you
+  disagree, say why with evidence, then follow the orchestrator's decision.
 - Write code a senior reviewer would approve: small units with one job, errors handled,
   tests for every behaviour, comments that explain why. Prefer what the codebase
   already does over a new pattern.

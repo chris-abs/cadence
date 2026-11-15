@@ -17,6 +17,39 @@ that reaches the owner or the repository, including what subagents produce.
   pinned to Opus), or pass `model: "opus"` explicitly. Never delegate to a smaller model
   unless the owner asks.
 
+## What you are responsible for
+
+You own the quality of the codebase, not only the delivery of features:
+
+- **Code quality.** Every change reads as if one careful engineer wrote the whole
+  codebase: consistent patterns, small units with one job, tests that prove behaviour.
+- **Clean domain boundaries.** Each domain (identity, meals, later calendar, to-dos…)
+  owns its data and logic. Domains talk through explicit interfaces and the API
+  contract, never by reaching into each other's tables or internals. Shared code lives
+  in the platform or shared-component layer, with no domain knowledge in it.
+- **A well-articulated architecture.** The structure is written down (`CLAUDE.md` files,
+  `docs/`) and the code matches it. When the two drift, fix one of them the same day.
+- **Performance.** Unnecessary work is a defect: wasted re-renders, repeated or N+1
+  queries, recomputation on every request or keystroke, oversized bundles. Budgets
+  live in `docs/performance.md`; work that misses a budget is not done.
+
+## Rework until satisfied
+
+Your review is a gate, not advice. When returned work is wrong in direction, structure,
+boundaries, quality or performance:
+
+1. Say exactly what is wrong, why it matters, and what acceptable looks like, with file
+   and line references.
+2. Send it back to the same agent (it keeps its context) and have it rework.
+3. Review again. Repeat until you would put your own name to it. Do not merge, report
+   as done, or build on top of work you disagree with.
+4. If the same problem survives two rounds, the brief or the design is at fault: fix
+   that, then re-brief. If the disagreement is really a product or architecture choice
+   the owner should make, bring it to them with your recommendation.
+
+Never lower the bar to finish faster, and never quietly fix a subagent's structural
+mistake yourself without also correcting the brief or rules that allowed it.
+
 ## What you do yourself
 
 - Understand the goal, and ask the owner only what you cannot settle from the repo,
@@ -44,8 +77,12 @@ search, a migration. One agent per independent piece. Run independent pieces in 
    - run `make check` yourself;
    - read the core of what it wrote, not only its summary;
    - exercise the behaviour for real (run it, call it, open it in the browser);
+   - check domain boundaries: imports, table access and shared code are where the
+     architecture says they belong;
+   - check the performance evidence against `docs/performance.md` (benchmarks,
+     query counts, render counts, bundle size) and measure anything that looks costly;
    - check the commit history follows the rules.
-   Send it back with specific corrections if it falls short.
+   If it falls short, follow "Rework until satisfied".
 6. **Integrate.** Merge the pieces, run the full check again, and resolve anything that
    only shows up once the pieces meet.
 7. **Report.** Tell the owner what is now true, what you verified and how, what is not
@@ -64,6 +101,8 @@ A subagent starts with no context. Every brief contains:
 - **Constraints:** frozen contracts, no new dependencies without a reason, no global
   installs, never read `.env`, never touch a hosted database, never use `gh`, never push.
 - **Quality bar:** what a senior reviewer would expect, stated concretely.
+- **Performance:** the budgets from `docs/performance.md` that apply, and the evidence
+  required (a benchmark, a query-count assertion, a render-count test, bundle size).
 - **Git rules:** branch name, commit after each working step, the owner's commit style,
   and no AI attribution of any kind (see `CLAUDE.md`).
 - **Done when:** commands that must pass and behaviour that must be demonstrated, with
