@@ -59,9 +59,9 @@ func catalogue() (*authz.Catalogue, error) {
 	return authz.NewCatalogue(meals.Module)
 }
 
-// NewHandler builds the full HTTP handler: middleware around the router. The
-// catalogue and the identity service are built once here, never per request.
-func NewHandler(d Deps) (*Handler, error) {
+// NewIdentityService builds the identity service from d, filling production
+// defaults for a nil clock or hasher. The server and the operator CLI share it.
+func NewIdentityService(d Deps) (*identity.Service, error) {
 	if d.Now == nil {
 		d.Now = time.Now
 	}
@@ -81,6 +81,16 @@ func NewHandler(d Deps) (*Handler, error) {
 	})
 	if err != nil {
 		return nil, fmt.Errorf("build identity service: %w", err)
+	}
+	return svc, nil
+}
+
+// NewHandler builds the full HTTP handler: middleware around the router. The
+// catalogue and the identity service are built once here, never per request.
+func NewHandler(d Deps) (*Handler, error) {
+	svc, err := NewIdentityService(d)
+	if err != nil {
+		return nil, err
 	}
 	ident := identity.NewHandler(svc, identity.HTTPConfig{
 		SecureCookies:     d.Env != EnvDevelopment,
