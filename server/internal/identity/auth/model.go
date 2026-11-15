@@ -110,7 +110,7 @@ func checkPassword(p string) string {
 	return ""
 }
 
-func normalizeDeviceName(raw *string) (*string, string) {
+func normaliseDeviceName(raw *string) (*string, string) {
 	if raw == nil {
 		return nil, ""
 	}

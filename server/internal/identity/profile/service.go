@@ -83,7 +83,7 @@ func (s *Service) Create(ctx context.Context, caller models.Caller, in Input) (P
 	}
 	fe := validate.Fields{}
 	name := ValidateDisplay(fe, "", in.Name, in.Colour, in.Avatar, tz)
-	contact, msg := normalizeContactEmail(in.ContactEmail)
+	contact, msg := normaliseContactEmail(in.ContactEmail)
 	fe.Add("contactEmail", msg)
 	fe.Add("role", checkRole(in.Role))
 	if in.Pin != nil {
@@ -144,7 +144,7 @@ func (s *Service) Update(ctx context.Context, caller models.Caller, id uuid.UUID
 	}
 	fe := validate.Fields{}
 	name := ValidateDisplay(fe, "", in.Name, in.Colour, in.Avatar, tz)
-	contact, msg := normalizeContactEmail(in.ContactEmail)
+	contact, msg := normaliseContactEmail(in.ContactEmail)
 	fe.Add("contactEmail", msg)
 	if err := fe.Err(); err != nil {
 		return Profile{}, err

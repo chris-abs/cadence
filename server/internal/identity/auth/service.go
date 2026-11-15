@@ -99,10 +99,10 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 	email, msg := validate.Email(in.Email)
 	fe.Add("email", msg)
 	fe.Add("password", checkPassword(in.Password))
-	familyName, msg := family.NormalizeName(in.FamilyName)
+	familyName, msg := family.NormaliseName(in.FamilyName)
 	fe.Add("familyName", msg)
 	ownerName := profile.ValidateDisplay(fe, "owner.", in.OwnerName, in.OwnerColour, in.OwnerAvatar, in.OwnerTimezone)
-	deviceName, msg := normalizeDeviceName(in.DeviceName)
+	deviceName, msg := normaliseDeviceName(in.DeviceName)
 	fe.Add("deviceName", msg)
 	if err := fe.Err(); err != nil {
 		return SignedIn{}, err
@@ -186,7 +186,7 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
 	case utf8.RuneCountInString(in.Password) > maxPasswordChars:
 		fe.Add("password", "Use at most 72 characters.")
 	}
-	deviceName, msg := normalizeDeviceName(in.DeviceName)
+	deviceName, msg := normaliseDeviceName(in.DeviceName)
 	fe.Add("deviceName", msg)
 	if err := fe.Err(); err != nil {
 		return LoggedIn{}, err

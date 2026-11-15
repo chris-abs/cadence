@@ -46,7 +46,7 @@ func FromContext(ctx context.Context) (Family, bool) {
 	return f, ok
 }
 
-func NormalizeName(raw string) (string, string) {
+func NormaliseName(raw string) (string, string) {
 	return validate.Name(raw, maxNameChars)
 }
 

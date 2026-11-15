@@ -59,7 +59,7 @@ func (s *Service) Update(ctx context.Context, caller models.Caller, name string,
 		return Family{}, models.ErrForbidden
 	}
 	fe := validate.Fields{}
-	name, msg := NormalizeName(name)
+	name, msg := NormaliseName(name)
 	fe.Add("name", msg)
 	fe.Add("autoLockMinutes", checkAutoLock(autoLockMinutes))
 	if err := fe.Err(); err != nil {

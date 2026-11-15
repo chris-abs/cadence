@@ -128,7 +128,7 @@ func checkTimezone(tz string) string {
 	return ""
 }
 
-func normalizeContactEmail(raw *string) (*string, string) {
+func normaliseContactEmail(raw *string) (*string, string) {
 	if raw == nil {
 		return nil, ""
 	}
