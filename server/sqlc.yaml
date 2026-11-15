@@ -1,0 +1,19 @@
+version: "2"
+sql:
+  - engine: postgresql
+    schema: db/migrations
+    queries: db/queries
+    gen:
+      go:
+        package: store
+        out: internal/store
+        sql_package: pgx/v5
+        output_files_suffix: .gen
+        output_db_file_name: db.gen.go
+        output_models_file_name: models.gen.go
+        emit_interface: false
+        emit_empty_slices: true
+        overrides:
+          # Plain time.Time rather than pgtype.Timestamptz for NOT NULL columns.
+          - db_type: timestamptz
+            go_type: time.Time

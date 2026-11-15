@@ -2,7 +2,11 @@ module github.com/chris-abs/cadence/server
 
 go 1.26.0
 
-require github.com/jackc/pgx/v5 v5.13.0
+require (
+	github.com/jackc/pgx/v5 v5.13.0
+	github.com/peterldowns/pgtestdb v0.1.1
+	github.com/peterldowns/pgtestdb/migrators/goosemigrator v0.1.1
+)
 
 require (
 	cel.dev/expr v0.25.3 // indirect
