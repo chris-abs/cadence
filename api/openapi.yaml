@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: Cadence API
+  version: 0.1.0
+  description: >
+    Contract between the Cadence web client and the Go API. Change this file
+    first, run `make gen`, then implement both sides.
+servers:
+  - url: /api
+paths:
+  /healthz:
+    get:
+      operationId: getHealth
+      summary: Liveness and database connectivity check
+      tags: [system]
+      responses:
+        "200":
+          description: The API is up and can reach its database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "503":
+          description: The API is up but cannot reach its database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              description: Stable machine-readable code, e.g. `invalid_request`.
+            message:
+              type: string
+              description: Human-readable message, safe to show to users.
+            fields:
+              type: object
+              description: Per-field validation messages, keyed by field name.
+              additionalProperties:
+                type: string
