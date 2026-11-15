@@ -285,19 +285,26 @@ func (s *Service) SelectProfile(ctx context.Context, device models.Device, profi
 	if ok, wait := s.selectPerDevice.Allow(device.SessionID.String()); !ok {
 		return SignedIn{}, s.rateLimited(ctx, "select_per_device", wait, audit.Family(device.FamilyID), audit.Session(device.SessionID))
 	}
-	p, err := s.Profiles.Unlock(ctx, device.FamilyID, profileID, pin)
-	if err != nil {
-		return SignedIn{}, err
-	}
-	var out SignedIn
-	var psID uuid.UUID
-	var expires time.Time
-	err = db.InTx(ctx, s.Pool, func(tx pgx.Tx) error {
+	var (
+		out     SignedIn
+		p       profile.Profile
+		verdict error
+		psID    uuid.UUID
+		expires time.Time
+	)
+	err := db.InTx(ctx, s.Pool, func(tx pgx.Tx) error {
+		var err error
+		if p, verdict, err = s.Profiles.Unlock(ctx, tx, device.FamilyID, profileID, pin); err != nil || verdict != nil {
+			return err
+		}
 		out.ProfileToken, psID, expires, err = s.createProfileSession(ctx, NewRepository(tx), device.SessionID, device.FamilyID, p.ID)
 		return err
 	})
 	if err != nil {
 		return SignedIn{}, err
+	}
+	if verdict != nil {
+		return SignedIn{}, verdict
 	}
 	out.Caller, err = s.caller(ctx, callerRow{familyID: device.FamilyID, device: device.SessionID, session: psID, profile: p.ID,
 		role: p.Role, owner: p.IsOwner, timezone: p.Timezone, expires: expires})

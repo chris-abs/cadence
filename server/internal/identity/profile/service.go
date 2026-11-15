@@ -254,34 +254,21 @@ func (s *Service) TransferOwnership(ctx context.Context, caller models.Caller, t
 	return nil
 }
 
-func (s *Service) Unlock(ctx context.Context, familyID, id uuid.UUID, pin *string) (Profile, error) {
+func (s *Service) Unlock(ctx context.Context, conn db.DBTX, familyID, id uuid.UUID, pin *string) (p Profile, verdict, err error) {
 	if pin != nil {
 		if msg := checkPIN(*pin); msg != "" {
-			return Profile{}, models.Invalid("pin", msg)
+			return Profile{}, nil, models.Invalid("pin", msg)
 		}
 	}
-	var (
-		p       Profile
-		verdict error
-	)
-	err := s.inTx(ctx, func(_ pgx.Tx, r *Repository) error {
-		var err error
-		if p, err = r.getForUpdate(ctx, familyID, id); err != nil {
-			return err
-		}
-		if !p.HasPin() {
-			return nil
-		}
-		if pin == nil {
-			return models.Invalid("pin", "Enter the PIN.")
-		}
-		verdict, err = s.checkPIN(ctx, r, p, *pin)
-		return err
-	})
-	if err != nil {
-		return Profile{}, err
+	r := NewRepository(conn)
+	if p, err = r.getForUpdate(ctx, familyID, id); err != nil || !p.HasPin() {
+		return p, nil, err
 	}
-	return p, verdict
+	if pin == nil {
+		return Profile{}, nil, models.Invalid("pin", "Enter the PIN.")
+	}
+	verdict, err = s.checkPIN(ctx, r, p, *pin)
+	return p, verdict, err
 }
 
 func (s *Service) checkPIN(ctx context.Context, r *Repository, p Profile, pin string) (verdict, err error) {
