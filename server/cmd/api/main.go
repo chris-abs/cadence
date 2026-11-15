@@ -1,4 +1,3 @@
-// Command api runs the Cadence HTTP API.
 package main
 
 import (
@@ -7,6 +6,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"github.com/chris-abs/cadence/server/internal/app"
@@ -15,17 +15,12 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		// The logger may not exist yet (bad config), so report on stderr.
 		fmt.Fprintln(os.Stderr, "api:", err)
 		os.Exit(1)
 	}
 }
 
-// run holds everything main would, so deferred cleanup runs before exit.
 func run() error {
-	// ctx is cancelled on the first SIGINT/SIGTERM. Releasing the signal
-	// handler straight away means a second signal kills the process the
-	// default way, so a hung shutdown can still be interrupted.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	go func() {
@@ -45,8 +40,22 @@ func run() error {
 	}
 	defer pool.Close()
 
-	handler := app.NewHandler(app.Deps{Logger: logger, DB: pool, Env: cfg.Env})
+	handler, err := app.NewHandler(app.Deps{
+		Logger: logger, DB: pool, Env: cfg.Env,
+		Registration: cfg.Registration, TrustedProxies: cfg.TrustedProxies, OpenAPIPath: cfg.OpenAPIPath,
+	})
+	if err != nil {
+		return err
+	}
 	srv := app.NewServer(handler, logger)
+
+	var background sync.WaitGroup
+	bgCtx, stopBackground := context.WithCancel(ctx)
+	background.Go(func() { handler.RunCleanup(bgCtx) })
+	defer func() {
+		stopBackground()
+		background.Wait()
+	}()
 
 	var lc net.ListenConfig
 	ln, err := lc.Listen(ctx, "tcp", cfg.Addr())

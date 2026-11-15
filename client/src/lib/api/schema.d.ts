@@ -21,6 +21,408 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Whether a new family can register right now */
+        get: operations["getRegistrationStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a family, its owner profile, and sign this device in as the owner
+         * @description One transaction. Sets both the family and the profile session cookie. Rate limited per IP. Closed unless `ALLOW_REGISTRATION` permits it.
+         */
+        post: operations["registerFamily"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign this device in to a family
+         * @description Replaces any family session this device already has. Unknown email and wrong password both answer `401 invalid_credentials`.
+         */
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign this device out of the family
+         * @description Deletes this device's family session and its profile session, and clears both cookies. Idempotent: succeeds without a valid session.
+         */
+        post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The signed-in family and its profile picker
+         * @description Bootstrap call for a device with a family session.
+         */
+        get: operations["getFamilySession"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/profile-session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Switch this device to a profile
+         * @description Replaces this device's profile session, if any. `pin` is required when the profile has one. Wrong PINs count towards the profile's lockout.
+         */
+        post: operations["selectProfile"];
+        /**
+         * Lock this device back to the profile picker
+         * @description Deletes this device's profile session and clears its cookie. Needs only the family session, so it works after the profile session has expired. Idempotent.
+         */
+        delete: operations["lockProfile"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Devices signed in to this family */
+        get: operations["listSessions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/sessions/{sessionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["SessionId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Sign one device out
+         * @description Deletes that family session and its profile session. Revoking the current device also clears this device's cookies.
+         */
+        delete: operations["revokeSession"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/sessions/revoke-others": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign out every device except this one */
+        post: operations["revokeOtherSessions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The current profile, its rights and the enabled modules */
+        get: operations["getMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The family account, including its email */
+        get: operations["getFamily"];
+        /** Edit the family's name and auto-lock setting */
+        put: operations["updateFamily"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family/email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Change the sign-in email (owner, re-enters the password) */
+        put: operations["changeFamilyEmail"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change the family password (owner)
+         * @description Signs out every other device.
+         */
+        put: operations["changeFamilyPassword"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family/owner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Make another PARENT profile the owner (owner, re-enters the password) */
+        post: operations["transferOwnership"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Permanently delete the family and all its data (owner)
+         * @description Immediate and irreversible. Needs the password and the family name typed again. Clears both cookies on this device.
+         */
+        post: operations["deleteFamily"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The family's profiles (the picker) */
+        get: operations["listProfiles"];
+        put?: never;
+        /** Add a profile (PARENT) */
+        post: operations["createProfile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/profiles/{profileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        /** One profile of this family */
+        get: operations["getProfile"];
+        /** Replace a profile's display fields (self, or any profile for a PARENT) */
+        put: operations["updateProfile"];
+        post?: never;
+        /** Remove a profile (PARENT; not self, not the owner) */
+        delete: operations["deleteProfile"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/profiles/{profileId}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** Change a profile's role (PARENT; not self, not the owner) */
+        put: operations["changeProfileRole"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/profiles/{profileId}/pin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set, change, remove or reset a profile's PIN
+         * @description `pin: null` removes the PIN. The proof needed depends on actor and target (identity spec §2): `currentPin` or `password` for your own existing PIN, nothing for a parent resetting a child (or the owner resetting another parent).
+         */
+        put: operations["setProfilePin"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/modules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Every module in the catalogue with this family's enabled state */
+        get: operations["listModules"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/modules/{moduleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                moduleId: components["parameters"]["ModuleId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** Enable or disable a module for the family (PARENT) */
+        put: operations["setModuleEnabled"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -31,21 +433,325 @@ export interface components {
         };
         Error: {
             error: {
-                /** @description Stable machine-readable code, e.g. `invalid_request`. */
+                /** @description Stable machine-readable code, e.g. `invalid_request`. The identity codes are listed in `docs/spec/identity.md` §7. Any path answers a method it does not support with `405 method_not_allowed` (and an `Allow` header), an unknown path with `404 not_found`. */
                 code: string;
                 /** @description Human-readable message, safe to show to users. */
                 message: string;
-                /** @description Per-field validation messages, keyed by field name. */
+                /** @description Per-field validation messages (with `validation_failed`). Each key is the dotted JSON path of the field in the request body, e.g. `password` or `owner.name`. */
                 fields?: {
                     [key: string]: string;
                 };
+                /** @description Set with `rate_limited` and `pin_locked`. */
+                retryAfterSeconds?: number;
+            };
+        };
+        /** Format: uuid */
+        Id: string;
+        /**
+         * @description A module from the server's catalogue, e.g. `meals`.
+         * @example meals
+         */
+        ModuleId: string;
+        /** @enum {string} */
+        Role: "PARENT" | "CHILD";
+        /** @enum {string} */
+        ProfileColour: "slate" | "gray" | "zinc" | "neutral" | "stone" | "red" | "orange" | "amber" | "yellow" | "lime" | "green" | "emerald" | "teal" | "cyan" | "sky" | "blue" | "indigo" | "violet" | "purple" | "fuchsia" | "pink" | "rose";
+        /**
+         * Format: email
+         * @description Trimmed and lower-cased by the server.
+         */
+        Email: string;
+        /** @description 10–72 characters and at most 72 bytes UTF-8. */
+        Password: string;
+        Pin: string;
+        ProfileName: string;
+        /** @description Key of a built-in avatar; absent or null shows initials. */
+        Avatar: string;
+        /**
+         * @description IANA time zone name, e.g. `Europe/London`.
+         * @example Europe/London
+         */
+        Timezone: string;
+        /** @description Label shown in the device list, e.g. "Kitchen tablet". */
+        DeviceName: string;
+        RegistrationStatus: {
+            open: boolean;
+        };
+        RegisterRequest: {
+            email: components["schemas"]["Email"];
+            password: components["schemas"]["Password"];
+            familyName: string;
+            owner: components["schemas"]["NewOwnerProfile"];
+            deviceName?: components["schemas"]["DeviceName"];
+        };
+        NewOwnerProfile: {
+            name: components["schemas"]["ProfileName"];
+            colour: components["schemas"]["ProfileColour"];
+            avatar?: components["schemas"]["Avatar"];
+            timezone: components["schemas"]["Timezone"];
+        };
+        LoginRequest: {
+            email: string;
+            password: string;
+            deviceName?: components["schemas"]["DeviceName"];
+        };
+        SelectProfileRequest: {
+            profileId: components["schemas"]["Id"];
+            pin?: components["schemas"]["Pin"];
+        };
+        FamilySummary: {
+            id: components["schemas"]["Id"];
+            name: string;
+            /** @description Lock back to the picker after this long without a touch. */
+            autoLockMinutes: number;
+        };
+        FamilySession: {
+            family: components["schemas"]["FamilySummary"];
+            profiles: components["schemas"]["ProfileSummary"][];
+        };
+        Family: {
+            id: components["schemas"]["Id"];
+            name: string;
+            email: string;
+            autoLockMinutes: number;
+            /** Format: date-time */
+            passwordChangedAt: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateFamilyRequest: {
+            name: string;
+            autoLockMinutes: number;
+        };
+        ChangeEmailRequest: {
+            email: components["schemas"]["Email"];
+            password: string;
+        };
+        ChangePasswordRequest: {
+            currentPassword: string;
+            newPassword: components["schemas"]["Password"];
+        };
+        TransferOwnershipRequest: {
+            profileId: components["schemas"]["Id"];
+            password: string;
+        };
+        DeleteFamilyRequest: {
+            password: string;
+            /** @description The family name, typed again (trimmed, case-insensitive). */
+            confirmName: string;
+        };
+        /** @description Picker view, readable with only the family session. Never carries contact details. */
+        ProfileSummary: {
+            id: components["schemas"]["Id"];
+            name: string;
+            role: components["schemas"]["Role"];
+            isOwner: boolean;
+            colour: components["schemas"]["ProfileColour"];
+            avatar: string | null;
+            timezone: string;
+            hasPin: boolean;
+            /**
+             * Format: date-time
+             * @description Set while wrong PINs have locked this profile.
+             */
+            lockedUntil: string | null;
+            /** @description Seconds left on the lockout, computed when the response was made (rounded up), so the picker countdown does not depend on the device clock. Null when not locked. */
+            lockedForSeconds: number | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        /** @description Full view of a profile. The contact fields are filled only when the caller is this profile or a PARENT; for anyone else they are null. */
+        Profile: {
+            id: components["schemas"]["Id"];
+            name: string;
+            role: components["schemas"]["Role"];
+            isOwner: boolean;
+            colour: components["schemas"]["ProfileColour"];
+            avatar: string | null;
+            timezone: string;
+            hasPin: boolean;
+            /**
+             * Format: date-time
+             * @description Set while wrong PINs have locked this profile.
+             */
+            lockedUntil: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** @description Optional address for notifications only; never a sign-in credential, not unique. Nothing is sent to it until verified. */
+            contactEmail: string | null;
+            /**
+             * Format: date-time
+             * @description Null until verified (not in v1); reset when the address changes.
+             */
+            contactEmailVerifiedAt: string | null;
+        };
+        ProfileList: {
+            profiles: components["schemas"]["ProfileSummary"][];
+        };
+        CreateProfileRequest: {
+            name: components["schemas"]["ProfileName"];
+            role: components["schemas"]["Role"];
+            colour: components["schemas"]["ProfileColour"];
+            avatar?: components["schemas"]["Avatar"];
+            timezone?: components["schemas"]["Timezone"];
+            pin?: components["schemas"]["Pin"];
+            contactEmail?: components["schemas"]["Email"];
+        };
+        /** @description Full replacement of the display fields; `avatar` or `contactEmail` null clears it. */
+        UpdateProfileRequest: {
+            name: components["schemas"]["ProfileName"];
+            colour: components["schemas"]["ProfileColour"];
+            avatar: string | null;
+            timezone: components["schemas"]["Timezone"];
+            /**
+             * Format: email
+             * @description Trimmed and lower-cased by the server.
+             */
+            contactEmail: string | null;
+        };
+        ChangeRoleRequest: {
+            role: components["schemas"]["Role"];
+        };
+        SetPinRequest: {
+            /** @description The new PIN, or null to remove it. */
+            pin: string | null;
+            currentPin?: components["schemas"]["Pin"];
+            /** @description Family password, as proof for a PARENT's own forgotten PIN. */
+            password?: string;
+        };
+        Me: {
+            profile: components["schemas"]["Profile"];
+            family: components["schemas"]["FamilySummary"];
+            /** @description Every right this profile has now, as `<module>.<action>`; identity rights use the `family` prefix (e.g. `family.profiles.create`, `meals.recipes.edit`). Only enabled modules appear. */
+            permissions: string[];
+            /** @description Enabled modules, for navigation. */
+            modules: components["schemas"]["Module"][];
+            /** @description A PARENT without a PIN in a family that has a CHILD profile. */
+            pinAdvised: boolean;
+            session: components["schemas"]["ProfileSessionInfo"];
+        };
+        ProfileSessionInfo: {
+            /**
+             * Format: date-time
+             * @description Absolute end of this profile session.
+             */
+            expiresAt: string;
+            /** @description Server-side idle limit (backstop for the client's auto-lock). */
+            idleTimeoutSeconds: number;
+        };
+        Module: {
+            id: components["schemas"]["ModuleId"];
+            name: string;
+            description: string;
+            enabled: boolean;
+        };
+        ModuleList: {
+            modules: components["schemas"]["Module"][];
+        };
+        SetModuleEnabledRequest: {
+            enabled: boolean;
+        };
+        DeviceSession: {
+            id: components["schemas"]["Id"];
+            deviceName: string | null;
+            userAgent: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            lastSeenAt: string;
+            /** @description This is the device making the request. */
+            current: boolean;
+            /** Format: uuid */
+            activeProfileId: string | null;
+            activeProfileName: string | null;
+        };
+        DeviceSessionList: {
+            sessions: components["schemas"]["DeviceSession"][];
+        };
+    };
+    responses: {
+        /** @description Malformed body or unknown field: `invalid_request`. */
+        BadRequest: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description `family_session_required` (go to login), `profile_session_required` (go to the picker) or `invalid_credentials` (login failed). */
+        Unauthorized: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description `forbidden`, `invalid_pin`, `invalid_password`, `module_disabled`, `registration_closed` or `cross_origin`. */
+        Forbidden: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description `not_found`, also for another family's ids. */
+        NotFound: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description `email_taken`, `name_taken`, `owner_protected`, `self_not_allowed` or `profile_limit_reached`. */
+        Conflict: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description `validation_failed` with per-field messages in `fields`. */
+        ValidationFailed: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description `rate_limited` or `pin_locked`, with `retryAfterSeconds`. */
+        RateLimited: {
+            headers: {
+                /** @description Seconds until a retry can succeed. */
+                "Retry-After"?: number;
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
             };
         };
     };
-    responses: never;
-    parameters: never;
+    parameters: {
+        ProfileId: components["schemas"]["Id"];
+        SessionId: components["schemas"]["Id"];
+        ModuleId: components["schemas"]["ModuleId"];
+    };
     requestBodies: never;
-    headers: never;
+    headers: {
+        /** @description Sets or clears `cadence_family` / `cadence_profile` (httpOnly; the client never reads them). */
+        SetSessionCookies: string;
+    };
     pathItems: never;
 }
 export type $defs = Record<string, never>;
@@ -77,6 +783,669 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    getRegistrationStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Registration status. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegistrationStatus"];
+                };
+            };
+        };
+    };
+    registerFamily: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterRequest"];
+            };
+        };
+        responses: {
+            /** @description Family created; both session cookies set. */
+            201: {
+                headers: {
+                    "Set-Cookie": components["headers"]["SetSessionCookies"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            403: components["responses"]["Forbidden"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description Signed in; family session cookie set. */
+            200: {
+                headers: {
+                    "Set-Cookie": components["headers"]["SetSessionCookies"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilySession"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Signed out; both cookies cleared. */
+            204: {
+                headers: {
+                    "Set-Cookie": components["headers"]["SetSessionCookies"];
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getFamilySession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The family session is valid. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilySession"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    selectProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SelectProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Profile selected; profile session cookie set. */
+            200: {
+                headers: {
+                    "Set-Cookie": components["headers"]["SetSessionCookies"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    lockProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Locked; profile session cookie cleared. */
+            204: {
+                headers: {
+                    "Set-Cookie": components["headers"]["SetSessionCookies"];
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    listSessions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One entry per family session (device). */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceSessionList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    revokeSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: components["parameters"]["SessionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Device signed out. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    revokeOtherSessions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All other devices signed out. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getMe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The profile session is valid. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    getFamily: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The family. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Family"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    updateFamily: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateFamilyRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated family. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Family"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    changeFamilyEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeEmailRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated family. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Family"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    changeFamilyPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangePasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Password changed. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    transferOwnership: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransferOwnershipRequest"];
+            };
+        };
+        responses: {
+            /** @description Ownership transferred. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    deleteFamily: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteFamilyRequest"];
+            };
+        };
+        responses: {
+            /** @description Family deleted; both cookies cleared. */
+            204: {
+                headers: {
+                    "Set-Cookie": components["headers"]["SetSessionCookies"];
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    listProfiles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All profiles, owner first, then by name. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    createProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Profile created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    getProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The profile. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    updateProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated profile. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    deleteProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Profile deleted with its sessions. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+        };
+    };
+    changeProfileRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated profile; its profile sessions are signed out. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    setProfilePin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profileId: components["parameters"]["ProfileId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetPinRequest"];
+            };
+        };
+        responses: {
+            /** @description PIN updated; lockout cleared; the target's other sessions signed out. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
+            429: components["responses"]["RateLimited"];
+        };
+    };
+    listModules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The module catalogue. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModuleList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    setModuleEnabled: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                moduleId: components["parameters"]["ModuleId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetModuleEnabledRequest"];
+            };
+        };
+        responses: {
+            /** @description The module with its new state. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Module"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
         };
     };
 }

@@ -2,18 +2,48 @@ version: "2"
 sql:
   - engine: postgresql
     schema: db/migrations
-    queries: db/queries
+    queries: db/queries/identity/auth
     gen:
       go:
-        package: store
-        out: internal/store
-        sql_package: pgx/v5
-        output_files_suffix: .gen
-        output_db_file_name: db.gen.go
-        output_models_file_name: models.gen.go
-        emit_interface: false
-        emit_empty_slices: true
-        overrides:
-          # Plain time.Time rather than pgtype.Timestamptz for NOT NULL columns.
-          - db_type: timestamptz
-            go_type: time.Time
+        package: authdb
+        out: internal/identity/auth/internal/authdb
+        <<: &go_options
+          sql_package: pgx/v5
+          output_files_suffix: .gen
+          output_db_file_name: db.gen.go
+          output_models_file_name: models.gen.go
+          emit_interface: false
+          emit_empty_slices: true
+          emit_pointers_for_null_types: true
+          overrides:
+            - db_type: timestamptz
+              go_type: time.Time
+            - db_type: timestamptz
+              nullable: true
+              go_type:
+                type: time.Time
+                pointer: true
+            - db_type: uuid
+              go_type: github.com/google/uuid.UUID
+            - db_type: uuid
+              nullable: true
+              go_type:
+                import: github.com/google/uuid
+                type: UUID
+                pointer: true
+  - engine: postgresql
+    schema: db/migrations
+    queries: db/queries/identity/family
+    gen:
+      go:
+        package: familydb
+        out: internal/identity/family/internal/familydb
+        <<: *go_options
+  - engine: postgresql
+    schema: db/migrations
+    queries: db/queries/identity/profile
+    gen:
+      go:
+        package: profiledb
+        out: internal/identity/profile/internal/profiledb
+        <<: *go_options

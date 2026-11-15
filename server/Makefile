@@ -1,7 +1,7 @@
 # Server targets. The root Makefile calls these via `make -C server <target>`.
 # Tools (goose, sqlc, oapi-codegen) are pinned in go.mod and run with `go tool`.
 
-.PHONY: help dev test migrate migrate-status migration gen check
+.PHONY: help dev test migrate migrate-status migration reset-password gen check
 
 # Local Docker Postgres from ../docker-compose.yml. An exported DATABASE_URL
 # wins, so no .env file is needed for local work.
@@ -38,6 +38,13 @@ migrate: ## Apply migrations to DATABASE_URL (local only unless MIGRATE_ALLOW_RE
 migrate-status: ## Show migration status for DATABASE_URL
 	@$(call guard_local)
 	@go tool goose -dir db/migrations postgres '$(DATABASE_URL)' status
+
+# Forgotten family password [I7]: prints a new random password and signs
+# every device out. Same local-only guard as migrate.
+reset-password: ## Reset a family's password: make reset-password email=family@example.com
+	@test -n '$(email)' || { echo 'usage: make reset-password email=<family email>'; exit 1; }
+	@$(call guard_local)
+	@DATABASE_URL='$(DATABASE_URL)' go run ./cmd/admin reset-password -email '$(email)'
 
 migration: ## Create a new SQL migration: make migration name=add_family
 	@test -n '$(name)' || { echo 'usage: make migration name=<snake_case_name>'; exit 1; }

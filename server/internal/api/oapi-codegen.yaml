@@ -1,11 +1,7 @@
-# Generates Go types from the contract. Models only: routing stays on the
-# stdlib ServeMux, so no server framework code is generated.
 package: api
 generate:
   models: true
 output-options:
   skip-prune: true
 compatibility:
-  # HealthStatusOk rather than Ok: enum constants stay unambiguous as the
-  # contract grows.
   always-prefix-enum-values: true
