@@ -1,0 +1,55 @@
+# Git hooks, run by lefthook (https://lefthook.dev). Install once per clone:
+#   lefthook install
+#
+# pre-commit: fast checks on staged files only. It reports problems and never
+# rewrites files, so what you commit is exactly what you staged.
+# pre-push:   the full `make check` gate, and no pushes to main.
+
+# `**` matches any depth (including none); `*` stays within one directory.
+glob_matcher: doublestar
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: gofmt
+      root: server/
+      glob: "**/*.go"
+      run: |
+        unformatted=$(gofmt -l {staged_files})
+        [ -z "$unformatted" ] || { printf 'gofmt: not formatted (run gofmt -w):\n%s\n' "$unformatted"; exit 1; }
+
+    - name: golangci-lint
+      root: server/
+      glob: "**/*.go"
+      # Lint only the packages (directories) that contain staged Go files.
+      run: |
+        command -v golangci-lint >/dev/null || { echo 'golangci-lint not found: brew install golangci-lint'; exit 1; }
+        golangci-lint run $(for f in {staged_files}; do dirname "$f"; done | sort -u)
+
+    - name: prettier
+      root: client/
+      glob: "**/*"
+      exclude: ["client/src/routeTree.gen.ts", "client/src/lib/api/schema.d.ts"]
+      run: |
+        [ -x node_modules/.bin/prettier ] || { echo 'client/node_modules missing: run `cd client && yarn install`'; exit 1; }
+        node_modules/.bin/prettier --check --ignore-unknown --log-level=warn {staged_files}
+
+    - name: eslint
+      root: client/
+      glob: "**/*.{ts,tsx,js}"
+      exclude: ["client/src/routeTree.gen.ts", "client/src/lib/api/schema.d.ts"]
+      # --no-warn-ignored: files ignored by eslint.config.js pass quietly
+      # instead of tripping --max-warnings=0.
+      run: |
+        [ -x node_modules/.bin/eslint ] || { echo 'client/node_modules missing: run `cd client && yarn install`'; exit 1; }
+        node_modules/.bin/eslint --max-warnings=0 --no-warn-ignored {staged_files}
+
+pre-push:
+  piped: true # stop at the first failure; the cheap guard runs first
+  jobs:
+    - name: refuse-push-to-main
+      run: bash scripts/refuse-push-to-main.sh
+      use_stdin: true
+
+    - name: make-check
+      run: make check
