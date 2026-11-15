@@ -8,22 +8,22 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // GetFamily returns the family account, email included (PARENT).
-func (s *Service) GetFamily(_ context.Context, caller Caller) (store.Family, error) {
+func (s *Service) GetFamily(_ context.Context, caller Caller) (identitydb.Family, error) {
 	if !caller.Subject.Can(authz.FamilyView) {
-		return store.Family{}, ErrForbidden
+		return identitydb.Family{}, ErrForbidden
 	}
 	// The session lookup loaded the family row on this request already.
 	return caller.Device.Family, nil
 }
 
 // UpdateFamily edits the family name and auto-lock setting (PARENT).
-func (s *Service) UpdateFamily(ctx context.Context, caller Caller, name string, autoLockMinutes int) (store.Family, error) {
+func (s *Service) UpdateFamily(ctx context.Context, caller Caller, name string, autoLockMinutes int) (identitydb.Family, error) {
 	if !caller.Subject.Can(authz.FamilyEdit) {
-		return store.Family{}, ErrForbidden
+		return identitydb.Family{}, ErrForbidden
 	}
 	fe := fieldErrors{}
 	name, msg := normalizeName(name, maxFamilyNameChars)
@@ -32,36 +32,36 @@ func (s *Service) UpdateFamily(ctx context.Context, caller Caller, name string, 
 		fe.add("autoLockMinutes", "Choose between 1 and 30 minutes.")
 	}
 	if err := fe.err(); err != nil {
-		return store.Family{}, err
+		return identitydb.Family{}, err
 	}
-	f, err := s.q.UpdateFamilySettings(ctx, store.UpdateFamilySettingsParams{
+	f, err := s.q.UpdateFamilySettings(ctx, identitydb.UpdateFamilySettingsParams{
 		Name: name, AutoLockMinutes: int16(autoLockMinutes), ID: caller.Device.Family.ID, //nolint:gosec // range-checked to 1–30 above.
 	})
 	if err != nil {
-		return store.Family{}, fmt.Errorf("update family: %w", err)
+		return identitydb.Family{}, fmt.Errorf("update family: %w", err)
 	}
 	return f, nil
 }
 
 // ChangeEmail changes the sign-in email (owner, password re-entered).
 // Sessions are unchanged (§3).
-func (s *Service) ChangeEmail(ctx context.Context, caller Caller, email, password string) (store.Family, error) {
+func (s *Service) ChangeEmail(ctx context.Context, caller Caller, email, password string) (identitydb.Family, error) {
 	if !caller.Subject.Can(authz.FamilyAccountManage) {
-		return store.Family{}, ErrForbidden
+		return identitydb.Family{}, ErrForbidden
 	}
 	email, msg := normalizeEmail(email)
 	if msg != "" {
-		return store.Family{}, &ValidationError{Fields: map[string]string{"email": msg}}
+		return identitydb.Family{}, &ValidationError{Fields: map[string]string{"email": msg}}
 	}
 	if err := s.verifyFamilyPassword(ctx, caller.Device.Family, password); err != nil {
-		return store.Family{}, err
+		return identitydb.Family{}, err
 	}
-	f, err := s.q.UpdateFamilyEmail(ctx, store.UpdateFamilyEmailParams{Email: email, ID: caller.Device.Family.ID})
+	f, err := s.q.UpdateFamilyEmail(ctx, identitydb.UpdateFamilyEmailParams{Email: email, ID: caller.Device.Family.ID})
 	if uniqueViolation(err, constraintFamilyEmail) {
-		return store.Family{}, ErrEmailTaken
+		return identitydb.Family{}, ErrEmailTaken
 	}
 	if err != nil {
-		return store.Family{}, fmt.Errorf("update family email: %w", err)
+		return identitydb.Family{}, fmt.Errorf("update family email: %w", err)
 	}
 	s.audit.event(ctx, evEmailChanged, familyAttr(f.ID), actorAttr(caller.Profile.ID))
 	return f, nil
@@ -84,11 +84,11 @@ func (s *Service) ChangePassword(ctx context.Context, caller Caller, current, ne
 		return err
 	}
 	familyID := caller.Device.Family.ID
-	err = s.inTx(ctx, func(q *store.Queries) error {
-		if err := q.UpdateFamilyPassword(ctx, store.UpdateFamilyPasswordParams{PasswordHash: hash, ID: familyID}); err != nil {
+	err = s.inTx(ctx, func(q *identitydb.Queries) error {
+		if err := q.UpdateFamilyPassword(ctx, identitydb.UpdateFamilyPasswordParams{PasswordHash: hash, ID: familyID}); err != nil {
 			return fmt.Errorf("update password: %w", err)
 		}
-		if _, err := q.DeleteFamilySessionsExcept(ctx, store.DeleteFamilySessionsExceptParams{
+		if _, err := q.DeleteFamilySessionsExcept(ctx, identitydb.DeleteFamilySessionsExceptParams{
 			FamilyID: familyID, Keep: []uuid.UUID{caller.Device.SessionID, caller.SessionID},
 		}); err != nil {
 			return fmt.Errorf("sign out other sessions: %w", err)
@@ -113,11 +113,11 @@ func (s *Service) TransferOwnership(ctx context.Context, caller Caller, to uuid.
 		return err
 	}
 	familyID := caller.Device.Family.ID
-	err := s.inTx(ctx, func(q *store.Queries) error {
+	err := s.inTx(ctx, func(q *identitydb.Queries) error {
 		if _, err := q.GetFamilyForUpdate(ctx, familyID); err != nil {
 			return fmt.Errorf("lock family: %w", err)
 		}
-		target, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: to})
+		target, err := q.GetProfileForUpdate(ctx, identitydb.GetProfileForUpdateParams{FamilyID: familyID, ID: to})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
@@ -130,7 +130,7 @@ func (s *Service) TransferOwnership(ctx context.Context, caller Caller, to uuid.
 		if err := q.ClearOwner(ctx, familyID); err != nil {
 			return fmt.Errorf("clear owner: %w", err)
 		}
-		if err := q.SetOwner(ctx, store.SetOwnerParams{FamilyID: familyID, ID: to}); err != nil {
+		if err := q.SetOwner(ctx, identitydb.SetOwnerParams{FamilyID: familyID, ID: to}); err != nil {
 			return fmt.Errorf("set owner: %w", err)
 		}
 		return nil

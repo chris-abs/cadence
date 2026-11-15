@@ -2,6 +2,8 @@
 -- and profile sessions, and per-family module settings (docs/spec/identity.md §4).
 -- Ids are UUIDv7 generated in Go. RLS is enabled with no policies so the
 -- hosted Data API sees nothing; the API connects as the table owner.
+--
+-- domain: identity (every table below; only db/queries/identity may query them)
 
 -- +goose Up
 CREATE TABLE family (

@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // CleanupInterval is how often expired sessions are swept (spec §3).
@@ -66,7 +66,7 @@ func (s *Service) ResetPassword(ctx context.Context, email string) (string, erro
 		return "", err
 	}
 	var familyID string
-	err = s.inTx(ctx, func(q *store.Queries) error {
+	err = s.inTx(ctx, func(q *identitydb.Queries) error {
 		f, err := q.GetFamilyByEmail(ctx, email)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return ErrUnknownFamily
@@ -75,11 +75,11 @@ func (s *Service) ResetPassword(ctx context.Context, email string) (string, erro
 			return fmt.Errorf("load family: %w", err)
 		}
 		familyID = f.ID.String()
-		if err := q.UpdateFamilyPassword(ctx, store.UpdateFamilyPasswordParams{PasswordHash: hash, ID: f.ID}); err != nil {
+		if err := q.UpdateFamilyPassword(ctx, identitydb.UpdateFamilyPasswordParams{PasswordHash: hash, ID: f.ID}); err != nil {
 			return fmt.Errorf("update password: %w", err)
 		}
 		// An empty keep list, not nil: NULL would make "id <> ALL(keep)" match nothing.
-		if _, err := q.DeleteFamilySessionsExcept(ctx, store.DeleteFamilySessionsExceptParams{FamilyID: f.ID, Keep: []uuid.UUID{}}); err != nil {
+		if _, err := q.DeleteFamilySessionsExcept(ctx, identitydb.DeleteFamilySessionsExceptParams{FamilyID: f.ID, Keep: []uuid.UUID{}}); err != nil {
 			return fmt.Errorf("sign out sessions: %w", err)
 		}
 		return nil

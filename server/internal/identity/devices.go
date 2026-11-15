@@ -8,12 +8,12 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // DeviceItem is one signed-in device in GET /auth/sessions.
 type DeviceItem struct {
-	Row     store.ListDevicesRow
+	Row     identitydb.ListDevicesRow
 	Current bool
 }
 
@@ -22,7 +22,7 @@ func (s *Service) ListDevices(ctx context.Context, caller Caller) ([]DeviceItem,
 	if !caller.Subject.Can(authz.FamilySessionsManage) {
 		return nil, ErrForbidden
 	}
-	rows, err := s.q.ListDevices(ctx, store.ListDevicesParams{FamilyID: caller.Device.Family.ID, Now: s.now()})
+	rows, err := s.q.ListDevices(ctx, identitydb.ListDevicesParams{FamilyID: caller.Device.Family.ID, Now: s.now()})
 	if err != nil {
 		return nil, fmt.Errorf("list devices: %w", err)
 	}
@@ -39,7 +39,7 @@ func (s *Service) RevokeDevice(ctx context.Context, caller Caller, id uuid.UUID)
 	if !caller.Subject.Can(authz.FamilySessionsManage) {
 		return false, ErrForbidden
 	}
-	n, err := s.q.DeleteDevice(ctx, store.DeleteDeviceParams{FamilyID: caller.Device.Family.ID, ID: id})
+	n, err := s.q.DeleteDevice(ctx, identitydb.DeleteDeviceParams{FamilyID: caller.Device.Family.ID, ID: id})
 	if err != nil {
 		return false, fmt.Errorf("revoke device: %w", err)
 	}
@@ -55,7 +55,7 @@ func (s *Service) RevokeOtherDevices(ctx context.Context, caller Caller) error {
 	if !caller.Subject.Can(authz.FamilySessionsManage) {
 		return ErrForbidden
 	}
-	n, err := s.q.DeleteOtherDevices(ctx, store.DeleteOtherDevicesParams{FamilyID: caller.Device.Family.ID, Keep: caller.Device.SessionID})
+	n, err := s.q.DeleteOtherDevices(ctx, identitydb.DeleteOtherDevicesParams{FamilyID: caller.Device.Family.ID, Keep: caller.Device.SessionID})
 	if err != nil {
 		return fmt.Errorf("revoke other devices: %w", err)
 	}

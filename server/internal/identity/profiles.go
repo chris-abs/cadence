@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // Me is the current profile with what the client needs to render rights.
@@ -36,7 +36,7 @@ func (s *Service) Me(ctx context.Context, caller Caller) (Me, error) {
 // GetProfile returns one profile of the caller's family (R7: another
 // family's id is not found).
 func (s *Service) GetProfile(ctx context.Context, caller Caller, id uuid.UUID) (ProfileItem, error) {
-	row, err := s.q.GetProfile(ctx, store.GetProfileParams{FamilyID: caller.Device.Family.ID, ID: id})
+	row, err := s.q.GetProfile(ctx, identitydb.GetProfileParams{FamilyID: caller.Device.Family.ID, ID: id})
 	if err != nil {
 		return ProfileItem{}, notFound(err, "load profile")
 	}
@@ -98,8 +98,8 @@ func (s *Service) CreateProfile(ctx context.Context, caller Caller, in ProfileIn
 	}
 
 	familyID := caller.Device.Family.ID
-	var created store.Profile
-	err = s.inTx(ctx, func(q *store.Queries) error {
+	var created identitydb.Profile
+	err = s.inTx(ctx, func(q *identitydb.Queries) error {
 		if _, err := q.GetFamilyForUpdate(ctx, familyID); err != nil {
 			return fmt.Errorf("lock family: %w", err)
 		}
@@ -110,7 +110,7 @@ func (s *Service) CreateProfile(ctx context.Context, caller Caller, in ProfileIn
 		if n >= maxProfiles {
 			return ErrProfileLimitReached
 		}
-		created, err = q.CreateProfile(ctx, store.CreateProfileParams{
+		created, err = q.CreateProfile(ctx, identitydb.CreateProfileParams{
 			ID: id, FamilyID: familyID, Name: name, Role: in.Role, IsOwner: false,
 			Colour: in.Colour, Avatar: in.Avatar, Timezone: tz, PinHash: pinHash, ContactEmail: contact,
 		})
@@ -149,7 +149,7 @@ func (s *Service) UpdateProfile(ctx context.Context, caller Caller, id uuid.UUID
 	if err := fe.err(); err != nil {
 		return ProfileItem{}, err
 	}
-	updated, err := s.q.UpdateProfileDisplay(ctx, store.UpdateProfileDisplayParams{
+	updated, err := s.q.UpdateProfileDisplay(ctx, identitydb.UpdateProfileDisplayParams{
 		Name: name, Colour: in.Colour, Avatar: in.Avatar, Timezone: tz, ContactEmail: contact,
 		FamilyID: caller.Device.Family.ID, ID: id,
 	})
@@ -174,19 +174,19 @@ func (s *Service) ChangeRole(ctx context.Context, caller Caller, id uuid.UUID, r
 	}
 	familyID := caller.Device.Family.ID
 	var out ProfileItem
-	err := s.inTx(ctx, func(q *store.Queries) error {
-		target, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
+	err := s.inTx(ctx, func(q *identitydb.Queries) error {
+		target, err := q.GetProfileForUpdate(ctx, identitydb.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
 		if err := guardTarget(caller, target); err != nil {
 			return err
 		}
-		updated, err := q.UpdateProfileRole(ctx, store.UpdateProfileRoleParams{Role: role, FamilyID: familyID, ID: id})
+		updated, err := q.UpdateProfileRole(ctx, identitydb.UpdateProfileRoleParams{Role: role, FamilyID: familyID, ID: id})
 		if err != nil {
 			return fmt.Errorf("update role: %w", err)
 		}
-		if _, err := q.DeleteProfileSessionsOf(ctx, store.DeleteProfileSessionsOfParams{
+		if _, err := q.DeleteProfileSessionsOf(ctx, identitydb.DeleteProfileSessionsOfParams{
 			ProfileID: &id, FamilyID: familyID, Keep: []uuid.UUID{},
 		}); err != nil {
 			return fmt.Errorf("sign out profile: %w", err)
@@ -213,15 +213,15 @@ func (s *Service) DeleteProfile(ctx context.Context, caller Caller, id uuid.UUID
 		return ErrForbidden
 	}
 	familyID := caller.Device.Family.ID
-	err := s.inTx(ctx, func(q *store.Queries) error {
-		target, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
+	err := s.inTx(ctx, func(q *identitydb.Queries) error {
+		target, err := q.GetProfileForUpdate(ctx, identitydb.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
 		if err := guardTarget(caller, target); err != nil {
 			return err
 		}
-		if err := q.DeleteProfile(ctx, store.DeleteProfileParams{FamilyID: familyID, ID: id}); err != nil {
+		if err := q.DeleteProfile(ctx, identitydb.DeleteProfileParams{FamilyID: familyID, ID: id}); err != nil {
 			return fmt.Errorf("delete profile: %w", err)
 		}
 		return nil
@@ -234,7 +234,7 @@ func (s *Service) DeleteProfile(ctx context.Context, caller Caller, id uuid.UUID
 }
 
 // guardTarget refuses role changes and deletion aimed at yourself or the owner.
-func guardTarget(caller Caller, target store.Profile) error {
+func guardTarget(caller Caller, target identitydb.Profile) error {
 	switch {
 	case target.ID == caller.Profile.ID:
 		return ErrSelfNotAllowed

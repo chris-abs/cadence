@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // lockoutAfter is the PIN lockout schedule (spec §6.2): failures 1–4 are
@@ -38,7 +38,7 @@ func lockoutAfter(failures int32) time.Duration {
 // It returns a verdict (nil, ErrInvalidPIN or a locked *RetryError) that the
 // caller must return only after committing, so failures persist; err is for
 // infrastructure failures.
-func (s *Service) verifyPIN(ctx context.Context, q *store.Queries, p store.Profile, pin string) (verdict, err error) {
+func (s *Service) verifyPIN(ctx context.Context, q *identitydb.Queries, p identitydb.Profile, pin string) (verdict, err error) {
 	now := s.now()
 	attempt, err := q.GetPinAttempt(ctx, p.ID)
 	hasFailures := err == nil
@@ -61,7 +61,7 @@ func (s *Service) verifyPIN(ctx context.Context, q *store.Queries, p store.Profi
 		return nil, nil
 	}
 
-	failures, err := q.RecordPinFailure(ctx, store.RecordPinFailureParams{ProfileID: p.ID, Now: now})
+	failures, err := q.RecordPinFailure(ctx, identitydb.RecordPinFailureParams{ProfileID: p.ID, Now: now})
 	if err != nil {
 		return nil, fmt.Errorf("record pin failure: %w", err)
 	}
@@ -72,7 +72,7 @@ func (s *Service) verifyPIN(ctx context.Context, q *store.Queries, p store.Profi
 		return ErrInvalidPIN, nil
 	}
 	until := now.Add(lock)
-	if err := q.LockPin(ctx, store.LockPinParams{ProfileID: p.ID, LockedUntil: &until}); err != nil {
+	if err := q.LockPin(ctx, identitydb.LockPinParams{ProfileID: p.ID, LockedUntil: &until}); err != nil {
 		return nil, fmt.Errorf("lock pin: %w", err)
 	}
 	s.audit.event(ctx, evPinLocked, append(attrs, slog.Duration("locked_for", lock))...)
@@ -107,8 +107,8 @@ func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID,
 		verdict error
 		by      string
 	)
-	err := s.inTx(ctx, func(q *store.Queries) error {
-		target, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: caller.Device.Family.ID, ID: targetID})
+	err := s.inTx(ctx, func(q *identitydb.Queries) error {
+		target, err := q.GetProfileForUpdate(ctx, identitydb.GetProfileForUpdateParams{FamilyID: caller.Device.Family.ID, ID: targetID})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
@@ -141,7 +141,7 @@ func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID,
 			}
 			hash = &h
 		}
-		if err := q.SetProfilePin(ctx, store.SetProfilePinParams{PinHash: hash, FamilyID: target.FamilyID, ID: target.ID}); err != nil {
+		if err := q.SetProfilePin(ctx, identitydb.SetProfilePinParams{PinHash: hash, FamilyID: target.FamilyID, ID: target.ID}); err != nil {
 			return fmt.Errorf("set pin: %w", err)
 		}
 		if err := q.ClearPinAttempts(ctx, target.ID); err != nil {
@@ -151,7 +151,7 @@ func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID,
 		if self {
 			keep = append(keep, caller.SessionID)
 		}
-		if _, err := q.DeleteProfileSessionsOf(ctx, store.DeleteProfileSessionsOfParams{
+		if _, err := q.DeleteProfileSessionsOf(ctx, identitydb.DeleteProfileSessionsOfParams{
 			ProfileID: &target.ID, FamilyID: target.FamilyID, Keep: keep,
 		}); err != nil {
 			return fmt.Errorf("sign out profile: %w", err)
@@ -172,7 +172,7 @@ func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID,
 // proveOwnPIN checks the proof for changing one's own existing PIN: the
 // current PIN (counted towards lockout), or the family password for a PARENT
 // who forgot theirs [I5].
-func (s *Service) proveOwnPIN(ctx context.Context, q *store.Queries, caller Caller, target store.Profile, in SetPINInput) (verdict, err error) {
+func (s *Service) proveOwnPIN(ctx context.Context, q *identitydb.Queries, caller Caller, target identitydb.Profile, in SetPINInput) (verdict, err error) {
 	switch {
 	case in.CurrentPin != nil:
 		return s.verifyPIN(ctx, q, target, *in.CurrentPin)

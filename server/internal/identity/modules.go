@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // ModuleItem is a catalogue module with the family's effective state.
@@ -37,7 +37,7 @@ func (s *Service) SetModuleEnabled(ctx context.Context, caller Caller, id string
 		return ModuleItem{}, ErrNotFound
 	}
 	familyID := caller.Device.Family.ID
-	if err := s.q.SetFamilyModule(ctx, store.SetFamilyModuleParams{FamilyID: familyID, ModuleID: id, Enabled: enabled}); err != nil {
+	if err := s.q.SetFamilyModule(ctx, identitydb.SetFamilyModuleParams{FamilyID: familyID, ModuleID: id, Enabled: enabled}); err != nil {
 		return ModuleItem{}, fmt.Errorf("set module: %w", err)
 	}
 	s.audit.event(ctx, evModuleToggled, familyAttr(familyID), actorAttr(caller.Profile.ID),

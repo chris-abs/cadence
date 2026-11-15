@@ -6,16 +6,16 @@ import (
 
 	"github.com/chris-abs/cadence/server/internal/api"
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // Conversions from domain values to the contract's generated types.
 
-func familySummaryView(f store.Family) api.FamilySummary {
+func familySummaryView(f identitydb.Family) api.FamilySummary {
 	return api.FamilySummary{Id: f.ID.String(), Name: f.Name, AutoLockMinutes: int(f.AutoLockMinutes)}
 }
 
-func familyView(f store.Family) api.Family {
+func familyView(f identitydb.Family) api.Family {
 	return api.Family{
 		Id: f.ID.String(), Name: f.Name, Email: f.Email, AutoLockMinutes: int(f.AutoLockMinutes),
 		PasswordChangedAt: f.PasswordChangedAt, CreatedAt: f.CreatedAt, UpdatedAt: f.UpdatedAt,

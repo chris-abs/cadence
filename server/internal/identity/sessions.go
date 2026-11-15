@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // Session lifetimes (spec §3, [I2], [I3]).
@@ -33,7 +33,7 @@ const (
 // Device is a validated family session: a signed-in device.
 type Device struct {
 	SessionID uuid.UUID
-	Family    store.Family
+	Family    identitydb.Family
 }
 
 // Caller is a validated profile session on its own device's family session.
@@ -41,7 +41,7 @@ type Caller struct {
 	Device      Device
 	SessionID   uuid.UUID
 	ExpiresAt   time.Time
-	Profile     store.Profile
+	Profile     identitydb.Profile
 	LockedUntil *time.Time
 	Subject     authz.Subject
 }
@@ -57,7 +57,7 @@ func newID() (uuid.UUID, error) {
 
 // createFamilySession inserts a family session and returns its cookie token.
 // deviceName must already be normalised.
-func (s *Service) createFamilySession(ctx context.Context, q *store.Queries, familyID uuid.UUID, deviceName *string, userAgent string) (string, uuid.UUID, error) {
+func (s *Service) createFamilySession(ctx context.Context, q *identitydb.Queries, familyID uuid.UUID, deviceName *string, userAgent string) (string, uuid.UUID, error) {
 	id, err := newID()
 	if err != nil {
 		return "", uuid.UUID{}, err
@@ -67,7 +67,7 @@ func (s *Service) createFamilySession(ctx context.Context, q *store.Queries, fam
 		return "", uuid.UUID{}, err
 	}
 	now := s.now()
-	if err := q.CreateSession(ctx, store.CreateSessionParams{
+	if err := q.CreateSession(ctx, identitydb.CreateSessionParams{
 		ID: id, TokenHash: hash, Kind: kindFamily, FamilyID: familyID,
 		DeviceName: deviceName, UserAgent: truncateUserAgent(userAgent),
 		Now: now, IdleExpiresAt: now.Add(FamilyIdleTimeout), ExpiresAt: now.Add(FamilyAbsoluteTimeout),
@@ -79,7 +79,7 @@ func (s *Service) createFamilySession(ctx context.Context, q *store.Queries, fam
 
 // createProfileSession replaces the device's profile session (one per
 // device) and returns the new token and absolute expiry.
-func (s *Service) createProfileSession(ctx context.Context, q *store.Queries, device uuid.UUID, familyID, profileID uuid.UUID) (string, uuid.UUID, time.Time, error) {
+func (s *Service) createProfileSession(ctx context.Context, q *identitydb.Queries, device uuid.UUID, familyID, profileID uuid.UUID) (string, uuid.UUID, time.Time, error) {
 	if err := q.DeleteDeviceProfileSession(ctx, &device); err != nil {
 		return "", uuid.UUID{}, time.Time{}, fmt.Errorf("delete previous profile session: %w", err)
 	}
@@ -93,7 +93,7 @@ func (s *Service) createProfileSession(ctx context.Context, q *store.Queries, de
 	}
 	now := s.now()
 	expires := now.Add(ProfileAbsoluteTimeout)
-	if err := q.CreateSession(ctx, store.CreateSessionParams{
+	if err := q.CreateSession(ctx, identitydb.CreateSessionParams{
 		ID: id, TokenHash: hash, Kind: kindProfile, FamilyID: familyID,
 		ProfileID: &profileID, FamilySessionID: &device,
 		Now: now, IdleExpiresAt: now.Add(ProfileIdleTimeout), ExpiresAt: expires,
@@ -123,7 +123,7 @@ func (s *Service) renew(ctx context.Context, w window, idle time.Duration, passi
 	if next.After(w.absolute) {
 		next = w.absolute
 	}
-	if err := s.q.TouchSession(ctx, store.TouchSessionParams{ID: w.id, Now: now, IdleExpiresAt: next}); err != nil {
+	if err := s.q.TouchSession(ctx, identitydb.TouchSessionParams{ID: w.id, Now: now, IdleExpiresAt: next}); err != nil {
 		return fmt.Errorf("renew session: %w", err)
 	}
 	return nil
@@ -166,7 +166,7 @@ func (s *Service) AuthenticateProfile(ctx context.Context, familyToken, profileT
 	if !ok {
 		return Caller{}, s.classifyMiss(ctx, familyToken)
 	}
-	row, err := s.q.GetProfileSession(ctx, store.GetProfileSessionParams{FamilyTokenHash: fsHash, ProfileTokenHash: psHash})
+	row, err := s.q.GetProfileSession(ctx, identitydb.GetProfileSessionParams{FamilyTokenHash: fsHash, ProfileTokenHash: psHash})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Caller{}, s.classifyMiss(ctx, familyToken)
 	}
@@ -227,7 +227,7 @@ func (s *Service) expire(ctx context.Context, id uuid.UUID, reason error) error 
 }
 
 // moduleSettings loads the family's module overrides (one primary-key prefix scan).
-func (s *Service) moduleSettings(ctx context.Context, q *store.Queries, familyID uuid.UUID) ([]authz.ModuleSetting, error) {
+func (s *Service) moduleSettings(ctx context.Context, q *identitydb.Queries, familyID uuid.UUID) ([]authz.ModuleSetting, error) {
 	rows, err := q.ListFamilyModules(ctx, familyID)
 	if err != nil {
 		return nil, fmt.Errorf("load module settings: %w", err)
@@ -241,7 +241,7 @@ func (s *Service) moduleSettings(ctx context.Context, q *store.Queries, familyID
 
 // subjectFor builds a caller's Subject outside the middleware (right after
 // register or select), reading module settings with q.
-func (s *Service) subjectFor(ctx context.Context, q *store.Queries, p store.Profile) (authz.Subject, error) {
+func (s *Service) subjectFor(ctx context.Context, q *identitydb.Queries, p identitydb.Profile) (authz.Subject, error) {
 	settings, err := s.moduleSettings(ctx, q, p.FamilyID)
 	if err != nil {
 		return authz.Subject{}, err

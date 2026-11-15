@@ -7,18 +7,17 @@ import (
 
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 	"github.com/chris-abs/cadence/server/internal/platform/testutil"
-	"github.com/chris-abs/cadence/server/internal/store"
 )
 
-// TestRoundTrip proves the whole data path: pgtestdb + goose migrations, the
-// pgx pool from db.Open, and sqlc-generated queries.
+// TestRoundTrip proves the data path: pgtestdb + goose migrations and the
+// pgx pool from db.Open. sqlc output is per domain and tested there.
 func TestRoundTrip(t *testing.T) {
 	t.Parallel()
 	pool := testutil.NewDB(t)
 
-	now, err := store.New(pool).DatabaseNow(t.Context())
-	if err != nil {
-		t.Fatalf("DatabaseNow: %v", err)
+	var now time.Time
+	if err := pool.QueryRow(t.Context(), `SELECT now()`).Scan(&now); err != nil {
+		t.Fatalf("select now: %v", err)
 	}
 	if skew := time.Since(now).Abs(); skew > time.Minute {
 		t.Errorf("database clock is %s away from the test clock", skew)

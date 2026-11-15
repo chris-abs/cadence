@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
-	"github.com/chris-abs/cadence/server/internal/store"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
 // registrationLockKey names the advisory lock that serialises registrations.
@@ -93,7 +93,7 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 	}
 
 	var out SignedIn
-	err = s.inTx(ctx, func(q *store.Queries) error {
+	err = s.inTx(ctx, func(q *identitydb.Queries) error {
 		if err := q.LockRegistration(ctx, registrationLockKey); err != nil {
 			return fmt.Errorf("lock registration: %w", err)
 		}
@@ -109,14 +109,14 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 		if err := s.dropDevice(ctx, q, in.CurrentDeviceToken); err != nil {
 			return err
 		}
-		family, err := q.CreateFamily(ctx, store.CreateFamilyParams{ID: familyID, Name: familyName, Email: email, PasswordHash: hash})
+		family, err := q.CreateFamily(ctx, identitydb.CreateFamilyParams{ID: familyID, Name: familyName, Email: email, PasswordHash: hash})
 		if uniqueViolation(err, constraintFamilyEmail) {
 			return ErrEmailTaken
 		}
 		if err != nil {
 			return fmt.Errorf("create family: %w", err)
 		}
-		owner, err := q.CreateProfile(ctx, store.CreateProfileParams{
+		owner, err := q.CreateProfile(ctx, identitydb.CreateProfileParams{
 			ID: ownerID, FamilyID: family.ID, Name: ownerName, Role: string(authz.Parent), IsOwner: true,
 			Colour: in.OwnerColour, Avatar: in.OwnerAvatar, Timezone: in.OwnerTimezone,
 		})
@@ -203,7 +203,7 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
 	}
 
 	var out LoggedIn
-	err = s.inTx(ctx, func(q *store.Queries) error {
+	err = s.inTx(ctx, func(q *identitydb.Queries) error {
 		if err := s.dropDevice(ctx, q, in.CurrentDeviceToken); err != nil {
 			return err
 		}
@@ -227,37 +227,37 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
 
 // checkCredentials returns the family, or a failure reason for the audit log.
 // It always runs exactly one bcrypt comparison.
-func (s *Service) checkCredentials(ctx context.Context, email, password string) (store.Family, string, error) {
+func (s *Service) checkCredentials(ctx context.Context, email, password string) (identitydb.Family, string, error) {
 	family, err := s.q.GetFamilyByEmail(ctx, email)
 	if errors.Is(err, pgx.ErrNoRows) {
 		if _, err := s.hasher.Matches(s.dummyHash, password); err != nil {
-			return store.Family{}, "", fmt.Errorf("dummy compare: %w", err)
+			return identitydb.Family{}, "", fmt.Errorf("dummy compare: %w", err)
 		}
-		return store.Family{}, "unknown_email", nil
+		return identitydb.Family{}, "unknown_email", nil
 	}
 	if err != nil {
-		return store.Family{}, "", fmt.Errorf("load family by email: %w", err)
+		return identitydb.Family{}, "", fmt.Errorf("load family by email: %w", err)
 	}
 	if len(password) > maxPasswordBytes {
 		// No stored password can be this long; bcrypt would refuse it.
 		if _, err := s.hasher.Matches(s.dummyHash, ""); err != nil {
-			return store.Family{}, "", fmt.Errorf("dummy compare: %w", err)
+			return identitydb.Family{}, "", fmt.Errorf("dummy compare: %w", err)
 		}
-		return store.Family{}, "bad_password", nil
+		return identitydb.Family{}, "bad_password", nil
 	}
 	ok, err := s.hasher.Matches(family.PasswordHash, password)
 	if err != nil {
-		return store.Family{}, "", fmt.Errorf("compare password: %w", err)
+		return identitydb.Family{}, "", fmt.Errorf("compare password: %w", err)
 	}
 	if !ok {
-		return store.Family{}, "bad_password", nil
+		return identitydb.Family{}, "bad_password", nil
 	}
 	return family, "", nil
 }
 
 // dropDevice deletes the family session behind a cookie value, if any; login
 // and register replace it. Its profile session goes by cascade.
-func (s *Service) dropDevice(ctx context.Context, q *store.Queries, token string) error {
+func (s *Service) dropDevice(ctx context.Context, q *identitydb.Queries, token string) error {
 	hash, ok := hashToken(token)
 	if !ok {
 		return nil
@@ -295,8 +295,8 @@ func (s *Service) SelectProfile(ctx context.Context, device Device, profileID uu
 		out     SignedIn
 		verdict error // a refusal that must not roll back the recorded failure
 	)
-	err := s.inTx(ctx, func(q *store.Queries) error {
-		profile, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: device.Family.ID, ID: profileID})
+	err := s.inTx(ctx, func(q *identitydb.Queries) error {
+		profile, err := q.GetProfileForUpdate(ctx, identitydb.GetProfileForUpdateParams{FamilyID: device.Family.ID, ID: profileID})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
@@ -341,7 +341,7 @@ func (s *Service) Lock(ctx context.Context, device Device) error {
 
 // ProfileItem is a profile with its current lockout, if any.
 type ProfileItem struct {
-	Profile     store.Profile
+	Profile     identitydb.Profile
 	LockedUntil *time.Time
 }
 
@@ -350,7 +350,7 @@ func (s *Service) FamilyProfiles(ctx context.Context, familyID uuid.UUID) ([]Pro
 	return s.listProfiles(ctx, s.q, familyID)
 }
 
-func (s *Service) listProfiles(ctx context.Context, q *store.Queries, familyID uuid.UUID) ([]ProfileItem, error) {
+func (s *Service) listProfiles(ctx context.Context, q *identitydb.Queries, familyID uuid.UUID) ([]ProfileItem, error) {
 	rows, err := q.ListProfiles(ctx, familyID)
 	if err != nil {
 		return nil, fmt.Errorf("list profiles: %w", err)

@@ -11,9 +11,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
+	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
 	"github.com/chris-abs/cadence/server/internal/platform/ratelimit"
-	"github.com/chris-abs/cadence/server/internal/store"
 )
 
 // RegistrationMode is ALLOW_REGISTRATION (spec §6.1).
@@ -48,7 +48,7 @@ type Deps struct {
 // package queries them.
 type Service struct {
 	pool         *pgxpool.Pool
-	q            *store.Queries
+	q            *identitydb.Queries
 	logger       *slog.Logger
 	audit        auditor
 	catalogue    *authz.Catalogue
@@ -78,7 +78,7 @@ func NewService(d Deps) (*Service, error) {
 	}
 	return &Service{
 		pool:         d.Pool,
-		q:            store.New(d.Pool),
+		q:            identitydb.New(d.Pool),
 		logger:       d.Logger,
 		audit:        auditor{logger: d.Logger},
 		catalogue:    d.Catalogue,
@@ -111,7 +111,7 @@ func newLimits(now func() time.Time) limits {
 }
 
 // inTx runs fn in a transaction, committing only if fn succeeds.
-func (s *Service) inTx(ctx context.Context, fn func(q *store.Queries) error) error {
+func (s *Service) inTx(ctx context.Context, fn func(q *identitydb.Queries) error) error {
 	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return fmt.Errorf("begin: %w", err)
@@ -138,7 +138,7 @@ func (s *Service) rateLimited(ctx context.Context, limit string, wait time.Durat
 // verifyFamilyPassword is the re-authentication step of owner actions and of
 // a PARENT resetting their own PIN: limited to 5 failures per family per
 // 15 minutes, checked before bcrypt runs.
-func (s *Service) verifyFamilyPassword(ctx context.Context, family store.Family, password string) error {
+func (s *Service) verifyFamilyPassword(ctx context.Context, family identitydb.Family, password string) error {
 	key := family.ID.String()
 	if ok, wait := s.limits.reauthPerFamily.Check(key); !ok {
 		return s.rateLimited(ctx, "reauth_per_family", wait, familyAttr(family.ID))

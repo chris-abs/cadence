@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: session.sql
 
-package store
+package identitydb
 
 import (
 	"context"
