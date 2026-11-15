@@ -361,6 +361,13 @@
   resolved "https://registry.yarnpkg.com/@fontsource-variable/geist/-/geist-5.3.0.tgz#59084c5e2ffa77c6e3c63bc06f3af62ba4dbbdc5"
   integrity sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==
 
+"@hookform/resolvers@^7.0.6":
+  version "7.0.6"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-7.0.6.tgz#c5a489b153989670bec2824dc5f2e29cf305d21c"
+  integrity sha512-LSTMwW4tmRWtM7pS5HkSqahi71USbhrmjc9pNHNa7UyYTbKIK/e0G1EAw6xsEnp9GahTjXhunxRJp0Bd8E6NZA==
+  dependencies:
+    "@standard-schema/utils" "^0.3.0"
+
 "@inquirer/ansi@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@inquirer/ansi/-/ansi-2.1.0.tgz#5bc0bb4cb986c52f325141e1964de5fa7b21d1ce"
@@ -1555,6 +1562,11 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/merge-streams/-/merge-streams-4.0.0.tgz#abb11d99aeb6d27f1b563c38147a72d50058e339"
   integrity sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==
+
+"@standard-schema/utils@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
+  integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
 
 "@tailwindcss/node@4.3.5":
   version "4.3.5"
@@ -3473,6 +3485,11 @@ react-dom@^19.3.1:
   dependencies:
     scheduler "^0.28.0"
 
+react-hook-form@^7.92.0:
+  version "7.92.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.92.0.tgz#6d4ef30192906d7f2318ff57eef17e83e35b09f1"
+  integrity sha512-O5ILyY5fYHN7N13Pfxpe55KboyNFsJdM03BHpshQkClJd8raugiAUGY7VjifITrfhVxyx81ko25azXCoayhf1w==
+
 react-is@^17.0.1:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
@@ -4162,7 +4179,7 @@ yoctocolors@^2.1.1:
   resolved "https://registry.yarnpkg.com/yoctocolors/-/yoctocolors-2.2.0.tgz#c4b68ee477f3982c33e4de24a5aa4a354be506d3"
   integrity sha512-xYqdZFUK/VYazNl/oCDYN+3WloWQwMfZxBoiNt6qNyk+xfOdi598muWE42rNZFp1kNOiqW936q5RhUdnpqElSg==
 
-zod@^4.2.0, zod@^4.5.4:
+zod@^4.2.0, zod@^4.5.4, zod@^4.6.7:
   version "4.6.7"
   resolved "https://registry.yarnpkg.com/zod/-/zod-4.6.7.tgz#e806cf64a7f4e37635ce9f2f52c04c3766f75e5b"
   integrity sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==

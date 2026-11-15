@@ -66,7 +66,13 @@
     "typescript/no-unsafe-call": "error",
     "typescript/no-unsafe-member-access": "error",
     "typescript/no-unsafe-return": "error",
-    "typescript/only-throw-error": "error",
+    // TanStack Router guards `throw redirect(...)`, a Response, by design.
+    "typescript/only-throw-error": [
+      "error",
+      {
+        "allow": [{ "from": "package", "package": "@tanstack/router-core", "name": "Redirect" }]
+      }
+    ],
     "typescript/prefer-promise-reject-errors": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/prefer-optional-chain": "error",

@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach } from "vitest";
+import { mockApi } from "./mock-api";
 import { server } from "./server";
 
 // jsdom keeps Node's Request, which rejects relative URLs such as the API
@@ -18,6 +19,7 @@ server.listen({ onUnhandledFrame: "error" });
 afterEach(() => {
   cleanup();
   server.resetHandlers();
+  mockApi.reset();
 });
 afterAll(() => {
   server.close();
