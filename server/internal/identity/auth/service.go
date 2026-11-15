@@ -140,10 +140,11 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 		if err := s.dropDevice(ctx, repo, in.CurrentDeviceToken); err != nil {
 			return err
 		}
-		if _, err := families.Create(ctx, family.NewFamily{ID: familyID, Name: familyName, Email: email, PasswordHash: hash}); err != nil {
+		var err error
+		if out.Family, err = families.Create(ctx, family.NewFamily{ID: familyID, Name: familyName, Email: email, PasswordHash: hash}); err != nil {
 			return err
 		}
-		if _, err := profiles.Create(ctx, profile.NewProfile{
+		if out.Profile, err = profiles.Create(ctx, profile.NewProfile{
 			ID: ownerID, FamilyID: familyID, Name: ownerName, Role: models.Parent, IsOwner: true,
 			Colour: in.OwnerColour, Avatar: in.OwnerAvatar, Timezone: in.OwnerTimezone,
 		}); err != nil {
@@ -306,6 +307,10 @@ func (s *Service) SelectProfile(ctx context.Context, device models.Device, profi
 	if verdict != nil {
 		return SignedIn{}, verdict
 	}
+	out.Profile = p
+	if out.Family, err = s.Families.Find(ctx, device.FamilyID); err != nil {
+		return SignedIn{}, err
+	}
 	out.Caller, err = s.caller(ctx, callerRow{familyID: device.FamilyID, device: device.SessionID, session: psID, profile: p.ID,
 		role: p.Role, owner: p.IsOwner, timezone: p.Timezone, expires: expires})
 	if err != nil {
@@ -315,15 +320,7 @@ func (s *Service) SelectProfile(ctx context.Context, device models.Device, profi
 	return out, nil
 }
 
-func (s *Service) Me(ctx context.Context, caller models.Caller) (Me, error) {
-	p, err := s.Profiles.Get(ctx, caller, caller.ProfileID)
-	if err != nil {
-		return Me{}, err
-	}
-	f, err := s.Families.Find(ctx, caller.FamilyID)
-	if err != nil {
-		return Me{}, err
-	}
+func (s *Service) Me(ctx context.Context, caller models.Caller, p profile.Profile, f family.Family) (Me, error) {
 	advised, err := s.Profiles.PinAdvised(ctx, p)
 	if err != nil {
 		return Me{}, err
@@ -406,59 +403,66 @@ func (s *Service) expire(ctx context.Context, id uuid.UUID, reason error) error 
 	return reason
 }
 
-func (s *Service) AuthenticateDevice(ctx context.Context, token string, passive bool) (models.Device, error) {
+func (s *Service) AuthenticateDevice(ctx context.Context, token string, passive bool) (context.Context, error) {
 	hash, ok := hashToken(token)
 	if !ok {
-		return models.Device{}, models.ErrFamilySessionRequired
+		return nil, models.ErrFamilySessionRequired
 	}
 	row, err := s.Repo.familySession(ctx, hash)
 	if err != nil {
-		return models.Device{}, err
+		return nil, err
 	}
-	w := window{id: row.ID, lastSeen: row.LastSeenAt, idle: row.IdleExpiresAt, absolute: row.ExpiresAt}
+	w := window{id: row.Session.ID, lastSeen: row.Session.LastSeenAt, idle: row.Session.IdleExpiresAt, absolute: row.Session.ExpiresAt}
 	if w.expired(s.Now()) {
-		return models.Device{}, s.expire(ctx, w.id, models.ErrFamilySessionRequired)
+		return nil, s.expire(ctx, w.id, models.ErrFamilySessionRequired)
 	}
 	if err := s.renew(ctx, w, FamilyIdleTimeout, passive); err != nil {
-		return models.Device{}, err
+		return nil, err
 	}
-	return models.Device{SessionID: row.ID, FamilyID: row.FamilyID}, nil
+	ctx = family.WithFamily(ctx, familyFromRow(row.Family))
+	return models.WithDevice(ctx, models.Device{SessionID: row.Session.ID, FamilyID: row.Family.ID}), nil
 }
 
-func (s *Service) AuthenticateProfile(ctx context.Context, familyToken, profileToken string, passive bool) (models.Caller, error) {
+func (s *Service) AuthenticateProfile(ctx context.Context, familyToken, profileToken string, passive bool) (context.Context, error) {
 	fsHash, ok := hashToken(familyToken)
 	if !ok {
-		return models.Caller{}, models.ErrFamilySessionRequired
+		return nil, models.ErrFamilySessionRequired
 	}
 	psHash, ok := hashToken(profileToken)
 	if !ok {
-		return models.Caller{}, s.classifyMiss(ctx, familyToken)
+		return nil, s.classifyMiss(ctx, familyToken)
 	}
 	row, found, err := s.Repo.profileSession(ctx, fsHash, psHash)
 	if err != nil {
-		return models.Caller{}, err
+		return nil, err
 	}
 	if !found {
-		return models.Caller{}, s.classifyMiss(ctx, familyToken)
+		return nil, s.classifyMiss(ctx, familyToken)
 	}
 	now := s.Now()
 	ps := row.Session
 	device := window{id: *ps.FamilySessionID, lastSeen: row.DeviceLastSeenAt, idle: row.DeviceIdleExpiresAt, absolute: row.DeviceExpiresAt}
 	if device.expired(now) {
-		return models.Caller{}, s.expire(ctx, device.id, models.ErrFamilySessionRequired)
+		return nil, s.expire(ctx, device.id, models.ErrFamilySessionRequired)
 	}
 	session := window{id: ps.ID, lastSeen: ps.LastSeenAt, idle: ps.IdleExpiresAt, absolute: ps.ExpiresAt}
 	if session.expired(now) {
-		return models.Caller{}, s.expire(ctx, session.id, models.ErrProfileSessionRequired)
+		return nil, s.expire(ctx, session.id, models.ErrProfileSessionRequired)
 	}
 	if err := s.renew(ctx, device, FamilyIdleTimeout, passive); err != nil {
-		return models.Caller{}, err
+		return nil, err
 	}
 	if err := s.renew(ctx, session, ProfileIdleTimeout, passive); err != nil {
-		return models.Caller{}, err
+		return nil, err
 	}
-	return s.caller(ctx, callerRow{familyID: ps.FamilyID, device: device.id, session: ps.ID, profile: *ps.ProfileID,
-		role: models.Role(row.Role), owner: row.IsOwner, timezone: row.Timezone, expires: ps.ExpiresAt})
+	p := profileFromRow(row.Profile, profile.ActiveLock(row.PinLockedUntil, now))
+	caller, err := s.caller(ctx, callerRow{familyID: ps.FamilyID, device: device.id, session: ps.ID, profile: p.ID,
+		role: p.Role, owner: p.IsOwner, timezone: p.Timezone, expires: ps.ExpiresAt})
+	if err != nil {
+		return nil, err
+	}
+	ctx = family.WithFamily(profile.WithProfile(ctx, p), familyFromRow(row.Family))
+	return models.WithCaller(ctx, caller), nil
 }
 
 func (s *Service) classifyMiss(ctx context.Context, familyToken string) error {

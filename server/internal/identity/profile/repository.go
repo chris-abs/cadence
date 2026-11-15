@@ -172,7 +172,7 @@ func fromRow(p profiledb.Profile, lockedUntil *time.Time) Profile {
 		ID: p.ID, FamilyID: p.FamilyID, Name: p.Name, Role: models.Role(p.Role), IsOwner: p.IsOwner,
 		Colour: p.Colour, Avatar: p.Avatar, Timezone: p.Timezone, ContactEmail: p.ContactEmail,
 		ContactEmailVerifiedAt: p.ContactEmailVerifiedAt, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt,
-		LockedUntil: lockedUntil, pinHash: p.PinHash,
+		LockedUntil: lockedUntil, HasPin: p.PinHash != nil, pinHash: p.PinHash,
 	}
 }
 

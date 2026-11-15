@@ -68,10 +68,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) error {
 
 func (h *Handler) Modules(w http.ResponseWriter, r *http.Request) error {
 	caller, _ := models.CallerFrom(r.Context())
-	states, err := h.svc.Modules(r.Context(), caller.FamilyID)
-	if err != nil {
-		return err
-	}
+	states := h.svc.Modules(caller)
 	mods := make([]api.Module, len(states))
 	for i, m := range states {
 		mods[i] = ModuleView(m.Module, m.Enabled)

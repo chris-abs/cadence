@@ -176,37 +176,56 @@ func (q *Queries) DeleteSession(ctx context.Context, id uuid.UUID) error {
 }
 
 const getFamilySession = `-- name: GetFamilySession :one
-SELECT id, token_hash, kind, family_id, profile_id, family_session_id, device_name, user_agent, created_at, last_seen_at, idle_expires_at, expires_at FROM session WHERE token_hash = $1 AND kind = 'family'
+SELECT s.id, s.token_hash, s.kind, s.family_id, s.profile_id, s.family_session_id, s.device_name, s.user_agent, s.created_at, s.last_seen_at, s.idle_expires_at, s.expires_at, f.id, f.name, f.email, f.password_hash, f.password_changed_at, f.auto_lock_minutes, f.created_at, f.updated_at
+FROM session s
+JOIN family f ON f.id = s.family_id
+WHERE s.token_hash = $1 AND s.kind = 'family'
 `
 
-func (q *Queries) GetFamilySession(ctx context.Context, tokenHash []byte) (Session, error) {
+type GetFamilySessionRow struct {
+	Session Session
+	Family  Family
+}
+
+func (q *Queries) GetFamilySession(ctx context.Context, tokenHash []byte) (GetFamilySessionRow, error) {
 	row := q.db.QueryRow(ctx, getFamilySession, tokenHash)
-	var i Session
+	var i GetFamilySessionRow
 	err := row.Scan(
-		&i.ID,
-		&i.TokenHash,
-		&i.Kind,
-		&i.FamilyID,
-		&i.ProfileID,
-		&i.FamilySessionID,
-		&i.DeviceName,
-		&i.UserAgent,
-		&i.CreatedAt,
-		&i.LastSeenAt,
-		&i.IdleExpiresAt,
-		&i.ExpiresAt,
+		&i.Session.ID,
+		&i.Session.TokenHash,
+		&i.Session.Kind,
+		&i.Session.FamilyID,
+		&i.Session.ProfileID,
+		&i.Session.FamilySessionID,
+		&i.Session.DeviceName,
+		&i.Session.UserAgent,
+		&i.Session.CreatedAt,
+		&i.Session.LastSeenAt,
+		&i.Session.IdleExpiresAt,
+		&i.Session.ExpiresAt,
+		&i.Family.ID,
+		&i.Family.Name,
+		&i.Family.Email,
+		&i.Family.PasswordHash,
+		&i.Family.PasswordChangedAt,
+		&i.Family.AutoLockMinutes,
+		&i.Family.CreatedAt,
+		&i.Family.UpdatedAt,
 	)
 	return i, err
 }
 
 const getProfileSession = `-- name: GetProfileSession :one
-SELECT ps.id, ps.token_hash, ps.kind, ps.family_id, ps.profile_id, ps.family_session_id, ps.device_name, ps.user_agent, ps.created_at, ps.last_seen_at, ps.idle_expires_at, ps.expires_at, p.role, p.is_owner, p.timezone,
+SELECT ps.id, ps.token_hash, ps.kind, ps.family_id, ps.profile_id, ps.family_session_id, ps.device_name, ps.user_agent, ps.created_at, ps.last_seen_at, ps.idle_expires_at, ps.expires_at, p.id, p.family_id, p.name, p.role, p.is_owner, p.colour, p.avatar, p.timezone, p.pin_hash, p.contact_email, p.contact_email_verified_at, p.created_at, p.updated_at, f.id, f.name, f.email, f.password_hash, f.password_changed_at, f.auto_lock_minutes, f.created_at, f.updated_at,
        fs.last_seen_at AS device_last_seen_at,
        fs.idle_expires_at AS device_idle_expires_at,
-       fs.expires_at AS device_expires_at
+       fs.expires_at AS device_expires_at,
+       a.locked_until AS pin_locked_until
 FROM session ps
 JOIN session fs ON fs.id = ps.family_session_id AND fs.kind = 'family' AND fs.token_hash = $1
 JOIN profile p ON p.family_id = ps.family_id AND p.id = ps.profile_id
+JOIN family f ON f.id = ps.family_id
+LEFT JOIN pin_attempt a ON a.profile_id = p.id
 WHERE ps.token_hash = $2 AND ps.kind = 'profile'
 `
 
@@ -217,12 +236,12 @@ type GetProfileSessionParams struct {
 
 type GetProfileSessionRow struct {
 	Session             Session
-	Role                string
-	IsOwner             bool
-	Timezone            string
+	Profile             Profile
+	Family              Family
 	DeviceLastSeenAt    time.Time
 	DeviceIdleExpiresAt time.Time
 	DeviceExpiresAt     time.Time
+	PinLockedUntil      *time.Time
 }
 
 func (q *Queries) GetProfileSession(ctx context.Context, arg GetProfileSessionParams) (GetProfileSessionRow, error) {
@@ -241,12 +260,31 @@ func (q *Queries) GetProfileSession(ctx context.Context, arg GetProfileSessionPa
 		&i.Session.LastSeenAt,
 		&i.Session.IdleExpiresAt,
 		&i.Session.ExpiresAt,
-		&i.Role,
-		&i.IsOwner,
-		&i.Timezone,
+		&i.Profile.ID,
+		&i.Profile.FamilyID,
+		&i.Profile.Name,
+		&i.Profile.Role,
+		&i.Profile.IsOwner,
+		&i.Profile.Colour,
+		&i.Profile.Avatar,
+		&i.Profile.Timezone,
+		&i.Profile.PinHash,
+		&i.Profile.ContactEmail,
+		&i.Profile.ContactEmailVerifiedAt,
+		&i.Profile.CreatedAt,
+		&i.Profile.UpdatedAt,
+		&i.Family.ID,
+		&i.Family.Name,
+		&i.Family.Email,
+		&i.Family.PasswordHash,
+		&i.Family.PasswordChangedAt,
+		&i.Family.AutoLockMinutes,
+		&i.Family.CreatedAt,
+		&i.Family.UpdatedAt,
 		&i.DeviceLastSeenAt,
 		&i.DeviceIdleExpiresAt,
 		&i.DeviceExpiresAt,
+		&i.PinLockedUntil,
 	)
 	return i, err
 }

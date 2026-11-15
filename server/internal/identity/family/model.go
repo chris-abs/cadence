@@ -1,6 +1,7 @@
 package family
 
 import (
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -32,6 +33,17 @@ type NewFamily struct {
 type ModuleState struct {
 	Module  models.Module
 	Enabled bool
+}
+
+type familyKey struct{}
+
+func WithFamily(ctx context.Context, f Family) context.Context {
+	return context.WithValue(ctx, familyKey{}, f)
+}
+
+func FromContext(ctx context.Context) (Family, bool) {
+	f, ok := ctx.Value(familyKey{}).(Family)
+	return f, ok
 }
 
 func NormalizeName(raw string) (string, string) {

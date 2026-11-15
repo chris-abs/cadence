@@ -50,7 +50,7 @@ func (s *Service) List(ctx context.Context, familyID uuid.UUID) ([]Profile, erro
 	now := s.now()
 	for i := range profiles {
 		p := &profiles[i]
-		if p.LockedUntil = activeLock(p.LockedUntil, now); p.LockedUntil != nil {
+		if p.LockedUntil = ActiveLock(p.LockedUntil, now); p.LockedUntil != nil {
 			p.LockedFor = p.LockedUntil.Sub(now)
 		}
 	}
@@ -62,12 +62,12 @@ func (s *Service) Get(ctx context.Context, caller models.Caller, id uuid.UUID) (
 	if err != nil {
 		return Profile{}, err
 	}
-	p.LockedUntil = activeLock(p.LockedUntil, s.now())
+	p.LockedUntil = ActiveLock(p.LockedUntil, s.now())
 	return p, nil
 }
 
 func (s *Service) PinAdvised(ctx context.Context, p Profile) (bool, error) {
-	if p.Role != models.Parent || p.HasPin() {
+	if p.Role != models.Parent || p.HasPin {
 		return false, nil
 	}
 	return s.repo.hasChild(ctx, p.FamilyID)
@@ -180,7 +180,7 @@ func (s *Service) ChangeRole(ctx context.Context, caller models.Caller, id uuid.
 			return err
 		}
 		_, lockedUntil, err := r.pinAttempt(ctx, id)
-		out.LockedUntil = activeLock(lockedUntil, s.now())
+		out.LockedUntil = ActiveLock(lockedUntil, s.now())
 		return err
 	})
 	if err != nil {
@@ -261,7 +261,7 @@ func (s *Service) Unlock(ctx context.Context, conn db.DBTX, familyID, id uuid.UU
 		}
 	}
 	r := NewRepository(conn)
-	if p, err = r.getForUpdate(ctx, familyID, id); err != nil || !p.HasPin() {
+	if p, err = r.getForUpdate(ctx, familyID, id); err != nil || !p.HasPin {
 		return p, nil, err
 	}
 	if pin == nil {
@@ -278,7 +278,7 @@ func (s *Service) checkPIN(ctx context.Context, r *Repository, p Profile, pin st
 	if err != nil {
 		return nil, err
 	}
-	if until := activeLock(lockedUntil, now); until != nil {
+	if until := ActiveLock(lockedUntil, now); until != nil {
 		return &models.RetryError{Locked: true, After: until.Sub(now)}, nil
 	}
 	ok, err := s.hasher.Matches(*p.pinHash, pin)
@@ -332,7 +332,7 @@ func (s *Service) SetPIN(ctx context.Context, caller models.Caller, targetID uui
 		switch {
 		case self:
 			by = "self"
-			if target.HasPin() {
+			if target.HasPin {
 				if verdict, err = s.proveOwnPIN(ctx, r, caller, target, in); err != nil || verdict != nil {
 					return err
 				}

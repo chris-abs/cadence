@@ -66,8 +66,8 @@ func (c Cookies) cookie(name, value string, ttl time.Duration) *http.Cookie {
 }
 
 type Sessions interface {
-	AuthenticateDevice(ctx context.Context, token string, passive bool) (models.Device, error)
-	AuthenticateProfile(ctx context.Context, familyToken, profileToken string, passive bool) (models.Caller, error)
+	AuthenticateDevice(ctx context.Context, token string, passive bool) (context.Context, error)
+	AuthenticateProfile(ctx context.Context, familyToken, profileToken string, passive bool) (context.Context, error)
 }
 
 type Auth struct {
@@ -85,24 +85,24 @@ func passive(r *http.Request) bool { return r.Header.Get("X-Cadence-Passive") ==
 func (a *Auth) RequireFamily(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs, _ := a.cookies.Read(r)
-		d, err := a.sessions.AuthenticateDevice(r.Context(), fs, passive(r))
+		ctx, err := a.sessions.AuthenticateDevice(r.Context(), fs, passive(r))
 		if err != nil {
 			a.reject(w, r, err)
 			return
 		}
-		next.ServeHTTP(w, r.WithContext(models.WithDevice(r.Context(), d)))
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func (a *Auth) RequireProfile(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs, ps := a.cookies.Read(r)
-		c, err := a.sessions.AuthenticateProfile(r.Context(), fs, ps, passive(r))
+		ctx, err := a.sessions.AuthenticateProfile(r.Context(), fs, ps, passive(r))
 		if err != nil {
 			a.reject(w, r, err)
 			return
 		}
-		next.ServeHTTP(w, r.WithContext(models.WithCaller(r.Context(), c)))
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

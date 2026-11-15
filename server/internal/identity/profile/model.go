@@ -1,6 +1,7 @@
 package profile
 
 import (
+	"context"
 	"regexp"
 	"time"
 
@@ -36,10 +37,20 @@ type Profile struct {
 	UpdatedAt              time.Time
 	LockedUntil            *time.Time
 	LockedFor              time.Duration
+	HasPin                 bool
 	pinHash                *string
 }
 
-func (p Profile) HasPin() bool { return p.pinHash != nil }
+type profileKey struct{}
+
+func WithProfile(ctx context.Context, p Profile) context.Context {
+	return context.WithValue(ctx, profileKey{}, p)
+}
+
+func FromContext(ctx context.Context) (Profile, bool) {
+	p, ok := ctx.Value(profileKey{}).(Profile)
+	return p, ok
+}
 
 type NewProfile struct {
 	ID           uuid.UUID
@@ -145,7 +156,7 @@ func lockoutAfter(failures int32) time.Duration {
 	}
 }
 
-func activeLock(until *time.Time, now time.Time) *time.Time {
+func ActiveLock(until *time.Time, now time.Time) *time.Time {
 	if until == nil || !now.Before(*until) {
 		return nil
 	}

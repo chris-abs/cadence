@@ -62,6 +62,8 @@ type SignedIn struct {
 	FamilyToken  string
 	ProfileToken string
 	Caller       models.Caller
+	Profile      profile.Profile
+	Family       family.Family
 }
 
 type LoggedIn struct {

@@ -178,7 +178,7 @@ func View(p Profile, viewer models.Caller) api.Profile {
 	v := api.Profile{
 		Id: p.ID.String(), Name: p.Name, Role: api.Role(p.Role), IsOwner: p.IsOwner,
 		Colour: api.ProfileColour(p.Colour), Avatar: p.Avatar, Timezone: p.Timezone,
-		HasPin: p.HasPin(), LockedUntil: p.LockedUntil, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt,
+		HasPin: p.HasPin, LockedUntil: p.LockedUntil, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt,
 	}
 	if viewer.ProfileID == p.ID || viewer.Role == models.Parent {
 		v.ContactEmail = p.ContactEmail
@@ -193,7 +193,7 @@ func SummaryViews(profiles []Profile) []api.ProfileSummary {
 		out[i] = api.ProfileSummary{
 			Id: p.ID.String(), Name: p.Name, Role: api.Role(p.Role), IsOwner: p.IsOwner,
 			Colour: api.ProfileColour(p.Colour), Avatar: p.Avatar, Timezone: p.Timezone,
-			HasPin: p.HasPin(), LockedUntil: p.LockedUntil, LockedForSeconds: wholeSeconds(p.LockedFor),
+			HasPin: p.HasPin, LockedUntil: p.LockedUntil, LockedForSeconds: wholeSeconds(p.LockedFor),
 			CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt,
 		}
 	}

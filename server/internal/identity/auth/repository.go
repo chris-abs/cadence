@@ -10,6 +10,8 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/chris-abs/cadence/server/internal/identity/auth/internal/authdb"
+	"github.com/chris-abs/cadence/server/internal/identity/family"
+	"github.com/chris-abs/cadence/server/internal/identity/profile"
 	"github.com/chris-abs/cadence/server/internal/models"
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 )
@@ -59,13 +61,13 @@ func (r *Repository) createSession(ctx context.Context, s newSession) error {
 	return nil
 }
 
-func (r *Repository) familySession(ctx context.Context, hash []byte) (authdb.Session, error) {
+func (r *Repository) familySession(ctx context.Context, hash []byte) (authdb.GetFamilySessionRow, error) {
 	row, err := r.q.GetFamilySession(ctx, hash)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return authdb.Session{}, models.ErrFamilySessionRequired
+		return row, models.ErrFamilySessionRequired
 	}
 	if err != nil {
-		return authdb.Session{}, fmt.Errorf("load family session: %w", err)
+		return row, fmt.Errorf("load family session: %w", err)
 	}
 	return row, nil
 }
@@ -162,4 +164,20 @@ func nonNil(ids []uuid.UUID) []uuid.UUID {
 		return []uuid.UUID{}
 	}
 	return ids
+}
+
+func familyFromRow(f authdb.Family) family.Family {
+	return family.Family{
+		ID: f.ID, Name: f.Name, Email: f.Email, PasswordHash: f.PasswordHash, PasswordChangedAt: f.PasswordChangedAt,
+		AutoLockMinutes: int(f.AutoLockMinutes), CreatedAt: f.CreatedAt, UpdatedAt: f.UpdatedAt,
+	}
+}
+
+func profileFromRow(p authdb.Profile, lockedUntil *time.Time) profile.Profile {
+	return profile.Profile{
+		ID: p.ID, FamilyID: p.FamilyID, Name: p.Name, Role: models.Role(p.Role), IsOwner: p.IsOwner,
+		Colour: p.Colour, Avatar: p.Avatar, Timezone: p.Timezone, ContactEmail: p.ContactEmail,
+		ContactEmailVerifiedAt: p.ContactEmailVerifiedAt, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt,
+		LockedUntil: lockedUntil, HasPin: p.PinHash != nil,
+	}
 }

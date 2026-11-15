@@ -47,7 +47,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	me, err := h.svc.Me(r.Context(), out.Caller)
+	me, err := h.svc.Me(r.Context(), out.Caller, out.Profile, out.Family)
 	if err != nil {
 		return err
 	}
@@ -108,7 +108,7 @@ func (h *Handler) SelectProfile(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	me, err := h.svc.Me(r.Context(), out.Caller)
+	me, err := h.svc.Me(r.Context(), out.Caller, out.Profile, out.Family)
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,9 @@ func (h *Handler) Lock(w http.ResponseWriter, r *http.Request) error {
 
 func (h *Handler) Me(w http.ResponseWriter, r *http.Request) error {
 	caller, _ := models.CallerFrom(r.Context())
-	me, err := h.svc.Me(r.Context(), caller)
+	p, _ := profile.FromContext(r.Context())
+	f, _ := family.FromContext(r.Context())
+	me, err := h.svc.Me(r.Context(), caller, p, f)
 	if err != nil {
 		return err
 	}

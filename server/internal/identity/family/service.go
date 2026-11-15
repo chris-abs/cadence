@@ -37,6 +37,9 @@ func (s *Service) Exists(ctx context.Context) (bool, error) {
 }
 
 func (s *Service) Find(ctx context.Context, id uuid.UUID) (Family, error) {
+	if f, ok := FromContext(ctx); ok && f.ID == id {
+		return f, nil
+	}
 	return s.repo.Get(ctx, id)
 }
 
@@ -48,7 +51,7 @@ func (s *Service) Get(ctx context.Context, caller models.Caller) (Family, error)
 	if !caller.Can(models.FamilyView) {
 		return Family{}, models.ErrForbidden
 	}
-	return s.repo.Get(ctx, caller.FamilyID)
+	return s.Find(ctx, caller.FamilyID)
 }
 
 func (s *Service) Update(ctx context.Context, caller models.Caller, name string, autoLockMinutes int) (Family, error) {
@@ -88,7 +91,7 @@ func (s *Service) Delete(ctx context.Context, caller models.Caller, password, co
 	if !caller.Can(models.FamilyAccountManage) {
 		return models.ErrForbidden
 	}
-	f, err := s.repo.Get(ctx, caller.FamilyID)
+	f, err := s.Find(ctx, caller.FamilyID)
 	if err != nil {
 		return err
 	}
@@ -106,7 +109,7 @@ func (s *Service) Delete(ctx context.Context, caller models.Caller, password, co
 }
 
 func (s *Service) VerifyPassword(ctx context.Context, familyID uuid.UUID, password string) error {
-	f, err := s.repo.Get(ctx, familyID)
+	f, err := s.Find(ctx, familyID)
 	if err != nil {
 		return err
 	}
@@ -130,21 +133,21 @@ func (s *Service) verify(ctx context.Context, f Family, password string) error {
 	return nil
 }
 
-func (s *Service) Modules(ctx context.Context, familyID uuid.UUID) ([]ModuleState, error) {
+func (s *Service) Modules(caller models.Caller) []ModuleState {
+	states := make([]ModuleState, len(catalogue))
+	for i, m := range catalogue {
+		states[i] = ModuleState{Module: m, Enabled: caller.ModuleEnabled(m.ID)}
+	}
+	return states
+}
+
+func (s *Service) EnabledModules(ctx context.Context, familyID uuid.UUID) ([]models.Module, error) {
 	settings, err := s.repo.ModuleSettings(ctx, familyID)
 	if err != nil {
 		return nil, err
 	}
-	return moduleStates(settings), nil
-}
-
-func (s *Service) EnabledModules(ctx context.Context, familyID uuid.UUID) ([]models.Module, error) {
-	states, err := s.Modules(ctx, familyID)
-	if err != nil {
-		return nil, err
-	}
 	var enabled []models.Module
-	for _, m := range states {
+	for _, m := range moduleStates(settings) {
 		if m.Enabled {
 			enabled = append(enabled, m.Module)
 		}

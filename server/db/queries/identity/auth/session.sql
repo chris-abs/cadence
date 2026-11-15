@@ -8,16 +8,22 @@ VALUES (@id, @token_hash, @kind, @family_id, sqlc.narg(profile_id), sqlc.narg(fa
         sqlc.narg(device_name), sqlc.narg(user_agent), @now, @now, @idle_expires_at, @expires_at);
 
 -- name: GetFamilySession :one
-SELECT * FROM session WHERE token_hash = $1 AND kind = 'family';
+SELECT sqlc.embed(s), sqlc.embed(f)
+FROM session s
+JOIN family f ON f.id = s.family_id
+WHERE s.token_hash = $1 AND s.kind = 'family';
 
 -- name: GetProfileSession :one
-SELECT sqlc.embed(ps), p.role, p.is_owner, p.timezone,
+SELECT sqlc.embed(ps), sqlc.embed(p), sqlc.embed(f),
        fs.last_seen_at AS device_last_seen_at,
        fs.idle_expires_at AS device_idle_expires_at,
-       fs.expires_at AS device_expires_at
+       fs.expires_at AS device_expires_at,
+       a.locked_until AS pin_locked_until
 FROM session ps
 JOIN session fs ON fs.id = ps.family_session_id AND fs.kind = 'family' AND fs.token_hash = @family_token_hash
 JOIN profile p ON p.family_id = ps.family_id AND p.id = ps.profile_id
+JOIN family f ON f.id = ps.family_id
+LEFT JOIN pin_attempt a ON a.profile_id = p.id
 WHERE ps.token_hash = @profile_token_hash AND ps.kind = 'profile';
 
 -- name: TouchSession :exec
