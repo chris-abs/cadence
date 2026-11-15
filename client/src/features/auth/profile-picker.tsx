@@ -10,6 +10,7 @@ import { Tile, TileList, TileListItem } from "@/components/tile";
 import { errorMessage } from "@/lib/forms";
 import { useSelectProfile } from "./mutations";
 import { authKeys, type ProfileSummary, useFamilySession, useProfiles } from "./queries";
+import { lockEnd } from "./retry-after";
 import { SignOutButton } from "./sign-out-button";
 
 /** "Who's using Cadence?": the tablet's home screen between people. */
@@ -62,7 +63,7 @@ export function ProfilePicker() {
                     select.isPending && select.variables.profileId === profile.id ? (
                       "Opening…"
                     ) : (
-                      <LockStatus lockedUntil={profile.lockedUntil} />
+                      <LockStatus until={lockEnd(profile, profiles.dataUpdatedAt)} />
                     )
                   }
                   busy={select.isPending && select.variables.profileId === profile.id}
@@ -81,10 +82,9 @@ export function ProfilePicker() {
 }
 
 /** The live countdown of a locked-out profile; only the timer ticks. */
-function LockStatus({ lockedUntil }: { lockedUntil: string | null }) {
+function LockStatus({ until }: { until: number | undefined }) {
   const queryClient = useQueryClient();
-  if (!lockedUntil) return null;
-  const until = Date.parse(lockedUntil);
+  if (until === undefined) return null;
   return (
     <>
       Locked for{" "}

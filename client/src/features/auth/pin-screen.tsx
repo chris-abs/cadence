@@ -15,7 +15,7 @@ import { ApiError } from "@/lib/api";
 import { errorMessage } from "@/lib/forms";
 import { useSelectProfile } from "./mutations";
 import { authKeys, useProfiles } from "./queries";
-import { retryAt } from "./retry-after";
+import { lockEnd, retryAt } from "./retry-after";
 
 function BackToPicker() {
   return (
@@ -100,9 +100,9 @@ export function PinScreen({ profileId }: { profileId: string }) {
     );
   }
 
-  // A lockout is known from this attempt's 429, or from the server's profile.
-  const lockedUntil =
-    retryAt(select) ?? (profile.lockedUntil ? Date.parse(profile.lockedUntil) : undefined);
+  // A lockout is known from this attempt's 429, or from the picker's profile data;
+  // both are relative to when the answer arrived, never to the server's clock.
+  const lockedUntil = retryAt(select) ?? lockEnd(profile, profiles.dataUpdatedAt);
   const wrongPin = select.error instanceof ApiError && select.error.code === "invalid_pin";
 
   function endLockout() {

@@ -61,7 +61,7 @@ describe("profile picker", () => {
     expect(await screen.findByRole("heading", { name: "Hello, Alex" })).toBeInTheDocument();
   });
 
-  it("locks the pad with a live countdown after too many wrong PINs", async () => {
+  it("goes straight to the locked countdown when the wrong PIN that starts a lock answers 429", async () => {
     mockApi.reset({
       profiles: [
         mockProfile({ name: "Jo" }),
@@ -74,11 +74,15 @@ describe("profile picker", () => {
     await screen.findByRole("heading", { name: "Alex" });
     await pressKeys("111111");
 
+    // The 5th wrong PIN answers 429 pin_locked at once (spec §2): no "wrong PIN"
+    // step, and no extra attempt is needed to see the lock.
     const alert = await screen.findByRole("alert");
     expect(alert).toHaveTextContent("Too many wrong PINs");
+    expect(alert).not.toHaveTextContent("That PIN is not right");
     expect(within(alert).getByRole("timer")).toHaveTextContent(/^0:(30|29)$/);
     expect(screen.getByRole("button", { name: "1" })).toBeDisabled();
     expect(screen.getByLabelText("PIN for Alex")).toBeDisabled();
+    expect(mockApi.profile("Alex").failedPins).toBe(5);
   });
 
   it("shows a locked-out profile's countdown on its tile", async () => {
@@ -95,6 +99,28 @@ describe("profile picker", () => {
     const alex = await tile(/^Alex/);
     expect(alex).toHaveTextContent(/Locked for 1:(30|29)/);
     expect(within(alex).getByRole("timer")).toBeInTheDocument();
+  });
+
+  it("counts a lockout down from lockedForSeconds, whatever the device clock says", async () => {
+    // The server's clock is an hour ahead of this device's: its lockedUntil looks
+    // 61½ minutes away here, but only 90 seconds are left.
+    const serverClockOffsetMs = 3_600_000;
+    mockApi.reset({
+      profiles: [
+        mockProfile({ name: "Jo" }),
+        mockProfile({
+          name: "Alex",
+          pin: "123456",
+          lockedUntil: new Date(Date.now() + serverClockOffsetMs + 90_000).toISOString(),
+        }),
+      ],
+      signedIn: true,
+      serverClockOffsetMs,
+    });
+    renderApp("/picker");
+
+    const alex = await tile(/^Alex/);
+    expect(within(alex).getByRole("timer")).toHaveTextContent(/^1:(30|29)$/);
   });
 
   it("keeps loading and ready PIN states in one frame", async () => {

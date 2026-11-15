@@ -92,6 +92,44 @@ describe("register", () => {
     expect(screen.getByLabelText("Password")).toHaveFocus();
   });
 
+  it("puts errors on the nested owner fields by their dotted paths", async () => {
+    server.use(
+      identity.registerValidationFailed({
+        "owner.name": "Use at most 40 characters.",
+        "owner.colour": "Choose one of the colours.",
+      }),
+    );
+    renderApp("/register");
+    await fillFamilyStep();
+    await fillOwnerStep();
+
+    expect(await screen.findByText("Use at most 40 characters.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Your profile" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Your name")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("Your name")).toHaveFocus();
+    expect(screen.getByRole("group", { name: "Your colour" })).toHaveAccessibleDescription(
+      "Choose one of the colours.",
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("shows field errors with no matching form field in a banner, not on a guessed field", async () => {
+    server.use(
+      identity.registerValidationFailed({
+        name: "Bare names are not a documented path.",
+        "owner.timezone": "Unknown time zone.",
+      }),
+    );
+    renderApp("/register");
+    await fillFamilyStep();
+    await fillOwnerStep();
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Bare names are not a documented path.");
+    expect(alert).toHaveTextContent("Unknown time zone.");
+    expect(screen.getByLabelText("Your name")).not.toHaveAttribute("aria-invalid");
+  });
+
   it("says when the email already has a family", async () => {
     renderApp("/register");
     await fillFamilyStep("taken@example.com");

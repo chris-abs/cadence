@@ -39,6 +39,8 @@ interface MockState {
   addDemoMembers: boolean;
   /** Mock-only: delay every response by this many ms (browser demo). */
   latencyMs: number;
+  /** Mock-only: how far the server's clock is ahead of the device's, in ms. */
+  serverClockOffsetMs: number;
 }
 
 export const MOCK_PASSWORD = "correct horse battery";
@@ -74,6 +76,11 @@ function newId(): string {
 
 const isoNow = () => new Date().toISOString();
 
+/** The mock server's clock, which tests can skew against the device's. */
+function serverNow(): number {
+  return Date.now() + state.serverClockOffsetMs;
+}
+
 function emptyState(): MockState {
   return {
     registrationOpen: true,
@@ -84,6 +91,7 @@ function emptyState(): MockState {
     failedLogins: 0,
     addDemoMembers: false,
     latencyMs: 0,
+    serverClockOffsetMs: 0,
   };
 }
 
@@ -101,6 +109,7 @@ export function mockProfile(overrides: Partial<MockProfile> = {}): MockProfile {
     timezone: "Europe/London",
     hasPin: overrides.pin != null,
     lockedUntil: null,
+    lockedForSeconds: null,
     createdAt: now,
     updatedAt: now,
     pin: null,
@@ -120,6 +129,8 @@ interface Seed {
   activeProfile?: string;
   addDemoMembers?: boolean;
   latencyMs?: number;
+  /** The server's clock runs this far ahead of the device's (negative: behind). */
+  serverClockOffsetMs?: number;
 }
 
 /** Test and demo controls for the mock. `reset` runs after every test. */
@@ -129,6 +140,7 @@ export const mockApi = {
     state.registrationOpen = seed.registrationOpen ?? true;
     state.addDemoMembers = seed.addDemoMembers ?? false;
     state.latencyMs = seed.latencyMs ?? 0;
+    state.serverClockOffsetMs = seed.serverClockOffsetMs ?? 0;
     if (seed.profiles) {
       state.family = {
         id: newId(),
@@ -180,8 +192,8 @@ const profileRequired = () =>
   errorResponse(401, "profile_session_required", "Choose a profile to continue.");
 
 function summary(p: MockProfile): Schemas["ProfileSummary"] {
-  const lockedUntil =
-    p.lockedUntil && Date.parse(p.lockedUntil) > Date.now() ? p.lockedUntil : null;
+  const lockedFor = remainingLockSeconds(p);
+  const lockedUntil = lockedFor > 0 ? p.lockedUntil : null;
   return {
     id: p.id,
     name: p.name,
@@ -192,6 +204,7 @@ function summary(p: MockProfile): Schemas["ProfileSummary"] {
     timezone: p.timezone,
     hasPin: p.pin != null,
     lockedUntil,
+    lockedForSeconds: lockedFor > 0 ? lockedFor : null,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
   };
@@ -231,7 +244,7 @@ function lockoutSeconds(failures: number): number {
 
 function remainingLockSeconds(p: MockProfile): number {
   if (!p.lockedUntil) return 0;
-  return Math.max(0, Math.ceil((Date.parse(p.lockedUntil) - Date.now()) / 1000));
+  return Math.max(0, Math.ceil((Date.parse(p.lockedUntil) - serverNow()) / 1000));
 }
 
 function demoMembers(): MockProfile[] {
@@ -353,7 +366,7 @@ export const identityHandlers = [
         profile.failedPins += 1;
         if (profile.failedPins > PIN_FREE_FAILURES) {
           const seconds = lockoutSeconds(profile.failedPins);
-          profile.lockedUntil = new Date(Date.now() + seconds * 1000).toISOString();
+          profile.lockedUntil = new Date(serverNow() + seconds * 1000).toISOString();
           return errorResponse(429, "pin_locked", "Too many wrong PINs.", {
             retryAfterSeconds: seconds,
           });

@@ -33,17 +33,15 @@ type RegisterValues = z.infer<typeof registerSchema>;
 const FAMILY_STEP_FIELDS = ["email", "password", "familyName"] as const;
 
 /**
- * Server field names → form fields. The contract does not say how nested
- * fields are named; both the dotted path and the bare name are accepted.
+ * `Error.fields` keys (dotted JSON paths into `RegisterRequest`, spec §6.3) →
+ * form fields. Anything else is shown as the form's error.
  */
 const SERVER_FIELDS: FieldMap<RegisterValues> = {
   email: "email",
   password: "password",
   familyName: "familyName",
   "owner.name": "ownerName",
-  name: "ownerName",
   "owner.colour": "colour",
-  colour: "colour",
 };
 
 type Step = "family" | "owner";
@@ -136,7 +134,7 @@ export function RegisterScreen() {
             .
           </Banner>
         ) : (
-          formError && <Banner tone="error">{errorMessage(formError)}</Banner>
+          formError && <Banner tone="error">{formErrorMessage(formError)}</Banner>
         )}
 
         {step === "family" ? (
@@ -232,6 +230,17 @@ function isFamilyStepField(field: string): boolean {
 }
 
 /** Errors shown next to a field rather than as a banner. */
+/** The banner text: field messages no field can show, else the error's message. */
+function formErrorMessage(error: Error): string {
+  if (error instanceof ApiError && error.code === "validation_failed") {
+    const unplaced = Object.entries(error.fields)
+      .filter(([field]) => !(field in SERVER_FIELDS))
+      .map(([, message]) => message);
+    if (unplaced.length > 0) return unplaced.join(" ");
+  }
+  return errorMessage(error);
+}
+
 function isPlacedOnField(error: ApiError): boolean {
   if (error.code === "email_taken") return true;
   return (
