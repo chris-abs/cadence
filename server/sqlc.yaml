@@ -13,7 +13,24 @@ sql:
         output_models_file_name: models.gen.go
         emit_interface: false
         emit_empty_slices: true
+        # Nullable columns become pointers (*string, *time.Time) rather than
+        # pgtype wrappers, so store types map onto the API types directly.
+        emit_pointers_for_null_types: true
         overrides:
           # Plain time.Time rather than pgtype.Timestamptz for NOT NULL columns.
           - db_type: timestamptz
             go_type: time.Time
+          - db_type: timestamptz
+            nullable: true
+            go_type:
+              type: time.Time
+              pointer: true
+          # google/uuid (UUIDv7 generation lives in Go) instead of pgtype.UUID.
+          - db_type: uuid
+            go_type: github.com/google/uuid.UUID
+          - db_type: uuid
+            nullable: true
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+              pointer: true
