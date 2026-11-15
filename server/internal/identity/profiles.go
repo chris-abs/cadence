@@ -2,10 +2,12 @@ package identity
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/chris-abs/cadence/server/internal/authz"
 	"github.com/chris-abs/cadence/server/internal/store"
@@ -173,11 +175,11 @@ func (s *Service) ChangeRole(ctx context.Context, caller Caller, id uuid.UUID, r
 	familyID := caller.Device.Family.ID
 	var out ProfileItem
 	err := s.inTx(ctx, func(q *store.Queries) error {
-		row, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
+		target, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
-		if err := guardTarget(caller, row.Profile); err != nil {
+		if err := guardTarget(caller, target); err != nil {
 			return err
 		}
 		updated, err := q.UpdateProfileRole(ctx, store.UpdateProfileRoleParams{Role: role, FamilyID: familyID, ID: id})
@@ -189,7 +191,11 @@ func (s *Service) ChangeRole(ctx context.Context, caller Caller, id uuid.UUID, r
 		}); err != nil {
 			return fmt.Errorf("sign out profile: %w", err)
 		}
-		out = ProfileItem{Profile: updated, LockedUntil: activeLock(row.LockedUntil, s.now())}
+		attempt, err := q.GetPinAttempt(ctx, id)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("load pin attempts: %w", err)
+		}
+		out = ProfileItem{Profile: updated, LockedUntil: activeLock(attempt.LockedUntil, s.now())}
 		return nil
 	})
 	if err != nil {
@@ -208,11 +214,11 @@ func (s *Service) DeleteProfile(ctx context.Context, caller Caller, id uuid.UUID
 	}
 	familyID := caller.Device.Family.ID
 	err := s.inTx(ctx, func(q *store.Queries) error {
-		row, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
+		target, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: id})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
-		if err := guardTarget(caller, row.Profile); err != nil {
+		if err := guardTarget(caller, target); err != nil {
 			return err
 		}
 		if err := q.DeleteProfile(ctx, store.DeleteProfileParams{FamilyID: familyID, ID: id}); err != nil {

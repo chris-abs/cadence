@@ -123,6 +123,22 @@ func (q *Queries) FamilyHasChild(ctx context.Context, familyID uuid.UUID) (bool,
 	return exists, err
 }
 
+const getPinAttempt = `-- name: GetPinAttempt :one
+SELECT failed_count, locked_until FROM pin_attempt WHERE profile_id = $1
+`
+
+type GetPinAttemptRow struct {
+	FailedCount int32
+	LockedUntil *time.Time
+}
+
+func (q *Queries) GetPinAttempt(ctx context.Context, profileID uuid.UUID) (GetPinAttemptRow, error) {
+	row := q.db.QueryRow(ctx, getPinAttempt, profileID)
+	var i GetPinAttemptRow
+	err := row.Scan(&i.FailedCount, &i.LockedUntil)
+	return i, err
+}
+
 const getProfile = `-- name: GetProfile :one
 SELECT p.id, p.family_id, p.name, p.role, p.is_owner, p.colour, p.avatar, p.timezone, p.pin_hash, p.contact_email, p.contact_email_verified_at, p.created_at, p.updated_at, a.locked_until
 FROM profile p
@@ -163,11 +179,7 @@ func (q *Queries) GetProfile(ctx context.Context, arg GetProfileParams) (GetProf
 }
 
 const getProfileForUpdate = `-- name: GetProfileForUpdate :one
-SELECT p.id, p.family_id, p.name, p.role, p.is_owner, p.colour, p.avatar, p.timezone, p.pin_hash, p.contact_email, p.contact_email_verified_at, p.created_at, p.updated_at, a.failed_count, a.locked_until
-FROM profile p
-LEFT JOIN pin_attempt a ON a.profile_id = p.id
-WHERE p.family_id = $1 AND p.id = $2
-FOR UPDATE OF p
+SELECT id, family_id, name, role, is_owner, colour, avatar, timezone, pin_hash, contact_email, contact_email_verified_at, created_at, updated_at FROM profile WHERE family_id = $1 AND id = $2 FOR UPDATE
 `
 
 type GetProfileForUpdateParams struct {
@@ -175,32 +187,27 @@ type GetProfileForUpdateParams struct {
 	ID       uuid.UUID
 }
 
-type GetProfileForUpdateRow struct {
-	Profile     Profile
-	FailedCount *int32
-	LockedUntil *time.Time
-}
-
 // Locks the profile row so concurrent PIN guesses are counted one at a time.
-func (q *Queries) GetProfileForUpdate(ctx context.Context, arg GetProfileForUpdateParams) (GetProfileForUpdateRow, error) {
+// PIN state is read by GetPinAttempt in a separate statement after the lock
+// is held: in READ COMMITTED a joined row would come from the snapshot taken
+// before waiting for the lock, so a waiter would miss the failure it waited on.
+func (q *Queries) GetProfileForUpdate(ctx context.Context, arg GetProfileForUpdateParams) (Profile, error) {
 	row := q.db.QueryRow(ctx, getProfileForUpdate, arg.FamilyID, arg.ID)
-	var i GetProfileForUpdateRow
+	var i Profile
 	err := row.Scan(
-		&i.Profile.ID,
-		&i.Profile.FamilyID,
-		&i.Profile.Name,
-		&i.Profile.Role,
-		&i.Profile.IsOwner,
-		&i.Profile.Colour,
-		&i.Profile.Avatar,
-		&i.Profile.Timezone,
-		&i.Profile.PinHash,
-		&i.Profile.ContactEmail,
-		&i.Profile.ContactEmailVerifiedAt,
-		&i.Profile.CreatedAt,
-		&i.Profile.UpdatedAt,
-		&i.FailedCount,
-		&i.LockedUntil,
+		&i.ID,
+		&i.FamilyID,
+		&i.Name,
+		&i.Role,
+		&i.IsOwner,
+		&i.Colour,
+		&i.Avatar,
+		&i.Timezone,
+		&i.PinHash,
+		&i.ContactEmail,
+		&i.ContactEmailVerifiedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

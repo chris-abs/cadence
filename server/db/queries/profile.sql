@@ -23,11 +23,13 @@ WHERE p.family_id = @family_id AND p.id = @id;
 
 -- name: GetProfileForUpdate :one
 -- Locks the profile row so concurrent PIN guesses are counted one at a time.
-SELECT sqlc.embed(p), a.failed_count, a.locked_until
-FROM profile p
-LEFT JOIN pin_attempt a ON a.profile_id = p.id
-WHERE p.family_id = @family_id AND p.id = @id
-FOR UPDATE OF p;
+-- PIN state is read by GetPinAttempt in a separate statement after the lock
+-- is held: in READ COMMITTED a joined row would come from the snapshot taken
+-- before waiting for the lock, so a waiter would miss the failure it waited on.
+SELECT * FROM profile WHERE family_id = @family_id AND id = @id FOR UPDATE;
+
+-- name: GetPinAttempt :one
+SELECT failed_count, locked_until FROM pin_attempt WHERE profile_id = $1;
 
 -- name: CountProfiles :one
 SELECT count(*) FROM profile WHERE family_id = $1;

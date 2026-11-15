@@ -296,28 +296,28 @@ func (s *Service) SelectProfile(ctx context.Context, device Device, profileID uu
 		verdict error // a refusal that must not roll back the recorded failure
 	)
 	err := s.inTx(ctx, func(q *store.Queries) error {
-		row, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: device.Family.ID, ID: profileID})
+		profile, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: device.Family.ID, ID: profileID})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
-		if row.Profile.PinHash != nil {
+		if profile.PinHash != nil {
 			if pin == nil {
 				return &ValidationError{Fields: map[string]string{"pin": "Enter the PIN."}}
 			}
-			if verdict, err = s.verifyPIN(ctx, q, row, *pin); err != nil || verdict != nil {
+			if verdict, err = s.verifyPIN(ctx, q, profile, *pin); err != nil || verdict != nil {
 				return err
 			}
 		}
-		token, psID, expires, err := s.createProfileSession(ctx, q, device.SessionID, device.Family.ID, row.Profile.ID)
+		token, psID, expires, err := s.createProfileSession(ctx, q, device.SessionID, device.Family.ID, profile.ID)
 		if err != nil {
 			return err
 		}
-		subject, err := s.subjectFor(ctx, q, row.Profile)
+		subject, err := s.subjectFor(ctx, q, profile)
 		if err != nil {
 			return err
 		}
 		out = SignedIn{ProfileToken: token, Caller: Caller{
-			Device: device, SessionID: psID, ExpiresAt: expires, Profile: row.Profile, Subject: subject,
+			Device: device, SessionID: psID, ExpiresAt: expires, Profile: profile, Subject: subject,
 		}}
 		return nil
 	})

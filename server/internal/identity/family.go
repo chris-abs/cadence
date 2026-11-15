@@ -117,14 +117,14 @@ func (s *Service) TransferOwnership(ctx context.Context, caller Caller, to uuid.
 		if _, err := q.GetFamilyForUpdate(ctx, familyID); err != nil {
 			return fmt.Errorf("lock family: %w", err)
 		}
-		row, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: to})
+		target, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: to})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
 		switch {
-		case row.Profile.ID == caller.Profile.ID:
+		case target.ID == caller.Profile.ID:
 			return ErrSelfNotAllowed
-		case row.Profile.Role != string(authz.Parent):
+		case target.Role != string(authz.Parent):
 			return &ValidationError{Fields: map[string]string{"profileId": "Ownership can only go to a PARENT profile."}}
 		}
 		if err := q.ClearOwner(ctx, familyID); err != nil {
