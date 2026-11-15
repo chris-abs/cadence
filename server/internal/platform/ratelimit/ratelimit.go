@@ -1,4 +1,4 @@
-package middleware
+package ratelimit
 
 import (
 	"math"
@@ -10,7 +10,7 @@ import (
 
 const sweepEvery = time.Minute
 
-type RateLimiter struct {
+type Limiter struct {
 	limit rate.Limit
 	burst int
 	now   func() time.Time
@@ -20,8 +20,8 @@ type RateLimiter struct {
 	lastSweep time.Time
 }
 
-func NewRateLimiter(interval time.Duration, burst int, now func() time.Time) *RateLimiter {
-	return &RateLimiter{
+func New(interval time.Duration, burst int, now func() time.Time) *Limiter {
+	return &Limiter{
 		limit:   rate.Every(interval),
 		burst:   burst,
 		now:     now,
@@ -29,7 +29,7 @@ func NewRateLimiter(interval time.Duration, burst int, now func() time.Time) *Ra
 	}
 }
 
-func (l *RateLimiter) Allow(key string) (bool, time.Duration) {
+func (l *Limiter) Allow(key string) (bool, time.Duration) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	now := l.now()
@@ -40,7 +40,7 @@ func (l *RateLimiter) Allow(key string) (bool, time.Duration) {
 	return false, l.wait(b, now)
 }
 
-func (l *RateLimiter) Check(key string) (bool, time.Duration) {
+func (l *Limiter) Check(key string) (bool, time.Duration) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	now := l.now()
@@ -51,14 +51,14 @@ func (l *RateLimiter) Check(key string) (bool, time.Duration) {
 	return false, l.wait(b, now)
 }
 
-func (l *RateLimiter) Fail(key string) {
+func (l *Limiter) Fail(key string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	now := l.now()
 	l.bucket(key, now).AllowN(now, 1)
 }
 
-func (l *RateLimiter) bucket(key string, now time.Time) *rate.Limiter {
+func (l *Limiter) bucket(key string, now time.Time) *rate.Limiter {
 	l.sweep(now)
 	b, ok := l.buckets[key]
 	if !ok {
@@ -68,7 +68,7 @@ func (l *RateLimiter) bucket(key string, now time.Time) *rate.Limiter {
 	return b
 }
 
-func (l *RateLimiter) sweep(now time.Time) {
+func (l *Limiter) sweep(now time.Time) {
 	if now.Sub(l.lastSweep) < sweepEvery {
 		return
 	}
@@ -80,7 +80,7 @@ func (l *RateLimiter) sweep(now time.Time) {
 	}
 }
 
-func (l *RateLimiter) wait(b *rate.Limiter, now time.Time) time.Duration {
+func (l *Limiter) wait(b *rate.Limiter, now time.Time) time.Duration {
 	missing := 1 - b.TokensAt(now)
 	secs := missing / float64(l.limit)
 	return time.Duration(math.Ceil(secs * float64(time.Second)))

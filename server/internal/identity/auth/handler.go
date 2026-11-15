@@ -42,7 +42,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) error {
 		Email: body.Email, Password: body.Password, FamilyName: body.FamilyName,
 		OwnerName: body.Owner.Name, OwnerColour: string(body.Owner.Colour), OwnerTimezone: body.Owner.Timezone,
 		OwnerAvatar: body.Owner.Avatar, DeviceName: body.DeviceName,
-		UserAgent: r.UserAgent(), ClientIP: middleware.ClientIP(r, h.proxies), CurrentDeviceToken: current,
+		UserAgent: r.UserAgent(), ClientIP: httpx.ClientIP(r, h.proxies), CurrentDeviceToken: current,
 	})
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) error {
 	current, _ := h.cookies.Read(r)
 	out, err := h.svc.Login(r.Context(), LoginInput{
 		Email: body.Email, Password: body.Password, DeviceName: body.DeviceName,
-		UserAgent: r.UserAgent(), ClientIP: middleware.ClientIP(r, h.proxies), CurrentDeviceToken: current,
+		UserAgent: r.UserAgent(), ClientIP: httpx.ClientIP(r, h.proxies), CurrentDeviceToken: current,
 	})
 	if err != nil {
 		return err

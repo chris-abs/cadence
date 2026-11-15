@@ -8,6 +8,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/chris-abs/cadence/server/internal/platform/audit"
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
 )
 
@@ -73,7 +74,7 @@ func RecoverPanic(log *slog.Logger) Middleware {
 				}
 				log.ErrorContext(r.Context(), "panic serving request",
 					"panic", fmt.Sprint(v), "path", r.URL.Path, "stack", string(debug.Stack()))
-				logWrite(r, log, httpx.WriteError(w, http.StatusInternalServerError, httpx.CodeInternal, "Something went wrong.", nil))
+				httpx.LogWrite(r, log, httpx.WriteError(w, http.StatusInternalServerError, httpx.CodeInternal, "Something went wrong.", nil))
 			}()
 			next.ServeHTTP(w, r)
 		})
@@ -95,7 +96,7 @@ func RequireJSONBody(log *slog.Logger) Middleware {
 			if r.ContentLength != 0 {
 				mt, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 				if err != nil || mt != "application/json" {
-					logWrite(r, log, httpx.WriteError(w, http.StatusUnsupportedMediaType, httpx.CodeUnsupportedMedia,
+					httpx.LogWrite(r, log, httpx.WriteError(w, http.StatusUnsupportedMediaType, httpx.CodeUnsupportedMedia,
 						"Content-Type must be application/json.", nil))
 					return
 				}
@@ -107,8 +108,8 @@ func RequireJSONBody(log *slog.Logger) Middleware {
 
 func CrossOriginDenied(log *slog.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		Audit(r.Context(), log, "auth.cross_origin_blocked", slog.String("method", r.Method), slog.String("path", r.URL.Path))
-		logWrite(r, log, httpx.WriteError(w, http.StatusForbidden, httpx.CodeCrossOrigin, "Cross-origin requests are not allowed.", nil))
+		audit.Event(r.Context(), log, "auth.cross_origin_blocked", slog.String("method", r.Method), slog.String("path", r.URL.Path))
+		httpx.LogWrite(r, log, httpx.WriteError(w, http.StatusForbidden, httpx.CodeCrossOrigin, "Cross-origin requests are not allowed.", nil))
 	})
 }
 
@@ -141,7 +142,7 @@ func (f *fallbackWriter) WriteHeader(status int) {
 		f.ResponseWriter.WriteHeader(status)
 		return
 	}
-	logWrite(f.r, f.log, httpx.WriteError(f.ResponseWriter, status, code, msg, nil))
+	httpx.LogWrite(f.r, f.log, httpx.WriteError(f.ResponseWriter, status, code, msg, nil))
 }
 
 func (f *fallbackWriter) Write(b []byte) (int, error) {

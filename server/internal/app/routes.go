@@ -84,9 +84,9 @@ func NewHandler(d Deps) (*Handler, error) {
 	profileH := profile.NewHandler(s.profile)
 
 	type handlerFunc = func(http.ResponseWriter, *http.Request) error
-	public := func(fn handlerFunc) http.Handler { return middleware.Handle(log, fn) }
-	device := func(fn handlerFunc) http.Handler { return sessions.RequireFamily(middleware.Handle(log, fn)) }
-	caller := func(fn handlerFunc) http.Handler { return sessions.RequireProfile(middleware.Handle(log, fn)) }
+	public := func(fn handlerFunc) http.Handler { return httpx.Handle(log, fn) }
+	device := func(fn handlerFunc) http.Handler { return sessions.RequireFamily(httpx.Handle(log, fn)) }
+	caller := func(fn handlerFunc) http.Handler { return sessions.RequireProfile(httpx.Handle(log, fn)) }
 
 	routes := map[string]http.Handler{
 		"GET /healthz": healthz(d.DB, log),

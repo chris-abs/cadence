@@ -19,10 +19,11 @@ import (
 
 	"github.com/chris-abs/cadence/server/internal/identity/family"
 	"github.com/chris-abs/cadence/server/internal/identity/profile"
-	"github.com/chris-abs/cadence/server/internal/middleware"
 	"github.com/chris-abs/cadence/server/internal/models"
+	"github.com/chris-abs/cadence/server/internal/platform/audit"
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
+	"github.com/chris-abs/cadence/server/internal/platform/ratelimit"
 )
 
 var ErrUnknownFamily = errors.New("no family has that email")
@@ -40,10 +41,10 @@ type Deps struct {
 
 type Service struct {
 	Deps
-	loginPerIP      *middleware.RateLimiter
-	loginPerEmail   *middleware.RateLimiter
-	registerPerIP   *middleware.RateLimiter
-	selectPerDevice *middleware.RateLimiter
+	loginPerIP      *ratelimit.Limiter
+	loginPerEmail   *ratelimit.Limiter
+	registerPerIP   *ratelimit.Limiter
+	selectPerDevice *ratelimit.Limiter
 	dummyHash       string
 }
 
@@ -58,16 +59,16 @@ func NewService(d Deps) (*Service, error) {
 	}
 	return &Service{
 		Deps:            d,
-		loginPerIP:      middleware.NewRateLimiter(30*time.Second, 5, d.Now),
-		loginPerEmail:   middleware.NewRateLimiter(90*time.Second, 10, d.Now),
-		registerPerIP:   middleware.NewRateLimiter(20*time.Minute, 3, d.Now),
-		selectPerDevice: middleware.NewRateLimiter(2*time.Second, 30, d.Now),
+		loginPerIP:      ratelimit.New(30*time.Second, 5, d.Now),
+		loginPerEmail:   ratelimit.New(90*time.Second, 10, d.Now),
+		registerPerIP:   ratelimit.New(20*time.Minute, 3, d.Now),
+		selectPerDevice: ratelimit.New(2*time.Second, 30, d.Now),
 		dummyHash:       dummy,
 	}, nil
 }
 
 func (s *Service) audit(ctx context.Context, event string, attrs ...slog.Attr) {
-	middleware.Audit(ctx, s.Log, event, attrs...)
+	audit.Event(ctx, s.Log, event, attrs...)
 }
 
 func (s *Service) rateLimited(ctx context.Context, limit string, wait time.Duration, attrs ...slog.Attr) error {
@@ -161,7 +162,7 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 	if err != nil {
 		return SignedIn{}, err
 	}
-	s.audit(ctx, "family.registered", middleware.FamilyAttr(familyID), middleware.ProfileAttr(ownerID), middleware.SessionAttr(fsID))
+	s.audit(ctx, "family.registered", audit.Family(familyID), audit.Profile(ownerID), audit.Session(fsID))
 	return out, nil
 }
 
@@ -216,7 +217,7 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
 	if out.Profiles, err = s.Profiles.List(ctx, f.ID); err != nil {
 		return LoggedIn{}, err
 	}
-	s.audit(ctx, "auth.login_succeeded", middleware.FamilyAttr(f.ID), middleware.SessionAttr(fsID))
+	s.audit(ctx, "auth.login_succeeded", audit.Family(f.ID), audit.Session(fsID))
 	return out, nil
 }
 
@@ -257,7 +258,7 @@ func (s *Service) dropDevice(ctx context.Context, repo *Repository, token string
 		return err
 	}
 	for _, r := range rows {
-		s.audit(ctx, "auth.logout", middleware.FamilyAttr(r.FamilyID), middleware.SessionAttr(r.ID), slog.String("reason", "replaced"))
+		s.audit(ctx, "auth.logout", audit.Family(r.FamilyID), audit.Session(r.ID), slog.String("reason", "replaced"))
 	}
 	return nil
 }
@@ -281,7 +282,7 @@ func (s *Service) FamilySession(ctx context.Context, device models.Device) (fami
 
 func (s *Service) SelectProfile(ctx context.Context, device models.Device, profileID uuid.UUID, pin *string) (SignedIn, error) {
 	if ok, wait := s.selectPerDevice.Allow(device.SessionID.String()); !ok {
-		return SignedIn{}, s.rateLimited(ctx, "select_per_device", wait, middleware.FamilyAttr(device.FamilyID), middleware.SessionAttr(device.SessionID))
+		return SignedIn{}, s.rateLimited(ctx, "select_per_device", wait, audit.Family(device.FamilyID), audit.Session(device.SessionID))
 	}
 	p, err := s.Profiles.Unlock(ctx, device.FamilyID, profileID, pin)
 	if err != nil {
@@ -302,7 +303,7 @@ func (s *Service) SelectProfile(ctx context.Context, device models.Device, profi
 	if err != nil {
 		return SignedIn{}, err
 	}
-	s.audit(ctx, "profile.selected", middleware.FamilyAttr(device.FamilyID), middleware.ProfileAttr(p.ID), middleware.SessionAttr(psID))
+	s.audit(ctx, "profile.selected", audit.Family(device.FamilyID), audit.Profile(p.ID), audit.Session(psID))
 	return out, nil
 }
 
@@ -504,7 +505,7 @@ func (s *Service) RevokeDevice(ctx context.Context, caller models.Caller, id uui
 	if !found {
 		return false, models.ErrNotFound
 	}
-	s.audit(ctx, "session.revoked", middleware.FamilyAttr(caller.FamilyID), middleware.SessionAttr(id), middleware.ActorAttr(caller.ProfileID))
+	s.audit(ctx, "session.revoked", audit.Family(caller.FamilyID), audit.Session(id), audit.Actor(caller.ProfileID))
 	return id == caller.FamilySessionID, nil
 }
 
@@ -516,8 +517,8 @@ func (s *Service) RevokeOtherDevices(ctx context.Context, caller models.Caller) 
 	if err != nil {
 		return err
 	}
-	s.audit(ctx, "session.revoked_others", middleware.FamilyAttr(caller.FamilyID), middleware.SessionAttr(caller.FamilySessionID),
-		middleware.ActorAttr(caller.ProfileID), slog.Int64("revoked", n))
+	s.audit(ctx, "session.revoked_others", audit.Family(caller.FamilyID), audit.Session(caller.FamilySessionID),
+		audit.Actor(caller.ProfileID), slog.Int64("revoked", n))
 	return nil
 }
 
@@ -544,7 +545,7 @@ func (s *Service) ChangePassword(ctx context.Context, caller models.Caller, curr
 	if err != nil {
 		return err
 	}
-	s.audit(ctx, "family.password_changed", middleware.FamilyAttr(caller.FamilyID), middleware.ActorAttr(caller.ProfileID))
+	s.audit(ctx, "family.password_changed", audit.Family(caller.FamilyID), audit.Actor(caller.ProfileID))
 	return nil
 }
 
@@ -577,7 +578,7 @@ func (s *Service) ResetPassword(ctx context.Context, email string) (string, erro
 	if err != nil {
 		return "", err
 	}
-	s.audit(ctx, "family.password_changed", middleware.FamilyAttr(familyID), slog.String("by", "operator"))
+	s.audit(ctx, "family.password_changed", audit.Family(familyID), slog.String("by", "operator"))
 	return password, nil
 }
 

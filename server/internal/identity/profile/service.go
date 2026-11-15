@@ -9,8 +9,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/chris-abs/cadence/server/internal/middleware"
 	"github.com/chris-abs/cadence/server/internal/models"
+	"github.com/chris-abs/cadence/server/internal/platform/audit"
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
 )
@@ -124,8 +124,8 @@ func (s *Service) Create(ctx context.Context, caller models.Caller, in Input) (P
 	if err != nil {
 		return Profile{}, err
 	}
-	middleware.Audit(ctx, s.log, "profile.created", middleware.FamilyAttr(caller.FamilyID), middleware.ProfileAttr(id),
-		middleware.ActorAttr(caller.ProfileID), slog.String("role", in.Role))
+	audit.Event(ctx, s.log, "profile.created", audit.Family(caller.FamilyID), audit.Profile(id),
+		audit.Actor(caller.ProfileID), slog.String("role", in.Role))
 	return created, nil
 }
 
@@ -185,8 +185,8 @@ func (s *Service) ChangeRole(ctx context.Context, caller models.Caller, id uuid.
 	if err != nil {
 		return Profile{}, err
 	}
-	middleware.Audit(ctx, s.log, "profile.role_changed", middleware.FamilyAttr(caller.FamilyID), middleware.ProfileAttr(id),
-		middleware.ActorAttr(caller.ProfileID), slog.String("role", role))
+	audit.Event(ctx, s.log, "profile.role_changed", audit.Family(caller.FamilyID), audit.Profile(id),
+		audit.Actor(caller.ProfileID), slog.String("role", role))
 	return out, nil
 }
 
@@ -207,8 +207,8 @@ func (s *Service) Delete(ctx context.Context, caller models.Caller, id uuid.UUID
 	if err != nil {
 		return err
 	}
-	middleware.Audit(ctx, s.log, "profile.deleted", middleware.FamilyAttr(caller.FamilyID), middleware.ProfileAttr(id),
-		middleware.ActorAttr(caller.ProfileID))
+	audit.Event(ctx, s.log, "profile.deleted", audit.Family(caller.FamilyID), audit.Profile(id),
+		audit.Actor(caller.ProfileID))
 	return nil
 }
 
@@ -248,8 +248,8 @@ func (s *Service) TransferOwnership(ctx context.Context, caller models.Caller, t
 	if err != nil {
 		return err
 	}
-	middleware.Audit(ctx, s.log, "family.owner_transferred", middleware.FamilyAttr(caller.FamilyID),
-		middleware.ActorAttr(caller.ProfileID), middleware.ProfileAttr(to))
+	audit.Event(ctx, s.log, "family.owner_transferred", audit.Family(caller.FamilyID),
+		audit.Actor(caller.ProfileID), audit.Profile(to))
 	return nil
 }
 
@@ -307,8 +307,8 @@ func (s *Service) checkPIN(ctx context.Context, r *Repository, p Profile, pin st
 	if err != nil {
 		return nil, err
 	}
-	attrs := []slog.Attr{middleware.FamilyAttr(p.FamilyID), middleware.ProfileAttr(p.ID), slog.Int("failed_count", int(failures))}
-	middleware.Audit(ctx, s.log, "profile.pin_failed", attrs...)
+	attrs := []slog.Attr{audit.Family(p.FamilyID), audit.Profile(p.ID), slog.Int("failed_count", int(failures))}
+	audit.Event(ctx, s.log, "profile.pin_failed", attrs...)
 	lock := lockoutAfter(failures)
 	if lock == 0 {
 		return models.ErrInvalidPIN, nil
@@ -316,7 +316,7 @@ func (s *Service) checkPIN(ctx context.Context, r *Repository, p Profile, pin st
 	if err := r.lockPin(ctx, p.ID, now.Add(lock)); err != nil {
 		return nil, err
 	}
-	middleware.Audit(ctx, s.log, "profile.pin_locked", append(attrs, slog.Duration("locked_for", lock))...)
+	audit.Event(ctx, s.log, "profile.pin_locked", append(attrs, slog.Duration("locked_for", lock))...)
 	return &models.RetryError{Locked: true, After: lock}, nil
 }
 
@@ -386,8 +386,8 @@ func (s *Service) SetPIN(ctx context.Context, caller models.Caller, targetID uui
 	if verdict != nil {
 		return verdict
 	}
-	middleware.Audit(ctx, s.log, "profile.pin_changed", middleware.FamilyAttr(caller.FamilyID), middleware.ProfileAttr(targetID),
-		middleware.ActorAttr(caller.ProfileID), slog.String("by", by))
+	audit.Event(ctx, s.log, "profile.pin_changed", audit.Family(caller.FamilyID), audit.Profile(targetID),
+		audit.Actor(caller.ProfileID), slog.String("by", by))
 	return nil
 }
 

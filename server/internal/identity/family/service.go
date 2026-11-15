@@ -9,16 +9,17 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/chris-abs/cadence/server/internal/middleware"
 	"github.com/chris-abs/cadence/server/internal/models"
+	"github.com/chris-abs/cadence/server/internal/platform/audit"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
+	"github.com/chris-abs/cadence/server/internal/platform/ratelimit"
 )
 
 type Service struct {
 	repo   *Repository
 	hasher passhash.Hasher
 	log    *slog.Logger
-	reauth *middleware.RateLimiter
+	reauth *ratelimit.Limiter
 }
 
 func NewService(pool *pgxpool.Pool, hasher passhash.Hasher, now func() time.Time, log *slog.Logger) *Service {
@@ -26,7 +27,7 @@ func NewService(pool *pgxpool.Pool, hasher passhash.Hasher, now func() time.Time
 		repo:   NewRepository(pool),
 		hasher: hasher,
 		log:    log,
-		reauth: middleware.NewRateLimiter(3*time.Minute, 5, now),
+		reauth: ratelimit.New(3*time.Minute, 5, now),
 	}
 }
 
@@ -78,7 +79,7 @@ func (s *Service) ChangeEmail(ctx context.Context, caller models.Caller, email, 
 	if err != nil {
 		return Family{}, err
 	}
-	middleware.Audit(ctx, s.log, "family.email_changed", middleware.FamilyAttr(f.ID), middleware.ActorAttr(caller.ProfileID))
+	audit.Event(ctx, s.log, "family.email_changed", audit.Family(f.ID), audit.Actor(caller.ProfileID))
 	return f, nil
 }
 
@@ -99,7 +100,7 @@ func (s *Service) Delete(ctx context.Context, caller models.Caller, password, co
 	if err := s.repo.Delete(ctx, f.ID); err != nil {
 		return err
 	}
-	middleware.Audit(ctx, s.log, "family.deleted", middleware.FamilyAttr(f.ID), middleware.ActorAttr(caller.ProfileID))
+	audit.Event(ctx, s.log, "family.deleted", audit.Family(f.ID), audit.Actor(caller.ProfileID))
 	return nil
 }
 
@@ -114,7 +115,7 @@ func (s *Service) VerifyPassword(ctx context.Context, familyID uuid.UUID, passwo
 func (s *Service) verify(ctx context.Context, f Family, password string) error {
 	key := f.ID.String()
 	if ok, wait := s.reauth.Check(key); !ok {
-		middleware.Audit(ctx, s.log, "auth.rate_limited", slog.String("limit", "reauth_per_family"), middleware.FamilyAttr(f.ID))
+		audit.Event(ctx, s.log, "auth.rate_limited", slog.String("limit", "reauth_per_family"), audit.Family(f.ID))
 		return &models.RetryError{After: wait}
 	}
 	ok, err := s.hasher.Matches(f.PasswordHash, password)
@@ -161,7 +162,7 @@ func (s *Service) SetModule(ctx context.Context, caller models.Caller, id string
 	if err := s.repo.SetModule(ctx, caller.FamilyID, id, enabled); err != nil {
 		return ModuleState{}, err
 	}
-	middleware.Audit(ctx, s.log, "family.module_toggled", middleware.FamilyAttr(caller.FamilyID), middleware.ActorAttr(caller.ProfileID),
+	audit.Event(ctx, s.log, "family.module_toggled", audit.Family(caller.FamilyID), audit.Actor(caller.ProfileID),
 		slog.String("module", id), slog.Bool("enabled", enabled))
 	return ModuleState{Module: m, Enabled: enabled}, nil
 }

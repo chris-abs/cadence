@@ -4,10 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"net"
 	"net/http"
-	"net/netip"
-	"strings"
 	"time"
 
 	"github.com/chris-abs/cadence/server/internal/models"
@@ -117,7 +114,7 @@ func (a *Auth) reject(w http.ResponseWriter, r *http.Request, err error) {
 	case errors.Is(err, models.ErrProfileSessionRequired) && ps != "":
 		a.cookies.ClearProfile(w)
 	}
-	WriteError(w, r, a.log, err)
+	httpx.Fail(w, r, a.log, err)
 }
 
 func RequireModule(moduleID string, log *slog.Logger) func(http.Handler) http.Handler {
@@ -126,42 +123,12 @@ func RequireModule(moduleID string, log *slog.Logger) func(http.Handler) http.Ha
 			c, ok := models.CallerFrom(r.Context())
 			switch {
 			case !ok:
-				logWrite(r, log, httpx.WriteError(w, http.StatusForbidden, httpx.CodeForbidden, "You are not allowed to do that.", nil))
+				httpx.LogWrite(r, log, httpx.WriteError(w, http.StatusForbidden, httpx.CodeForbidden, "You are not allowed to do that.", nil))
 			case !c.ModuleEnabled(moduleID):
-				logWrite(r, log, httpx.WriteError(w, http.StatusForbidden, httpx.CodeModuleDisabled, "This module is switched off for your family.", nil))
+				httpx.LogWrite(r, log, httpx.WriteError(w, http.StatusForbidden, httpx.CodeModuleDisabled, "This module is switched off for your family.", nil))
 			default:
 				next.ServeHTTP(w, r)
 			}
 		})
 	}
-}
-
-func ClientIP(r *http.Request, trusted []netip.Prefix) string {
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		host = r.RemoteAddr
-	}
-	peer, err := netip.ParseAddr(host)
-	if err != nil || !fromTrusted(peer, trusted) {
-		return host
-	}
-	xff := r.Header.Values("X-Forwarded-For")
-	if len(xff) == 0 {
-		return host
-	}
-	// Only the hop our proxy appended is trustworthy; earlier ones are client-supplied.
-	hops := strings.Split(xff[len(xff)-1], ",")
-	if last, err := netip.ParseAddr(strings.TrimSpace(hops[len(hops)-1])); err == nil {
-		return last.String()
-	}
-	return host
-}
-
-func fromTrusted(addr netip.Addr, trusted []netip.Prefix) bool {
-	for _, p := range trusted {
-		if p.Contains(addr.Unmap()) {
-			return true
-		}
-	}
-	return false
 }
