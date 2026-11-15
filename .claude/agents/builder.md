@@ -22,10 +22,15 @@ you to read before writing anything.
 - Commit messages: one lowercase line starting `feat:`, `fix:` or `chore:`, with no
   scope and no body. Never add `Co-Authored-By`, "Generated with" or any other AI
   attribution. Limit each commit to the paths you changed.
-- Never push, amend, rebase, switch away from your branch or bypass hooks
-  (`--no-verify`, `LEFTHOOK=0`) unless the brief explicitly authorises that one action.
-- Never read `.env` files, never touch a hosted or production database, never use the
-  `gh` CLI, never install global tools.
+- Never amend, rebase, switch away from your branch or bypass hooks (`--no-verify`,
+  `LEFTHOOK=0`) unless the brief explicitly authorises that one action.
+- Pull requests: when the brief asks for one, push your own feature branch (never
+  `main`, never with force) and open a pull request with `gh pr create`, filling in
+  the template honestly. **Never merge, approve or close a pull request, and never
+  enable auto-merge**: the orchestrator reviews, and only the owner merges. Use `gh`
+  for nothing else beyond reading pull requests and CI results.
+- Never read `.env` files, never touch a hosted or production database, never install
+  global tools.
 - The API contract and merged migrations are frozen unless the brief says otherwise.
   If you find a real gap, make the smallest fix and report it prominently.
 - Performance is part of done: meet the budgets in `docs/performance.md` that apply,

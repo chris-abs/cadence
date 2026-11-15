@@ -50,6 +50,9 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 ## Hard rules
 
 1. Work on a feature branch; never commit to or push `main` directly once the remote exists.
+   Agents may push their own feature branch and open a pull request for it. **Agents
+   never merge, approve or close a pull request, and never enable auto-merge.** The
+   orchestrator reviews every pull request; only the owner merges.
 2. `make check` must pass before every commit. Never skip hooks (`--no-verify`).
 3. Commit small and often: every time a step works and `make check` passes.
    Messages follow the owner's style: one lowercase line, `feat:` / `fix:` / `chore:`,

@@ -52,7 +52,15 @@
       "Bash(docker compose up -d --wait)",
       "Bash(docker compose ps *)",
       "Bash(docker compose logs *)",
-      "Bash(docker compose down)"
+      "Bash(docker compose down)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr comment *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)"
     ],
     "deny": [
       "Read(**/.env)",
@@ -77,7 +85,18 @@
       "Bash(git commit * -n *)",
       "Bash(*LEFTHOOK=0*)",
       "Bash(*MIGRATE_ALLOW_REMOTE*)",
-      "Bash(MIGRATE_ALLOW_REMOTE=* *)"
+      "Bash(MIGRATE_ALLOW_REMOTE=* *)",
+      "Bash(gh pr merge*)",
+      "Bash(gh pr review*)",
+      "Bash(gh pr close*)",
+      "Bash(gh pr ready*)",
+      "Bash(gh api *merge*)",
+      "Bash(gh api *pulls*reviews*)",
+      "Bash(gh repo delete*)",
+      "Bash(gh repo edit*)",
+      "Bash(gh auth *)",
+      "Bash(gh secret *)",
+      "Bash(gh workflow *)"
     ]
   },
   "hooks": {

@@ -83,8 +83,13 @@ search, a migration. One agent per independent piece. Run independent pieces in 
      query counts, render counts, bundle size) and measure anything that looks costly;
    - check the commit history follows the rules.
    If it falls short, follow "Rework until satisfied".
-6. **Integrate.** Merge the pieces, run the full check again, and resolve anything that
-   only shows up once the pieces meet.
+6. **Integrate.** Combine the pieces on a feature branch, run the full check again, and
+   resolve anything that only shows up once the pieces meet.
+   **Pull requests.** Work reaches `main` only through a pull request. An agent (or you)
+   opens it; you review it against the spec, the boundaries and the budgets, and wait
+   for CI. Only when you would put your name to it do you tell the owner it is ready,
+   with what you verified and what you are unsure of. **Only the owner merges.** Neither
+   you nor any agent merges, approves, closes or auto-merges a pull request.
 7. **Report.** Tell the owner what is now true, what you verified and how, what is not
    done or not verified, and the decisions you need from them. Lead with the conclusion.
 8. **Record.** Decisions go in `docs/decisions/`. Anything a future session must know
