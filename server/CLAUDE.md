@@ -11,45 +11,67 @@ Go API: stdlib `net/http`, pgx v5, sqlc, goose. Root rules in `../CLAUDE.md` app
 | `internal/app` | Config, router (`routes.go`, 404/405/415 fallbacks), middleware, HTTP server |
 | `internal/health` | `GET /api/healthz` |
 | `internal/identity` | Family, profiles, sessions, PINs, devices, module settings (`docs/spec/identity.md`) |
+| `internal/identity/internal/identitydb` | Identity's sqlc queries; importable only from `internal/identity/...` |
 | `internal/authz` | Module catalogue, `Subject`, `Can`, `Require`, `RequireModule` |
 | `internal/meals` | The meals module (only its catalogue entry so far) |
 | `internal/api` | Types generated from `../api/openapi.yaml` |
-| `internal/store` | sqlc query layer |
-| `internal/platform/httpx` | `WriteJSON`, `WriteError`, `DecodeJSON`, error codes |
+| `internal/platform/httpx` | `WriteJSON`, `WriteError`, `DecodeJSON`, error codes, `Route` |
 | `internal/platform/db` | `pgxpool` setup |
 | `internal/platform/passhash` | bcrypt behind a `Hasher` interface (cost 12 in production) |
 | `internal/platform/ratelimit` | In-memory per-key token buckets with an injectable clock |
 | `internal/platform/testutil` | `NewDB(t)`, fake `Clock`, `QueryCounter` tracer |
-| `db/migrations`, `db/queries` | goose SQL, sqlc SQL |
+| `internal/archtest` | Tests that enforce the domain boundaries below |
+| `db/migrations` | goose SQL, one ordered history for all domains |
+| `db/queries/<domain>/` | sqlc SQL, one directory per domain |
 
 Feature packages (`internal/identity`, `internal/meals`) each own their handlers.
 
-## Identity boundary (what feature modules may use)
+## Domain boundaries
+
+- **A table belongs to exactly one domain.** The migration that creates it says
+  `-- domain: <name>`. Only `db/queries/<name>/` may query it.
+- **Each domain owns its generated queries privately.** `sqlc.yaml` has one
+  entry per domain, generating into `internal/<name>/internal/<name>db`. Go's
+  `internal/` rule makes that package importable only from inside the domain, so
+  the compiler rejects any other importer.
+- **Cross-domain needs go through the owning domain's exported Go API**, never
+  its tables or row types. The only database-level coupling allowed is a foreign
+  key to `family(id)` or `profile(family_id, id)` (composite, so a row cannot point
+  at another family's profile).
+- **Guarded by `make check-server`** (`internal/archtest`): an outsider importing
+  `identitydb` fails to compile; every sqlc `out` is domain-internal; every query
+  file references only its own domain's tables; identity's exported API (`go doc`)
+  never mentions `identitydb`.
+- **Routes:** each domain exposes `Routes() []httpx.Route`; `app.NewHandler`
+  concatenates them, so the authorisation matrix sees every route.
+
+## Identity API for module authors
 
 Identity owns `family`, `profile`, `pin_attempt`, `session` and `family_module`.
-Nothing outside `internal/identity` queries those tables; modules reference
-`family(id)` / `profile(id)` only as foreign keys. A module gets everything else
-through this interface:
+A module uses only this:
 
-1. **Catalogue entry.** Export one `authz.Module{ID, Name, Description,
-   DefaultEnabled, Actions}` and add it to `catalogue()` in `internal/app/routes.go`.
-   Built once at startup; permissions are `"<module>.<action>"`.
-2. **Route wiring** in `app.NewHandler`:
-   `ident.RequireProfile(authz.RequireModule("meals", logger)(handler))`.
-   `RequireProfile` answers `401 family_session_required` / `profile_session_required`;
-   `RequireModule` answers `403 module_disabled` while the family has it off.
-3. **Caller.** `s, _ := authz.SubjectFrom(r.Context())` gives `s.FamilyID`,
-   `s.ProfileID`, `s.Role`. Scope every query by `s.FamilyID`; set `created_by`
-   from `s.ProfileID`.
-4. **Checks.** `if err := authz.Require(ctx, "meals.recipes.edit"); err != nil`
-   → `403 forbidden` (`errors.Is(err, authz.ErrForbidden)`). Zero allocations;
-   the subject is rebuilt from the database on every request, so a demotion or a
-   disabled module applies to the next request.
+| From | Use | For |
+|---|---|---|
+| `authz` | `Module`, `Action`, `Role` (`Parent`, `Child`) | The module's catalogue entry: export one `authz.Module` and add it to `catalogue()` in `internal/app/routes.go` |
+| `authz` | `SubjectFrom(ctx)` → `Subject{FamilyID, ProfileID, Role, IsOwner}` | Scope every query by `FamilyID`; set `created_by` from `ProfileID` |
+| `authz` | `Require(ctx, "meals.recipes.edit")` → `ErrForbidden` | Per-action checks in handlers (403 `forbidden`); 0 allocations |
+| `authz` | `RequireModule("meals", logger)` | Middleware: 403 `module_disabled` while the family has it off |
+| `identity` | `(*Handler).RequireProfile` | Middleware: 401 `family_session_required` / `profile_session_required`; puts the caller in the context |
+| `identity` | `CallerFrom(ctx)` → `Caller{Family{ID, Name, AutoLockMinutes}, Profile{ID, FamilyID, Name, Role, IsOwner, Timezone}, Subject}` | Display name or time zone of the caller (e.g. "today" in their zone) |
 
-Per request the profile middleware spends one query on session + device +
-profile + role + family and one on module settings; renewal writes at most once a
-minute per session (none for `X-Cadence-Passive: 1`). bcrypt runs only on login,
-password re-authentication and PIN entry.
+Wiring a module route in `app.NewHandler`:
+
+```go
+ident.RequireProfile(authz.RequireModule("meals", d.Logger)(mealsHandler))
+```
+
+Everything else in `identity` (the service, sessions, rows) is for `app` and
+`cmd/admin` only. Rights are read from the database on every request, so a
+demotion or a disabled module applies to the next request. Per request the
+profile middleware spends one query on session + device + profile + role +
+family and one on module settings; renewal writes at most once a minute per
+session (none for `X-Cadence-Passive: 1`). bcrypt runs only on login, password
+re-authentication and PIN entry.
 
 ## Conventions
 
@@ -64,7 +86,7 @@ password re-authentication and PIN entry.
 
 ## Generated: do not edit
 
-`internal/api/types.gen.go` and `internal/store/*.gen.go`. Change the source, run `make gen`.
+`internal/api/types.gen.go` and `internal/*/internal/*db/*.gen.go`. Change the source, run `make gen`.
 `make check` fails if they are stale. Merged migrations are also immutable: add a new one.
 
 ## Add an endpoint
@@ -72,9 +94,11 @@ password re-authentication and PIN entry.
 1. Contract: add the path and schemas to `../api/openapi.yaml`.
 2. `make gen` (from repo root it also regenerates client types).
 3. Schema change? `make migration name=<what>`, write Up and Down, `make migrate`.
-4. Queries: add SQL to `db/queries/<feature>.sql`, then `make gen`.
+4. Queries: add SQL to `db/queries/<domain>/<topic>.sql` (a new domain also gets a
+   `sqlc.yaml` entry and `-- domain:` lines in its migrations), then `make gen`.
 5. Handler in the feature package, using the generated request/response types.
-6. Register the route in `internal/app/routes.go`.
+6. Return it from the domain's `Routes() []httpx.Route`; a new domain's routes are
+   appended in `internal/app/routes.go`.
 7. Tests (below), then `make check`. Commit.
 
 ## Tests
