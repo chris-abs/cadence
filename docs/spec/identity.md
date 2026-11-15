@@ -1,8 +1,8 @@
 # Identity — authentication, authorisation, family and profiles
 
-**Status: Draft — awaiting owner approval (PLAN.md M3.0).** Implements decisions 0001–0003.
+**Status: Approved by the owner on 2026-11-15 (PLAN.md M3.0).** Implements decisions 0001–0003.
 Contract: the `auth`, `family`, `profiles`, `sessions`, `modules` tags in `api/openapi.yaml`.
-Owner choices with a default are marked **[I#]** and listed in §9.
+Owner choices are marked **[I#]** and listed in §9; all were approved with their defaults.
 
 ## 1. Summary
 
@@ -34,7 +34,8 @@ All paths are relative to `/api`. "FS" = family session cookie, "PS" = profile s
    email and wrong password (§6.3).
 
 **Pick / switch profile**
-1. Picker lists `GET /profiles` (FS): name, colour, avatar, `hasPin`, `lockedUntil`.
+1. Picker lists `GET /profiles` (FS, `ProfileSummary`): name, colour, avatar, `hasPin`,
+   `lockedUntil`. Never contact emails.
 2. No PIN: `POST /auth/profile-session {profileId}` → PS cookie set, `Me` returned.
 3. With PIN: client shows the PIN pad, then the same call with `pin`. Wrong PIN →
    `403 invalid_pin`; locked → `429 pin_locked` with `retryAfterSeconds` (§6.2).
@@ -46,9 +47,11 @@ All paths are relative to `/api`. "FS" = family session cookie, "PS" = profile s
   which deletes this device's PS and clears its cookie. Server idle timeout is the backstop (§3).
 
 **Add / edit / remove a profile** (PARENT)
-1. Add: `POST /profiles {name, role, colour, avatar?, timezone?, pin?}`. Max 20 profiles.
-2. Edit display fields: `PUT /profiles/{id} {name, colour, avatar, timezone}` (full replace, so
-   `avatar: null` clears without tri-state JSON) — self for anyone, any profile for a PARENT.
+1. Add: `POST /profiles {name, role, colour, avatar?, timezone?, pin?, contactEmail?}`. Max 20
+   profiles.
+2. Edit display fields: `PUT /profiles/{id} {name, colour, avatar, timezone, contactEmail}` (full
+   replace, so `null` clears `avatar` or `contactEmail` without tri-state JSON) — self for
+   anyone, any profile for a PARENT. A changed `contactEmail` resets its verification.
 3. Remove: `DELETE /profiles/{id}`; not the owner, not yourself. Cascades its sessions and
    PIN state; module data it authored keeps the row with `created_by = NULL`.
 
@@ -77,6 +80,11 @@ CHILD profile. The client shows a dismissible banner; nothing is forced.
 Deletes every session of the family except this device's FS and PS.
 
 **Change family email** (owner): `PUT /family/email {email, password}`. Sessions unchanged.
+
+**Emails.** The family email is the only sign-in and recovery address; it may be any adult's
+personal address. A profile's optional **contact email** is for notifications only: never a
+credential, not unique, visible to the profile itself and PARENTs (§5.1). Nothing is sent to it
+until verified; verification arrives with email sending (not in v1), so v1 stores it unverified.
 
 **Transfer ownership** (owner): `POST /family/owner {profileId, password}` to another PARENT.
 
@@ -176,6 +184,8 @@ Conventions as `docs/spec/meals.md` §4: UUIDv7 from Go, `timestamptz` timestamp
 | `avatar` | `text NULL` | preset key `^[a-z0-9-]{1,32}$`; NULL = initials. Image upload waits for S3 **[I8]** |
 | `timezone` | `text NOT NULL` | IANA name, validated with `time.LoadLocation` |
 | `pin_hash` | `text NULL` | bcrypt of the 6 digits; NULL = no PIN |
+| `contact_email` | `text NULL` | `CHECK (contact_email = lower(contact_email))`; same rules as `family.email` (§6.3); not unique |
+| `contact_email_verified_at` | `timestamptz NULL` | NULL = unverified (always in v1); set to NULL whenever `contact_email` changes |
 | `created_at`, `updated_at` | `timestamptz NOT NULL DEFAULT now()` | |
 
 Indexes: `CREATE UNIQUE INDEX profile_one_owner ON profile (family_id) WHERE is_owner;` and
@@ -241,7 +251,8 @@ PK `(family_id, module_id)`. Effective state = row's `enabled`, else the module'
 | Select profile / lock (FS) | `POST`, `DELETE /auth/profile-session` | ✓ | ✓ | ✓ |
 | Current profile, rights | `GET /me` | ✓ | ✓ | ✓ |
 | View a profile | `GET /profiles/{id}` | ✓ | ✓ | ✓ |
-| Edit display fields | `PUT /profiles/{id}` | self | ✓ | ✓ |
+| See a profile's contact email | `Profile.contactEmail*` in any response | self | ✓ | ✓ |
+| Edit display fields, contact email | `PUT /profiles/{id}` | self | ✓ | ✓ |
 | Create profile (any role) | `POST /profiles` | ✗ | ✓ | ✓ |
 | Change role | `PUT /profiles/{id}/role` | ✗ | ✓ not self, not owner | ✓ not self |
 | Delete profile | `DELETE /profiles/{id}` | ✗ | ✓ not self, not owner | ✓ not self |
@@ -254,6 +265,10 @@ PK `(family_id, module_id)`. Effective state = row's `enabled`, else the module'
 | Enable/disable a module | `PUT /modules/{id}` | ✗ | ✓ | ✓ |
 | List / revoke devices | `GET`, `DELETE /auth/sessions…`, `revoke-others` | ✗ | ✓ | ✓ |
 | Change email / password, transfer, delete family | `/family/email`, `/password`, `/owner`, `/delete` | ✗ | ✗ | ✓ **[I4]** |
+
+Contact email visibility: `ProfileSummary` (picker, FS) never carries it. `Profile` carries
+`contactEmail` and `contactEmailVerifiedAt`, set to null when the caller is neither that profile
+nor a PARENT, so a CHILD cannot tell whether another profile has one.
 
 `Me.permissions` lists the identity rights as strings so the client never re-derives them:
 `family.view`, `family.edit`, `family.modules.manage`, `family.profiles.create`,
@@ -320,7 +335,8 @@ per profile, not per device: a child on a phone cannot bypass it. A parent reset
 IP = `RemoteAddr`; `X-Forwarded-For` only when `TRUSTED_PROXY` is configured (hosting, M5).
 
 ### 6.3 Input and enumeration
-- Email: trimmed, lower-cased, ≤ 254, must parse with `net/mail` as a bare address.
+- Email (family and contact): trimmed, lower-cased, ≤ 254, must parse with `net/mail` as a bare
+  address. An empty contact email is rejected (`422`); clearing it is `null`.
 - Password: 10–72 characters and ≤ 72 bytes UTF-8 (bcrypt's limit; reject, never truncate).
 - PIN: exactly 6 ASCII digits. Names: trimmed, 1–40 (profile) / 1–60 (family), no control chars.
 - Validation failures: `422 validation_failed` with `fields` (e.g. `{"password": "Use at least
@@ -330,6 +346,7 @@ IP = `RemoteAddr`; `X-Forwarded-For` only when `TRUSTED_PROXY` is configured (ho
 - Register with a taken email: `409 email_taken` **[I9]** — an accepted leak, since
   registration is normally closed and rate limited; hiding it needs email verification.
 - Picker data (`GET /profiles`) is visible to anyone holding the FS: by design on a family tablet.
+  It therefore holds no contact emails.
 
 ### 6.4 Audit events
 `slog` at INFO with `event=<name>`, `family_id`, `profile_id`/`actor_id`, `session_id`; never
@@ -387,17 +404,23 @@ without rows fails a coverage check that walks the registered routes.
 15. Cross-origin POST (`Sec-Fetch-Site: cross-site`) → 403 `cross_origin`.
 16. Disabled module route → 403 `module_disabled`; re-enabled → allowed.
 17. Password of 73 bytes (multibyte) → 422; never truncated.
+18. Contact email visibility: absent from `GET /profiles` and `GET /auth/session`; on `GET
+    /profiles/{id}`, `Me` and write responses filled for self and PARENT, null for a CHILD
+    viewing another profile.
+19. Contact email input: `" Sam@Example.COM "` stored as `sam@example.com`; invalid, empty or
+    255-char → 422; two profiles (or a profile and the family) may share one; CHILD setting
+    another profile's → 403; a change resets `contact_email_verified_at`; `null` clears it.
 
 Client (M4): MSW handlers per endpoint; picker with/without PIN, lockout countdown, auto-lock
 timer, 401 code routing (login vs picker), parent-only controls absent for a CHILD.
 
-## 9. Decisions for the owner (ranked)
+## 9. Owner decisions (approved 2026-11-15 with these defaults)
 
 | # | Question | Default | If you choose otherwise | Cost to change later |
 |---|---|---|---|---|
 | I1 | Delete family: immediate or 7-day grace? | Immediate, after password + typing the name | Grace: a `deletion_scheduled_at` column, all sessions revoked, login offers "cancel deletion", plus a purge job (none exists yet) | Medium: column + job, no data change |
 | I2 | Family session lifetime on the tablet | 30 d idle, 90 d absolute | Longer/no absolute: fewer re-logins, longer exposure if the tablet walks off | Trivial (constants) |
-| I3 | Auto-lock to picker | Family setting, default 10 min (1–30); server backstop 30 min | "Never" option for families without children; per-profile timeout | Low |
+| I3 | Auto-lock to picker | Family setting, default 10 min (1–30); server backstop 30 min. One setting for all profiles, PIN-less ones included (they just return to the picker) | "Never" option for families without children; per-profile timeout | Low |
 | I4 | Who manages the account (email, password, ownership, delete) | Owner only | Any PARENT: drop four matrix cells | Trivial |
 | I5 | May any PARENT reset their own forgotten PIN with the family password? | Yes | Owner only: other parents ask the owner | Trivial |
 | I6 | Per-profile permission overrides in v1? | Deferred; model ready (§5.2) | In v1: one table, `Can` change, a settings screen | Low now, low later |

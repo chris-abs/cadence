@@ -986,7 +986,7 @@ components:
         profiles:
           type: array
           items:
-            $ref: "#/components/schemas/Profile"
+            $ref: "#/components/schemas/ProfileSummary"
     Family:
       type: object
       required: [id, name, email, autoLockMinutes, passwordChangedAt, createdAt, updatedAt]
@@ -1063,8 +1063,11 @@ components:
           type: string
           description: The family name, typed again (trimmed, case-insensitive).
 
-    Profile:
+    ProfileSummary:
       type: object
+      description: >
+        Picker view, readable with only the family session. Never carries
+        contact details.
       required: [id, name, role, isOwner, colour, avatar, timezone, hasPin, lockedUntil, createdAt, updatedAt]
       properties:
         id:
@@ -1095,6 +1098,52 @@ components:
         updatedAt:
           type: string
           format: date-time
+    Profile:
+      type: object
+      description: >
+        Full view of a profile. The contact fields are filled only when the
+        caller is this profile or a PARENT; for anyone else they are null.
+      required: [id, name, role, isOwner, colour, avatar, timezone, hasPin, lockedUntil, contactEmail, contactEmailVerifiedAt, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+        isOwner:
+          type: boolean
+        colour:
+          $ref: "#/components/schemas/ProfileColour"
+        avatar:
+          type: string
+          nullable: true
+        timezone:
+          type: string
+        hasPin:
+          type: boolean
+        lockedUntil:
+          type: string
+          format: date-time
+          nullable: true
+          description: Set while wrong PINs have locked this profile.
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        contactEmail:
+          type: string
+          nullable: true
+          description: >
+            Optional address for notifications only; never a sign-in
+            credential, not unique. Nothing is sent to it until verified.
+        contactEmailVerifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Null until verified (not in v1); reset when the address changes.
     ProfileList:
       type: object
       required: [profiles]
@@ -1102,7 +1151,7 @@ components:
         profiles:
           type: array
           items:
-            $ref: "#/components/schemas/Profile"
+            $ref: "#/components/schemas/ProfileSummary"
     CreateProfileRequest:
       type: object
       additionalProperties: false
@@ -1120,11 +1169,15 @@ components:
           $ref: "#/components/schemas/Timezone"
         pin:
           $ref: "#/components/schemas/Pin"
+        contactEmail:
+          $ref: "#/components/schemas/Email"
     UpdateProfileRequest:
       type: object
       additionalProperties: false
-      description: Full replacement of the display fields; `avatar` null clears it.
-      required: [name, colour, avatar, timezone]
+      description: >
+        Full replacement of the display fields; `avatar` or `contactEmail`
+        null clears it.
+      required: [name, colour, avatar, timezone, contactEmail]
       properties:
         name:
           $ref: "#/components/schemas/ProfileName"
@@ -1136,6 +1189,13 @@ components:
           nullable: true
         timezone:
           $ref: "#/components/schemas/Timezone"
+        contactEmail:
+          type: string
+          format: email
+          x-go-type: string
+          maxLength: 254
+          nullable: true
+          description: Trimmed and lower-cased by the server.
     ChangeRoleRequest:
       type: object
       additionalProperties: false
