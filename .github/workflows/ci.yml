@@ -1,0 +1,142 @@
+# CI. The only required status check is `ci-ok`: it always runs and fails if
+# any job it needs failed, so path-filtered jobs that are skipped still let a
+# pull request merge.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Least privilege by default; jobs widen this only where needed.
+permissions:
+  contents: read
+
+# A new push to the same PR (or branch) cancels the run in progress.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read # paths-filter lists a PR's files through the API
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      client: ${{ steps.filter.outputs.client }}
+    steps:
+      # Needed on push events, where paths-filter diffs with git.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          # Changes to the contract, the root Makefile or this workflow run both sides.
+          filters: |
+            shared: &shared
+              - 'api/**'
+              - 'Makefile'
+              - '.github/workflows/ci.yml'
+            server:
+              - *shared
+              - 'server/**'
+            client:
+              - *shared
+              - 'client/**'
+
+  server:
+    name: server
+    needs: changes
+    if: needs.changes.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      # Same image, credentials and host port as docker-compose.yml, so the
+      # defaults in server/Makefile (DATABASE_URL) and testutil
+      # (TEST_DATABASE_URL) work unchanged: localhost:5433.
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: cadence
+          POSTGRES_PASSWORD: cadence_local_dev # local/CI-only container, not a secret
+          POSTGRES_DB: cadence
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U cadence -d cadence"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Use the go.mod language version with the latest patch release
+      # (e.g. `go 1.26.0` -> 1.26.x). Installing exactly 1.26.0 would make
+      # govulncheck report standard-library fixes we already have locally.
+      - name: Read Go version from server/go.mod
+        id: go
+        run: echo "version=$(sed -n 's/^go \([0-9]*\.[0-9]*\).*/\1/p' server/go.mod).x" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: ${{ steps.go.outputs.version }}
+          cache-dependency-path: server/go.sum
+
+      # `make check-server` calls golangci-lint itself; this only installs it.
+      # Keep the version in step with the one used locally.
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.15.0
+          install-only: true
+
+      - name: Migrations apply cleanly
+        run: make migrate
+      - name: make check-server
+        run: make check-server
+      - name: govulncheck
+        working-directory: server
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+
+  client:
+    name: client
+    needs: changes
+    if: needs.changes.outputs.client == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: yarn
+          cache-dependency-path: client/yarn.lock
+      - name: yarn install
+        working-directory: client
+        run: yarn install --frozen-lockfile --non-interactive
+      - name: make check-client
+        run: make check-client
+
+  # The single required status check. Skipped jobs (no changes on that side)
+  # count as success; a failed or cancelled job fails this one.
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs: [changes, server, client]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Fail if a needed job did not succeed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "changes=${{ needs.changes.result }} server=${{ needs.server.result }} client=${{ needs.client.result }}"
+          exit 1
+      - run: echo "all needed jobs passed or were skipped"
