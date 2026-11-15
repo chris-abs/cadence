@@ -70,6 +70,30 @@ describe("PinPad", () => {
     expect(screen.getByLabelText("PIN")).toBeDisabled();
   });
 
+  it("takes focus when it appears and when it unlocks", () => {
+    const onComplete = vi.fn<(pin: string) => void>();
+    const { rerender } = render(<PinPad label="PIN" onComplete={onComplete} disabled />);
+    expect(screen.getByLabelText("PIN")).not.toHaveFocus();
+
+    rerender(<PinPad label="PIN" onComplete={onComplete} />);
+
+    expect(screen.getByLabelText("PIN")).toHaveFocus();
+  });
+
+  it("ignores input while busy but keeps focus in the pad", async () => {
+    const onComplete = vi.fn<(pin: string) => void>();
+    render(<PinPad label="PIN" onComplete={onComplete} busy />);
+
+    const input = screen.getByLabelText("PIN");
+    expect(input).toHaveFocus();
+    expect(input).toHaveAttribute("aria-busy", "true");
+    await pressKeys("123456");
+    await userEvent.type(input, "123456");
+
+    expect(onComplete).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "1" })).toBeEnabled();
+  });
+
   it("marks the input invalid and links its message", () => {
     render(
       <>

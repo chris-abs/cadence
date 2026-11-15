@@ -58,7 +58,7 @@ export function RegisterScreen() {
   const rateLimitedUntil = retryAt(register);
 
   async function next() {
-    if (await form.trigger(FAMILY_STEP_FIELDS)) {
+    if (await form.trigger(FAMILY_STEP_FIELDS, { shouldFocus: true })) {
       register.reset();
       // Render the next step now so its first field can take focus.
       flushSync(() => {

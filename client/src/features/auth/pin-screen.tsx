@@ -87,7 +87,8 @@ function PinEntry({ profile }: { profile: ProfileSummary }) {
           label={`PIN for ${profile.name}`}
           describedBy={messageId}
           invalid={wrongPin}
-          disabled={select.isPending || lockedUntil !== undefined}
+          disabled={lockedUntil !== undefined}
+          busy={select.isPending}
           onComplete={(pin) => {
             select.mutate({ profileId: profile.id, pin });
           }}

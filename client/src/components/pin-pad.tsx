@@ -1,6 +1,13 @@
 import { cva } from "class-variance-authority";
 import { Delete } from "lucide-react";
-import { type KeyboardEvent, useId, useState, useSyncExternalStore } from "react";
+import {
+  type KeyboardEvent,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Button } from "@/components/ui/button";
 
 export const PIN_LENGTH = 6;
@@ -46,15 +53,22 @@ interface PinDotsProps {
   describedBy: string | undefined;
   invalid: boolean;
   disabled: boolean;
+  busy: boolean;
   onInput: (next: string) => void;
 }
 
 /** The six dots, plus the real input that keyboards and screen readers type into. */
-function PinDots({ store, inputId, describedBy, invalid, disabled, onInput }: PinDotsProps) {
+function PinDots({ store, inputId, describedBy, invalid, disabled, busy, onInput }: PinDotsProps) {
   const value = useSyncExternalStore(store.subscribe, store.get);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // The pad is the screen's only task: take focus when it appears or unlocks.
+  useEffect(() => {
+    if (!disabled) inputRef.current?.focus();
+  }, [disabled]);
   return (
     <div className="relative flex justify-center gap-3 rounded-lg p-3 has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
       <input
+        ref={inputRef}
         id={inputId}
         type="password"
         // No on-screen keyboard: the keypad below is the touch input.
@@ -63,6 +77,9 @@ function PinDots({ store, inputId, describedBy, invalid, disabled, onInput }: Pi
         maxLength={PIN_LENGTH}
         value={value}
         disabled={disabled}
+        // Busy keeps focus where it is (a disabled input would drop it).
+        readOnly={busy}
+        aria-busy={busy || undefined}
         aria-invalid={invalid || undefined}
         aria-describedby={describedBy}
         onChange={(event) => {
@@ -85,11 +102,12 @@ function PinDots({ store, inputId, describedBy, invalid, disabled, onInput }: Pi
 
 interface KeypadProps {
   disabled: boolean;
+  busy: boolean;
   onDigit: (digit: string) => void;
   onDelete: () => void;
 }
 
-function Keypad({ disabled, onDigit, onDelete }: KeypadProps) {
+function Keypad({ disabled, busy, onDigit, onDelete }: KeypadProps) {
   return (
     <div className="grid grid-cols-3 justify-items-center gap-3">
       {DIGITS.map((digit) => (
@@ -98,6 +116,7 @@ function Keypad({ disabled, onDigit, onDelete }: KeypadProps) {
           variant="secondary"
           size="keypad"
           disabled={disabled}
+          aria-disabled={busy || undefined}
           onClick={() => {
             onDigit(digit);
           }}
@@ -110,6 +129,7 @@ function Keypad({ disabled, onDigit, onDelete }: KeypadProps) {
         variant="secondary"
         size="keypad"
         disabled={disabled}
+        aria-disabled={busy || undefined}
         onClick={() => {
           onDigit("0");
         }}
@@ -120,6 +140,7 @@ function Keypad({ disabled, onDigit, onDelete }: KeypadProps) {
         variant="ghost"
         size="keypad"
         disabled={disabled}
+        aria-disabled={busy || undefined}
         aria-label="Delete last digit"
         onClick={onDelete}
       >
@@ -134,7 +155,10 @@ interface PinPadProps {
   label: string;
   /** Called with all six digits; the pad then clears itself. */
   onComplete: (pin: string) => void;
+  /** No entry at all, e.g. while locked out. */
   disabled?: boolean;
+  /** Ignores entry but keeps focus, e.g. while a PIN is being checked. */
+  busy?: boolean;
   /** Shows the dots in the error colour, e.g. after a wrong PIN. */
   invalid?: boolean;
   /** Id of a message that describes the input, e.g. the current error. */
@@ -150,13 +174,16 @@ export function PinPad({
   label,
   onComplete,
   disabled = false,
+  busy = false,
   invalid = false,
   describedBy,
 }: PinPadProps) {
   const [store] = useState(createPinStore);
   const inputId = useId();
+  const inert = disabled || busy;
 
   function update(next: string) {
+    if (inert) return;
     if (next.length < PIN_LENGTH) {
       store.set(next);
       return;
@@ -167,7 +194,7 @@ export function PinPad({
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     // The input handles its own typing; this covers focus on a keypad button.
-    if (disabled || event.target instanceof HTMLInputElement) return;
+    if (inert || event.target instanceof HTMLInputElement) return;
     if (/^\d$/.test(event.key)) {
       event.preventDefault();
       update(store.get() + event.key);
@@ -190,15 +217,17 @@ export function PinPad({
         describedBy={describedBy}
         invalid={invalid}
         disabled={disabled}
+        busy={busy}
         onInput={update}
       />
       <Keypad
         disabled={disabled}
+        busy={busy}
         onDigit={(digit) => {
           update(store.get() + digit);
         }}
         onDelete={() => {
-          store.set(store.get().slice(0, -1));
+          if (!inert) store.set(store.get().slice(0, -1));
         }}
       />
     </div>
