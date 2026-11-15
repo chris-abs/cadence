@@ -17,7 +17,9 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 | `docs/PLAN.md` | Reviewed build plan and milestones. |
 | `docs/decisions/` | Short decision records. Add one when a choice in the plan changes. |
 | `docs/spec/` | Product specs. |
+| `docs/performance.md` | Server performance budgets, measured in review. |
 | `legacy/` | Old repos. Git-ignored. Read for reference, never edit. |
+| `.claude/skills/orchestrator/` | How a lead session plans, delegates to Opus `builder` agents and verifies. Invoke with `/orchestrator`. |
 
 ## Commands
 
@@ -48,6 +50,9 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 ## Hard rules
 
 1. Work on a feature branch; never commit to or push `main` directly once the remote exists.
+   Agents may push their own feature branch and open a pull request for it. **Agents
+   never merge, approve or close a pull request, and never enable auto-merge.** The
+   orchestrator reviews every pull request; only the owner merges.
 2. `make check` must pass before every commit. Never skip hooks (`--no-verify`).
 3. Commit small and often: every time a step works and `make check` passes.
    Messages follow the owner's style: one lowercase line, `feat:` / `fix:` / `chore:`,
@@ -70,3 +75,5 @@ ignored. Prefer the standard library.
 
 - Comments: none by default; one line only where the reason cannot be read from the code.
 - A domain is one package with handler, service, repository and model; never a flat pile of files.
+- British English in names and prose, except names fixed by a standard or a library.
+- The client's architecture is the owner's decision; add nothing there without their direction.
