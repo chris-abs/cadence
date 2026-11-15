@@ -104,7 +104,108 @@
 
     "promise/no-nesting": "error"
   },
+  // Component layers (see CLAUDE.md): ui primitives <- shared components <- features <- routes.
   "overrides": [
+    {
+      "files": ["src/components/**", "src/lib/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features/**", "@/routes/**"],
+                "message": "The shared layer must not depend on features or routes."
+              },
+              {
+                "regex": "^(\\.\\./)+(features|routes)(/|$)",
+                "message": "The shared layer must not depend on features or routes."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features/**"],
+                "message": "Features never import other features. Import your own files relatively; move code two features need into src/components or src/lib."
+              },
+              {
+                "regex": "^\\.\\./\\.\\./",
+                "message": "Leave the feature with an @/ import, never ../../."
+              },
+              {
+                "group": ["@/routes/**"],
+                "message": "Features must not depend on routes."
+              },
+              {
+                "group": ["@/components/ui/*"],
+                "importNamePattern": "Variants$",
+                "message": "Use the component and its variant props; class recipes are internal to components/ui."
+              }
+            ]
+          }
+        ],
+        "react/forbid-component-props": [
+          "error",
+          {
+            "forbid": [
+              {
+                "propName": "className",
+                "message": "Do not restyle shared components from a feature: use a variant or prop, or add one to the shared component."
+              },
+              {
+                "propName": "style",
+                "message": "Do not restyle shared components from a feature: use a variant or prop, or add one to the shared component."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/routes/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features/*/**"],
+                "message": "Import a feature through its index.ts (e.g. @/features/system)."
+              },
+              {
+                "group": ["@/components/ui/*"],
+                "importNamePattern": "Variants$",
+                "message": "Use the component and its variant props; class recipes are internal to components/ui."
+              }
+            ]
+          }
+        ],
+        "react/forbid-component-props": [
+          "error",
+          {
+            "forbid": [
+              {
+                "propName": "className",
+                "message": "Routes compose shared components and features; they do not style them."
+              },
+              {
+                "propName": "style",
+                "message": "Routes compose shared components and features; they do not style them."
+              }
+            ]
+          }
+        ]
+      }
+    },
     {
       // Route files export `Route`; shadcn files export variants. Both stay fast-refresh safe.
       "files": ["src/routes/**", "src/components/ui/**"],

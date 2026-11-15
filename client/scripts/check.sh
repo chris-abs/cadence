@@ -32,7 +32,15 @@ generated_up_to_date() {
   return 1
 }
 
+# Features and routes use theme tokens and component variants, never arbitrary
+# Tailwind values such as h-[475px] or text-[#333] (see CLAUDE.md). oxlint has no
+# Tailwind rules, so this is a plain search.
+no_arbitrary_values() {
+  ! grep -rnE '[a-z0-9]-\[[^]]+\]' --include='*.tsx' --include='*.ts' src/features src/routes
+}
+
 step "generated files" generated_up_to_date
+step "no arbitrary tailwind values in features/routes" no_arbitrary_values
 step "typecheck" yarn -s typecheck
 step "lint" yarn -s lint
 step "format" yarn -s format:check
