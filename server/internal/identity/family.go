@@ -1,0 +1,163 @@
+package identity
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	"github.com/google/uuid"
+
+	"github.com/chris-abs/cadence/server/internal/authz"
+	"github.com/chris-abs/cadence/server/internal/store"
+)
+
+// GetFamily returns the family account, email included (PARENT).
+func (s *Service) GetFamily(_ context.Context, caller Caller) (store.Family, error) {
+	if !caller.Subject.Can(authz.FamilyView) {
+		return store.Family{}, ErrForbidden
+	}
+	// The session lookup loaded the family row on this request already.
+	return caller.Device.Family, nil
+}
+
+// UpdateFamily edits the family name and auto-lock setting (PARENT).
+func (s *Service) UpdateFamily(ctx context.Context, caller Caller, name string, autoLockMinutes int) (store.Family, error) {
+	if !caller.Subject.Can(authz.FamilyEdit) {
+		return store.Family{}, ErrForbidden
+	}
+	fe := fieldErrors{}
+	name, msg := normalizeName(name, maxFamilyNameChars)
+	fe.add("name", msg)
+	if autoLockMinutes < 1 || autoLockMinutes > 30 {
+		fe.add("autoLockMinutes", "Choose between 1 and 30 minutes.")
+	}
+	if err := fe.err(); err != nil {
+		return store.Family{}, err
+	}
+	f, err := s.q.UpdateFamilySettings(ctx, store.UpdateFamilySettingsParams{
+		Name: name, AutoLockMinutes: int16(autoLockMinutes), ID: caller.Device.Family.ID, //nolint:gosec // range-checked to 1–30 above.
+	})
+	if err != nil {
+		return store.Family{}, fmt.Errorf("update family: %w", err)
+	}
+	return f, nil
+}
+
+// ChangeEmail changes the sign-in email (owner, password re-entered).
+// Sessions are unchanged (§3).
+func (s *Service) ChangeEmail(ctx context.Context, caller Caller, email, password string) (store.Family, error) {
+	if !caller.Subject.Can(authz.FamilyAccountManage) {
+		return store.Family{}, ErrForbidden
+	}
+	email, msg := normalizeEmail(email)
+	if msg != "" {
+		return store.Family{}, &ValidationError{Fields: map[string]string{"email": msg}}
+	}
+	if err := s.verifyFamilyPassword(ctx, caller.Device.Family, password); err != nil {
+		return store.Family{}, err
+	}
+	f, err := s.q.UpdateFamilyEmail(ctx, store.UpdateFamilyEmailParams{Email: email, ID: caller.Device.Family.ID})
+	if uniqueViolation(err, constraintFamilyEmail) {
+		return store.Family{}, ErrEmailTaken
+	}
+	if err != nil {
+		return store.Family{}, fmt.Errorf("update family email: %w", err)
+	}
+	s.audit.event(ctx, evEmailChanged, familyAttr(f.ID), actorAttr(caller.Profile.ID))
+	return f, nil
+}
+
+// ChangePassword sets a new family password (owner) and signs out every
+// session of the family except this device's family and profile session.
+func (s *Service) ChangePassword(ctx context.Context, caller Caller, current, next string) error {
+	if !caller.Subject.Can(authz.FamilyAccountManage) {
+		return ErrForbidden
+	}
+	if msg := checkPassword(next); msg != "" {
+		return &ValidationError{Fields: map[string]string{"newPassword": msg}}
+	}
+	if err := s.verifyFamilyPassword(ctx, caller.Device.Family, current); err != nil {
+		return err
+	}
+	hash, err := s.hasher.Hash(next)
+	if err != nil {
+		return err
+	}
+	familyID := caller.Device.Family.ID
+	err = s.inTx(ctx, func(q *store.Queries) error {
+		if err := q.UpdateFamilyPassword(ctx, store.UpdateFamilyPasswordParams{PasswordHash: hash, ID: familyID}); err != nil {
+			return fmt.Errorf("update password: %w", err)
+		}
+		if _, err := q.DeleteFamilySessionsExcept(ctx, store.DeleteFamilySessionsExceptParams{
+			FamilyID: familyID, Keep: []uuid.UUID{caller.Device.SessionID, caller.SessionID},
+		}); err != nil {
+			return fmt.Errorf("sign out other sessions: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	s.audit.event(ctx, evPasswordChanged, familyAttr(familyID), actorAttr(caller.Profile.ID))
+	return nil
+}
+
+// TransferOwnership makes another PARENT the owner (owner, password
+// re-entered). The old owner is cleared before the new one is set, in one
+// transaction, so the one-owner index never sees two. Sessions are unchanged.
+func (s *Service) TransferOwnership(ctx context.Context, caller Caller, to uuid.UUID, password string) error {
+	if !caller.Subject.Can(authz.FamilyAccountManage) {
+		return ErrForbidden
+	}
+	if err := s.verifyFamilyPassword(ctx, caller.Device.Family, password); err != nil {
+		return err
+	}
+	familyID := caller.Device.Family.ID
+	err := s.inTx(ctx, func(q *store.Queries) error {
+		if _, err := q.GetFamilyForUpdate(ctx, familyID); err != nil {
+			return fmt.Errorf("lock family: %w", err)
+		}
+		row, err := q.GetProfileForUpdate(ctx, store.GetProfileForUpdateParams{FamilyID: familyID, ID: to})
+		if err != nil {
+			return notFound(err, "load profile")
+		}
+		switch {
+		case row.Profile.ID == caller.Profile.ID:
+			return ErrSelfNotAllowed
+		case row.Profile.Role != string(authz.Parent):
+			return &ValidationError{Fields: map[string]string{"profileId": "Ownership can only go to a PARENT profile."}}
+		}
+		if err := q.ClearOwner(ctx, familyID); err != nil {
+			return fmt.Errorf("clear owner: %w", err)
+		}
+		if err := q.SetOwner(ctx, store.SetOwnerParams{FamilyID: familyID, ID: to}); err != nil {
+			return fmt.Errorf("set owner: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	s.audit.event(ctx, evOwnerTransferred, familyAttr(familyID), actorAttr(caller.Profile.ID), profileAttr(to))
+	return nil
+}
+
+// DeleteFamily permanently deletes the family and, by cascade, everything
+// that belongs to it [I1]: password and the family name typed again.
+func (s *Service) DeleteFamily(ctx context.Context, caller Caller, password, confirmName string) error {
+	if !caller.Subject.Can(authz.FamilyAccountManage) {
+		return ErrForbidden
+	}
+	family := caller.Device.Family
+	if err := s.verifyFamilyPassword(ctx, family, password); err != nil {
+		return err
+	}
+	if !strings.EqualFold(strings.TrimSpace(confirmName), family.Name) {
+		return &ValidationError{Fields: map[string]string{"confirmName": "Type the family name exactly as shown."}}
+	}
+	if _, err := s.q.DeleteFamily(ctx, family.ID); err != nil {
+		return fmt.Errorf("delete family: %w", err)
+	}
+	s.audit.event(ctx, evFamilyDeleted, familyAttr(family.ID), actorAttr(caller.Profile.ID))
+	return nil
+}

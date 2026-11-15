@@ -1,8 +1,12 @@
 package app
 
 import (
+	"net/netip"
+	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/chris-abs/cadence/server/internal/identity"
 )
 
 const testDBURL = "postgres://u:secret@localhost:5433/db?sslmode=disable"
@@ -16,8 +20,8 @@ func TestLoadConfigDefaults(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadConfig: %v", err)
 	}
-	want := Config{Port: 8080, DatabaseURL: testDBURL, Env: EnvDevelopment}
-	if cfg != want {
+	want := Config{Port: 8080, DatabaseURL: testDBURL, Env: EnvDevelopment, Registration: identity.RegistrationFirst}
+	if !reflect.DeepEqual(cfg, want) {
 		t.Errorf("got %+v, want %+v", cfg, want)
 	}
 	if cfg.Addr() != ":8080" {
@@ -27,15 +31,22 @@ func TestLoadConfigDefaults(t *testing.T) {
 
 func TestLoadConfigOverrides(t *testing.T) {
 	cfg, err := LoadConfig(envFrom(map[string]string{
-		"DATABASE_URL": "postgresql://h/db",
-		"PORT":         "9000",
-		"APP_ENV":      "production",
+		"DATABASE_URL":       "postgresql://h/db",
+		"PORT":               "9000",
+		"APP_ENV":            "production",
+		"ALLOW_REGISTRATION": "closed",
+		"TRUSTED_PROXY":      "10.0.0.0/8, 192.168.1.7",
 	}))
 	if err != nil {
 		t.Fatalf("LoadConfig: %v", err)
 	}
-	if cfg.Port != 9000 || cfg.Env != EnvProduction || cfg.DatabaseURL != "postgresql://h/db" {
+	if cfg.Port != 9000 || cfg.Env != EnvProduction || cfg.DatabaseURL != "postgresql://h/db" ||
+		cfg.Registration != identity.RegistrationClosed {
 		t.Errorf("got %+v", cfg)
+	}
+	want := []netip.Prefix{netip.MustParsePrefix("10.0.0.0/8"), netip.MustParsePrefix("192.168.1.7/32")}
+	if !reflect.DeepEqual(cfg.TrustedProxies, want) {
+		t.Errorf("TrustedProxies = %v", cfg.TrustedProxies)
 	}
 }
 
@@ -51,6 +62,8 @@ func TestLoadConfigInvalid(t *testing.T) {
 		{"port not a number", map[string]string{"DATABASE_URL": testDBURL, "PORT": "http"}, []string{"PORT"}},
 		{"port out of range", map[string]string{"DATABASE_URL": testDBURL, "PORT": "70000"}, []string{"PORT"}},
 		{"unknown env", map[string]string{"DATABASE_URL": testDBURL, "APP_ENV": "staging"}, []string{"APP_ENV"}},
+		{"unknown registration mode", map[string]string{"DATABASE_URL": testDBURL, "ALLOW_REGISTRATION": "yes"}, []string{"ALLOW_REGISTRATION"}},
+		{"bad proxy", map[string]string{"DATABASE_URL": testDBURL, "TRUSTED_PROXY": "proxy.local"}, []string{"TRUSTED_PROXY"}},
 		{
 			"all problems reported together",
 			map[string]string{"PORT": "0", "APP_ENV": "prod"},

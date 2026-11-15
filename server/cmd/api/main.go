@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"github.com/chris-abs/cadence/server/internal/app"
@@ -45,8 +46,24 @@ func run() error {
 	}
 	defer pool.Close()
 
-	handler := app.NewHandler(app.Deps{Logger: logger, DB: pool, Env: cfg.Env})
+	handler, err := app.NewHandler(app.Deps{
+		Logger: logger, DB: pool, Env: cfg.Env,
+		Registration: cfg.Registration, TrustedProxies: cfg.TrustedProxies,
+	})
+	if err != nil {
+		return err
+	}
 	srv := app.NewServer(handler, logger)
+
+	// The session sweep lives exactly as long as the server: it stops when
+	// serving ends for any reason, and run waits for it before closing the pool.
+	var background sync.WaitGroup
+	bgCtx, stopBackground := context.WithCancel(ctx)
+	background.Go(func() { handler.RunCleanup(bgCtx) })
+	defer func() {
+		stopBackground()
+		background.Wait()
+	}()
 
 	var lc net.ListenConfig
 	ln, err := lc.Listen(ctx, "tcp", cfg.Addr())
