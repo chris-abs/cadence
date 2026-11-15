@@ -8,9 +8,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/chris-abs/cadence/server/internal/family"
+	"github.com/chris-abs/cadence/server/internal/identity/family"
+	"github.com/chris-abs/cadence/server/internal/identity/profile"
 	"github.com/chris-abs/cadence/server/internal/models"
-	"github.com/chris-abs/cadence/server/internal/profile"
 )
 
 type RegistrationMode string

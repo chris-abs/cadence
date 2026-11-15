@@ -2,11 +2,11 @@ version: "2"
 sql:
   - engine: postgresql
     schema: db/migrations
-    queries: db/queries/auth
+    queries: db/queries/identity/auth
     gen:
       go:
         package: authdb
-        out: internal/auth/internal/authdb
+        out: internal/identity/auth/internal/authdb
         <<: &go_options
           sql_package: pgx/v5
           output_files_suffix: .gen
@@ -33,17 +33,17 @@ sql:
                 pointer: true
   - engine: postgresql
     schema: db/migrations
-    queries: db/queries/family
+    queries: db/queries/identity/family
     gen:
       go:
         package: familydb
-        out: internal/family/internal/familydb
+        out: internal/identity/family/internal/familydb
         <<: *go_options
   - engine: postgresql
     schema: db/migrations
-    queries: db/queries/profile
+    queries: db/queries/identity/profile
     gen:
       go:
         package: profiledb
-        out: internal/profile/internal/profiledb
+        out: internal/identity/profile/internal/profiledb
         <<: *go_options

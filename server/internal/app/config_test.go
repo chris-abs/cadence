@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chris-abs/cadence/server/internal/auth"
+	"github.com/chris-abs/cadence/server/internal/identity/auth"
 )
 
 func envFrom(m map[string]string) func(string) string {

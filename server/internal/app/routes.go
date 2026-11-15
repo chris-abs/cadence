@@ -10,12 +10,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/chris-abs/cadence/server/internal/api"
-	"github.com/chris-abs/cadence/server/internal/auth"
-	"github.com/chris-abs/cadence/server/internal/family"
+	"github.com/chris-abs/cadence/server/internal/identity/auth"
+	"github.com/chris-abs/cadence/server/internal/identity/family"
+	"github.com/chris-abs/cadence/server/internal/identity/profile"
 	"github.com/chris-abs/cadence/server/internal/middleware"
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
-	"github.com/chris-abs/cadence/server/internal/profile"
 )
 
 type Deps struct {

@@ -12,7 +12,7 @@ import (
 
 	"github.com/chris-abs/cadence/server/internal/api"
 	"github.com/chris-abs/cadence/server/internal/app"
-	"github.com/chris-abs/cadence/server/internal/auth"
+	"github.com/chris-abs/cadence/server/internal/identity/auth"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
 	"github.com/chris-abs/cadence/server/internal/platform/testutil"
 )

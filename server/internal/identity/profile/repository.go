@@ -9,9 +9,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 
+	"github.com/chris-abs/cadence/server/internal/identity/profile/internal/profiledb"
 	"github.com/chris-abs/cadence/server/internal/models"
 	"github.com/chris-abs/cadence/server/internal/platform/db"
-	"github.com/chris-abs/cadence/server/internal/profile/internal/profiledb"
 )
 
 const constraintName = "profile_family_name"

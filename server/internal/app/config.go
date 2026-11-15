@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chris-abs/cadence/server/internal/auth"
+	"github.com/chris-abs/cadence/server/internal/identity/auth"
 )
 
 type Env string

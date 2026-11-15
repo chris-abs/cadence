@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/chris-abs/cadence/server/internal/app"
-	"github.com/chris-abs/cadence/server/internal/auth"
+	"github.com/chris-abs/cadence/server/internal/identity/auth"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
 	"github.com/chris-abs/cadence/server/internal/platform/testutil"
 )

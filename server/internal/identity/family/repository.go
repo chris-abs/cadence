@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 
-	"github.com/chris-abs/cadence/server/internal/family/internal/familydb"
+	"github.com/chris-abs/cadence/server/internal/identity/family/internal/familydb"
 	"github.com/chris-abs/cadence/server/internal/models"
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 )

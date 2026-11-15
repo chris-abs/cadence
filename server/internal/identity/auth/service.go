@@ -17,12 +17,12 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/chris-abs/cadence/server/internal/family"
+	"github.com/chris-abs/cadence/server/internal/identity/family"
+	"github.com/chris-abs/cadence/server/internal/identity/profile"
 	"github.com/chris-abs/cadence/server/internal/middleware"
 	"github.com/chris-abs/cadence/server/internal/models"
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
-	"github.com/chris-abs/cadence/server/internal/profile"
 )
 
 var ErrUnknownFamily = errors.New("no family has that email")
