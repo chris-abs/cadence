@@ -1,7 +1,10 @@
 # Cadence
 
-A family meal-planning web app: a family account signs in, each person picks a
-profile (optional PIN), then plans meals, recipes and shopping lists together.
+A family orchestration platform: one place that runs a family's day-to-day life.
+It is signed in on a central family tablet; each person switches to their profile
+(PIN-protected) and sees and does what their role allows. The core is identity:
+family, profiles, roles and per-module authorisation. Features are modules built on
+that core: meal planning first, later calendar, to-dos, activities, music.
 This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 
 ## Map

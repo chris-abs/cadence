@@ -36,3 +36,18 @@ Implications for `docs/spec/meals.md` (to be revised before M6):
 - Plan entries and shopping lists must resolve to the family's version of a recipe.
 - Someone has to author and maintain the default recipes (seed data and its migration
   story when defaults are updated after families have customised them).
+
+## Product vision (added same day)
+
+Cadence is a **family orchestration platform**, not only a meal planner: activities,
+to-dos, calendar, music and other centralised family logic, signed in on a **central
+family tablet** where people switch profiles and act according to their authorisation.
+
+Implications:
+
+- Identity is the platform core. Authorisation must be **module-aware** from the start:
+  role × module × action, with modules a family can enable or disable.
+- Profile switching on a shared device is the primary flow, so it must be fast, and a
+  profile's rights must change the moment a parent changes them.
+- Each feature is a self-contained module (server package + client feature folder)
+  built on the identity core and the shared component layer.
