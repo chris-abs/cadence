@@ -31,6 +31,10 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
+        // Comfortable for fingers on the family tablet.
+        touch: "h-11 gap-2 px-4 text-base",
+        // One key of an on-screen number pad.
+        keypad: "size-16 rounded-full text-2xl font-semibold sm:size-18",
       },
     },
     defaultVariants: {

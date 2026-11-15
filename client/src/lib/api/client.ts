@@ -33,5 +33,9 @@ export async function unwrap<R extends FetchResult>(
 ): Promise<Success<R>["data"]> {
   const result = await request;
   if (isSuccess(result)) return result.data;
-  throw new ApiError(result.response.status, result.error);
+  throw new ApiError(
+    result.response.status,
+    result.error,
+    result.response.headers.get("Retry-After"),
+  );
 }

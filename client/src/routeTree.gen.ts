@@ -9,50 +9,210 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
+import { Route as FamilyRouteImport } from "./routes/_family";
+import { Route as LoginRouteImport } from "./routes/login";
+import { Route as RegisterRouteImport } from "./routes/register";
+import { Route as FamilyProfileRouteImport } from "./routes/_family/_profile";
+import { Route as FamilyProfileIndexRouteImport } from "./routes/_family/_profile/index";
+import { Route as FamilyProfileSettingsRouteImport } from "./routes/_family/_profile/settings";
+import { Route as FamilyPickerIndexRouteImport } from "./routes/_family/picker.index";
+import { Route as FamilyPickerProfileIdRouteImport } from "./routes/_family/picker.$profileId";
 
-const IndexRoute = IndexRouteImport.update({
+const FamilyRoute = FamilyRouteImport.update({
+  id: "/_family",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const LoginRoute = LoginRouteImport.update({
+  id: "/login",
+  path: "/login",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const RegisterRoute = RegisterRouteImport.update({
+  id: "/register",
+  path: "/register",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const FamilyProfileRoute = FamilyProfileRouteImport.update({
+  id: "/_profile",
+  getParentRoute: () => FamilyRoute,
+} as any);
+const FamilyProfileIndexRoute = FamilyProfileIndexRouteImport.update({
   id: "/",
   path: "/",
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => FamilyProfileRoute,
+} as any);
+const FamilyProfileSettingsRoute = FamilyProfileSettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
+  getParentRoute: () => FamilyProfileRoute,
+} as any);
+const FamilyPickerIndexRoute = FamilyPickerIndexRouteImport.update({
+  id: "/picker/",
+  path: "/picker/",
+  getParentRoute: () => FamilyRoute,
+} as any);
+const FamilyPickerProfileIdRoute = FamilyPickerProfileIdRouteImport.update({
+  id: "/picker/$profileId",
+  path: "/picker/$profileId",
+  getParentRoute: () => FamilyRoute,
 } as any);
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
+  "/": typeof FamilyProfileIndexRoute;
+  "/login": typeof LoginRoute;
+  "/register": typeof RegisterRoute;
+  "/settings": typeof FamilyProfileSettingsRoute;
+  "/picker/$profileId": typeof FamilyPickerProfileIdRoute;
+  "/picker/": typeof FamilyPickerIndexRoute;
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
+  "/": typeof FamilyProfileIndexRoute;
+  "/login": typeof LoginRoute;
+  "/register": typeof RegisterRoute;
+  "/settings": typeof FamilyProfileSettingsRoute;
+  "/picker/$profileId": typeof FamilyPickerProfileIdRoute;
+  "/picker": typeof FamilyPickerIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
+  "/_family": typeof FamilyRouteWithChildren;
+  "/login": typeof LoginRoute;
+  "/register": typeof RegisterRoute;
+  "/_family/_profile": typeof FamilyProfileRouteWithChildren;
+  "/_family/_profile/settings": typeof FamilyProfileSettingsRoute;
+  "/_family/picker/$profileId": typeof FamilyPickerProfileIdRoute;
+  "/_family/_profile/": typeof FamilyProfileIndexRoute;
+  "/_family/picker/": typeof FamilyPickerIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/";
+  fullPaths:
+    | "/"
+    | "/login"
+    | "/register"
+    | "/settings"
+    | "/picker/$profileId"
+    | "/picker/";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/";
-  id: "__root__" | "/";
+  to:
+    | "/"
+    | "/login"
+    | "/register"
+    | "/settings"
+    | "/picker/$profileId"
+    | "/picker";
+  id:
+    | "__root__"
+    | "/_family"
+    | "/login"
+    | "/register"
+    | "/_family/_profile"
+    | "/_family/_profile/settings"
+    | "/_family/picker/$profileId"
+    | "/_family/_profile/"
+    | "/_family/picker/";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
+  FamilyRoute: typeof FamilyRouteWithChildren;
+  LoginRoute: typeof LoginRoute;
+  RegisterRoute: typeof RegisterRoute;
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
+    "/_family": {
+      id: "/_family";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof FamilyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/login": {
+      id: "/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/register": {
+      id: "/register";
+      path: "/register";
+      fullPath: "/register";
+      preLoaderRoute: typeof RegisterRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_family/_profile": {
+      id: "/_family/_profile";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof FamilyProfileRouteImport;
+      parentRoute: typeof FamilyRoute;
+    };
+    "/_family/_profile/": {
+      id: "/_family/_profile/";
       path: "/";
       fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
+      preLoaderRoute: typeof FamilyProfileIndexRouteImport;
+      parentRoute: typeof FamilyProfileRoute;
+    };
+    "/_family/_profile/settings": {
+      id: "/_family/_profile/settings";
+      path: "/settings";
+      fullPath: "/settings";
+      preLoaderRoute: typeof FamilyProfileSettingsRouteImport;
+      parentRoute: typeof FamilyProfileRoute;
+    };
+    "/_family/picker/": {
+      id: "/_family/picker/";
+      path: "/picker";
+      fullPath: "/picker/";
+      preLoaderRoute: typeof FamilyPickerIndexRouteImport;
+      parentRoute: typeof FamilyRoute;
+    };
+    "/_family/picker/$profileId": {
+      id: "/_family/picker/$profileId";
+      path: "/picker/$profileId";
+      fullPath: "/picker/$profileId";
+      preLoaderRoute: typeof FamilyPickerProfileIdRouteImport;
+      parentRoute: typeof FamilyRoute;
     };
   }
 }
 
+interface FamilyProfileRouteChildren {
+  FamilyProfileSettingsRoute: typeof FamilyProfileSettingsRoute;
+  FamilyProfileIndexRoute: typeof FamilyProfileIndexRoute;
+}
+
+const FamilyProfileRouteChildren: FamilyProfileRouteChildren = {
+  FamilyProfileSettingsRoute: FamilyProfileSettingsRoute,
+  FamilyProfileIndexRoute: FamilyProfileIndexRoute,
+};
+
+const FamilyProfileRouteWithChildren = FamilyProfileRoute._addFileChildren(
+  FamilyProfileRouteChildren,
+);
+
+interface FamilyRouteChildren {
+  FamilyProfileRoute: typeof FamilyProfileRouteWithChildren;
+  FamilyPickerProfileIdRoute: typeof FamilyPickerProfileIdRoute;
+  FamilyPickerIndexRoute: typeof FamilyPickerIndexRoute;
+}
+
+const FamilyRouteChildren: FamilyRouteChildren = {
+  FamilyProfileRoute: FamilyProfileRouteWithChildren,
+  FamilyPickerProfileIdRoute: FamilyPickerProfileIdRoute,
+  FamilyPickerIndexRoute: FamilyPickerIndexRoute,
+};
+
+const FamilyRouteWithChildren =
+  FamilyRoute._addFileChildren(FamilyRouteChildren);
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  FamilyRoute: FamilyRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

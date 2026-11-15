@@ -46,5 +46,6 @@ step "lint" yarn -s lint
 step "format" yarn -s format:check
 step "test" yarn -s test
 step "build" yarn -s vite build
+step "bundle size" node scripts/bundle-size.ts
 
 exit $failed

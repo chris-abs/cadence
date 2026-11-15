@@ -66,7 +66,13 @@
     "typescript/no-unsafe-call": "error",
     "typescript/no-unsafe-member-access": "error",
     "typescript/no-unsafe-return": "error",
-    "typescript/only-throw-error": "error",
+    // TanStack Router guards `throw redirect(...)`, a Response, by design.
+    "typescript/only-throw-error": [
+      "error",
+      {
+        "allow": [{ "from": "package", "package": "@tanstack/router-core", "name": "Redirect" }]
+      }
+    ],
     "typescript/prefer-promise-reject-errors": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/prefer-optional-chain": "error",
@@ -120,6 +126,53 @@
               {
                 "regex": "^(\\.\\./)+(features|routes)(/|$)",
                 "message": "The shared layer must not depend on features or routes."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // Shared components take plain props, never API types; features map API data onto them.
+      "files": ["src/components/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features/**", "@/routes/**"],
+                "message": "The shared layer must not depend on features or routes."
+              },
+              {
+                "regex": "^(\\.\\./)+(features|routes)(/|$)",
+                "message": "The shared layer must not depend on features or routes."
+              },
+              {
+                "group": ["@/lib/api", "@/lib/api/**"],
+                "message": "Shared components take plain props, not API types. Map API data in the feature."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // All styling lives in the shared layer: features and routes carry no classes or
+      // inline styles, on components or on native elements.
+      "files": ["src/features/**", "src/routes/**"],
+      "rules": {
+        "react/forbid-dom-props": [
+          "error",
+          {
+            "forbid": [
+              {
+                "propName": "className",
+                "message": "No styling in features or routes: use a shared component (Stack, Text, Form, …) or add a variant to one."
+              },
+              {
+                "propName": "style",
+                "message": "No styling in features or routes: use a shared component (Stack, Text, Form, …) or add a variant to one."
               }
             ]
           }
