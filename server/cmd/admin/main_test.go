@@ -65,11 +65,16 @@ func TestResetPassword(t *testing.T) {
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM session`).Scan(&sessions); err != nil || sessions != 0 {
 		t.Errorf("sessions after reset = %d (%v), want 0", sessions, err)
 	}
-	if _, err := svc.Login(ctx, identity.LoginInput{Email: "owner@example.com", Password: m[1], ClientIP: "10.0.0.2"}); err != nil {
-		t.Errorf("login with the new password: %v", err)
+	var hash string
+	if err := pool.QueryRow(ctx, `SELECT password_hash FROM family WHERE email = 'owner@example.com'`).Scan(&hash); err != nil {
+		t.Fatal(err)
 	}
-	if _, err := svc.Login(ctx, identity.LoginInput{Email: "owner@example.com", Password: "old password 123", ClientIP: "10.0.0.3"}); !errors.Is(err, identity.ErrInvalidCredentials) {
-		t.Errorf("old password: %v", err)
+	hasher := passhash.NewBcrypt(bcrypt.MinCost)
+	if ok, err := hasher.Matches(hash, m[1]); err != nil || !ok {
+		t.Errorf("the printed password must be the stored one (%v)", err)
+	}
+	if ok, _ := hasher.Matches(hash, "old password 123"); ok {
+		t.Error("the old password still matches")
 	}
 
 	if err := resetPassword(ctx, svc, "nobody@example.com", &out); !errors.Is(err, identity.ErrUnknownFamily) {

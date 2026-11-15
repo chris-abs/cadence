@@ -7,24 +7,24 @@ import (
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
 )
 
-func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) getProfile(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	id, err := pathID(r, "profileId")
 	if err != nil {
 		return err
 	}
-	p, err := h.svc.GetProfile(r.Context(), c, id)
+	p, err := h.svc.getProfile(r.Context(), c, id)
 	if err != nil {
 		return err
 	}
 	return h.writeJSON(w, r, http.StatusOK, profileView(p, c.Subject))
 }
 
-func (h *Handler) createProfile(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) createProfile(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	var body api.CreateProfileRequest
 	if err := httpx.DecodeJSON(w, r, &body, 0); err != nil {
 		return err
 	}
-	p, err := h.svc.CreateProfile(r.Context(), c, ProfileInput{
+	p, err := h.svc.createProfile(r.Context(), c, profileInput{
 		Name: body.Name, Colour: string(body.Colour), Avatar: body.Avatar, Timezone: body.Timezone,
 		ContactEmail: body.ContactEmail, Role: string(body.Role), Pin: body.Pin,
 	})
@@ -34,7 +34,7 @@ func (h *Handler) createProfile(w http.ResponseWriter, r *http.Request, c Caller
 	return h.writeJSON(w, r, http.StatusCreated, profileView(p, c.Subject))
 }
 
-func (h *Handler) updateProfile(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) updateProfile(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	id, err := pathID(r, "profileId")
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (h *Handler) updateProfile(w http.ResponseWriter, r *http.Request, c Caller
 	if err := fe.err(); err != nil {
 		return err
 	}
-	p, err := h.svc.UpdateProfile(r.Context(), c, id, ProfileInput{
+	p, err := h.svc.updateProfile(r.Context(), c, id, profileInput{
 		Name: body.Name, Colour: body.Colour, Avatar: body.Avatar.Value, Timezone: &body.Timezone,
 		ContactEmail: body.ContactEmail.Value,
 	})
@@ -63,7 +63,7 @@ func (h *Handler) updateProfile(w http.ResponseWriter, r *http.Request, c Caller
 	return h.writeJSON(w, r, http.StatusOK, profileView(p, c.Subject))
 }
 
-func (h *Handler) changeRole(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) changeRole(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	id, err := pathID(r, "profileId")
 	if err != nil {
 		return err
@@ -72,25 +72,25 @@ func (h *Handler) changeRole(w http.ResponseWriter, r *http.Request, c Caller) e
 	if err := httpx.DecodeJSON(w, r, &body, 0); err != nil {
 		return err
 	}
-	p, err := h.svc.ChangeRole(r.Context(), c, id, string(body.Role))
+	p, err := h.svc.changeRole(r.Context(), c, id, string(body.Role))
 	if err != nil {
 		return err
 	}
 	return h.writeJSON(w, r, http.StatusOK, profileView(p, c.Subject))
 }
 
-func (h *Handler) deleteProfile(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) deleteProfile(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	id, err := pathID(r, "profileId")
 	if err != nil {
 		return err
 	}
-	if err := h.svc.DeleteProfile(r.Context(), c, id); err != nil {
+	if err := h.svc.deleteProfile(r.Context(), c, id); err != nil {
 		return err
 	}
 	return noContent(w)
 }
 
-func (h *Handler) setPin(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) setPin(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	id, err := pathID(r, "profileId")
 	if err != nil {
 		return err
@@ -102,7 +102,7 @@ func (h *Handler) setPin(w http.ResponseWriter, r *http.Request, c Caller) error
 	if !body.Pin.Set {
 		return &ValidationError{Fields: map[string]string{"pin": "Send the new PIN, or null to remove it."}}
 	}
-	if err := h.svc.SetPIN(r.Context(), c, id, SetPINInput{
+	if err := h.svc.setPIN(r.Context(), c, id, setPINInput{
 		Pin: body.Pin.Value, CurrentPin: body.CurrentPin, Password: body.Password,
 	}); err != nil {
 		return err

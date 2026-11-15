@@ -11,17 +11,17 @@ import (
 	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
-// GetFamily returns the family account, email included (PARENT).
-func (s *Service) GetFamily(_ context.Context, caller Caller) (identitydb.Family, error) {
+// getFamily returns the family account, email included (PARENT).
+func (s *Service) getFamily(_ context.Context, caller callerSession) (identitydb.Family, error) {
 	if !caller.Subject.Can(authz.FamilyView) {
 		return identitydb.Family{}, ErrForbidden
 	}
 	// The session lookup loaded the family row on this request already.
-	return caller.Device.Family, nil
+	return caller.device.Family, nil
 }
 
-// UpdateFamily edits the family name and auto-lock setting (PARENT).
-func (s *Service) UpdateFamily(ctx context.Context, caller Caller, name string, autoLockMinutes int) (identitydb.Family, error) {
+// updateFamily edits the family name and auto-lock setting (PARENT).
+func (s *Service) updateFamily(ctx context.Context, caller callerSession, name string, autoLockMinutes int) (identitydb.Family, error) {
 	if !caller.Subject.Can(authz.FamilyEdit) {
 		return identitydb.Family{}, ErrForbidden
 	}
@@ -35,7 +35,7 @@ func (s *Service) UpdateFamily(ctx context.Context, caller Caller, name string, 
 		return identitydb.Family{}, err
 	}
 	f, err := s.q.UpdateFamilySettings(ctx, identitydb.UpdateFamilySettingsParams{
-		Name: name, AutoLockMinutes: int16(autoLockMinutes), ID: caller.Device.Family.ID, //nolint:gosec // range-checked to 1–30 above.
+		Name: name, AutoLockMinutes: int16(autoLockMinutes), ID: caller.device.Family.ID, //nolint:gosec // range-checked to 1–30 above.
 	})
 	if err != nil {
 		return identitydb.Family{}, fmt.Errorf("update family: %w", err)
@@ -43,9 +43,9 @@ func (s *Service) UpdateFamily(ctx context.Context, caller Caller, name string, 
 	return f, nil
 }
 
-// ChangeEmail changes the sign-in email (owner, password re-entered).
+// changeEmail changes the sign-in email (owner, password re-entered).
 // Sessions are unchanged (§3).
-func (s *Service) ChangeEmail(ctx context.Context, caller Caller, email, password string) (identitydb.Family, error) {
+func (s *Service) changeEmail(ctx context.Context, caller callerSession, email, password string) (identitydb.Family, error) {
 	if !caller.Subject.Can(authz.FamilyAccountManage) {
 		return identitydb.Family{}, ErrForbidden
 	}
@@ -53,10 +53,10 @@ func (s *Service) ChangeEmail(ctx context.Context, caller Caller, email, passwor
 	if msg != "" {
 		return identitydb.Family{}, &ValidationError{Fields: map[string]string{"email": msg}}
 	}
-	if err := s.verifyFamilyPassword(ctx, caller.Device.Family, password); err != nil {
+	if err := s.verifyFamilyPassword(ctx, caller.device.Family, password); err != nil {
 		return identitydb.Family{}, err
 	}
-	f, err := s.q.UpdateFamilyEmail(ctx, identitydb.UpdateFamilyEmailParams{Email: email, ID: caller.Device.Family.ID})
+	f, err := s.q.UpdateFamilyEmail(ctx, identitydb.UpdateFamilyEmailParams{Email: email, ID: caller.device.Family.ID})
 	if uniqueViolation(err, constraintFamilyEmail) {
 		return identitydb.Family{}, ErrEmailTaken
 	}
@@ -67,29 +67,29 @@ func (s *Service) ChangeEmail(ctx context.Context, caller Caller, email, passwor
 	return f, nil
 }
 
-// ChangePassword sets a new family password (owner) and signs out every
+// changePassword sets a new family password (owner) and signs out every
 // session of the family except this device's family and profile session.
-func (s *Service) ChangePassword(ctx context.Context, caller Caller, current, next string) error {
+func (s *Service) changePassword(ctx context.Context, caller callerSession, current, next string) error {
 	if !caller.Subject.Can(authz.FamilyAccountManage) {
 		return ErrForbidden
 	}
 	if msg := checkPassword(next); msg != "" {
 		return &ValidationError{Fields: map[string]string{"newPassword": msg}}
 	}
-	if err := s.verifyFamilyPassword(ctx, caller.Device.Family, current); err != nil {
+	if err := s.verifyFamilyPassword(ctx, caller.device.Family, current); err != nil {
 		return err
 	}
 	hash, err := s.hasher.Hash(next)
 	if err != nil {
 		return err
 	}
-	familyID := caller.Device.Family.ID
+	familyID := caller.device.Family.ID
 	err = s.inTx(ctx, func(q *identitydb.Queries) error {
 		if err := q.UpdateFamilyPassword(ctx, identitydb.UpdateFamilyPasswordParams{PasswordHash: hash, ID: familyID}); err != nil {
 			return fmt.Errorf("update password: %w", err)
 		}
 		if _, err := q.DeleteFamilySessionsExcept(ctx, identitydb.DeleteFamilySessionsExceptParams{
-			FamilyID: familyID, Keep: []uuid.UUID{caller.Device.SessionID, caller.SessionID},
+			FamilyID: familyID, Keep: []uuid.UUID{caller.device.SessionID, caller.SessionID},
 		}); err != nil {
 			return fmt.Errorf("sign out other sessions: %w", err)
 		}
@@ -102,17 +102,17 @@ func (s *Service) ChangePassword(ctx context.Context, caller Caller, current, ne
 	return nil
 }
 
-// TransferOwnership makes another PARENT the owner (owner, password
+// transferOwnership makes another PARENT the owner (owner, password
 // re-entered). The old owner is cleared before the new one is set, in one
 // transaction, so the one-owner index never sees two. Sessions are unchanged.
-func (s *Service) TransferOwnership(ctx context.Context, caller Caller, to uuid.UUID, password string) error {
+func (s *Service) transferOwnership(ctx context.Context, caller callerSession, to uuid.UUID, password string) error {
 	if !caller.Subject.Can(authz.FamilyAccountManage) {
 		return ErrForbidden
 	}
-	if err := s.verifyFamilyPassword(ctx, caller.Device.Family, password); err != nil {
+	if err := s.verifyFamilyPassword(ctx, caller.device.Family, password); err != nil {
 		return err
 	}
-	familyID := caller.Device.Family.ID
+	familyID := caller.device.Family.ID
 	err := s.inTx(ctx, func(q *identitydb.Queries) error {
 		if _, err := q.GetFamilyForUpdate(ctx, familyID); err != nil {
 			return fmt.Errorf("lock family: %w", err)
@@ -142,13 +142,13 @@ func (s *Service) TransferOwnership(ctx context.Context, caller Caller, to uuid.
 	return nil
 }
 
-// DeleteFamily permanently deletes the family and, by cascade, everything
+// deleteFamily permanently deletes the family and, by cascade, everything
 // that belongs to it [I1]: password and the family name typed again.
-func (s *Service) DeleteFamily(ctx context.Context, caller Caller, password, confirmName string) error {
+func (s *Service) deleteFamily(ctx context.Context, caller callerSession, password, confirmName string) error {
 	if !caller.Subject.Can(authz.FamilyAccountManage) {
 		return ErrForbidden
 	}
-	family := caller.Device.Family
+	family := caller.device.Family
 	if err := s.verifyFamilyPassword(ctx, family, password); err != nil {
 		return err
 	}

@@ -7,8 +7,8 @@ import (
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
 )
 
-func (h *Handler) listModules(w http.ResponseWriter, r *http.Request, c Caller) error {
-	items := h.svc.ListModules(c)
+func (h *Handler) listModules(w http.ResponseWriter, r *http.Request, c callerSession) error {
+	items := h.svc.listModules(c)
 	mods := make([]api.Module, len(items))
 	for i, m := range items {
 		mods[i] = moduleView(m)
@@ -16,12 +16,12 @@ func (h *Handler) listModules(w http.ResponseWriter, r *http.Request, c Caller) 
 	return h.writeJSON(w, r, http.StatusOK, api.ModuleList{Modules: mods})
 }
 
-func (h *Handler) setModuleEnabled(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) setModuleEnabled(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	var body api.SetModuleEnabledRequest
 	if err := httpx.DecodeJSON(w, r, &body, 0); err != nil {
 		return err
 	}
-	m, err := h.svc.SetModuleEnabled(r.Context(), c, r.PathValue("moduleId"), body.Enabled)
+	m, err := h.svc.setModuleEnabled(r.Context(), c, r.PathValue("moduleId"), body.Enabled)
 	if err != nil {
 		return err
 	}

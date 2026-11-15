@@ -6,8 +6,8 @@ import (
 	"github.com/chris-abs/cadence/server/internal/api"
 )
 
-func (h *Handler) listSessions(w http.ResponseWriter, r *http.Request, c Caller) error {
-	items, err := h.svc.ListDevices(r.Context(), c)
+func (h *Handler) listSessions(w http.ResponseWriter, r *http.Request, c callerSession) error {
+	items, err := h.svc.listDevices(r.Context(), c)
 	if err != nil {
 		return err
 	}
@@ -18,12 +18,12 @@ func (h *Handler) listSessions(w http.ResponseWriter, r *http.Request, c Caller)
 	return h.writeJSON(w, r, http.StatusOK, api.DeviceSessionList{Sessions: sessions})
 }
 
-func (h *Handler) revokeSession(w http.ResponseWriter, r *http.Request, c Caller) error {
+func (h *Handler) revokeSession(w http.ResponseWriter, r *http.Request, c callerSession) error {
 	id, err := pathID(r, "sessionId")
 	if err != nil {
 		return err
 	}
-	current, err := h.svc.RevokeDevice(r.Context(), c, id)
+	current, err := h.svc.revokeDevice(r.Context(), c, id)
 	if err != nil {
 		return err
 	}
@@ -33,8 +33,8 @@ func (h *Handler) revokeSession(w http.ResponseWriter, r *http.Request, c Caller
 	return noContent(w)
 }
 
-func (h *Handler) revokeOtherSessions(w http.ResponseWriter, r *http.Request, c Caller) error {
-	if err := h.svc.RevokeOtherDevices(r.Context(), c); err != nil {
+func (h *Handler) revokeOtherSessions(w http.ResponseWriter, r *http.Request, c callerSession) error {
+	if err := h.svc.revokeOtherDevices(r.Context(), c); err != nil {
 		return err
 	}
 	return noContent(w)

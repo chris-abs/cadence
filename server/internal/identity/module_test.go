@@ -43,7 +43,8 @@ func probeRouter(t *testing.T, e *env) http.Handler {
 			return
 		}
 		s, _ := authz.SubjectFrom(r.Context())
-		if s.FamilyID.String() == "" {
+		c, ok := identity.CallerFrom(r.Context())
+		if !ok || c.Profile.ID != s.ProfileID || c.Family.ID != s.FamilyID || c.Profile.Role != s.Role || c.Profile.Timezone == "" {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

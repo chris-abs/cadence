@@ -11,55 +11,55 @@ import (
 	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
-// DeviceItem is one signed-in device in GET /auth/sessions.
-type DeviceItem struct {
+// deviceItem is one signed-in device in GET /auth/sessions.
+type deviceItem struct {
 	Row     identitydb.ListDevicesRow
 	Current bool
 }
 
-// ListDevices lists the family's live devices (PARENT).
-func (s *Service) ListDevices(ctx context.Context, caller Caller) ([]DeviceItem, error) {
+// listDevices lists the family's live devices (PARENT).
+func (s *Service) listDevices(ctx context.Context, caller callerSession) ([]deviceItem, error) {
 	if !caller.Subject.Can(authz.FamilySessionsManage) {
 		return nil, ErrForbidden
 	}
-	rows, err := s.q.ListDevices(ctx, identitydb.ListDevicesParams{FamilyID: caller.Device.Family.ID, Now: s.now()})
+	rows, err := s.q.ListDevices(ctx, identitydb.ListDevicesParams{FamilyID: caller.device.Family.ID, Now: s.now()})
 	if err != nil {
 		return nil, fmt.Errorf("list devices: %w", err)
 	}
-	items := make([]DeviceItem, len(rows))
+	items := make([]deviceItem, len(rows))
 	for i, r := range rows {
-		items[i] = DeviceItem{Row: r, Current: r.ID == caller.Device.SessionID}
+		items[i] = deviceItem{Row: r, Current: r.ID == caller.device.SessionID}
 	}
 	return items, nil
 }
 
-// RevokeDevice signs one device out (PARENT). It reports whether that was
+// revokeDevice signs one device out (PARENT). It reports whether that was
 // the caller's own device, whose cookies the handler then clears.
-func (s *Service) RevokeDevice(ctx context.Context, caller Caller, id uuid.UUID) (bool, error) {
+func (s *Service) revokeDevice(ctx context.Context, caller callerSession, id uuid.UUID) (bool, error) {
 	if !caller.Subject.Can(authz.FamilySessionsManage) {
 		return false, ErrForbidden
 	}
-	n, err := s.q.DeleteDevice(ctx, identitydb.DeleteDeviceParams{FamilyID: caller.Device.Family.ID, ID: id})
+	n, err := s.q.DeleteDevice(ctx, identitydb.DeleteDeviceParams{FamilyID: caller.device.Family.ID, ID: id})
 	if err != nil {
 		return false, fmt.Errorf("revoke device: %w", err)
 	}
 	if n == 0 {
 		return false, ErrNotFound
 	}
-	s.audit.event(ctx, evSessionRevoked, familyAttr(caller.Device.Family.ID), sessionAttr(id), actorAttr(caller.Profile.ID))
-	return id == caller.Device.SessionID, nil
+	s.audit.event(ctx, evSessionRevoked, familyAttr(caller.device.Family.ID), sessionAttr(id), actorAttr(caller.Profile.ID))
+	return id == caller.device.SessionID, nil
 }
 
-// RevokeOtherDevices signs out every device but this one (PARENT).
-func (s *Service) RevokeOtherDevices(ctx context.Context, caller Caller) error {
+// revokeOtherDevices signs out every device but this one (PARENT).
+func (s *Service) revokeOtherDevices(ctx context.Context, caller callerSession) error {
 	if !caller.Subject.Can(authz.FamilySessionsManage) {
 		return ErrForbidden
 	}
-	n, err := s.q.DeleteOtherDevices(ctx, identitydb.DeleteOtherDevicesParams{FamilyID: caller.Device.Family.ID, Keep: caller.Device.SessionID})
+	n, err := s.q.DeleteOtherDevices(ctx, identitydb.DeleteOtherDevicesParams{FamilyID: caller.device.Family.ID, Keep: caller.device.SessionID})
 	if err != nil {
 		return fmt.Errorf("revoke other devices: %w", err)
 	}
-	s.audit.event(ctx, evSessionRevokedOthers, familyAttr(caller.Device.Family.ID), sessionAttr(caller.Device.SessionID),
+	s.audit.event(ctx, evSessionRevokedOthers, familyAttr(caller.device.Family.ID), sessionAttr(caller.device.SessionID),
 		actorAttr(caller.Profile.ID), slog.Int64("revoked", n))
 	return nil
 }

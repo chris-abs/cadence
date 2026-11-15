@@ -79,8 +79,8 @@ func (h *Handler) Routes() []Route {
 // contract, so handlers never write error responses themselves.
 type (
 	publicFunc  func(http.ResponseWriter, *http.Request) error
-	familyFunc  func(http.ResponseWriter, *http.Request, Device) error
-	profileFunc func(http.ResponseWriter, *http.Request, Caller) error
+	familyFunc  func(http.ResponseWriter, *http.Request, deviceSession) error
+	profileFunc func(http.ResponseWriter, *http.Request, callerSession) error
 )
 
 func (h *Handler) public(fn publicFunc) http.Handler {
@@ -91,14 +91,14 @@ func (h *Handler) public(fn publicFunc) http.Handler {
 
 func (h *Handler) family(fn familyFunc) http.Handler {
 	return h.RequireFamily(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		d, _ := r.Context().Value(deviceKey{}).(Device)
+		d, _ := r.Context().Value(deviceKey{}).(deviceSession)
 		h.finish(w, r, fn(w, r, d))
 	}))
 }
 
 func (h *Handler) profile(fn profileFunc) http.Handler {
 	return h.RequireProfile(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c, _ := CallerFrom(r.Context())
+		c, _ := r.Context().Value(callerKey{}).(callerSession)
 		h.finish(w, r, fn(w, r, c))
 	}))
 }
@@ -114,11 +114,15 @@ type (
 	callerKey struct{}
 )
 
-// CallerFrom returns the profile-session caller the profile middleware stored.
-// Feature modules normally need only authz.SubjectFrom.
+// CallerFrom returns the profile-session caller RequireProfile stored: ids,
+// role, display name and time zone of the profile and its family. Modules that
+// need only ids and permission checks can use authz.SubjectFrom instead.
 func CallerFrom(ctx context.Context) (Caller, bool) {
-	c, ok := ctx.Value(callerKey{}).(Caller)
-	return c, ok
+	c, ok := ctx.Value(callerKey{}).(callerSession)
+	if !ok {
+		return Caller{}, false
+	}
+	return c.public(), true
 }
 
 // passive reports X-Cadence-Passive: 1, background polling that must not
@@ -129,7 +133,7 @@ func passive(r *http.Request) bool { return r.Header.Get("X-Cadence-Passive") ==
 func (h *Handler) RequireFamily(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs, _ := h.cookies.read(r)
-		d, err := h.svc.AuthenticateDevice(r.Context(), fs, passive(r))
+		d, err := h.svc.authenticateDevice(r.Context(), fs, passive(r))
 		if err != nil {
 			h.writeError(w, r, err)
 			return
@@ -139,12 +143,12 @@ func (h *Handler) RequireFamily(next http.Handler) http.Handler {
 }
 
 // RequireProfile admits requests with a valid profile session on its own
-// device's family session, and stores the Caller and its authz.Subject in the
+// device's family session, and stores the callerSession and its authz.Subject in the
 // context. Every feature-module route sits behind it.
 func (h *Handler) RequireProfile(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs, ps := h.cookies.read(r)
-		c, err := h.svc.AuthenticateProfile(r.Context(), fs, ps, passive(r))
+		c, err := h.svc.authenticateProfile(r.Context(), fs, ps, passive(r))
 		if err != nil {
 			h.writeError(w, r, err)
 			return

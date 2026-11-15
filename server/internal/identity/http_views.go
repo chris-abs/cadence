@@ -23,7 +23,7 @@ func familyView(f identitydb.Family) api.Family {
 }
 
 // profileSummaryView is the picker view. It never carries contact details.
-func profileSummaryView(p ProfileItem) api.ProfileSummary {
+func profileSummaryView(p profileItem) api.ProfileSummary {
 	pr := p.Profile
 	return api.ProfileSummary{
 		Id: pr.ID.String(), Name: pr.Name, Role: api.Role(pr.Role), IsOwner: pr.IsOwner,
@@ -32,7 +32,7 @@ func profileSummaryView(p ProfileItem) api.ProfileSummary {
 	}
 }
 
-func profileSummaries(items []ProfileItem) []api.ProfileSummary {
+func profileSummaries(items []profileItem) []api.ProfileSummary {
 	out := make([]api.ProfileSummary, len(items))
 	for i, p := range items {
 		out[i] = profileSummaryView(p)
@@ -43,7 +43,7 @@ func profileSummaries(items []ProfileItem) []api.ProfileSummary {
 // profileView is the full view. Contact fields are visible to the profile
 // itself and to PARENTs; for anyone else they are null, so a CHILD cannot
 // tell whether another profile has one (spec §5.1).
-func profileView(p ProfileItem, viewer authz.Subject) api.Profile {
+func profileView(p profileItem, viewer authz.Subject) api.Profile {
 	pr := p.Profile
 	v := api.Profile{
 		Id: pr.ID.String(), Name: pr.Name, Role: api.Role(pr.Role), IsOwner: pr.IsOwner,
@@ -57,16 +57,16 @@ func profileView(p ProfileItem, viewer authz.Subject) api.Profile {
 	return v
 }
 
-func meView(m Me) api.Me {
-	c := m.Caller
+func meView(m meResult) api.Me {
+	c := m.session
 	mods := c.Subject.EnabledModules()
 	modules := make([]api.Module, len(mods))
 	for i, mod := range mods {
-		modules[i] = moduleView(ModuleItem{Module: mod, Enabled: true})
+		modules[i] = moduleView(moduleItem{Module: mod, Enabled: true})
 	}
 	return api.Me{
-		Profile:     profileView(ProfileItem{Profile: c.Profile, LockedUntil: c.LockedUntil}, c.Subject),
-		Family:      familySummaryView(c.Device.Family),
+		Profile:     profileView(profileItem{Profile: c.Profile, LockedUntil: c.LockedUntil}, c.Subject),
+		Family:      familySummaryView(c.device.Family),
 		Permissions: c.Subject.Permissions(),
 		Modules:     modules,
 		PinAdvised:  m.PinAdvised,
@@ -74,11 +74,11 @@ func meView(m Me) api.Me {
 	}
 }
 
-func moduleView(m ModuleItem) api.Module {
+func moduleView(m moduleItem) api.Module {
 	return api.Module{Id: m.Module.ID, Name: m.Module.Name, Description: m.Module.Description, Enabled: m.Enabled}
 }
 
-func deviceView(d DeviceItem) api.DeviceSession {
+func deviceView(d deviceItem) api.DeviceSession {
 	v := api.DeviceSession{
 		Id: d.Row.ID.String(), DeviceName: d.Row.DeviceName, UserAgent: d.Row.UserAgent,
 		CreatedAt: d.Row.CreatedAt, LastSeenAt: d.Row.LastSeenAt, Current: d.Current,

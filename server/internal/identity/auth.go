@@ -19,8 +19,8 @@ import (
 // registrationLockKey names the advisory lock that serialises registrations.
 const registrationLockKey = 0x63616465 // "cade"
 
-// RegistrationOpen reports whether a new family may register now (§6.1).
-func (s *Service) RegistrationOpen(ctx context.Context) (bool, error) {
+// registrationOpen reports whether a new family may register now (§6.1).
+func (s *Service) registrationOpen(ctx context.Context) (bool, error) {
 	switch s.registration {
 	case RegistrationOpen:
 		return true, nil
@@ -48,8 +48,11 @@ type RegisterInput struct {
 type SignedIn struct {
 	FamilyToken  string // empty when the family session was not replaced
 	ProfileToken string
-	Caller       Caller
+	session      callerSession
 }
+
+// Caller is the signed-in caller as other domains see it.
+func (s SignedIn) Caller() Caller { return s.session.public() }
 
 // Register creates a family, its owner, and signs this device in as the owner,
 // all in one transaction under an advisory lock (R10).
@@ -135,8 +138,8 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 		if err != nil {
 			return err
 		}
-		out = SignedIn{FamilyToken: fsToken, ProfileToken: psToken, Caller: Caller{
-			Device: Device{SessionID: fsID, Family: family}, SessionID: psID, ExpiresAt: expires,
+		out = SignedIn{FamilyToken: fsToken, ProfileToken: psToken, session: callerSession{
+			device: deviceSession{SessionID: fsID, Family: family}, SessionID: psID, ExpiresAt: expires,
 			Profile: owner, Subject: subject,
 		}}
 		return nil
@@ -144,30 +147,30 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 	if err != nil {
 		return SignedIn{}, err
 	}
-	s.audit.event(ctx, evFamilyRegistered, familyAttr(familyID), profileAttr(ownerID), sessionAttr(out.Caller.Device.SessionID))
+	s.audit.event(ctx, evFamilyRegistered, familyAttr(familyID), profileAttr(ownerID), sessionAttr(out.session.device.SessionID))
 	return out, nil
 }
 
-// LoginInput is a login request.
-type LoginInput struct {
+// loginInput is a login request.
+type loginInput struct {
 	Email, Password                         string
 	DeviceName                              *string
 	UserAgent, ClientIP, CurrentDeviceToken string
 }
 
-// LoggedIn is a successful login: the new family-session token and what the
+// loggedIn is a successful login: the new family-session token and what the
 // picker needs.
-type LoggedIn struct {
+type loggedIn struct {
 	Token    string
-	Device   Device
-	Profiles []ProfileItem
+	device   deviceSession
+	Profiles []profileItem
 }
 
-// Login signs this device in to a family. Unknown email and wrong password
+// login signs this device in to a family. Unknown email and wrong password
 // cost the same bcrypt time and return the same ErrInvalidCredentials (§6.3).
-func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
+func (s *Service) login(ctx context.Context, in loginInput) (loggedIn, error) {
 	if ok, wait := s.limits.loginPerIP.Allow(in.ClientIP); !ok {
-		return LoggedIn{}, s.rateLimited(ctx, "login_per_ip", wait)
+		return loggedIn{}, s.rateLimited(ctx, "login_per_ip", wait)
 	}
 	fe := fieldErrors{}
 	email := strings.ToLower(strings.TrimSpace(in.Email))
@@ -186,23 +189,23 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
 	deviceName, msg := normalizeDeviceName(in.DeviceName)
 	fe.add("deviceName", msg)
 	if err := fe.err(); err != nil {
-		return LoggedIn{}, err
+		return loggedIn{}, err
 	}
 	if ok, wait := s.limits.loginPerEmail.Check(email); !ok {
-		return LoggedIn{}, s.rateLimited(ctx, "login_per_email", wait)
+		return loggedIn{}, s.rateLimited(ctx, "login_per_email", wait)
 	}
 
 	family, reason, err := s.checkCredentials(ctx, email, in.Password)
 	if err != nil {
-		return LoggedIn{}, err
+		return loggedIn{}, err
 	}
 	if reason != "" {
 		s.limits.loginPerEmail.Fail(email)
 		s.audit.event(ctx, evLoginFailed, slog.String("reason", reason))
-		return LoggedIn{}, ErrInvalidCredentials
+		return loggedIn{}, ErrInvalidCredentials
 	}
 
-	var out LoggedIn
+	var out loggedIn
 	err = s.inTx(ctx, func(q *identitydb.Queries) error {
 		if err := s.dropDevice(ctx, q, in.CurrentDeviceToken); err != nil {
 			return err
@@ -215,13 +218,13 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
 		if err != nil {
 			return err
 		}
-		out = LoggedIn{Token: token, Device: Device{SessionID: id, Family: family}, Profiles: profiles}
+		out = loggedIn{Token: token, device: deviceSession{SessionID: id, Family: family}, Profiles: profiles}
 		return nil
 	})
 	if err != nil {
-		return LoggedIn{}, err
+		return loggedIn{}, err
 	}
-	s.audit.event(ctx, evLoginSucceeded, familyAttr(family.ID), sessionAttr(out.Device.SessionID))
+	s.audit.event(ctx, evLoginSucceeded, familyAttr(family.ID), sessionAttr(out.device.SessionID))
 	return out, nil
 }
 
@@ -272,16 +275,16 @@ func (s *Service) dropDevice(ctx context.Context, q *identitydb.Queries, token s
 	return nil
 }
 
-// Logout signs this device out. It is idempotent: an unknown or missing
+// logout signs this device out. It is idempotent: an unknown or missing
 // token is not an error.
-func (s *Service) Logout(ctx context.Context, token string) error {
+func (s *Service) logout(ctx context.Context, token string) error {
 	return s.dropDevice(ctx, s.q, token)
 }
 
-// SelectProfile switches the device to a profile, checking its PIN if it has
+// selectProfile switches the device to a profile, checking its PIN if it has
 // one. Wrong PINs count towards the profile's lockout and are committed even
 // though the call fails.
-func (s *Service) SelectProfile(ctx context.Context, device Device, profileID uuid.UUID, pin *string) (SignedIn, error) {
+func (s *Service) selectProfile(ctx context.Context, device deviceSession, profileID uuid.UUID, pin *string) (SignedIn, error) {
 	if ok, wait := s.limits.selectPerDevice.Allow(device.SessionID.String()); !ok {
 		return SignedIn{}, s.rateLimited(ctx, "select_per_device", wait, familyAttr(device.Family.ID), sessionAttr(device.SessionID))
 	}
@@ -316,8 +319,8 @@ func (s *Service) SelectProfile(ctx context.Context, device Device, profileID uu
 		if err != nil {
 			return err
 		}
-		out = SignedIn{ProfileToken: token, Caller: Caller{
-			Device: device, SessionID: psID, ExpiresAt: expires, Profile: profile, Subject: subject,
+		out = SignedIn{ProfileToken: token, session: callerSession{
+			device: device, SessionID: psID, ExpiresAt: expires, Profile: profile, Subject: subject,
 		}}
 		return nil
 	})
@@ -327,38 +330,38 @@ func (s *Service) SelectProfile(ctx context.Context, device Device, profileID uu
 	if verdict != nil {
 		return SignedIn{}, verdict
 	}
-	s.audit.event(ctx, evProfileSelected, familyAttr(device.Family.ID), profileAttr(profileID), sessionAttr(out.Caller.SessionID))
+	s.audit.event(ctx, evProfileSelected, familyAttr(device.Family.ID), profileAttr(profileID), sessionAttr(out.session.SessionID))
 	return out, nil
 }
 
-// Lock deletes this device's profile session (back to the picker).
-func (s *Service) Lock(ctx context.Context, device Device) error {
+// lock deletes this device's profile session (back to the picker).
+func (s *Service) lock(ctx context.Context, device deviceSession) error {
 	if err := s.q.DeleteDeviceProfileSession(ctx, &device.SessionID); err != nil {
 		return fmt.Errorf("lock device: %w", err)
 	}
 	return nil
 }
 
-// ProfileItem is a profile with its current lockout, if any.
-type ProfileItem struct {
+// profileItem is a profile with its current lockout, if any.
+type profileItem struct {
 	Profile     identitydb.Profile
 	LockedUntil *time.Time
 }
 
-// FamilyProfiles is the picker for a device.
-func (s *Service) FamilyProfiles(ctx context.Context, familyID uuid.UUID) ([]ProfileItem, error) {
+// familyProfiles is the picker for a device.
+func (s *Service) familyProfiles(ctx context.Context, familyID uuid.UUID) ([]profileItem, error) {
 	return s.listProfiles(ctx, s.q, familyID)
 }
 
-func (s *Service) listProfiles(ctx context.Context, q *identitydb.Queries, familyID uuid.UUID) ([]ProfileItem, error) {
+func (s *Service) listProfiles(ctx context.Context, q *identitydb.Queries, familyID uuid.UUID) ([]profileItem, error) {
 	rows, err := q.ListProfiles(ctx, familyID)
 	if err != nil {
 		return nil, fmt.Errorf("list profiles: %w", err)
 	}
 	now := s.now()
-	items := make([]ProfileItem, len(rows))
+	items := make([]profileItem, len(rows))
 	for i, r := range rows {
-		items[i] = ProfileItem{Profile: r.Profile, LockedUntil: activeLock(r.LockedUntil, now)}
+		items[i] = profileItem{Profile: r.Profile, LockedUntil: activeLock(r.LockedUntil, now)}
 	}
 	return items, nil
 }

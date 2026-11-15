@@ -60,6 +60,30 @@ func TestDomainDBIsPrivate(t *testing.T) {
 	}
 }
 
+// TestIdentityAPIHidesRows: nothing in identity's exported API (what `go doc`
+// shows) mentions its generated row types, so other domains cannot come to
+// depend on identity's tables through it.
+func TestIdentityAPIHidesRows(t *testing.T) {
+	t.Parallel()
+	out, err := exec.CommandContext(t.Context(), "go", "doc", "-all", "../identity").CombinedOutput()
+	if err != nil {
+		t.Fatalf("go doc: %v\n%s", err, out)
+	}
+	if strings.Contains(string(out), "identitydb") {
+		t.Errorf("identity's exported API exposes identitydb types:\n%s", grepLines(string(out), "identitydb"))
+	}
+}
+
+func grepLines(s, sub string) string {
+	var hits []string
+	for line := range strings.SplitSeq(s, "\n") {
+		if strings.Contains(line, sub) {
+			hits = append(hits, line)
+		}
+	}
+	return strings.Join(hits, "\n")
+}
+
 // TestSQLCOutputIsDomainInternal: every sqlc entry generates into
 // internal/<domain>/internal/<domain>db and reads queries from
 // db/queries/<domain>, so the internal/ rule covers every domain.

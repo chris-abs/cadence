@@ -81,16 +81,16 @@ func (s *Service) verifyPIN(ctx context.Context, q *identitydb.Queries, p identi
 	return &RetryError{Locked: true, After: lock}, nil
 }
 
-// SetPINInput is PUT /profiles/{id}/pin. Pin nil removes the PIN.
-type SetPINInput struct {
+// setPINInput is PUT /profiles/{id}/pin. Pin nil removes the PIN.
+type setPINInput struct {
 	Pin        *string
 	CurrentPin *string
 	Password   *string
 }
 
-// SetPIN sets, changes, removes or resets a profile's PIN with the proof the
+// setPIN sets, changes, removes or resets a profile's PIN with the proof the
 // spec §2 table requires for this actor and target.
-func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID, in SetPINInput) error {
+func (s *Service) setPIN(ctx context.Context, caller callerSession, targetID uuid.UUID, in setPINInput) error {
 	fe := fieldErrors{}
 	if in.Pin != nil {
 		fe.add("pin", checkPIN(*in.Pin))
@@ -108,7 +108,7 @@ func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID,
 		by      string
 	)
 	err := s.inTx(ctx, func(q *identitydb.Queries) error {
-		target, err := q.GetProfileForUpdate(ctx, identitydb.GetProfileForUpdateParams{FamilyID: caller.Device.Family.ID, ID: targetID})
+		target, err := q.GetProfileForUpdate(ctx, identitydb.GetProfileForUpdateParams{FamilyID: caller.device.Family.ID, ID: targetID})
 		if err != nil {
 			return notFound(err, "load profile")
 		}
@@ -164,7 +164,7 @@ func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID,
 	if verdict != nil {
 		return verdict
 	}
-	s.audit.event(ctx, evPinChanged, familyAttr(caller.Device.Family.ID), profileAttr(targetID),
+	s.audit.event(ctx, evPinChanged, familyAttr(caller.device.Family.ID), profileAttr(targetID),
 		actorAttr(caller.Profile.ID), slog.String("by", by))
 	return nil
 }
@@ -172,7 +172,7 @@ func (s *Service) SetPIN(ctx context.Context, caller Caller, targetID uuid.UUID,
 // proveOwnPIN checks the proof for changing one's own existing PIN: the
 // current PIN (counted towards lockout), or the family password for a PARENT
 // who forgot theirs [I5].
-func (s *Service) proveOwnPIN(ctx context.Context, q *identitydb.Queries, caller Caller, target identitydb.Profile, in SetPINInput) (verdict, err error) {
+func (s *Service) proveOwnPIN(ctx context.Context, q *identitydb.Queries, caller callerSession, target identitydb.Profile, in setPINInput) (verdict, err error) {
 	switch {
 	case in.CurrentPin != nil:
 		return s.verifyPIN(ctx, q, target, *in.CurrentPin)
@@ -180,7 +180,7 @@ func (s *Service) proveOwnPIN(ctx context.Context, q *identitydb.Queries, caller
 		if caller.Subject.Role != authz.Parent {
 			return nil, ErrForbidden
 		}
-		return nil, s.verifyFamilyPassword(ctx, caller.Device.Family, *in.Password)
+		return nil, s.verifyFamilyPassword(ctx, caller.device.Family, *in.Password)
 	default:
 		return nil, &ValidationError{Fields: map[string]string{"currentPin": "Enter your current PIN."}}
 	}

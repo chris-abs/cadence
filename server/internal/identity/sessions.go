@@ -30,20 +30,62 @@ const (
 	kindProfile = "profile"
 )
 
-// Device is a validated family session: a signed-in device.
-type Device struct {
+// Family is the caller's family as other domains see it.
+type Family struct {
+	ID              uuid.UUID
+	Name            string
+	AutoLockMinutes int
+}
+
+// Profile is the calling profile as other domains see it.
+type Profile struct {
+	ID       uuid.UUID
+	FamilyID uuid.UUID
+	Name     string
+	Role     authz.Role
+	IsOwner  bool
+	Timezone string // IANA name, e.g. for "today" in the caller's zone
+}
+
+// Caller is an authenticated profile-session caller, as exported to feature
+// modules. It holds no database rows, hashes or session ids; Subject answers
+// permission checks.
+type Caller struct {
+	Family  Family
+	Profile Profile
+	Subject authz.Subject
+}
+
+// deviceSession is a validated family session: a signed-in device. It keeps
+// the family row (password hash included) for re-authentication, so it never
+// leaves this package.
+type deviceSession struct {
 	SessionID uuid.UUID
 	Family    identitydb.Family
 }
 
-// Caller is a validated profile session on its own device's family session.
-type Caller struct {
-	Device      Device
+// callerSession is a validated profile session on its own device's family
+// session: the package-internal form of Caller.
+type callerSession struct {
+	device      deviceSession
 	SessionID   uuid.UUID
 	ExpiresAt   time.Time
 	Profile     identitydb.Profile
 	LockedUntil *time.Time
 	Subject     authz.Subject
+}
+
+// public is the caller as other domains may see it.
+func (c callerSession) public() Caller {
+	f, p := c.device.Family, c.Profile
+	return Caller{
+		Family: Family{ID: f.ID, Name: f.Name, AutoLockMinutes: int(f.AutoLockMinutes)},
+		Profile: Profile{
+			ID: p.ID, FamilyID: p.FamilyID, Name: p.Name, Role: authz.Role(p.Role),
+			IsOwner: p.IsOwner, Timezone: p.Timezone,
+		},
+		Subject: c.Subject,
+	}
 }
 
 // newID returns a UUIDv7: time-ordered, so primary-key indexes stay compact.
@@ -129,74 +171,74 @@ func (s *Service) renew(ctx context.Context, w window, idle time.Duration, passi
 	return nil
 }
 
-// AuthenticateDevice validates a family-session cookie value: one query,
+// authenticateDevice validates a family-session cookie value: one query,
 // plus a renewal write at most once a minute.
-func (s *Service) AuthenticateDevice(ctx context.Context, token string, passive bool) (Device, error) {
+func (s *Service) authenticateDevice(ctx context.Context, token string, passive bool) (deviceSession, error) {
 	hash, ok := hashToken(token)
 	if !ok {
-		return Device{}, ErrFamilySessionRequired
+		return deviceSession{}, ErrFamilySessionRequired
 	}
 	row, err := s.q.GetFamilySession(ctx, hash)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return Device{}, ErrFamilySessionRequired
+		return deviceSession{}, ErrFamilySessionRequired
 	}
 	if err != nil {
-		return Device{}, fmt.Errorf("load family session: %w", err)
+		return deviceSession{}, fmt.Errorf("load family session: %w", err)
 	}
 	w := window{id: row.Session.ID, lastSeen: row.Session.LastSeenAt, idle: row.Session.IdleExpiresAt, absolute: row.Session.ExpiresAt}
 	if w.expired(s.now()) {
-		return Device{}, s.expire(ctx, w.id, ErrFamilySessionRequired)
+		return deviceSession{}, s.expire(ctx, w.id, ErrFamilySessionRequired)
 	}
 	if err := s.renew(ctx, w, FamilyIdleTimeout, passive); err != nil {
-		return Device{}, err
+		return deviceSession{}, err
 	}
-	return Device{SessionID: row.Session.ID, Family: row.Family}, nil
+	return deviceSession{SessionID: row.Session.ID, Family: row.Family}, nil
 }
 
-// AuthenticateProfile validates a profile session together with the family
+// authenticateProfile validates a profile session together with the family
 // session of the same request (R1, R2). The success path is one query for
 // session + device + profile + role + family and one for module settings;
 // renewal writes happen at most once a minute per session.
-func (s *Service) AuthenticateProfile(ctx context.Context, familyToken, profileToken string, passive bool) (Caller, error) {
+func (s *Service) authenticateProfile(ctx context.Context, familyToken, profileToken string, passive bool) (callerSession, error) {
 	fsHash, ok := hashToken(familyToken)
 	if !ok {
-		return Caller{}, ErrFamilySessionRequired
+		return callerSession{}, ErrFamilySessionRequired
 	}
 	psHash, ok := hashToken(profileToken)
 	if !ok {
-		return Caller{}, s.classifyMiss(ctx, familyToken)
+		return callerSession{}, s.classifyMiss(ctx, familyToken)
 	}
 	row, err := s.q.GetProfileSession(ctx, identitydb.GetProfileSessionParams{FamilyTokenHash: fsHash, ProfileTokenHash: psHash})
 	if errors.Is(err, pgx.ErrNoRows) {
-		return Caller{}, s.classifyMiss(ctx, familyToken)
+		return callerSession{}, s.classifyMiss(ctx, familyToken)
 	}
 	if err != nil {
-		return Caller{}, fmt.Errorf("load profile session: %w", err)
+		return callerSession{}, fmt.Errorf("load profile session: %w", err)
 	}
 
 	now := s.now()
 	device := window{id: *row.Session.FamilySessionID, lastSeen: row.DeviceLastSeenAt, idle: row.DeviceIdleExpiresAt, absolute: row.DeviceExpiresAt}
 	if device.expired(now) {
-		return Caller{}, s.expire(ctx, device.id, ErrFamilySessionRequired)
+		return callerSession{}, s.expire(ctx, device.id, ErrFamilySessionRequired)
 	}
 	profile := window{id: row.Session.ID, lastSeen: row.Session.LastSeenAt, idle: row.Session.IdleExpiresAt, absolute: row.Session.ExpiresAt}
 	if profile.expired(now) {
-		return Caller{}, s.expire(ctx, profile.id, ErrProfileSessionRequired)
+		return callerSession{}, s.expire(ctx, profile.id, ErrProfileSessionRequired)
 	}
 	// A profile request counts as activity on its device too.
 	if err := s.renew(ctx, device, FamilyIdleTimeout, passive); err != nil {
-		return Caller{}, err
+		return callerSession{}, err
 	}
 	if err := s.renew(ctx, profile, ProfileIdleTimeout, passive); err != nil {
-		return Caller{}, err
+		return callerSession{}, err
 	}
 
 	settings, err := s.moduleSettings(ctx, s.q, row.Family.ID)
 	if err != nil {
-		return Caller{}, err
+		return callerSession{}, err
 	}
-	return Caller{
-		Device:      Device{SessionID: device.id, Family: row.Family},
+	return callerSession{
+		device:      deviceSession{SessionID: device.id, Family: row.Family},
 		SessionID:   row.Session.ID,
 		ExpiresAt:   row.Session.ExpiresAt,
 		Profile:     row.Profile,
@@ -209,7 +251,7 @@ func (s *Service) AuthenticateProfile(ctx context.Context, familyToken, profileT
 // goes to login when the device itself is signed out, else to the picker.
 // It runs only on the failure path.
 func (s *Service) classifyMiss(ctx context.Context, familyToken string) error {
-	if _, err := s.AuthenticateDevice(ctx, familyToken, true); err != nil {
+	if _, err := s.authenticateDevice(ctx, familyToken, true); err != nil {
 		if errors.Is(err, ErrFamilySessionRequired) {
 			return ErrFamilySessionRequired
 		}

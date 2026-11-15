@@ -9,38 +9,38 @@ import (
 	"github.com/chris-abs/cadence/server/internal/identity/internal/identitydb"
 )
 
-// ModuleItem is a catalogue module with the family's effective state.
-type ModuleItem struct {
+// moduleItem is a catalogue module with the family's effective state.
+type moduleItem struct {
 	Module  authz.Module
 	Enabled bool
 }
 
-// ListModules lists the whole catalogue with this family's state. It uses the
+// listModules lists the whole catalogue with this family's state. It uses the
 // settings the middleware already loaded, so it costs no query.
-func (s *Service) ListModules(caller Caller) []ModuleItem {
+func (s *Service) listModules(caller callerSession) []moduleItem {
 	mods := s.catalogue.Modules()
-	items := make([]ModuleItem, len(mods))
+	items := make([]moduleItem, len(mods))
 	for i, m := range mods {
-		items[i] = ModuleItem{Module: m, Enabled: caller.Subject.ModuleEnabled(m.ID)}
+		items[i] = moduleItem{Module: m, Enabled: caller.Subject.ModuleEnabled(m.ID)}
 	}
 	return items
 }
 
-// SetModuleEnabled enables or disables a module for the family (PARENT).
+// setModuleEnabled enables or disables a module for the family (PARENT).
 // Unknown modules are not found.
-func (s *Service) SetModuleEnabled(ctx context.Context, caller Caller, id string, enabled bool) (ModuleItem, error) {
+func (s *Service) setModuleEnabled(ctx context.Context, caller callerSession, id string, enabled bool) (moduleItem, error) {
 	if !caller.Subject.Can(authz.FamilyModulesManage) {
-		return ModuleItem{}, ErrForbidden
+		return moduleItem{}, ErrForbidden
 	}
 	m, ok := s.catalogue.Lookup(id)
 	if !ok {
-		return ModuleItem{}, ErrNotFound
+		return moduleItem{}, ErrNotFound
 	}
-	familyID := caller.Device.Family.ID
+	familyID := caller.device.Family.ID
 	if err := s.q.SetFamilyModule(ctx, identitydb.SetFamilyModuleParams{FamilyID: familyID, ModuleID: id, Enabled: enabled}); err != nil {
-		return ModuleItem{}, fmt.Errorf("set module: %w", err)
+		return moduleItem{}, fmt.Errorf("set module: %w", err)
 	}
 	s.audit.event(ctx, evModuleToggled, familyAttr(familyID), actorAttr(caller.Profile.ID),
 		slog.String("module", id), slog.Bool("enabled", enabled))
-	return ModuleItem{Module: m, Enabled: enabled}, nil
+	return moduleItem{Module: m, Enabled: enabled}, nil
 }
