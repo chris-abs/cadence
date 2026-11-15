@@ -13,6 +13,7 @@ import (
 	"github.com/chris-abs/cadence/server/internal/platform/audit"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
 	"github.com/chris-abs/cadence/server/internal/platform/ratelimit"
+	"github.com/chris-abs/cadence/server/internal/platform/validate"
 )
 
 type Service struct {
@@ -54,7 +55,7 @@ func (s *Service) Update(ctx context.Context, caller models.Caller, name string,
 	if !caller.Can(models.FamilyEdit) {
 		return Family{}, models.ErrForbidden
 	}
-	fe := models.FieldErrors{}
+	fe := validate.Fields{}
 	name, msg := NormalizeName(name)
 	fe.Add("name", msg)
 	fe.Add("autoLockMinutes", checkAutoLock(autoLockMinutes))
@@ -68,7 +69,7 @@ func (s *Service) ChangeEmail(ctx context.Context, caller models.Caller, email, 
 	if !caller.Can(models.FamilyAccountManage) {
 		return Family{}, models.ErrForbidden
 	}
-	email, msg := models.NormalizeEmail(email)
+	email, msg := validate.Email(email)
 	if msg != "" {
 		return Family{}, models.Invalid("email", msg)
 	}

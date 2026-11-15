@@ -24,6 +24,7 @@ import (
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
 	"github.com/chris-abs/cadence/server/internal/platform/ratelimit"
+	"github.com/chris-abs/cadence/server/internal/platform/validate"
 )
 
 var ErrUnknownFamily = errors.New("no family has that email")
@@ -94,8 +95,8 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 	if ok, wait := s.registerPerIP.Allow(in.ClientIP); !ok {
 		return SignedIn{}, s.rateLimited(ctx, "register_per_ip", wait)
 	}
-	fe := models.FieldErrors{}
-	email, msg := models.NormalizeEmail(in.Email)
+	fe := validate.Fields{}
+	email, msg := validate.Email(in.Email)
 	fe.Add("email", msg)
 	fe.Add("password", checkPassword(in.Password))
 	familyName, msg := family.NormalizeName(in.FamilyName)
@@ -110,11 +111,11 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (SignedIn, err
 	if err != nil {
 		return SignedIn{}, err
 	}
-	familyID, err := models.NewID()
+	familyID, err := db.NewID()
 	if err != nil {
 		return SignedIn{}, err
 	}
-	ownerID, err := models.NewID()
+	ownerID, err := db.NewID()
 	if err != nil {
 		return SignedIn{}, err
 	}
@@ -170,12 +171,12 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (LoggedIn, error) {
 	if ok, wait := s.loginPerIP.Allow(in.ClientIP); !ok {
 		return LoggedIn{}, s.rateLimited(ctx, "login_per_ip", wait)
 	}
-	fe := models.FieldErrors{}
+	fe := validate.Fields{}
 	email := strings.ToLower(strings.TrimSpace(in.Email))
 	switch {
 	case email == "":
 		fe.Add("email", "Enter your email address.")
-	case len(email) > models.MaxEmailLength:
+	case len(email) > validate.MaxEmailLength:
 		fe.Add("email", "Use at most 254 characters.")
 	}
 	switch {
@@ -324,7 +325,7 @@ func (s *Service) Me(ctx context.Context, caller models.Caller) (Me, error) {
 }
 
 func (s *Service) newSession() (uuid.UUID, string, []byte, error) {
-	id, err := models.NewID()
+	id, err := db.NewID()
 	if err != nil {
 		return uuid.UUID{}, "", nil, err
 	}
@@ -550,7 +551,7 @@ func (s *Service) ChangePassword(ctx context.Context, caller models.Caller, curr
 }
 
 func (s *Service) ResetPassword(ctx context.Context, email string) (string, error) {
-	email, msg := models.NormalizeEmail(email)
+	email, msg := validate.Email(email)
 	if msg != "" {
 		return "", fmt.Errorf("invalid email: %s", msg)
 	}

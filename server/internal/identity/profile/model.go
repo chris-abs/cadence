@@ -8,6 +8,7 @@ import (
 
 	"github.com/chris-abs/cadence/server/internal/api"
 	"github.com/chris-abs/cadence/server/internal/models"
+	"github.com/chris-abs/cadence/server/internal/platform/validate"
 )
 
 const (
@@ -69,8 +70,8 @@ type PINInput struct {
 	Password   *string
 }
 
-func ValidateDisplay(fe models.FieldErrors, prefix, name, colour string, avatar *string, timezone string) string {
-	name, msg := models.NormalizeName(name, maxNameChars)
+func ValidateDisplay(fe validate.Fields, prefix, name, colour string, avatar *string, timezone string) string {
+	name, msg := validate.Name(name, maxNameChars)
 	fe.Add(prefix+"name", msg)
 	fe.Add(prefix+"colour", checkColour(colour))
 	fe.Add(prefix+"avatar", checkAvatar(avatar))
@@ -120,7 +121,7 @@ func normalizeContactEmail(raw *string) (*string, string) {
 	if raw == nil {
 		return nil, ""
 	}
-	email, msg := models.NormalizeEmail(*raw)
+	email, msg := validate.Email(*raw)
 	if msg != "" {
 		return nil, msg
 	}

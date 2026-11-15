@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"slices"
 	"time"
 
@@ -64,12 +63,4 @@ func WithCaller(ctx context.Context, c Caller) context.Context {
 func CallerFrom(ctx context.Context) (Caller, bool) {
 	c, ok := ctx.Value(callerKey{}).(Caller)
 	return c, ok
-}
-
-func NewID() (uuid.UUID, error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return uuid.UUID{}, fmt.Errorf("new uuid: %w", err)
-	}
-	return id, nil
 }

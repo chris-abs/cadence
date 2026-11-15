@@ -12,6 +12,7 @@ import (
 	"github.com/chris-abs/cadence/server/internal/api"
 	"github.com/chris-abs/cadence/server/internal/models"
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
+	"github.com/chris-abs/cadence/server/internal/platform/validate"
 )
 
 type Handler struct {
@@ -75,7 +76,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) error {
 	if err := httpx.DecodeJSON(w, r, &body, 0); err != nil {
 		return err
 	}
-	fe := models.FieldErrors{}
+	fe := validate.Fields{}
 	if !body.Avatar.Set {
 		fe.Add("avatar", "Send avatar, or null for initials.")
 	}

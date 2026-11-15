@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/chris-abs/cadence/server/internal/models"
+	"github.com/chris-abs/cadence/server/internal/platform/validate"
 )
 
 const maxNameChars = 60
@@ -34,7 +35,7 @@ type ModuleState struct {
 }
 
 func NormalizeName(raw string) (string, string) {
-	return models.NormalizeName(raw, maxNameChars)
+	return validate.Name(raw, maxNameChars)
 }
 
 func checkAutoLock(minutes int) string {

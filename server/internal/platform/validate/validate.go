@@ -1,4 +1,4 @@
-package models
+package validate
 
 import (
 	"fmt"
@@ -6,11 +6,13 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/chris-abs/cadence/server/internal/models"
 )
 
-type FieldErrors map[string]string
+type Fields map[string]string
 
-func (f FieldErrors) Add(field, msg string) {
+func (f Fields) Add(field, msg string) {
 	if msg == "" {
 		return
 	}
@@ -19,16 +21,16 @@ func (f FieldErrors) Add(field, msg string) {
 	}
 }
 
-func (f FieldErrors) Err() error {
+func (f Fields) Err() error {
 	if len(f) == 0 {
 		return nil
 	}
-	return &ValidationError{Fields: f}
+	return &models.ValidationError{Fields: f}
 }
 
 const MaxEmailLength = 254
 
-func NormalizeEmail(raw string) (string, string) {
+func Email(raw string) (string, string) {
 	email := strings.ToLower(strings.TrimSpace(raw))
 	switch {
 	case email == "":
@@ -43,7 +45,7 @@ func NormalizeEmail(raw string) (string, string) {
 	return email, ""
 }
 
-func NormalizeName(raw string, maxChars int) (string, string) {
+func Name(raw string, maxChars int) (string, string) {
 	name := strings.TrimSpace(raw)
 	switch n := utf8.RuneCountInString(name); {
 	case n == 0:

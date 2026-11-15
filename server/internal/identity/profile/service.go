@@ -13,6 +13,7 @@ import (
 	"github.com/chris-abs/cadence/server/internal/platform/audit"
 	"github.com/chris-abs/cadence/server/internal/platform/db"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
+	"github.com/chris-abs/cadence/server/internal/platform/validate"
 )
 
 type PasswordVerifier interface {
@@ -80,7 +81,7 @@ func (s *Service) Create(ctx context.Context, caller models.Caller, in Input) (P
 	if in.Timezone != nil {
 		tz = *in.Timezone
 	}
-	fe := models.FieldErrors{}
+	fe := validate.Fields{}
 	name := ValidateDisplay(fe, "", in.Name, in.Colour, in.Avatar, tz)
 	contact, msg := normalizeContactEmail(in.ContactEmail)
 	fe.Add("contactEmail", msg)
@@ -99,7 +100,7 @@ func (s *Service) Create(ctx context.Context, caller models.Caller, in Input) (P
 		}
 		pinHash = &h
 	}
-	id, err := models.NewID()
+	id, err := db.NewID()
 	if err != nil {
 		return Profile{}, err
 	}
@@ -141,7 +142,7 @@ func (s *Service) Update(ctx context.Context, caller models.Caller, id uuid.UUID
 	if in.Timezone != nil {
 		tz = *in.Timezone
 	}
-	fe := models.FieldErrors{}
+	fe := validate.Fields{}
 	name := ValidateDisplay(fe, "", in.Name, in.Colour, in.Avatar, tz)
 	contact, msg := normalizeContactEmail(in.ContactEmail)
 	fe.Add("contactEmail", msg)
@@ -321,7 +322,7 @@ func (s *Service) checkPIN(ctx context.Context, r *Repository, p Profile, pin st
 }
 
 func (s *Service) SetPIN(ctx context.Context, caller models.Caller, targetID uuid.UUID, in PINInput) error {
-	fe := models.FieldErrors{}
+	fe := validate.Fields{}
 	if in.Pin != nil {
 		fe.Add("pin", checkPIN(*in.Pin))
 	}
