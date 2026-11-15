@@ -59,11 +59,14 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 5. Never edit `legacy/`, generated files, or a migration that has already been merged.
    Schema changes are always a new migration.
 6. Change `api/openapi.yaml` first, regenerate, then implement both sides.
-7. Every behaviour change comes with a test. Auth rules are tested as a role × action matrix.
+7. Behaviour changes come with tests of core function only: a planned list per domain, one test per behaviour, nothing that adds no functional coverage.
 8. Never run anything against the hosted (Supabase) database or production.
 9. No new dependency without a one-line reason in the PR description.
 
 ## Style
 
 Clear over clever. Small packages and files with one job. Errors are handled, not
-ignored. Comments explain why, not what. Prefer the standard library.
+ignored. Prefer the standard library.
+
+- Comments: none by default; one line only where the reason cannot be read from the code.
+- A domain is one package with handler, service, repository and model; never a flat pile of files.
