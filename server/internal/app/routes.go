@@ -100,8 +100,9 @@ func NewHandler(d Deps) (*Handler, error) {
 
 	// Routes are registered relative to /api, matching the contract's
 	// `servers: [{url: /api}]`, so paths here read exactly like openapi.yaml.
-	routes := []identity.Route{{Pattern: "GET /healthz", Handler: health.NewHandler(d.DB, d.Logger)}}
-	routes = append(routes, ident.Routes()...)
+	// Each domain contributes its routes the same way; a new module appends
+	// its Routes() here.
+	routes := slices.Concat(health.NewHandler(d.DB, d.Logger).Routes(), ident.Routes())
 
 	api := http.NewServeMux()
 	patterns := make([]string, 0, len(routes))

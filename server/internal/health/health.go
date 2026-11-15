@@ -33,6 +33,11 @@ func NewHandler(db Pinger, logger *slog.Logger) *Handler {
 	return &Handler{db: db, logger: logger}
 }
 
+// Routes is the health endpoint for the /api mux.
+func (h *Handler) Routes() []httpx.Route {
+	return []httpx.Route{{Pattern: "GET /healthz", Handler: h}}
+}
+
 // ServeHTTP implements GET /api/healthz per api/openapi.yaml (getHealth).
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), pingTimeout)

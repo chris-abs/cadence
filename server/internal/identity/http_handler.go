@@ -37,41 +37,35 @@ func NewHandler(svc *Service, cfg HTTPConfig, logger *slog.Logger) *Handler {
 	return &Handler{svc: svc, cookies: newCookieJar(cfg), proxies: cfg.TrustedProxies, logger: logger, audit: auditor{logger: logger}}
 }
 
-// Route is one pattern for the /api mux, relative to /api.
-type Route struct {
-	Pattern string
-	Handler http.Handler
-}
-
 // Routes lists every identity endpoint of the contract.
-func (h *Handler) Routes() []Route {
-	return []Route{
-		{"GET /auth/registration", h.public(h.registrationStatus)},
-		{"POST /auth/register", h.public(h.register)},
-		{"POST /auth/login", h.public(h.login)},
-		{"POST /auth/logout", h.public(h.logout)},
-		{"GET /auth/session", h.family(h.familySession)},
-		{"POST /auth/profile-session", h.family(h.selectProfile)},
-		{"DELETE /auth/profile-session", h.family(h.lockProfile)},
-		{"GET /auth/sessions", h.profile(h.listSessions)},
-		{"DELETE /auth/sessions/{sessionId}", h.profile(h.revokeSession)},
-		{"POST /auth/sessions/revoke-others", h.profile(h.revokeOtherSessions)},
-		{"GET /me", h.profile(h.me)},
-		{"GET /family", h.profile(h.getFamily)},
-		{"PUT /family", h.profile(h.updateFamily)},
-		{"PUT /family/email", h.profile(h.changeEmail)},
-		{"PUT /family/password", h.profile(h.changePassword)},
-		{"POST /family/owner", h.profile(h.transferOwnership)},
-		{"POST /family/delete", h.profile(h.deleteFamily)},
-		{"GET /profiles", h.family(h.listProfiles)},
-		{"POST /profiles", h.profile(h.createProfile)},
-		{"GET /profiles/{profileId}", h.profile(h.getProfile)},
-		{"PUT /profiles/{profileId}", h.profile(h.updateProfile)},
-		{"DELETE /profiles/{profileId}", h.profile(h.deleteProfile)},
-		{"PUT /profiles/{profileId}/role", h.profile(h.changeRole)},
-		{"PUT /profiles/{profileId}/pin", h.profile(h.setPin)},
-		{"GET /modules", h.profile(h.listModules)},
-		{"PUT /modules/{moduleId}", h.profile(h.setModuleEnabled)},
+func (h *Handler) Routes() []httpx.Route {
+	return []httpx.Route{
+		{Pattern: "GET /auth/registration", Handler: h.public(h.registrationStatus)},
+		{Pattern: "POST /auth/register", Handler: h.public(h.register)},
+		{Pattern: "POST /auth/login", Handler: h.public(h.login)},
+		{Pattern: "POST /auth/logout", Handler: h.public(h.logout)},
+		{Pattern: "GET /auth/session", Handler: h.family(h.familySession)},
+		{Pattern: "POST /auth/profile-session", Handler: h.family(h.selectProfile)},
+		{Pattern: "DELETE /auth/profile-session", Handler: h.family(h.lockProfile)},
+		{Pattern: "GET /auth/sessions", Handler: h.profile(h.listSessions)},
+		{Pattern: "DELETE /auth/sessions/{sessionId}", Handler: h.profile(h.revokeSession)},
+		{Pattern: "POST /auth/sessions/revoke-others", Handler: h.profile(h.revokeOtherSessions)},
+		{Pattern: "GET /me", Handler: h.profile(h.me)},
+		{Pattern: "GET /family", Handler: h.profile(h.getFamily)},
+		{Pattern: "PUT /family", Handler: h.profile(h.updateFamily)},
+		{Pattern: "PUT /family/email", Handler: h.profile(h.changeEmail)},
+		{Pattern: "PUT /family/password", Handler: h.profile(h.changePassword)},
+		{Pattern: "POST /family/owner", Handler: h.profile(h.transferOwnership)},
+		{Pattern: "POST /family/delete", Handler: h.profile(h.deleteFamily)},
+		{Pattern: "GET /profiles", Handler: h.family(h.listProfiles)},
+		{Pattern: "POST /profiles", Handler: h.profile(h.createProfile)},
+		{Pattern: "GET /profiles/{profileId}", Handler: h.profile(h.getProfile)},
+		{Pattern: "PUT /profiles/{profileId}", Handler: h.profile(h.updateProfile)},
+		{Pattern: "DELETE /profiles/{profileId}", Handler: h.profile(h.deleteProfile)},
+		{Pattern: "PUT /profiles/{profileId}/role", Handler: h.profile(h.changeRole)},
+		{Pattern: "PUT /profiles/{profileId}/pin", Handler: h.profile(h.setPin)},
+		{Pattern: "GET /modules", Handler: h.profile(h.listModules)},
+		{Pattern: "PUT /modules/{moduleId}", Handler: h.profile(h.setModuleEnabled)},
 	}
 }
 
