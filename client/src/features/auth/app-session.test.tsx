@@ -1,6 +1,7 @@
 import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { pressKeys } from "@/test/actions";
 import { identity } from "@/test/handlers";
 import { mockApi, mockProfile, standardFamily } from "@/test/mock-api";
 import { recordRequests, renderApp } from "@/test/render-app";
@@ -13,6 +14,17 @@ function signedInAs(name: string, autoLockMinutes = 10) {
     activeProfile: name,
     autoLockMinutes,
   });
+}
+
+/** From the app: lock to the picker, then open `name` (with `pin` if it has one). */
+async function switchTo(name: string, pin?: string) {
+  await userEvent.click(await screen.findByRole("button", { name: "Switch profile" }));
+  await userEvent.click(await screen.findByRole("button", { name: new RegExp(`^${name}`) }));
+  if (pin) {
+    await screen.findByLabelText(`PIN for ${name}`);
+    await pressKeys(pin);
+  }
+  await screen.findByRole("heading", { name: `Hello, ${name}` });
 }
 
 describe("app shell", () => {
@@ -90,6 +102,33 @@ describe("PIN advice", () => {
     await userEvent.click(screen.getByRole("button", { name: "Dismiss" }));
 
     expect(screen.queryByText("Consider setting a PIN")).not.toBeInTheDocument();
+  });
+
+  it("remembers the dismissal for that profile on this device across unlocks", async () => {
+    signedInAs("Jo");
+    renderApp("/");
+    await screen.findByText("Consider setting a PIN");
+    await userEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+
+    await switchTo("Jo");
+
+    expect(screen.queryByText("Consider setting a PIN")).not.toBeInTheDocument();
+  });
+
+  it("shows the advice again if it stops applying and later applies again", async () => {
+    signedInAs("Jo");
+    renderApp("/");
+    await screen.findByText("Consider setting a PIN");
+    await userEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+
+    // Jo sets a PIN (advice no longer applies), then removes it again.
+    mockApi.profile("Jo").pin = "123456";
+    await switchTo("Jo", "123456");
+    expect(screen.queryByText("Consider setting a PIN")).not.toBeInTheDocument();
+    mockApi.profile("Jo").pin = null;
+    await switchTo("Jo");
+
+    expect(await screen.findByText("Consider setting a PIN")).toBeInTheDocument();
   });
 
   it("does not advise a parent who has a PIN, or a child", async () => {

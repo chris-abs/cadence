@@ -36,7 +36,9 @@ export function ProfileSessionLayout() {
         </Can>
       }
       actions={<ProfileMenu me={me} />}
-      notices={<PinAdviceBanner key={me.profile.id} advised={me.pinAdvised} />}
+      notices={
+        <PinAdviceBanner key={me.profile.id} profileId={me.profile.id} advised={me.pinAdvised} />
+      }
     >
       <AutoLock minutes={me.family.autoLockMinutes} />
       <Outlet />
