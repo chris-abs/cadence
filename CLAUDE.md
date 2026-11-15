@@ -53,6 +53,8 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
    Messages follow the owner's style: one lowercase line, `feat:` / `fix:` / `chore:`,
    no scope, no body. Examples: `feat: profile pin lockout`, `fix: session expiry check`,
    `chore: cleanup`. Branches are `feature/<name>`.
+   **Never add `Co-Authored-By`, "Generated with" or any other AI attribution** to
+   commit messages or pull requests. The owner is the sole author and contributor.
 4. Never read, print or commit `.env` files or any secret.
 5. Never edit `legacy/`, generated files, or a migration that has already been merged.
    Schema changes are always a new migration.
