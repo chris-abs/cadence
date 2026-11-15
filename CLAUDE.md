@@ -26,6 +26,14 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 | `make dev-server` / `make dev-client` | Run the API (:8080) / the web client (:5173) |
 | `make check` | **The quality gate**: format, lint, tests, type-check, build |
 
+## Hooks
+
+- Run `lefthook install` once per clone. pre-commit checks staged files (gofmt,
+  golangci-lint, Prettier, ESLint) without rewriting them; pre-push runs `make check`
+  and refuses pushes to `main`.
+- `.claude/hooks/` formats each file after an edit and blocks edits to `legacy/`,
+  generated files and migrations already on `main`. Fix the cause; never bypass a hook.
+
 ## Environments
 
 - **Tests** always use local Docker Postgres. They create and drop databases freely.
