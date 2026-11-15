@@ -6,5 +6,8 @@
     "stylesheet": "./src/index.css",
     "functions": ["cva", "cn"]
   },
-  "ignorePatterns": ["dist", "src/routeTree.gen.ts", "src/lib/api/schema.d.ts"]
+  "ignorePatterns": ["dist", "src/routeTree.gen.ts", "src/lib/api/schema.d.ts"],
+  "sortImports": {
+    "newlinesBetween": false
+  }
 }
