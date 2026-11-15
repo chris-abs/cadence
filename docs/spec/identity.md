@@ -56,7 +56,8 @@ All paths are relative to `/api`. "FS" = family session cookie, "PS" = profile s
 target's profile sessions are deleted so its UI reloads with the new rights.
 
 **PIN** — one endpoint, `PUT /profiles/{id}/pin {pin | null, currentPin?, password?}`
-(`null` removes the PIN). Proof required, by case:
+(`null` removes the PIN; the key is required, and the handler rejects a body without it with
+`422`, because Go decodes a missing key and `null` alike). Proof required, by case:
 
 | Actor → target | Proof |
 |---|---|

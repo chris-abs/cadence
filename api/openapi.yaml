@@ -1,12 +1,23 @@
 openapi: 3.0.3
 info:
   title: Cadence API
-  version: 0.1.0
+  version: 0.2.0
   description: >
     Contract between the Cadence web client and the Go API. Change this file
-    first, run `make gen`, then implement both sides.
+    first, run `make gen`, then implement both sides. Identity rules (who may
+    call what, session lifetimes, lockout) are specified in
+    `docs/spec/identity.md`; this file is the wire format.
 servers:
   - url: /api
+tags:
+  - name: system
+  - name: auth
+    description: Family sign-in, profile sessions and devices.
+  - name: family
+    description: The family account. Needs a profile session.
+  - name: profiles
+  - name: modules
+    description: Feature modules a family can enable or disable.
 paths:
   /healthz:
     get:
@@ -26,7 +37,770 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  # --- auth -----------------------------------------------------------------
+  /auth/registration:
+    get:
+      operationId: getRegistrationStatus
+      summary: Whether a new family can register right now
+      tags: [auth]
+      security: []
+      responses:
+        "200":
+          description: Registration status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationStatus"
+  /auth/register:
+    post:
+      operationId: registerFamily
+      summary: Create a family, its owner profile, and sign this device in as the owner
+      description: >
+        One transaction. Sets both the family and the profile session cookie.
+        Rate limited per IP. Closed unless `ALLOW_REGISTRATION` permits it.
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Family created; both session cookies set.
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetSessionCookies"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /auth/login:
+    post:
+      operationId: login
+      summary: Sign this device in to a family
+      description: >
+        Replaces any family session this device already has. Unknown email and
+        wrong password both answer `401 invalid_credentials`.
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Signed in; family session cookie set.
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetSessionCookies"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FamilySession"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /auth/logout:
+    post:
+      operationId: logout
+      summary: Sign this device out of the family
+      description: >
+        Deletes this device's family session and its profile session, and
+        clears both cookies. Idempotent: succeeds without a valid session.
+      tags: [auth]
+      security:
+        - {}
+        - familySession: []
+      responses:
+        "204":
+          description: Signed out; both cookies cleared.
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetSessionCookies"
+  /auth/session:
+    get:
+      operationId: getFamilySession
+      summary: The signed-in family and its profile picker
+      description: Bootstrap call for a device with a family session.
+      tags: [auth]
+      security:
+        - familySession: []
+      responses:
+        "200":
+          description: The family session is valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FamilySession"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /auth/profile-session:
+    post:
+      operationId: selectProfile
+      summary: Switch this device to a profile
+      description: >
+        Replaces this device's profile session, if any. `pin` is required when
+        the profile has one. Wrong PINs count towards the profile's lockout.
+      tags: [auth]
+      security:
+        - familySession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SelectProfileRequest"
+      responses:
+        "200":
+          description: Profile selected; profile session cookie set.
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetSessionCookies"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+    delete:
+      operationId: lockProfile
+      summary: Lock this device back to the profile picker
+      description: >
+        Deletes this device's profile session and clears its cookie. Needs only
+        the family session, so it works after the profile session has expired.
+        Idempotent.
+      tags: [auth]
+      security:
+        - familySession: []
+      responses:
+        "204":
+          description: Locked; profile session cookie cleared.
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetSessionCookies"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /auth/sessions:
+    get:
+      operationId: listSessions
+      summary: Devices signed in to this family
+      tags: [auth]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: One entry per family session (device).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceSessionList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /auth/sessions/{sessionId}:
+    parameters:
+      - $ref: "#/components/parameters/SessionId"
+    delete:
+      operationId: revokeSession
+      summary: Sign one device out
+      description: >
+        Deletes that family session and its profile session. Revoking the
+        current device also clears this device's cookies.
+      tags: [auth]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "204":
+          description: Device signed out.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /auth/sessions/revoke-others:
+    post:
+      operationId: revokeOtherSessions
+      summary: Sign out every device except this one
+      tags: [auth]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "204":
+          description: All other devices signed out.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  # --- me -------------------------------------------------------------------
+  /me:
+    get:
+      operationId: getMe
+      summary: The current profile, its rights and the enabled modules
+      tags: [auth]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The profile session is valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- family ---------------------------------------------------------------
+  /family:
+    get:
+      operationId: getFamily
+      summary: The family account, including its email
+      tags: [family]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The family.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Family"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    put:
+      operationId: updateFamily
+      summary: Edit the family's name and auto-lock setting
+      tags: [family]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFamilyRequest"
+      responses:
+        "200":
+          description: Updated family.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Family"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /family/email:
+    put:
+      operationId: changeFamilyEmail
+      summary: Change the sign-in email (owner, re-enters the password)
+      tags: [family]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeEmailRequest"
+      responses:
+        "200":
+          description: Updated family.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Family"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /family/password:
+    put:
+      operationId: changeFamilyPassword
+      summary: Change the family password (owner)
+      description: Signs out every other device.
+      tags: [family]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        "204":
+          description: Password changed.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /family/owner:
+    post:
+      operationId: transferOwnership
+      summary: Make another PARENT profile the owner (owner, re-enters the password)
+      tags: [family]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferOwnershipRequest"
+      responses:
+        "204":
+          description: Ownership transferred.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /family/delete:
+    post:
+      operationId: deleteFamily
+      summary: Permanently delete the family and all its data (owner)
+      description: >
+        Immediate and irreversible. Needs the password and the family name
+        typed again. Clears both cookies on this device.
+      tags: [family]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteFamilyRequest"
+      responses:
+        "204":
+          description: Family deleted; both cookies cleared.
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetSessionCookies"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  # --- profiles -------------------------------------------------------------
+  /profiles:
+    get:
+      operationId: listProfiles
+      summary: The family's profiles (the picker)
+      tags: [profiles]
+      security:
+        - familySession: []
+      responses:
+        "200":
+          description: All profiles, owner first, then by name.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      operationId: createProfile
+      summary: Add a profile (PARENT)
+      tags: [profiles]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProfileRequest"
+      responses:
+        "201":
+          description: Profile created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /profiles/{profileId}:
+    parameters:
+      - $ref: "#/components/parameters/ProfileId"
+    get:
+      operationId: getProfile
+      summary: One profile of this family
+      tags: [profiles]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateProfile
+      summary: Replace a profile's display fields (self, or any profile for a PARENT)
+      tags: [profiles]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Updated profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+    delete:
+      operationId: deleteProfile
+      summary: Remove a profile (PARENT; not self, not the owner)
+      tags: [profiles]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "204":
+          description: Profile deleted with its sessions.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /profiles/{profileId}/role:
+    parameters:
+      - $ref: "#/components/parameters/ProfileId"
+    put:
+      operationId: changeProfileRole
+      summary: Change a profile's role (PARENT; not self, not the owner)
+      tags: [profiles]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeRoleRequest"
+      responses:
+        "200":
+          description: Updated profile; its profile sessions are signed out.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /profiles/{profileId}/pin:
+    parameters:
+      - $ref: "#/components/parameters/ProfileId"
+    put:
+      operationId: setProfilePin
+      summary: Set, change, remove or reset a profile's PIN
+      description: >
+        `pin: null` removes the PIN. The proof needed depends on actor and
+        target (identity spec §2): `currentPin` or `password` for your own
+        existing PIN, nothing for a parent resetting a child (or the owner
+        resetting another parent).
+      tags: [profiles]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetPinRequest"
+      responses:
+        "204":
+          description: PIN updated; lockout cleared; the target's other sessions signed out.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  # --- modules --------------------------------------------------------------
+  /modules:
+    get:
+      operationId: listModules
+      summary: Every module in the catalogue with this family's enabled state
+      tags: [modules]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The module catalogue.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModuleList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /modules/{moduleId}:
+    parameters:
+      - $ref: "#/components/parameters/ModuleId"
+    put:
+      operationId: setModuleEnabled
+      summary: Enable or disable a module for the family (PARENT)
+      tags: [modules]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetModuleEnabledRequest"
+      responses:
+        "200":
+          description: The module with its new state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
+  securitySchemes:
+    familySession:
+      type: apiKey
+      in: cookie
+      name: cadence_family
+      description: >
+        Family session (a signed-in device). httpOnly, SameSite=Strict. Named
+        `__Host-cadence_family` and Secure outside development.
+    profileSession:
+      type: apiKey
+      in: cookie
+      name: cadence_profile
+      description: >
+        Profile session, valid only together with the family session it was
+        created under. httpOnly, SameSite=Strict. Named
+        `__Host-cadence_profile` and Secure outside development.
+
+  parameters:
+    ProfileId:
+      name: profileId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    ModuleId:
+      name: moduleId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/ModuleId"
+
+  headers:
+    SetSessionCookies:
+      description: >
+        Sets or clears `cadence_family` / `cadence_profile` (httpOnly; the
+        client never reads them).
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: "Malformed body or unknown field: `invalid_request`."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: >
+        `family_session_required` (go to login), `profile_session_required`
+        (go to the picker) or `invalid_credentials` (login failed).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: >
+        `forbidden`, `invalid_pin`, `invalid_password`, `module_disabled`,
+        `registration_closed` or `cross_origin`.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: "`not_found`, also for another family's ids."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Conflict:
+      description: >
+        `email_taken`, `name_taken`, `owner_protected`, `self_not_allowed` or
+        `profile_limit_reached`.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ValidationFailed:
+      description: "`validation_failed` with per-field messages in `fields`."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimited:
+      description: "`rate_limited` or `pin_locked`, with `retryAfterSeconds`."
+      headers:
+        Retry-After:
+          description: Seconds until a retry can succeed.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
   schemas:
     Health:
       type: object
@@ -54,3 +828,438 @@ components:
               description: Per-field validation messages, keyed by field name.
               additionalProperties:
                 type: string
+            retryAfterSeconds:
+              type: integer
+              minimum: 1
+              description: Set with `rate_limited` and `pin_locked`.
+
+    # Ids are UUIDv7 strings. Kept as plain strings in Go so the generated
+    # types need no runtime library; handlers parse them with google/uuid.
+    Id:
+      type: string
+      format: uuid
+      x-go-type: string
+    ModuleId:
+      type: string
+      pattern: "^[a-z][a-z0-9_]{1,31}$"
+      description: A module from the server's catalogue, e.g. `meals`.
+      example: meals
+    Role:
+      type: string
+      enum: [PARENT, CHILD]
+    ProfileColour:
+      type: string
+      enum:
+        [
+          slate,
+          gray,
+          zinc,
+          neutral,
+          stone,
+          red,
+          orange,
+          amber,
+          yellow,
+          lime,
+          green,
+          emerald,
+          teal,
+          cyan,
+          sky,
+          blue,
+          indigo,
+          violet,
+          purple,
+          fuchsia,
+          pink,
+          rose,
+        ]
+    Email:
+      type: string
+      format: email
+      x-go-type: string
+      maxLength: 254
+      description: Trimmed and lower-cased by the server.
+    Password:
+      type: string
+      minLength: 10
+      maxLength: 72
+      description: 10–72 characters and at most 72 bytes UTF-8.
+    Pin:
+      type: string
+      pattern: "^[0-9]{6}$"
+    ProfileName:
+      type: string
+      minLength: 1
+      maxLength: 40
+    Avatar:
+      type: string
+      pattern: "^[a-z0-9-]{1,32}$"
+      description: Key of a built-in avatar; absent or null shows initials.
+    Timezone:
+      type: string
+      description: IANA time zone name, e.g. `Europe/London`.
+      example: Europe/London
+    DeviceName:
+      type: string
+      maxLength: 60
+      description: Label shown in the device list, e.g. "Kitchen tablet".
+
+    RegistrationStatus:
+      type: object
+      required: [open]
+      properties:
+        open:
+          type: boolean
+    RegisterRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password, familyName, owner]
+      properties:
+        email:
+          $ref: "#/components/schemas/Email"
+        password:
+          $ref: "#/components/schemas/Password"
+        familyName:
+          type: string
+          minLength: 1
+          maxLength: 60
+        owner:
+          $ref: "#/components/schemas/NewOwnerProfile"
+        deviceName:
+          $ref: "#/components/schemas/DeviceName"
+    NewOwnerProfile:
+      type: object
+      additionalProperties: false
+      required: [name, colour, timezone]
+      properties:
+        name:
+          $ref: "#/components/schemas/ProfileName"
+        colour:
+          $ref: "#/components/schemas/ProfileColour"
+        avatar:
+          $ref: "#/components/schemas/Avatar"
+        timezone:
+          $ref: "#/components/schemas/Timezone"
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          maxLength: 254
+        password:
+          type: string
+          maxLength: 72
+        deviceName:
+          $ref: "#/components/schemas/DeviceName"
+    SelectProfileRequest:
+      type: object
+      additionalProperties: false
+      required: [profileId]
+      properties:
+        profileId:
+          $ref: "#/components/schemas/Id"
+        pin:
+          $ref: "#/components/schemas/Pin"
+
+    FamilySummary:
+      type: object
+      required: [id, name, autoLockMinutes]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        autoLockMinutes:
+          type: integer
+          minimum: 1
+          maximum: 30
+          description: Lock back to the picker after this long without a touch.
+    FamilySession:
+      type: object
+      required: [family, profiles]
+      properties:
+        family:
+          $ref: "#/components/schemas/FamilySummary"
+        profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Profile"
+    Family:
+      type: object
+      required: [id, name, email, autoLockMinutes, passwordChangedAt, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        email:
+          type: string
+        autoLockMinutes:
+          type: integer
+        passwordChangedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UpdateFamilyRequest:
+      type: object
+      additionalProperties: false
+      required: [name, autoLockMinutes]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        autoLockMinutes:
+          type: integer
+          minimum: 1
+          maximum: 30
+    ChangeEmailRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email:
+          $ref: "#/components/schemas/Email"
+        password:
+          type: string
+          maxLength: 72
+    ChangePasswordRequest:
+      type: object
+      additionalProperties: false
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+          maxLength: 72
+        newPassword:
+          $ref: "#/components/schemas/Password"
+    TransferOwnershipRequest:
+      type: object
+      additionalProperties: false
+      required: [profileId, password]
+      properties:
+        profileId:
+          $ref: "#/components/schemas/Id"
+        password:
+          type: string
+          maxLength: 72
+    DeleteFamilyRequest:
+      type: object
+      additionalProperties: false
+      required: [password, confirmName]
+      properties:
+        password:
+          type: string
+          maxLength: 72
+        confirmName:
+          type: string
+          description: The family name, typed again (trimmed, case-insensitive).
+
+    Profile:
+      type: object
+      required: [id, name, role, isOwner, colour, avatar, timezone, hasPin, lockedUntil, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+        isOwner:
+          type: boolean
+        colour:
+          $ref: "#/components/schemas/ProfileColour"
+        avatar:
+          type: string
+          nullable: true
+        timezone:
+          type: string
+        hasPin:
+          type: boolean
+        lockedUntil:
+          type: string
+          format: date-time
+          nullable: true
+          description: Set while wrong PINs have locked this profile.
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ProfileList:
+      type: object
+      required: [profiles]
+      properties:
+        profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Profile"
+    CreateProfileRequest:
+      type: object
+      additionalProperties: false
+      required: [name, role, colour]
+      properties:
+        name:
+          $ref: "#/components/schemas/ProfileName"
+        role:
+          $ref: "#/components/schemas/Role"
+        colour:
+          $ref: "#/components/schemas/ProfileColour"
+        avatar:
+          $ref: "#/components/schemas/Avatar"
+        timezone:
+          $ref: "#/components/schemas/Timezone"
+        pin:
+          $ref: "#/components/schemas/Pin"
+    UpdateProfileRequest:
+      type: object
+      additionalProperties: false
+      description: Full replacement of the display fields; `avatar` null clears it.
+      required: [name, colour, avatar, timezone]
+      properties:
+        name:
+          $ref: "#/components/schemas/ProfileName"
+        colour:
+          $ref: "#/components/schemas/ProfileColour"
+        avatar:
+          type: string
+          pattern: "^[a-z0-9-]{1,32}$"
+          nullable: true
+        timezone:
+          $ref: "#/components/schemas/Timezone"
+    ChangeRoleRequest:
+      type: object
+      additionalProperties: false
+      required: [role]
+      properties:
+        role:
+          $ref: "#/components/schemas/Role"
+    SetPinRequest:
+      type: object
+      additionalProperties: false
+      required: [pin]
+      properties:
+        pin:
+          type: string
+          pattern: "^[0-9]{6}$"
+          nullable: true
+          description: The new PIN, or null to remove it.
+        currentPin:
+          $ref: "#/components/schemas/Pin"
+        password:
+          type: string
+          maxLength: 72
+          description: Family password, as proof for a PARENT's own forgotten PIN.
+
+    Me:
+      type: object
+      required: [profile, family, permissions, modules, pinAdvised, session]
+      properties:
+        profile:
+          $ref: "#/components/schemas/Profile"
+        family:
+          $ref: "#/components/schemas/FamilySummary"
+        permissions:
+          type: array
+          description: >
+            Every right this profile has now, as `<module>.<action>`; identity
+            rights use the `family` prefix (e.g. `family.profiles.create`,
+            `meals.recipes.edit`). Only enabled modules appear.
+          items:
+            type: string
+        modules:
+          type: array
+          description: Enabled modules, for navigation.
+          items:
+            $ref: "#/components/schemas/Module"
+        pinAdvised:
+          type: boolean
+          description: A PARENT without a PIN in a family that has a CHILD profile.
+        session:
+          $ref: "#/components/schemas/ProfileSessionInfo"
+    ProfileSessionInfo:
+      type: object
+      required: [expiresAt, idleTimeoutSeconds]
+      properties:
+        expiresAt:
+          type: string
+          format: date-time
+          description: Absolute end of this profile session.
+        idleTimeoutSeconds:
+          type: integer
+          description: Server-side idle limit (backstop for the client's auto-lock).
+
+    Module:
+      type: object
+      required: [id, name, description, enabled]
+      properties:
+        id:
+          $ref: "#/components/schemas/ModuleId"
+        name:
+          type: string
+        description:
+          type: string
+        enabled:
+          type: boolean
+    ModuleList:
+      type: object
+      required: [modules]
+      properties:
+        modules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Module"
+    SetModuleEnabledRequest:
+      type: object
+      additionalProperties: false
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+
+    DeviceSession:
+      type: object
+      required: [id, deviceName, userAgent, createdAt, lastSeenAt, current, activeProfileId, activeProfileName]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        deviceName:
+          type: string
+          nullable: true
+        userAgent:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        lastSeenAt:
+          type: string
+          format: date-time
+        current:
+          type: boolean
+          description: This is the device making the request.
+        activeProfileId:
+          type: string
+          format: uuid
+          x-go-type: string
+          nullable: true
+        activeProfileName:
+          type: string
+          nullable: true
+    DeviceSessionList:
+      type: object
+      required: [sessions]
+      properties:
+        sessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeviceSession"
