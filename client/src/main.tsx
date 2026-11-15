@@ -7,6 +7,17 @@ import { createQueryClient } from "@/lib/query-client";
 import { createAppRouter } from "./router";
 import "./index.css";
 
+async function startMockApi() {
+  // Dev-only: `import.meta.env.DEV` is false in production builds, so the mock
+  // and MSW are dropped from the bundle entirely.
+  if (import.meta.env.DEV && import.meta.env.VITE_MOCK_API === "1") {
+    const { startMockWorker } = await import("./mocks/browser");
+    await startMockWorker();
+  }
+}
+
+await startMockApi();
+
 const queryClient = createQueryClient();
 installSessionGuard(queryClient);
 const router = createAppRouter(queryClient);
