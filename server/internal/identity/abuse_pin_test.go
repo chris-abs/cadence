@@ -57,12 +57,23 @@ func TestPINLockoutSchedule(t *testing.T) {
 	if e.hasher.calls.Load() != calls {
 		t.Error("the lockout must be checked before bcrypt")
 	}
+	// The picker shows the lock both as an instant and as seconds left at
+	// response time, so a device with a wrong clock still counts down right.
+	e.clock.Advance(10*time.Second + 500*time.Millisecond)
 	picker := decode[api.ProfileList](t, d.do(http.MethodGet, "/profiles", nil))
 	for _, p := range picker.Profiles {
-		if p.Id == f.child.id && (p.LockedUntil == nil || !p.LockedUntil.Equal(e.clock.Now().Add(30*time.Second))) {
+		switch {
+		case p.Id != f.child.id:
+			if p.LockedUntil != nil || p.LockedForSeconds != nil {
+				t.Errorf("%s shows a lock it does not have", p.Name)
+			}
+		case p.LockedUntil == nil || !p.LockedUntil.Equal(e.clock.Now().Add(19*time.Second+500*time.Millisecond)):
 			t.Errorf("picker lockedUntil = %v", p.LockedUntil)
+		case p.LockedForSeconds == nil || *p.LockedForSeconds != 20:
+			t.Errorf("picker lockedForSeconds = %v, want 20 (19.5 s rounded up)", p.LockedForSeconds)
 		}
 	}
+	e.clock.Advance(-10*time.Second - 500*time.Millisecond) // back to the lock instant for the schedule below
 
 	for _, step := range []struct{ wait, next int }{{30, 60}, {60, 300}, {300, 900}, {900, 3600}, {3600, 3600}} {
 		e.clock.Advance(time.Duration(step.wait) * time.Second)

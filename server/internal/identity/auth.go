@@ -346,6 +346,9 @@ func (s *Service) lock(ctx context.Context, device deviceSession) error {
 type profileItem struct {
 	Profile     identitydb.Profile
 	LockedUntil *time.Time
+	// LockedFor is how long the lock has left at listing time; set only for
+	// the picker, whose countdown must not depend on the device clock.
+	LockedFor time.Duration
 }
 
 // familyProfiles is the picker for a device.
@@ -362,6 +365,9 @@ func (s *Service) listProfiles(ctx context.Context, q *identitydb.Queries, famil
 	items := make([]profileItem, len(rows))
 	for i, r := range rows {
 		items[i] = profileItem{Profile: r.Profile, LockedUntil: activeLock(r.LockedUntil, now)}
+		if items[i].LockedUntil != nil {
+			items[i].LockedFor = items[i].LockedUntil.Sub(now)
+		}
 	}
 	return items, nil
 }

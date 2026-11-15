@@ -3,6 +3,8 @@ package identity
 import (
 	"encoding/json"
 	"fmt"
+	"math"
+	"time"
 
 	"github.com/chris-abs/cadence/server/internal/api"
 	"github.com/chris-abs/cadence/server/internal/authz"
@@ -28,8 +30,19 @@ func profileSummaryView(p profileItem) api.ProfileSummary {
 	return api.ProfileSummary{
 		Id: pr.ID.String(), Name: pr.Name, Role: api.Role(pr.Role), IsOwner: pr.IsOwner,
 		Colour: api.ProfileColour(pr.Colour), Avatar: pr.Avatar, Timezone: pr.Timezone,
-		HasPin: pr.PinHash != nil, LockedUntil: p.LockedUntil, CreatedAt: pr.CreatedAt, UpdatedAt: pr.UpdatedAt,
+		HasPin: pr.PinHash != nil, LockedUntil: p.LockedUntil, LockedForSeconds: wholeSeconds(p.LockedFor),
+		CreatedAt: pr.CreatedAt, UpdatedAt: pr.UpdatedAt,
 	}
+}
+
+// wholeSeconds rounds a remaining wait up to whole seconds (at least one), or
+// nil when there is none, so a countdown never reaches zero early.
+func wholeSeconds(d time.Duration) *int {
+	if d <= 0 {
+		return nil
+	}
+	secs := max(1, int(math.Ceil(d.Seconds())))
+	return &secs
 }
 
 func profileSummaries(items []profileItem) []api.ProfileSummary {

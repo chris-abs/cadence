@@ -35,10 +35,14 @@ All paths are relative to `/api`. "FS" = family session cookie, "PS" = profile s
 
 **Pick / switch profile**
 1. Picker lists `GET /profiles` (FS, `ProfileSummary`): name, colour, avatar, `hasPin`,
-   `lockedUntil`. Never contact emails.
+   `lockedUntil` and `lockedForSeconds` (seconds left at response time, so the countdown does
+   not depend on the device clock). Never contact emails.
 2. No PIN: `POST /auth/profile-session {profileId}` → PS cookie set, `Me` returned.
 3. With PIN: client shows the PIN pad, then the same call with `pin`. Wrong PIN →
-   `403 invalid_pin`; locked → `429 pin_locked` with `retryAfterSeconds` (§6.2).
+   `403 invalid_pin`; locked → `429 pin_locked` with `retryAfterSeconds` (§6.2). The wrong
+   PIN that starts a lock (the 5th, and each one after a lock expires) already answers
+   `429 pin_locked`, so the client shows the countdown without another failed attempt. A
+   profile with a PIN selected without `pin` → `422` (not counted).
 4. Switching = picking again: the server replaces this device's PS (one PS per FS).
 
 **Lock back to the picker**
@@ -48,9 +52,10 @@ All paths are relative to `/api`. "FS" = family session cookie, "PS" = profile s
 
 **Add / edit / remove a profile** (PARENT)
 1. Add: `POST /profiles {name, role, colour, avatar?, timezone?, pin?, contactEmail?}`. Max 20
-   profiles.
+   profiles. Without `timezone` the new profile gets its creator's time zone.
 2. Edit display fields: `PUT /profiles/{id} {name, colour, avatar, timezone, contactEmail}` (full
-   replace, so `null` clears `avatar` or `contactEmail` without tri-state JSON) — self for
+   replace, so `null` clears `avatar` or `contactEmail` without tri-state JSON; both keys are
+   therefore required, and a body without either is `422`, never read as "clear it") — self for
    anyone, any profile for a PARENT. A changed `contactEmail` resets its verification.
 3. Remove: `DELETE /profiles/{id}`; not the owner, not yourself. Cascades its sessions and
    PIN state; module data it authored keeps the row with `created_by = NULL`.
@@ -87,6 +92,8 @@ credential, not unique, visible to the profile itself and PARENTs (§5.1). Nothi
 until verified; verification arrives with email sending (not in v1), so v1 stores it unverified.
 
 **Transfer ownership** (owner): `POST /family/owner {profileId, password}` to another PARENT.
+Yourself → `409 self_not_allowed`; a CHILD → `422 validation_failed` on `profileId` (promote
+them first); another family's or an unknown id → `404`.
 
 **Edit family** (PARENT): `PUT /family {name, autoLockMinutes}`.
 
@@ -340,7 +347,8 @@ IP = `RemoteAddr`; `X-Forwarded-For` only when `TRUSTED_PROXY` is configured (ho
 - Password: 10–72 characters and ≤ 72 bytes UTF-8 (bcrypt's limit; reject, never truncate).
 - PIN: exactly 6 ASCII digits. Names: trimmed, 1–40 (profile) / 1–60 (family), no control chars.
 - Validation failures: `422 validation_failed` with `fields` (e.g. `{"password": "Use at least
-  10 characters."}`). Malformed JSON stays `400 invalid_request`.
+  10 characters."}`). Each key is the dotted JSON path of the field in the request body
+  (`owner.name` for register's nested owner). Malformed JSON stays `400 invalid_request`.
 - Login: unknown email runs bcrypt against a fixed dummy hash, so timing and response
   (`401 invalid_credentials`) match a wrong password.
 - Register with a taken email: `409 email_taken` **[I9]** — an accepted leak, since
@@ -368,10 +376,11 @@ emails, passwords, PINs or tokens. No audit table in v1 **[I10]**.
 | 403 | `forbidden` | role lacks the right (§5.1) |
 | 403 | `invalid_pin`, `invalid_password` | wrong proof on select / PIN / re-auth |
 | 403 | `module_disabled`, `registration_closed`, `cross_origin` | |
-| 404 | `not_found` | unknown or other family's id; unknown module |
+| 404 | `not_found` | unknown or other family's id; unknown module; unknown path |
+| 405 | `method_not_allowed` | known path, unsupported method (with an `Allow` header) |
 | 409 | `email_taken`, `owner_protected`, `self_not_allowed`, `name_taken`, `profile_limit_reached` | |
 | 415 / 413 | `unsupported_media_type` / `request_too_large` | |
-| 422 | `validation_failed` | per-field messages in `fields` |
+| 422 | `validation_failed` | per-field messages in `fields`, keyed by dotted JSON path |
 | 429 | `rate_limited`, `pin_locked` | `retryAfterSeconds` set, `Retry-After` header |
 
 ## 8. Test plan
