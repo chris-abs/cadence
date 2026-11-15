@@ -17,7 +17,7 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 | `docs/PLAN.md` | Reviewed build plan and milestones. |
 | `docs/decisions/` | Short decision records. Add one when a choice in the plan changes. |
 | `docs/spec/` | Product specs. |
-| `docs/performance.md` | Performance budgets. Work that misses one is not done. |
+| `docs/performance.md` | Server performance budgets, measured in review. |
 | `legacy/` | Old repos. Git-ignored. Read for reference, never edit. |
 | `.claude/skills/orchestrator/` | How a lead session plans, delegates to Opus `builder` agents and verifies. Invoke with `/orchestrator`. |
 
@@ -75,3 +75,5 @@ ignored. Prefer the standard library.
 
 - Comments: none by default; one line only where the reason cannot be read from the code.
 - A domain is one package with handler, service, repository and model; never a flat pile of files.
+- British English in names and prose, except names fixed by a standard or a library.
+- The client's architecture is the owner's decision; add nothing there without their direction.
