@@ -819,13 +819,21 @@ components:
           properties:
             code:
               type: string
-              description: Stable machine-readable code, e.g. `invalid_request`.
+              description: >
+                Stable machine-readable code, e.g. `invalid_request`. The
+                identity codes are listed in `docs/spec/identity.md` §7. Any
+                path answers a method it does not support with
+                `405 method_not_allowed` (and an `Allow` header), an unknown
+                path with `404 not_found`.
             message:
               type: string
               description: Human-readable message, safe to show to users.
             fields:
               type: object
-              description: Per-field validation messages, keyed by field name.
+              description: >
+                Per-field validation messages (with `validation_failed`). Each
+                key is the dotted JSON path of the field in the request body,
+                e.g. `password` or `owner.name`.
               additionalProperties:
                 type: string
             retryAfterSeconds:
@@ -1068,7 +1076,7 @@ components:
       description: >
         Picker view, readable with only the family session. Never carries
         contact details.
-      required: [id, name, role, isOwner, colour, avatar, timezone, hasPin, lockedUntil, createdAt, updatedAt]
+      required: [id, name, role, isOwner, colour, avatar, timezone, hasPin, lockedUntil, lockedForSeconds, createdAt, updatedAt]
       properties:
         id:
           $ref: "#/components/schemas/Id"
@@ -1092,6 +1100,14 @@ components:
           format: date-time
           nullable: true
           description: Set while wrong PINs have locked this profile.
+        lockedForSeconds:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: >
+            Seconds left on the lockout, computed when the response was made
+            (rounded up), so the picker countdown does not depend on the
+            device clock. Null when not locked.
         createdAt:
           type: string
           format: date-time

@@ -194,10 +194,10 @@ type Email = string
 // Error defines model for Error.
 type Error struct {
 	Error struct {
-		// Code Stable machine-readable code, e.g. `invalid_request`.
+		// Code Stable machine-readable code, e.g. `invalid_request`. The identity codes are listed in `docs/spec/identity.md` §7. Any path answers a method it does not support with `405 method_not_allowed` (and an `Allow` header), an unknown path with `404 not_found`.
 		Code string `json:"code"`
 
-		// Fields Per-field validation messages, keyed by field name.
+		// Fields Per-field validation messages (with `validation_failed`). Each key is the dotted JSON path of the field in the request body, e.g. `password` or `owner.name`.
 		Fields *map[string]string `json:"fields,omitempty"`
 
 		// Message Human-readable message, safe to show to users.
@@ -362,6 +362,9 @@ type ProfileSummary struct {
 	HasPin    bool          `json:"hasPin"`
 	Id        Id            `json:"id"`
 	IsOwner   bool          `json:"isOwner"`
+
+	// LockedForSeconds Seconds left on the lockout, computed when the response was made (rounded up), so the picker countdown does not depend on the device clock. Null when not locked.
+	LockedForSeconds *int `json:"lockedForSeconds"`
 
 	// LockedUntil Set while wrong PINs have locked this profile.
 	LockedUntil *time.Time `json:"lockedUntil"`
