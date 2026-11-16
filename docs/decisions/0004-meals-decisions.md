@@ -14,10 +14,14 @@ recipe book" section of `0002-owner-direction.md`. Specified in `docs/spec/meals
 - **Adopting a recipe the family has edited replaces their version.**
 - **Book off:** "any recipe they've edited will be enabled if book is off but stock recipes
   will be removed".
-- **Book off, recipe already on a plan:** the plan entry stays as free text with the
-  recipe's name (orchestrator's recommendation, agreed).
-- **Book back on:** stock recipes return at the current book versions, without any the
-  family deleted themselves (orchestrator's recommendation, agreed).
+- **Recipes are referenced by id, never by text.** "We don't map against plain text, we
+  use ids." A recipe's content is mutable: adopting overwrites it with the default, editing
+  keeps the family's version, and the id stays the same either way.
+- **Book off deletes nothing.** Stock recipes leave the recipe list; plan entries keep
+  their recipe by id. Turning the book on brings the same recipes back. This replaces an
+  earlier agreed recommendation that such plan entries fall back to free text.
+- **Not design questions:** the hosted database runs the latest Postgres; the client
+  confirms destructive actions; no family exists before the book does.
 - **The book's recipes are written later.** "We'll seed all of the recipes when we're
   ready." The mechanism is built first against an empty book.
 
@@ -48,7 +52,6 @@ the server in small pull requests. Nothing in `client/`. Screens are out of the 
 - Each family recipe records its book recipe, the revision copied and whether it was edited.
 - Any save of a copied recipe marks it edited.
 - Adopting while the book is off is refused.
-- Book off deletes the unedited copies and remembers which, instead of hiding them.
 - Every meals route sits under `/meals`.
 - One extra endpoint to read a single book recipe in full.
 - Left out of the draft: the per-family week-start setting, the recipe image column, and

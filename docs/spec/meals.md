@@ -22,8 +22,8 @@ The recipe book is Cadence's own catalogue of recipes, the same for every family
 | B3. Nothing updates on its own | When the book gains a recipe or a book recipe is changed, no family's recipes change. |
 | B4. The book can be browsed | A family sees every book recipe with where it stands (below). |
 | B5. Adopt | Adopting a book recipe gives the family the book's current version. If the family has no copy, one is added. If it has a copy, edited or not, that copy is replaced and the family's edits are lost. The recipe keeps its id, so plan entries stay linked. |
-| B6. Book off | Turning the book off removes every copy the family has not edited. Copies the family has edited stay. Plan entries that used a removed recipe stay, as free text with the recipe's name. |
-| B7. Book back on | The recipes removed by B6 come back at the book's current versions. Recipes the family deleted themselves do not come back, and neither do book recipes they never had. Plan entries that became free text are not re-linked. |
+| B6. Book off | Copies the family has not edited leave the family's recipe list and search. Copies the family has edited, and its own recipes, stay. Nothing is deleted: plan entries keep pointing at the same recipe by id and still show it. |
+| B7. Book back on | The same recipes return to the list, unchanged. Any the book has changed since show as `update_available`, like any other copy. |
 
 Where a family stands on a book recipe:
 
@@ -42,7 +42,6 @@ Where a family stands on a book recipe:
 - **(addition)** The book's content arrives by migration when the owner is ready. Until
   then the book is empty and every rule above still holds. A migration that changes a book
   recipe raises its revision.
-- A family registered before a recipe was in the book sees it as `not_added` and adopts it.
 
 ## 2. Recipes
 
@@ -141,16 +140,8 @@ across families impossible in the database, not only in Go. Those parents carry
 | `family_id` | `uuid PRIMARY KEY` | References `family(id) ON DELETE CASCADE`; no separate `id` |
 | `enabled` | `boolean NOT NULL` | |
 
-**`removed_book_recipe`** — what turning the book off removed, so turning it on can put
-exactly those back (B7). Rows are written when the book goes off and cleared when it comes on.
-
-| Column | Type | Constraints |
-|---|---|---|
-| `family_id`, `book_recipe_id` | `uuid NOT NULL` | Primary key together; `book_recipe_id` references `book_recipe(id) ON DELETE CASCADE`; no separate `id` |
-
-Why remove and remember, not hide: a hidden recipe would need filtering out of every query
-that reads recipes, and one missed filter would show a recipe the family turned off. Removing
-it reuses the delete behaviour that already exists (R6).
+A recipe is listed when it is the family's own, or edited, or the book is on. That one
+condition lives in the recipe list query; reading a recipe by id is never affected.
 
 ### 6.2 Recipes
 
@@ -210,7 +201,7 @@ Indexes: the unique `(recipe_id, position)`; `(family_id, name_key)` for the nam
 Indexes: `(family_id, date)`; `(recipe_id)`.
 
 "Recipe or free text" is one column being NULL. The title is always present, so a recipe
-that is deleted, or removed with the book, leaves a free-text entry with no special case.
+the family deletes leaves a free-text entry with no special case.
 Responses show the recipe's live name while it exists.
 
 ### 6.4 Shopping list
@@ -306,7 +297,7 @@ handler, service, repository and model.
 
 | Package | One sentence | Owns |
 |---|---|---|
-| `meals/recipe` | A family's recipes and their relationship to the Cadence book | `recipe`, `recipe_ingredient`, `book_recipe`, `book_recipe_ingredient`, `recipe_book_setting`, `removed_book_recipe` |
+| `meals/recipe` | A family's recipes and their relationship to the Cadence book | `recipe`, `recipe_ingredient`, `book_recipe`, `book_recipe_ingredient`, `recipe_book_setting` |
 | `meals/plan` | What a family eats on which day | `meal_plan_entry` |
 | `meals/shopping` | The week's shopping list and its ticks | `shopping_list`, `shopping_item` |
 
@@ -334,11 +325,6 @@ written before the tests.
 
 - **Name matching** is the main quality risk: plurals and synonyms produce duplicate lines.
   The name lookup (R3) is the only mitigation in this version.
-- **Adopt discards edits** with no undo. A client should confirm first.
-- **Book off is destructive for plan links:** entries that became free text are not re-linked
-  when the book comes back on.
-- **`ON DELETE SET NULL (recipe_id)`** needs Postgres 15 or later. Local is 17; the hosted
-  version must be confirmed by the owner before the plan migration.
 - **Saving a recipe replaces its ingredients,** so ingredient ids are not stable. Nothing
   refers to them.
 - **Last write wins** on recipes.
