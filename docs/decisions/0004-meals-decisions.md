@@ -47,12 +47,29 @@ instructions, and no import, pantry, nutrition, cost or who-cooks.
 Server only: "let's get the data structures and endpoints up first." Contract first, then
 the server in small pull requests. Nothing in `client/`. Screens are out of the spec.
 
+## Meals and recipes (owner)
+
+- "Recipe contains a meal + instructions, meals contain macros, micros, ingredients +
+  prices." This reverses the draft default that nutrition and cost were out of scope; the
+  legacy `feature/meals` branch already had macros, allergens, dietary tags and cuisine.
+- **A meal carries its own numbers**, typed in per serving. Nothing is calculated from
+  ingredients, and there is no shared ingredient catalogue for now (orchestrator's
+  recommendation, agreed after seeing both structures). A catalogue can attach to
+  ingredient names later.
+- **A meal can exist without a recipe.** The plan and shopping list use meals; a recipe is
+  the optional how-to-cook part (orchestrator's recommendation, agreed).
+- The recipe book therefore holds meals with their recipes, and the book rules above apply
+  to meals.
+
 ## Orchestrator's additions and changes (awaiting owner approval with the spec)
 
-- Each family recipe records its book recipe, the revision copied and whether it was edited.
-- Any save of a copied recipe marks it edited.
+- Each family meal records its book meal, the revision copied and whether it was edited.
+- Any save of a copied meal marks it edited.
 - Adopting while the book is off is refused.
-- Every meals route sits under `/meals`.
-- One extra endpoint to read a single book recipe in full.
-- Left out of the draft: the per-family week-start setting, the recipe image column, and
-  the "used in N upcoming meals" count.
+- One extra endpoint to read a single book meal in full.
+- The values of the fixed lists: macros, micros, allergens, dietary tags and ingredient
+  categories. Cost is whole pence in one currency; cuisine is free text.
+- Cost sits on the meal per serving, not on each ingredient.
+- Left out of the draft: the per-family week-start setting and the "used in N upcoming
+  meals" count. Left out of legacy: meal options, primary/secondary/side ingredient types
+  and images.
