@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Family struct {
@@ -25,6 +26,54 @@ type FamilyModule struct {
 	FamilyID  uuid.UUID
 	ModuleID  string
 	Enabled   bool
+	UpdatedAt time.Time
+}
+
+type Meal struct {
+	ID            uuid.UUID
+	FamilyID      uuid.UUID
+	Name          string
+	Description   string
+	Servings      *int16
+	Cuisine       *string
+	Allergens     []string
+	DietaryTags   []string
+	Calories      *int32
+	ProteinG      pgtype.Numeric
+	CarbsG        pgtype.Numeric
+	SugarG        pgtype.Numeric
+	FatG          pgtype.Numeric
+	SaturatedFatG pgtype.Numeric
+	FibreG        pgtype.Numeric
+	SaltG         pgtype.Numeric
+	CostPence     *int32
+	CreatedBy     *uuid.UUID
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}
+
+type MealIngredient struct {
+	ID        uuid.UUID
+	FamilyID  uuid.UUID
+	MealID    uuid.UUID
+	Position  int16
+	Quantity  pgtype.Numeric
+	Unit      *string
+	Name      string
+	NameKey   string
+	Note      string
+	Category  *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type MealNutrient struct {
+	ID        uuid.UUID
+	FamilyID  uuid.UUID
+	MealID    uuid.UUID
+	Nutrient  string
+	Amount    pgtype.Numeric
+	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
@@ -49,6 +98,18 @@ type Profile struct {
 	ContactEmailVerifiedAt *time.Time
 	CreatedAt              time.Time
 	UpdatedAt              time.Time
+}
+
+type Recipe struct {
+	ID           uuid.UUID
+	FamilyID     uuid.UUID
+	MealID       uuid.UUID
+	Instructions string
+	PrepMinutes  *int16
+	CookMinutes  *int16
+	SourceUrl    *string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 type Session struct {
