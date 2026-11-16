@@ -1969,10 +1969,53 @@ components:
 
     Macros:
       type: object
+      description: Per serving, typed in, never calculated. A value not given is null.
+      required: [calories, proteinG, carbsG, sugarG, fatG, saturatedFatG, fibreG, saltG]
+      properties:
+        calories:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: kcal.
+        proteinG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        carbsG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        sugarG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        fatG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        saturatedFatG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        fibreG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        saltG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+    MacrosInput:
+      type: object
       additionalProperties: false
-      description: >
-        Per serving, typed in, never calculated. Responses always carry every
-        field; a value not given is null.
+      description: Per serving. Anything left out is stored as not given.
       properties:
         calories:
           type: integer
@@ -2284,7 +2327,7 @@ components:
           items:
             $ref: "#/components/schemas/DietaryTag"
         macros:
-          $ref: "#/components/schemas/Macros"
+          $ref: "#/components/schemas/MacrosInput"
         micros:
           type: array
           description: At most one entry per nutrient.

@@ -443,7 +443,7 @@ type BookMeal struct {
 	Id          Id           `json:"id"`
 	Ingredients []Ingredient `json:"ingredients"`
 
-	// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
+	// Macros Per serving, typed in, never calculated. A value not given is null.
 	Macros Macros `json:"macros"`
 
 	// MealId The family's copy; null when `status` is `not_added`.
@@ -674,8 +674,21 @@ type LoginRequest struct {
 	Password   string      `json:"password"`
 }
 
-// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
+// Macros Per serving, typed in, never calculated. A value not given is null.
 type Macros struct {
+	// Calories kcal.
+	Calories      *int     `json:"calories"`
+	CarbsG        *float64 `json:"carbsG"`
+	FatG          *float64 `json:"fatG"`
+	FibreG        *float64 `json:"fibreG"`
+	ProteinG      *float64 `json:"proteinG"`
+	SaltG         *float64 `json:"saltG"`
+	SaturatedFatG *float64 `json:"saturatedFatG"`
+	SugarG        *float64 `json:"sugarG"`
+}
+
+// MacrosInput Per serving. Anything left out is stored as not given.
+type MacrosInput struct {
 	// Calories kcal.
 	Calories      *int     `json:"calories,omitempty"`
 	CarbsG        *float64 `json:"carbsG,omitempty"`
@@ -726,7 +739,7 @@ type Meal struct {
 	// Ingredients In the order entered.
 	Ingredients []Ingredient `json:"ingredients"`
 
-	// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
+	// Macros Per serving, typed in, never calculated. A value not given is null.
 	Macros Macros  `json:"macros"`
 	Micros []Micro `json:"micros"`
 	Name   string  `json:"name"`
@@ -988,8 +1001,8 @@ type SaveMealRequest struct {
 	DietaryTags *[]DietaryTag      `json:"dietaryTags,omitempty"`
 	Ingredients *[]IngredientInput `json:"ingredients,omitempty"`
 
-	// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
-	Macros *Macros `json:"macros,omitempty"`
+	// Macros Per serving. Anything left out is stored as not given.
+	Macros *MacrosInput `json:"macros,omitempty"`
 
 	// Micros At most one entry per nutrient.
 	Micros   *[]Micro     `json:"micros,omitempty"`
