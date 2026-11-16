@@ -961,8 +961,27 @@ export interface components {
          * @enum {string}
          */
         BookStatus: "not_added" | "current" | "update_available" | "edited";
-        /** @description Per serving, typed in, never calculated. Responses always carry every field; a value not given is null. */
+        /** @description Per serving, typed in, never calculated. A value not given is null. */
         Macros: {
+            /** @description kcal. */
+            calories: number | null;
+            /** Format: double */
+            proteinG: number | null;
+            /** Format: double */
+            carbsG: number | null;
+            /** Format: double */
+            sugarG: number | null;
+            /** Format: double */
+            fatG: number | null;
+            /** Format: double */
+            saturatedFatG: number | null;
+            /** Format: double */
+            fibreG: number | null;
+            /** Format: double */
+            saltG: number | null;
+        };
+        /** @description Per serving. Anything left out is stored as not given. */
+        MacrosInput: {
             /** @description kcal. */
             calories?: number | null;
             /** Format: double */
@@ -1084,7 +1103,7 @@ export interface components {
             cuisine?: string | null;
             allergens?: components["schemas"]["Allergen"][];
             dietaryTags?: components["schemas"]["DietaryTag"][];
-            macros?: components["schemas"]["Macros"];
+            macros?: components["schemas"]["MacrosInput"];
             /** @description At most one entry per nutrient. */
             micros?: components["schemas"]["Micro"][];
             costPence?: number | null;
