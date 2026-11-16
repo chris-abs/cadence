@@ -10,24 +10,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Family struct {
-	ID                uuid.UUID
-	Name              string
-	Email             string
-	PasswordHash      string
-	PasswordChangedAt time.Time
-	AutoLockMinutes   int
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
-}
-
-type FamilyModule struct {
-	FamilyID  uuid.UUID
-	ModuleID  string
-	Enabled   bool
-	UpdatedAt time.Time
-}
-
 type Meal struct {
 	ID            uuid.UUID
 	FamilyID      uuid.UUID
@@ -74,54 +56,4 @@ type MealNutrient struct {
 	Amount    float64
 	CreatedAt time.Time
 	UpdatedAt time.Time
-}
-
-type PinAttempt struct {
-	ProfileID    uuid.UUID
-	FailedCount  int
-	LockedUntil  *time.Time
-	LastFailedAt time.Time
-}
-
-type Profile struct {
-	ID                     uuid.UUID
-	FamilyID               uuid.UUID
-	Name                   string
-	Role                   string
-	IsOwner                bool
-	Colour                 string
-	Avatar                 *string
-	Timezone               string
-	PinHash                *string
-	ContactEmail           *string
-	ContactEmailVerifiedAt *time.Time
-	CreatedAt              time.Time
-	UpdatedAt              time.Time
-}
-
-type Recipe struct {
-	ID           uuid.UUID
-	FamilyID     uuid.UUID
-	MealID       uuid.UUID
-	Instructions string
-	PrepMinutes  *int
-	CookMinutes  *int
-	SourceUrl    *string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-}
-
-type Session struct {
-	ID              uuid.UUID
-	TokenHash       []byte
-	Kind            string
-	FamilyID        uuid.UUID
-	ProfileID       *uuid.UUID
-	FamilySessionID *uuid.UUID
-	DeviceName      *string
-	UserAgent       *string
-	CreatedAt       time.Time
-	LastSeenAt      time.Time
-	IdleExpiresAt   time.Time
-	ExpiresAt       time.Time
 }
