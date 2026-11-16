@@ -1,12 +1,13 @@
 openapi: 3.0.3
 info:
   title: Cadence API
-  version: 0.2.0
+  version: 0.3.0
   description: >
     Contract between the Cadence web client and the Go API. Change this file
     first, run `make gen`, then implement both sides. Identity rules (who may
     call what, session lifetimes, lockout) are specified in
-    `docs/spec/identity.md`; this file is the wire format.
+    `docs/spec/identity.md` and meals rules in `docs/spec/meals.md`; this file
+    is the wire format.
 servers:
   - url: /api
 tags:
@@ -18,6 +19,16 @@ tags:
   - name: profiles
   - name: modules
     description: Feature modules a family can enable or disable.
+  - name: meals
+    description: >
+      A family's meals and their recipes. Needs a profile session and the
+      meals module enabled, as do the three tags below.
+  - name: recipe-book
+    description: Cadence's own meals, which a family's meals start as a copy of.
+  - name: meal-plan
+    description: Meals or free text on the days of a week.
+  - name: shopping
+    description: One shopping list per week, generated from the plan.
 paths:
   /healthz:
     get:
@@ -700,6 +711,522 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  # --- meals ----------------------------------------------------------------
+  /meals:
+    get:
+      operationId: listMeals
+      summary: The family's meals, sorted by name
+      tags: [meals]
+      security:
+        - familySession: []
+          profileSession: []
+      parameters:
+        - name: q
+          in: query
+          description: Case-insensitive match anywhere in the name.
+          schema:
+            type: string
+            maxLength: 120
+      responses:
+        "200":
+          description: >
+            Matching meals. While the recipe book is off, unedited copies of
+            book meals are left out.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      operationId: createMeal
+      summary: Add a meal, with its ingredients, micros and optional recipe (PARENT)
+      tags: [meals]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveMealRequest"
+      responses:
+        "201":
+          description: Meal created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meal"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /meals/{mealId}:
+    parameters:
+      - $ref: "#/components/parameters/MealId"
+    get:
+      operationId: getMeal
+      summary: One meal in full, with its recipe if it has one
+      tags: [meals]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The meal. Readable by id even while the recipe book is off.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meal"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateMeal
+      summary: Replace a meal and everything in it (PARENT)
+      description: >
+        Replaces every field, the ingredients, the micros and the recipe.
+        Anything left out is cleared; leaving `recipe` out removes the recipe.
+        A copy of a book meal becomes `edited`.
+      tags: [meals]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveMealRequest"
+      responses:
+        "200":
+          description: Updated meal.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meal"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+    delete:
+      operationId: deleteMeal
+      summary: Delete a meal and its recipe (PARENT)
+      tags: [meals]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "204":
+          description: >
+            Meal deleted. Plan entries that used it remain as free text with
+            its last name.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /ingredient-names:
+    get:
+      operationId: listIngredientNames
+      summary: Ingredient names the family has already used, for typing them the same way
+      tags: [meals]
+      security:
+        - familySession: []
+          profileSession: []
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 80
+      responses:
+        "200":
+          description: Up to 10 matching names.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngredientNameList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+
+  # --- recipe book ----------------------------------------------------------
+  /recipe-book:
+    get:
+      operationId: getRecipeBook
+      summary: Whether the book is on, and every book meal with where the family stands on it
+      tags: [recipe-book]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The recipe book, sorted by name.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeBook"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    put:
+      operationId: setRecipeBookEnabled
+      summary: Turn the recipe book on or off for the family (PARENT)
+      description: >
+        Off: unedited copies of book meals leave the meal list. Nothing is
+        deleted and plan entries keep their meals. On: they return unchanged.
+      tags: [recipe-book]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetRecipeBookEnabledRequest"
+      responses:
+        "200":
+          description: The recipe book with its new state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeBook"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /recipe-book/meals/{bookMealId}:
+    parameters:
+      - $ref: "#/components/parameters/BookMealId"
+    get:
+      operationId: getBookMeal
+      summary: One book meal in full, as Cadence ships it
+      tags: [recipe-book]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The book meal.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookMeal"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /recipe-book/meals/{bookMealId}/adopt:
+    parameters:
+      - $ref: "#/components/parameters/BookMealId"
+    post:
+      operationId: adoptBookMeal
+      summary: Take the book's current version of a meal (PARENT)
+      description: >
+        Adds the meal if the family has no copy. If it has one, edited or not,
+        its content is overwritten with the book's and it keeps its id.
+      tags: [recipe-book]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The family's meal, now matching the book.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meal"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  # --- meal plan ------------------------------------------------------------
+  /meal-plan:
+    get:
+      operationId: getMealPlan
+      summary: Plan entries between two dates
+      tags: [meal-plan]
+      security:
+        - familySession: []
+          profileSession: []
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Date"
+        - name: to
+          in: query
+          required: true
+          description: Inclusive; at most 42 days from `from`.
+          schema:
+            $ref: "#/components/schemas/Date"
+      responses:
+        "200":
+          description: Entries ordered by date, slot and position.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealPlan"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /meal-plan/entries:
+    post:
+      operationId: createPlanEntry
+      summary: Put a meal or free text on a day (PARENT)
+      tags: [meal-plan]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePlanEntryRequest"
+      responses:
+        "201":
+          description: Entry created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlanEntry"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /meal-plan/entries/{entryId}:
+    parameters:
+      - $ref: "#/components/parameters/PlanEntryId"
+    patch:
+      operationId: updatePlanEntry
+      summary: Move or change a plan entry (PARENT)
+      tags: [meal-plan]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePlanEntryRequest"
+      responses:
+        "200":
+          description: Updated entry.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlanEntry"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+    delete:
+      operationId: deletePlanEntry
+      summary: Remove a plan entry (PARENT)
+      tags: [meal-plan]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "204":
+          description: Entry deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # --- shopping -------------------------------------------------------------
+  /shopping-lists/{weekStart}:
+    parameters:
+      - $ref: "#/components/parameters/WeekStart"
+    get:
+      operationId: getShoppingList
+      summary: A week's shopping list with its items
+      tags: [shopping]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "`not_found`: no list has been made for this week yet."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /shopping-lists/{weekStart}/generate:
+    parameters:
+      - $ref: "#/components/parameters/WeekStart"
+    post:
+      operationId: generateShoppingList
+      summary: Create or regenerate the week's list from the plan (PARENT)
+      description: >
+        Merges the ingredients of the week's meal entries. Manual items are
+        untouched; a line still needed keeps its tick unless its quantity
+        went up.
+      tags: [shopping]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "200":
+          description: The generated list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /shopping-lists/{weekStart}/items:
+    parameters:
+      - $ref: "#/components/parameters/WeekStart"
+    post:
+      operationId: createShoppingItem
+      summary: Add a manual item; creates the week's list if there is none (PARENT)
+      tags: [shopping]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateShoppingItemRequest"
+      responses:
+        "201":
+          description: Item added.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+  /shopping-items/{itemId}:
+    parameters:
+      - $ref: "#/components/parameters/ShoppingItemId"
+    patch:
+      operationId: updateShoppingItem
+      summary: Tick or untick an item (anyone); edit a manual item (PARENT)
+      tags: [shopping]
+      security:
+        - familySession: []
+          profileSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateShoppingItemRequest"
+      responses:
+        "200":
+          description: Updated item.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+    delete:
+      operationId: deleteShoppingItem
+      summary: Delete a manual item (PARENT)
+      tags: [shopping]
+      security:
+        - familySession: []
+          profileSession: []
+      responses:
+        "204":
+          description: Item deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+
 components:
   securitySchemes:
     familySession:
@@ -737,6 +1264,37 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/ModuleId"
+    MealId:
+      name: mealId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    BookMealId:
+      name: bookMealId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    PlanEntryId:
+      name: entryId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    ShoppingItemId:
+      name: itemId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    WeekStart:
+      name: weekStart
+      in: path
+      required: true
+      description: The Monday the week starts on; any other weekday is refused (422).
+      schema:
+        $ref: "#/components/schemas/Date"
 
   headers:
     SetSessionCookies:
@@ -777,8 +1335,8 @@ components:
             $ref: "#/components/schemas/Error"
     Conflict:
       description: >
-        `email_taken`, `name_taken`, `owner_protected`, `self_not_allowed` or
-        `profile_limit_reached`.
+        `email_taken`, `name_taken`, `owner_protected`, `self_not_allowed`,
+        `profile_limit_reached` or `recipe_book_off`.
       content:
         application/json:
           schema:
@@ -1339,3 +1897,778 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/DeviceSession"
+
+    # --- meals ---
+    Date:
+      type: string
+      format: date
+      x-go-type: string
+      description: A calendar date, `YYYY-MM-DD`, with no time zone.
+      example: "2026-11-16"
+    Unit:
+      type: string
+      enum: [g, kg, oz, lb, ml, l, tsp, tbsp, cup, clove, slice, tin, pack, bunch, pinch]
+    IngredientCategory:
+      type: string
+      description: The part of the shop an ingredient is found in.
+      enum: [produce, meat, fish, dairy, bakery, tins, dry_goods, frozen, drinks, household, other]
+    Allergen:
+      type: string
+      enum:
+        [
+          celery,
+          cereals_gluten,
+          crustaceans,
+          eggs,
+          fish,
+          lupin,
+          milk,
+          molluscs,
+          mustard,
+          peanuts,
+          sesame,
+          soya,
+          sulphites,
+          tree_nuts,
+        ]
+    DietaryTag:
+      type: string
+      enum: [vegetarian, vegan, pescatarian, gluten_free, dairy_free, nut_free, halal, kosher]
+    Nutrient:
+      type: string
+      description: >
+        A micronutrient. Amounts are in µg for `vitamin_a`, `vitamin_d`,
+        `vitamin_k`, `vitamin_b12` and `folate`, and in mg for the rest.
+      enum:
+        [
+          vitamin_a,
+          vitamin_c,
+          vitamin_d,
+          vitamin_e,
+          vitamin_k,
+          vitamin_b6,
+          vitamin_b12,
+          folate,
+          calcium,
+          iron,
+          magnesium,
+          potassium,
+          zinc,
+        ]
+    MealSlot:
+      type: string
+      enum: [breakfast, lunch, dinner, snack]
+    BookStatus:
+      type: string
+      description: >
+        Where the family stands on a book meal. `not_added`: no copy.
+        `current`: an unedited copy that matches the book. `update_available`:
+        an unedited copy and the book has changed since. `edited`: the family
+        has changed its copy.
+      enum: [not_added, current, update_available, edited]
+
+    Macros:
+      type: object
+      additionalProperties: false
+      description: >
+        Per serving, typed in, never calculated. Responses always carry every
+        field; a value not given is null.
+      properties:
+        calories:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: kcal.
+        proteinG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        carbsG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        sugarG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        fatG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        saturatedFatG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        fibreG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+        saltG:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+    Micro:
+      type: object
+      additionalProperties: false
+      required: [nutrient, amount]
+      properties:
+        nutrient:
+          $ref: "#/components/schemas/Nutrient"
+        amount:
+          type: number
+          format: double
+          minimum: 0
+          description: Per serving, in the nutrient's unit.
+    Ingredient:
+      type: object
+      required: [quantity, unit, name, note, category]
+      properties:
+        quantity:
+          type: number
+          format: double
+          nullable: true
+        unit:
+          allOf:
+            - $ref: "#/components/schemas/Unit"
+          nullable: true
+          description: Null with a quantity is a count ("2 onions").
+        name:
+          type: string
+        note:
+          type: string
+          description: Preparation, e.g. "finely chopped". Empty when none.
+        category:
+          allOf:
+            - $ref: "#/components/schemas/IngredientCategory"
+          nullable: true
+    IngredientInput:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        quantity:
+          type: number
+          format: double
+          exclusiveMinimum: true
+          minimum: 0
+          nullable: true
+        unit:
+          allOf:
+            - $ref: "#/components/schemas/Unit"
+          nullable: true
+          description: A unit without a quantity is refused.
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        note:
+          type: string
+          maxLength: 200
+        category:
+          allOf:
+            - $ref: "#/components/schemas/IngredientCategory"
+          nullable: true
+    Recipe:
+      type: object
+      description: How to cook a meal.
+      required: [instructions, prepMinutes, cookMinutes, sourceUrl]
+      properties:
+        instructions:
+          type: string
+          description: Plain text, one step per line.
+        prepMinutes:
+          type: integer
+          nullable: true
+        cookMinutes:
+          type: integer
+          nullable: true
+        sourceUrl:
+          type: string
+          nullable: true
+    RecipeInput:
+      type: object
+      additionalProperties: false
+      properties:
+        instructions:
+          type: string
+          maxLength: 20000
+        prepMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          nullable: true
+        cookMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          nullable: true
+        sourceUrl:
+          type: string
+          maxLength: 2048
+          nullable: true
+          description: An http or https link.
+
+    MealSummary:
+      type: object
+      required:
+        [id, name, servings, cuisine, allergens, dietaryTags, calories, costPence, hasRecipe, prepMinutes, cookMinutes, bookMealId, edited]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        servings:
+          type: integer
+          nullable: true
+        cuisine:
+          type: string
+          nullable: true
+        allergens:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allergen"
+        dietaryTags:
+          type: array
+          items:
+            $ref: "#/components/schemas/DietaryTag"
+        calories:
+          type: integer
+          nullable: true
+          description: kcal per serving.
+        costPence:
+          type: integer
+          nullable: true
+          description: Per serving.
+        hasRecipe:
+          type: boolean
+        prepMinutes:
+          type: integer
+          nullable: true
+        cookMinutes:
+          type: integer
+          nullable: true
+        bookMealId:
+          type: string
+          format: uuid
+          x-go-type: string
+          nullable: true
+          description: The book meal this was copied from; null for the family's own.
+        edited:
+          type: boolean
+          description: A copy of a book meal that the family has changed.
+    MealList:
+      type: object
+      required: [meals]
+      properties:
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/MealSummary"
+    Meal:
+      type: object
+      required:
+        [
+          id,
+          name,
+          description,
+          servings,
+          cuisine,
+          allergens,
+          dietaryTags,
+          macros,
+          micros,
+          costPence,
+          ingredients,
+          recipe,
+          bookMealId,
+          edited,
+          createdAt,
+          updatedAt,
+        ]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        description:
+          type: string
+        servings:
+          type: integer
+          nullable: true
+          description: What the numbers and ingredient amounts are based on.
+        cuisine:
+          type: string
+          nullable: true
+        allergens:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allergen"
+        dietaryTags:
+          type: array
+          items:
+            $ref: "#/components/schemas/DietaryTag"
+        macros:
+          $ref: "#/components/schemas/Macros"
+        micros:
+          type: array
+          items:
+            $ref: "#/components/schemas/Micro"
+        costPence:
+          type: integer
+          nullable: true
+          description: Estimated cost per serving, in pence.
+        ingredients:
+          type: array
+          description: In the order entered.
+          items:
+            $ref: "#/components/schemas/Ingredient"
+        recipe:
+          allOf:
+            - $ref: "#/components/schemas/Recipe"
+          nullable: true
+          description: Null for a meal with nothing to cook.
+        bookMealId:
+          type: string
+          format: uuid
+          x-go-type: string
+          nullable: true
+          description: The book meal this was copied from; null for the family's own.
+        edited:
+          type: boolean
+          description: A copy of a book meal that the family has changed.
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    SaveMealRequest:
+      type: object
+      additionalProperties: false
+      description: >
+        The whole meal. On an update anything left out is cleared, and leaving
+        `recipe` out removes the recipe.
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 2000
+        servings:
+          type: integer
+          minimum: 1
+          maximum: 50
+          nullable: true
+        cuisine:
+          type: string
+          maxLength: 50
+          nullable: true
+        allergens:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/Allergen"
+        dietaryTags:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/DietaryTag"
+        macros:
+          $ref: "#/components/schemas/Macros"
+        micros:
+          type: array
+          description: At most one entry per nutrient.
+          maxItems: 13
+          items:
+            $ref: "#/components/schemas/Micro"
+        costPence:
+          type: integer
+          minimum: 0
+          nullable: true
+        ingredients:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/IngredientInput"
+        recipe:
+          allOf:
+            - $ref: "#/components/schemas/RecipeInput"
+          nullable: true
+    IngredientNameList:
+      type: object
+      required: [names]
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+
+    BookMealSummary:
+      type: object
+      required:
+        [id, name, servings, cuisine, allergens, dietaryTags, calories, costPence, hasRecipe, prepMinutes, cookMinutes, status, mealId]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        servings:
+          type: integer
+          nullable: true
+        cuisine:
+          type: string
+          nullable: true
+        allergens:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allergen"
+        dietaryTags:
+          type: array
+          items:
+            $ref: "#/components/schemas/DietaryTag"
+        calories:
+          type: integer
+          nullable: true
+        costPence:
+          type: integer
+          nullable: true
+        hasRecipe:
+          type: boolean
+        prepMinutes:
+          type: integer
+          nullable: true
+        cookMinutes:
+          type: integer
+          nullable: true
+        status:
+          $ref: "#/components/schemas/BookStatus"
+        mealId:
+          type: string
+          format: uuid
+          x-go-type: string
+          nullable: true
+          description: The family's copy; null when `status` is `not_added`.
+    RecipeBook:
+      type: object
+      required: [enabled, meals]
+      properties:
+        enabled:
+          type: boolean
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookMealSummary"
+    SetRecipeBookEnabledRequest:
+      type: object
+      additionalProperties: false
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+    BookMeal:
+      type: object
+      required:
+        [
+          id,
+          name,
+          description,
+          servings,
+          cuisine,
+          allergens,
+          dietaryTags,
+          macros,
+          micros,
+          costPence,
+          ingredients,
+          recipe,
+          status,
+          mealId,
+        ]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        description:
+          type: string
+        servings:
+          type: integer
+          nullable: true
+        cuisine:
+          type: string
+          nullable: true
+        allergens:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allergen"
+        dietaryTags:
+          type: array
+          items:
+            $ref: "#/components/schemas/DietaryTag"
+        macros:
+          $ref: "#/components/schemas/Macros"
+        micros:
+          type: array
+          items:
+            $ref: "#/components/schemas/Micro"
+        costPence:
+          type: integer
+          nullable: true
+        ingredients:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ingredient"
+        recipe:
+          allOf:
+            - $ref: "#/components/schemas/Recipe"
+          nullable: true
+        status:
+          $ref: "#/components/schemas/BookStatus"
+        mealId:
+          type: string
+          format: uuid
+          x-go-type: string
+          nullable: true
+          description: The family's copy; null when `status` is `not_added`.
+
+    PlanMeal:
+      type: object
+      description: Enough of a planned meal to show the entry and add up a week.
+      required: [id, name, servings, calories, costPence]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+        servings:
+          type: integer
+          nullable: true
+        calories:
+          type: integer
+          nullable: true
+          description: kcal per serving.
+        costPence:
+          type: integer
+          nullable: true
+          description: Per serving.
+    PlanEntry:
+      type: object
+      required: [id, date, slot, position, title, meal, servings, note, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        date:
+          $ref: "#/components/schemas/Date"
+        slot:
+          $ref: "#/components/schemas/MealSlot"
+        position:
+          type: integer
+          description: Order within the slot.
+        title:
+          type: string
+          description: The meal's current name, or the free text.
+        meal:
+          allOf:
+            - $ref: "#/components/schemas/PlanMeal"
+          nullable: true
+          description: Null for a free-text entry.
+        servings:
+          type: integer
+          nullable: true
+          description: Servings planned; null uses the meal's own.
+        note:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    MealPlan:
+      type: object
+      required: [entries]
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlanEntry"
+    CreatePlanEntryRequest:
+      type: object
+      additionalProperties: false
+      description: Give `mealId` for a meal entry or `title` for free text, not both.
+      required: [date]
+      properties:
+        date:
+          $ref: "#/components/schemas/Date"
+        slot:
+          $ref: "#/components/schemas/MealSlot"
+        position:
+          type: integer
+          minimum: 0
+        mealId:
+          $ref: "#/components/schemas/Id"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        servings:
+          type: integer
+          minimum: 1
+          maximum: 50
+          nullable: true
+        note:
+          type: string
+          maxLength: 500
+    UpdatePlanEntryRequest:
+      type: object
+      additionalProperties: false
+      description: >
+        Only the fields given change. `mealId` swaps the meal; `title` turns
+        the entry into free text.
+      properties:
+        date:
+          $ref: "#/components/schemas/Date"
+        slot:
+          $ref: "#/components/schemas/MealSlot"
+        position:
+          type: integer
+          minimum: 0
+        mealId:
+          $ref: "#/components/schemas/Id"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        servings:
+          type: integer
+          minimum: 1
+          maximum: 50
+          nullable: true
+        note:
+          type: string
+          maxLength: 500
+
+    ShoppingItemOrigin:
+      type: string
+      description: "`generated` lines come from the plan and can only be ticked."
+      enum: [generated, manual]
+    ShoppingItem:
+      type: object
+      required: [id, origin, name, quantity, unit, category, sources, checked, checkedAt, checkedBy]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        origin:
+          $ref: "#/components/schemas/ShoppingItemOrigin"
+        name:
+          type: string
+        quantity:
+          type: number
+          format: double
+          nullable: true
+        unit:
+          allOf:
+            - $ref: "#/components/schemas/Unit"
+          nullable: true
+        category:
+          allOf:
+            - $ref: "#/components/schemas/IngredientCategory"
+          nullable: true
+        sources:
+          type: array
+          description: Names of the meals a generated line came from.
+          items:
+            type: string
+        checked:
+          type: boolean
+        checkedAt:
+          type: string
+          format: date-time
+          nullable: true
+        checkedBy:
+          type: string
+          format: uuid
+          x-go-type: string
+          nullable: true
+          description: The profile that ticked it.
+    ShoppingList:
+      type: object
+      required: [id, weekStart, generatedAt, stale, items]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        weekStart:
+          $ref: "#/components/schemas/Date"
+        generatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Null while the list holds only manual items.
+        stale:
+          type: boolean
+          description: Regenerating now would produce different lines.
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShoppingItem"
+    CreateShoppingItemRequest:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        quantity:
+          type: number
+          format: double
+          exclusiveMinimum: true
+          minimum: 0
+          nullable: true
+        unit:
+          allOf:
+            - $ref: "#/components/schemas/Unit"
+          nullable: true
+        category:
+          allOf:
+            - $ref: "#/components/schemas/IngredientCategory"
+          nullable: true
+    UpdateShoppingItemRequest:
+      type: object
+      additionalProperties: false
+      description: >
+        Only the fields given change. `checked` sets the tick (it is not a
+        toggle) and is allowed on any item. The other fields are for manual
+        items only; on a generated line they are refused (422).
+      properties:
+        checked:
+          type: boolean
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        quantity:
+          type: number
+          format: double
+          exclusiveMinimum: true
+          minimum: 0
+          nullable: true
+        unit:
+          allOf:
+            - $ref: "#/components/schemas/Unit"
+          nullable: true
+        category:
+          allOf:
+            - $ref: "#/components/schemas/IngredientCategory"
+          nullable: true

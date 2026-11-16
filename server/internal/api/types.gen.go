@@ -7,6 +7,120 @@ import (
 	"time"
 )
 
+// Defines values for Allergen.
+const (
+	AllergenCelery        Allergen = "celery"
+	AllergenCerealsGluten Allergen = "cereals_gluten"
+	AllergenCrustaceans   Allergen = "crustaceans"
+	AllergenEggs          Allergen = "eggs"
+	AllergenFish          Allergen = "fish"
+	AllergenLupin         Allergen = "lupin"
+	AllergenMilk          Allergen = "milk"
+	AllergenMolluscs      Allergen = "molluscs"
+	AllergenMustard       Allergen = "mustard"
+	AllergenPeanuts       Allergen = "peanuts"
+	AllergenSesame        Allergen = "sesame"
+	AllergenSoya          Allergen = "soya"
+	AllergenSulphites     Allergen = "sulphites"
+	AllergenTreeNuts      Allergen = "tree_nuts"
+)
+
+// Valid indicates whether the value is a known member of the Allergen enum.
+func (e Allergen) Valid() bool {
+	switch e {
+	case AllergenCelery:
+		return true
+	case AllergenCerealsGluten:
+		return true
+	case AllergenCrustaceans:
+		return true
+	case AllergenEggs:
+		return true
+	case AllergenFish:
+		return true
+	case AllergenLupin:
+		return true
+	case AllergenMilk:
+		return true
+	case AllergenMolluscs:
+		return true
+	case AllergenMustard:
+		return true
+	case AllergenPeanuts:
+		return true
+	case AllergenSesame:
+		return true
+	case AllergenSoya:
+		return true
+	case AllergenSulphites:
+		return true
+	case AllergenTreeNuts:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for BookStatus.
+const (
+	BookStatusCurrent         BookStatus = "current"
+	BookStatusEdited          BookStatus = "edited"
+	BookStatusNotAdded        BookStatus = "not_added"
+	BookStatusUpdateAvailable BookStatus = "update_available"
+)
+
+// Valid indicates whether the value is a known member of the BookStatus enum.
+func (e BookStatus) Valid() bool {
+	switch e {
+	case BookStatusCurrent:
+		return true
+	case BookStatusEdited:
+		return true
+	case BookStatusNotAdded:
+		return true
+	case BookStatusUpdateAvailable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DietaryTag.
+const (
+	DietaryTagDairyFree   DietaryTag = "dairy_free"
+	DietaryTagGlutenFree  DietaryTag = "gluten_free"
+	DietaryTagHalal       DietaryTag = "halal"
+	DietaryTagKosher      DietaryTag = "kosher"
+	DietaryTagNutFree     DietaryTag = "nut_free"
+	DietaryTagPescatarian DietaryTag = "pescatarian"
+	DietaryTagVegan       DietaryTag = "vegan"
+	DietaryTagVegetarian  DietaryTag = "vegetarian"
+)
+
+// Valid indicates whether the value is a known member of the DietaryTag enum.
+func (e DietaryTag) Valid() bool {
+	switch e {
+	case DietaryTagDairyFree:
+		return true
+	case DietaryTagGlutenFree:
+		return true
+	case DietaryTagHalal:
+		return true
+	case DietaryTagKosher:
+		return true
+	case DietaryTagNutFree:
+		return true
+	case DietaryTagPescatarian:
+		return true
+	case DietaryTagVegan:
+		return true
+	case DietaryTagVegetarian:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for HealthStatus.
 const (
 	HealthStatusOk HealthStatus = "ok"
@@ -16,6 +130,126 @@ const (
 func (e HealthStatus) Valid() bool {
 	switch e {
 	case HealthStatusOk:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IngredientCategory.
+const (
+	IngredientCategoryBakery    IngredientCategory = "bakery"
+	IngredientCategoryDairy     IngredientCategory = "dairy"
+	IngredientCategoryDrinks    IngredientCategory = "drinks"
+	IngredientCategoryDryGoods  IngredientCategory = "dry_goods"
+	IngredientCategoryFish      IngredientCategory = "fish"
+	IngredientCategoryFrozen    IngredientCategory = "frozen"
+	IngredientCategoryHousehold IngredientCategory = "household"
+	IngredientCategoryMeat      IngredientCategory = "meat"
+	IngredientCategoryOther     IngredientCategory = "other"
+	IngredientCategoryProduce   IngredientCategory = "produce"
+	IngredientCategoryTins      IngredientCategory = "tins"
+)
+
+// Valid indicates whether the value is a known member of the IngredientCategory enum.
+func (e IngredientCategory) Valid() bool {
+	switch e {
+	case IngredientCategoryBakery:
+		return true
+	case IngredientCategoryDairy:
+		return true
+	case IngredientCategoryDrinks:
+		return true
+	case IngredientCategoryDryGoods:
+		return true
+	case IngredientCategoryFish:
+		return true
+	case IngredientCategoryFrozen:
+		return true
+	case IngredientCategoryHousehold:
+		return true
+	case IngredientCategoryMeat:
+		return true
+	case IngredientCategoryOther:
+		return true
+	case IngredientCategoryProduce:
+		return true
+	case IngredientCategoryTins:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MealSlot.
+const (
+	MealSlotBreakfast MealSlot = "breakfast"
+	MealSlotDinner    MealSlot = "dinner"
+	MealSlotLunch     MealSlot = "lunch"
+	MealSlotSnack     MealSlot = "snack"
+)
+
+// Valid indicates whether the value is a known member of the MealSlot enum.
+func (e MealSlot) Valid() bool {
+	switch e {
+	case MealSlotBreakfast:
+		return true
+	case MealSlotDinner:
+		return true
+	case MealSlotLunch:
+		return true
+	case MealSlotSnack:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for Nutrient.
+const (
+	NutrientCalcium    Nutrient = "calcium"
+	NutrientFolate     Nutrient = "folate"
+	NutrientIron       Nutrient = "iron"
+	NutrientMagnesium  Nutrient = "magnesium"
+	NutrientPotassium  Nutrient = "potassium"
+	NutrientVitaminA   Nutrient = "vitamin_a"
+	NutrientVitaminB12 Nutrient = "vitamin_b12"
+	NutrientVitaminB6  Nutrient = "vitamin_b6"
+	NutrientVitaminC   Nutrient = "vitamin_c"
+	NutrientVitaminD   Nutrient = "vitamin_d"
+	NutrientVitaminE   Nutrient = "vitamin_e"
+	NutrientVitaminK   Nutrient = "vitamin_k"
+	NutrientZinc       Nutrient = "zinc"
+)
+
+// Valid indicates whether the value is a known member of the Nutrient enum.
+func (e Nutrient) Valid() bool {
+	switch e {
+	case NutrientCalcium:
+		return true
+	case NutrientFolate:
+		return true
+	case NutrientIron:
+		return true
+	case NutrientMagnesium:
+		return true
+	case NutrientPotassium:
+		return true
+	case NutrientVitaminA:
+		return true
+	case NutrientVitaminB12:
+		return true
+	case NutrientVitaminB6:
+		return true
+	case NutrientVitaminC:
+		return true
+	case NutrientVitaminD:
+		return true
+	case NutrientVitaminE:
+		return true
+	case NutrientVitaminK:
+		return true
+	case NutrientZinc:
 		return true
 	default:
 		return false
@@ -118,8 +352,134 @@ func (e Role) Valid() bool {
 	}
 }
 
+// Defines values for ShoppingItemOrigin.
+const (
+	ShoppingItemOriginGenerated ShoppingItemOrigin = "generated"
+	ShoppingItemOriginManual    ShoppingItemOrigin = "manual"
+)
+
+// Valid indicates whether the value is a known member of the ShoppingItemOrigin enum.
+func (e ShoppingItemOrigin) Valid() bool {
+	switch e {
+	case ShoppingItemOriginGenerated:
+		return true
+	case ShoppingItemOriginManual:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for Unit.
+const (
+	UnitBunch Unit = "bunch"
+	UnitClove Unit = "clove"
+	UnitCup   Unit = "cup"
+	UnitG     Unit = "g"
+	UnitKg    Unit = "kg"
+	UnitL     Unit = "l"
+	UnitLb    Unit = "lb"
+	UnitMl    Unit = "ml"
+	UnitOz    Unit = "oz"
+	UnitPack  Unit = "pack"
+	UnitPinch Unit = "pinch"
+	UnitSlice Unit = "slice"
+	UnitTbsp  Unit = "tbsp"
+	UnitTin   Unit = "tin"
+	UnitTsp   Unit = "tsp"
+)
+
+// Valid indicates whether the value is a known member of the Unit enum.
+func (e Unit) Valid() bool {
+	switch e {
+	case UnitBunch:
+		return true
+	case UnitClove:
+		return true
+	case UnitCup:
+		return true
+	case UnitG:
+		return true
+	case UnitKg:
+		return true
+	case UnitL:
+		return true
+	case UnitLb:
+		return true
+	case UnitMl:
+		return true
+	case UnitOz:
+		return true
+	case UnitPack:
+		return true
+	case UnitPinch:
+		return true
+	case UnitSlice:
+		return true
+	case UnitTbsp:
+		return true
+	case UnitTin:
+		return true
+	case UnitTsp:
+		return true
+	default:
+		return false
+	}
+}
+
+// Allergen defines model for Allergen.
+type Allergen string
+
 // Avatar Key of a built-in avatar; absent or null shows initials.
 type Avatar = string
+
+// BookMeal defines model for BookMeal.
+type BookMeal struct {
+	Allergens   []Allergen   `json:"allergens"`
+	CostPence   *int         `json:"costPence"`
+	Cuisine     *string      `json:"cuisine"`
+	Description string       `json:"description"`
+	DietaryTags []DietaryTag `json:"dietaryTags"`
+	Id          Id           `json:"id"`
+	Ingredients []Ingredient `json:"ingredients"`
+
+	// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
+	Macros Macros `json:"macros"`
+
+	// MealId The family's copy; null when `status` is `not_added`.
+	MealId   *string `json:"mealId"`
+	Micros   []Micro `json:"micros"`
+	Name     string  `json:"name"`
+	Recipe   *Recipe `json:"recipe"`
+	Servings *int    `json:"servings"`
+
+	// Status Where the family stands on a book meal. `not_added`: no copy. `current`: an unedited copy that matches the book. `update_available`: an unedited copy and the book has changed since. `edited`: the family has changed its copy.
+	Status BookStatus `json:"status"`
+}
+
+// BookMealSummary defines model for BookMealSummary.
+type BookMealSummary struct {
+	Allergens   []Allergen   `json:"allergens"`
+	Calories    *int         `json:"calories"`
+	CookMinutes *int         `json:"cookMinutes"`
+	CostPence   *int         `json:"costPence"`
+	Cuisine     *string      `json:"cuisine"`
+	DietaryTags []DietaryTag `json:"dietaryTags"`
+	HasRecipe   bool         `json:"hasRecipe"`
+	Id          Id           `json:"id"`
+
+	// MealId The family's copy; null when `status` is `not_added`.
+	MealId      *string `json:"mealId"`
+	Name        string  `json:"name"`
+	PrepMinutes *int    `json:"prepMinutes"`
+	Servings    *int    `json:"servings"`
+
+	// Status Where the family stands on a book meal. `not_added`: no copy. `current`: an unedited copy that matches the book. `update_available`: an unedited copy and the book has changed since. `edited`: the family has changed its copy.
+	Status BookStatus `json:"status"`
+}
+
+// BookStatus Where the family stands on a book meal. `not_added`: no copy. `current`: an unedited copy that matches the book. `update_available`: an unedited copy and the book has changed since. `edited`: the family has changed its copy.
+type BookStatus string
 
 // ChangeEmailRequest defines model for ChangeEmailRequest.
 type ChangeEmailRequest struct {
@@ -141,6 +501,20 @@ type ChangeRoleRequest struct {
 	Role Role `json:"role"`
 }
 
+// CreatePlanEntryRequest Give `mealId` for a meal entry or `title` for free text, not both.
+type CreatePlanEntryRequest struct {
+	// Date A calendar date, `YYYY-MM-DD`, with no time zone.
+	//
+	// Example: 2026-11-16
+	Date     Date      `json:"date"`
+	MealId   *Id       `json:"mealId,omitempty"`
+	Note     *string   `json:"note,omitempty"`
+	Position *int      `json:"position,omitempty"`
+	Servings *int      `json:"servings,omitempty"`
+	Slot     *MealSlot `json:"slot,omitempty"`
+	Title    *string   `json:"title,omitempty"`
+}
+
 // CreateProfileRequest defines model for CreateProfileRequest.
 type CreateProfileRequest struct {
 	// Avatar Key of a built-in avatar; absent or null shows initials.
@@ -158,6 +532,19 @@ type CreateProfileRequest struct {
 	// Example: Europe/London
 	Timezone *Timezone `json:"timezone,omitempty"`
 }
+
+// CreateShoppingItemRequest defines model for CreateShoppingItemRequest.
+type CreateShoppingItemRequest struct {
+	Category *IngredientCategory `json:"category,omitempty"`
+	Name     string              `json:"name"`
+	Quantity *float64            `json:"quantity,omitempty"`
+	Unit     *Unit               `json:"unit,omitempty"`
+}
+
+// Date A calendar date, `YYYY-MM-DD`, with no time zone.
+//
+// Example: 2026-11-16
+type Date = string
 
 // DeleteFamilyRequest defines model for DeleteFamilyRequest.
 type DeleteFamilyRequest struct {
@@ -187,6 +574,9 @@ type DeviceSession struct {
 type DeviceSessionList struct {
 	Sessions []DeviceSession `json:"sessions"`
 }
+
+// DietaryTag defines model for DietaryTag.
+type DietaryTag string
 
 // Email Trimmed and lower-cased by the server.
 type Email = string
@@ -244,12 +634,57 @@ type HealthStatus string
 // Id defines model for Id.
 type Id = string
 
+// Ingredient defines model for Ingredient.
+type Ingredient struct {
+	Category *IngredientCategory `json:"category"`
+	Name     string              `json:"name"`
+
+	// Note Preparation, e.g. "finely chopped". Empty when none.
+	Note     string   `json:"note"`
+	Quantity *float64 `json:"quantity"`
+
+	// Unit Null with a quantity is a count ("2 onions").
+	Unit *Unit `json:"unit"`
+}
+
+// IngredientCategory The part of the shop an ingredient is found in.
+type IngredientCategory string
+
+// IngredientInput defines model for IngredientInput.
+type IngredientInput struct {
+	Category *IngredientCategory `json:"category,omitempty"`
+	Name     string              `json:"name"`
+	Note     *string             `json:"note,omitempty"`
+	Quantity *float64            `json:"quantity,omitempty"`
+
+	// Unit A unit without a quantity is refused.
+	Unit *Unit `json:"unit,omitempty"`
+}
+
+// IngredientNameList defines model for IngredientNameList.
+type IngredientNameList struct {
+	Names []string `json:"names"`
+}
+
 // LoginRequest defines model for LoginRequest.
 type LoginRequest struct {
 	// DeviceName Label shown in the device list, e.g. "Kitchen tablet".
 	DeviceName *DeviceName `json:"deviceName,omitempty"`
 	Email      string      `json:"email"`
 	Password   string      `json:"password"`
+}
+
+// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
+type Macros struct {
+	// Calories kcal.
+	Calories      *int     `json:"calories,omitempty"`
+	CarbsG        *float64 `json:"carbsG,omitempty"`
+	FatG          *float64 `json:"fatG,omitempty"`
+	FibreG        *float64 `json:"fibreG,omitempty"`
+	ProteinG      *float64 `json:"proteinG,omitempty"`
+	SaltG         *float64 `json:"saltG,omitempty"`
+	SaturatedFatG *float64 `json:"saturatedFatG,omitempty"`
+	SugarG        *float64 `json:"sugarG,omitempty"`
 }
 
 // Me defines model for Me.
@@ -268,6 +703,87 @@ type Me struct {
 	// Profile Full view of a profile. The contact fields are filled only when the caller is this profile or a PARENT; for anyone else they are null.
 	Profile Profile            `json:"profile"`
 	Session ProfileSessionInfo `json:"session"`
+}
+
+// Meal defines model for Meal.
+type Meal struct {
+	Allergens []Allergen `json:"allergens"`
+
+	// BookMealId The book meal this was copied from; null for the family's own.
+	BookMealId *string `json:"bookMealId"`
+
+	// CostPence Estimated cost per serving, in pence.
+	CostPence   *int         `json:"costPence"`
+	CreatedAt   time.Time    `json:"createdAt"`
+	Cuisine     *string      `json:"cuisine"`
+	Description string       `json:"description"`
+	DietaryTags []DietaryTag `json:"dietaryTags"`
+
+	// Edited A copy of a book meal that the family has changed.
+	Edited bool `json:"edited"`
+	Id     Id   `json:"id"`
+
+	// Ingredients In the order entered.
+	Ingredients []Ingredient `json:"ingredients"`
+
+	// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
+	Macros Macros  `json:"macros"`
+	Micros []Micro `json:"micros"`
+	Name   string  `json:"name"`
+
+	// Recipe Null for a meal with nothing to cook.
+	Recipe *Recipe `json:"recipe"`
+
+	// Servings What the numbers and ingredient amounts are based on.
+	Servings  *int      `json:"servings"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+// MealList defines model for MealList.
+type MealList struct {
+	Meals []MealSummary `json:"meals"`
+}
+
+// MealPlan defines model for MealPlan.
+type MealPlan struct {
+	Entries []PlanEntry `json:"entries"`
+}
+
+// MealSlot defines model for MealSlot.
+type MealSlot string
+
+// MealSummary defines model for MealSummary.
+type MealSummary struct {
+	Allergens []Allergen `json:"allergens"`
+
+	// BookMealId The book meal this was copied from; null for the family's own.
+	BookMealId *string `json:"bookMealId"`
+
+	// Calories kcal per serving.
+	Calories    *int `json:"calories"`
+	CookMinutes *int `json:"cookMinutes"`
+
+	// CostPence Per serving.
+	CostPence   *int         `json:"costPence"`
+	Cuisine     *string      `json:"cuisine"`
+	DietaryTags []DietaryTag `json:"dietaryTags"`
+
+	// Edited A copy of a book meal that the family has changed.
+	Edited      bool   `json:"edited"`
+	HasRecipe   bool   `json:"hasRecipe"`
+	Id          Id     `json:"id"`
+	Name        string `json:"name"`
+	PrepMinutes *int   `json:"prepMinutes"`
+	Servings    *int   `json:"servings"`
+}
+
+// Micro defines model for Micro.
+type Micro struct {
+	// Amount Per serving, in the nutrient's unit.
+	Amount float64 `json:"amount"`
+
+	// Nutrient A micronutrient. Amounts are in µg for `vitamin_a`, `vitamin_d`, `vitamin_k`, `vitamin_b12` and `folate`, and in mg for the rest.
+	Nutrient Nutrient `json:"nutrient"`
 }
 
 // Module defines model for Module.
@@ -305,11 +821,52 @@ type NewOwnerProfile struct {
 	Timezone Timezone `json:"timezone"`
 }
 
+// Nutrient A micronutrient. Amounts are in µg for `vitamin_a`, `vitamin_d`, `vitamin_k`, `vitamin_b12` and `folate`, and in mg for the rest.
+type Nutrient string
+
 // Password 10–72 characters and at most 72 bytes UTF-8.
 type Password = string
 
 // Pin defines model for Pin.
 type Pin = string
+
+// PlanEntry defines model for PlanEntry.
+type PlanEntry struct {
+	CreatedAt time.Time `json:"createdAt"`
+
+	// Date A calendar date, `YYYY-MM-DD`, with no time zone.
+	//
+	// Example: 2026-11-16
+	Date Date `json:"date"`
+	Id   Id   `json:"id"`
+
+	// Meal Null for a free-text entry.
+	Meal *PlanMeal `json:"meal"`
+	Note string    `json:"note"`
+
+	// Position Order within the slot.
+	Position int `json:"position"`
+
+	// Servings Servings planned; null uses the meal's own.
+	Servings *int     `json:"servings"`
+	Slot     MealSlot `json:"slot"`
+
+	// Title The meal's current name, or the free text.
+	Title     string    `json:"title"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+// PlanMeal Enough of a planned meal to show the entry and add up a week.
+type PlanMeal struct {
+	// Calories kcal per serving.
+	Calories *int `json:"calories"`
+
+	// CostPence Per serving.
+	CostPence *int   `json:"costPence"`
+	Id        Id     `json:"id"`
+	Name      string `json:"name"`
+	Servings  *int   `json:"servings"`
+}
 
 // Profile Full view of a profile. The contact fields are filled only when the caller is this profile or a PARENT; for anyone else they are null.
 type Profile struct {
@@ -374,6 +931,32 @@ type ProfileSummary struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
+// Recipe How to cook a meal.
+type Recipe struct {
+	CookMinutes *int `json:"cookMinutes"`
+
+	// Instructions Plain text, one step per line.
+	Instructions string  `json:"instructions"`
+	PrepMinutes  *int    `json:"prepMinutes"`
+	SourceUrl    *string `json:"sourceUrl"`
+}
+
+// RecipeBook defines model for RecipeBook.
+type RecipeBook struct {
+	Enabled bool              `json:"enabled"`
+	Meals   []BookMealSummary `json:"meals"`
+}
+
+// RecipeInput defines model for RecipeInput.
+type RecipeInput struct {
+	CookMinutes  *int    `json:"cookMinutes,omitempty"`
+	Instructions *string `json:"instructions,omitempty"`
+	PrepMinutes  *int    `json:"prepMinutes,omitempty"`
+
+	// SourceUrl An http or https link.
+	SourceUrl *string `json:"sourceUrl,omitempty"`
+}
+
 // RegisterRequest defines model for RegisterRequest.
 type RegisterRequest struct {
 	// DeviceName Label shown in the device list, e.g. "Kitchen tablet".
@@ -395,6 +978,25 @@ type RegistrationStatus struct {
 
 // Role defines model for Role.
 type Role string
+
+// SaveMealRequest The whole meal. On an update anything left out is cleared, and leaving `recipe` out removes the recipe.
+type SaveMealRequest struct {
+	Allergens   *[]Allergen        `json:"allergens,omitempty"`
+	CostPence   *int               `json:"costPence,omitempty"`
+	Cuisine     *string            `json:"cuisine,omitempty"`
+	Description *string            `json:"description,omitempty"`
+	DietaryTags *[]DietaryTag      `json:"dietaryTags,omitempty"`
+	Ingredients *[]IngredientInput `json:"ingredients,omitempty"`
+
+	// Macros Per serving, typed in, never calculated. Responses always carry every field; a value not given is null.
+	Macros *Macros `json:"macros,omitempty"`
+
+	// Micros At most one entry per nutrient.
+	Micros   *[]Micro     `json:"micros,omitempty"`
+	Name     string       `json:"name"`
+	Recipe   *RecipeInput `json:"recipe,omitempty"`
+	Servings *int         `json:"servings,omitempty"`
+}
 
 // SelectProfileRequest defines model for SelectProfileRequest.
 type SelectProfileRequest struct {
@@ -418,6 +1020,50 @@ type SetPinRequest struct {
 	Pin *string `json:"pin"`
 }
 
+// SetRecipeBookEnabledRequest defines model for SetRecipeBookEnabledRequest.
+type SetRecipeBookEnabledRequest struct {
+	Enabled bool `json:"enabled"`
+}
+
+// ShoppingItem defines model for ShoppingItem.
+type ShoppingItem struct {
+	Category  *IngredientCategory `json:"category"`
+	Checked   bool                `json:"checked"`
+	CheckedAt *time.Time          `json:"checkedAt"`
+
+	// CheckedBy The profile that ticked it.
+	CheckedBy *string `json:"checkedBy"`
+	Id        Id      `json:"id"`
+	Name      string  `json:"name"`
+
+	// Origin `generated` lines come from the plan and can only be ticked.
+	Origin   ShoppingItemOrigin `json:"origin"`
+	Quantity *float64           `json:"quantity"`
+
+	// Sources Names of the meals a generated line came from.
+	Sources []string `json:"sources"`
+	Unit    *Unit    `json:"unit"`
+}
+
+// ShoppingItemOrigin `generated` lines come from the plan and can only be ticked.
+type ShoppingItemOrigin string
+
+// ShoppingList defines model for ShoppingList.
+type ShoppingList struct {
+	// GeneratedAt Null while the list holds only manual items.
+	GeneratedAt *time.Time     `json:"generatedAt"`
+	Id          Id             `json:"id"`
+	Items       []ShoppingItem `json:"items"`
+
+	// Stale Regenerating now would produce different lines.
+	Stale bool `json:"stale"`
+
+	// WeekStart A calendar date, `YYYY-MM-DD`, with no time zone.
+	//
+	// Example: 2026-11-16
+	WeekStart Date `json:"weekStart"`
+}
+
 // Timezone IANA time zone name, e.g. `Europe/London`.
 //
 // Example: Europe/London
@@ -429,10 +1075,27 @@ type TransferOwnershipRequest struct {
 	ProfileId Id     `json:"profileId"`
 }
 
+// Unit defines model for Unit.
+type Unit string
+
 // UpdateFamilyRequest defines model for UpdateFamilyRequest.
 type UpdateFamilyRequest struct {
 	AutoLockMinutes int    `json:"autoLockMinutes"`
 	Name            string `json:"name"`
+}
+
+// UpdatePlanEntryRequest Only the fields given change. `mealId` swaps the meal; `title` turns the entry into free text.
+type UpdatePlanEntryRequest struct {
+	// Date A calendar date, `YYYY-MM-DD`, with no time zone.
+	//
+	// Example: 2026-11-16
+	Date     *Date     `json:"date,omitempty"`
+	MealId   *Id       `json:"mealId,omitempty"`
+	Note     *string   `json:"note,omitempty"`
+	Position *int      `json:"position,omitempty"`
+	Servings *int      `json:"servings,omitempty"`
+	Slot     *MealSlot `json:"slot,omitempty"`
+	Title    *string   `json:"title,omitempty"`
 }
 
 // UpdateProfileRequest Full replacement of the display fields; `avatar` or `contactEmail` null clears it.
@@ -450,11 +1113,37 @@ type UpdateProfileRequest struct {
 	Timezone Timezone `json:"timezone"`
 }
 
+// UpdateShoppingItemRequest Only the fields given change. `checked` sets the tick (it is not a toggle) and is allowed on any item. The other fields are for manual items only; on a generated line they are refused (422).
+type UpdateShoppingItemRequest struct {
+	Category *IngredientCategory `json:"category,omitempty"`
+	Checked  *bool               `json:"checked,omitempty"`
+	Name     *string             `json:"name,omitempty"`
+	Quantity *float64            `json:"quantity,omitempty"`
+	Unit     *Unit               `json:"unit,omitempty"`
+}
+
+// BookMealId defines model for BookMealId.
+type BookMealId = Id
+
+// MealId defines model for MealId.
+type MealId = Id
+
+// PlanEntryId defines model for PlanEntryId.
+type PlanEntryId = Id
+
 // ProfileId defines model for ProfileId.
 type ProfileId = Id
 
 // SessionId defines model for SessionId.
 type SessionId = Id
+
+// ShoppingItemId defines model for ShoppingItemId.
+type ShoppingItemId = Id
+
+// WeekStart A calendar date, `YYYY-MM-DD`, with no time zone.
+//
+// Example: 2026-11-16
+type WeekStart = Date
 
 // BadRequest defines model for BadRequest.
 type BadRequest = Error
@@ -476,6 +1165,25 @@ type Unauthorized = Error
 
 // ValidationFailed defines model for ValidationFailed.
 type ValidationFailed = Error
+
+// ListIngredientNamesParams defines parameters for ListIngredientNames.
+type ListIngredientNamesParams struct {
+	Q string `form:"q" json:"q"`
+}
+
+// GetMealPlanParams defines parameters for GetMealPlan.
+type GetMealPlanParams struct {
+	From Date `form:"from" json:"from"`
+
+	// To Inclusive; at most 42 days from `from`.
+	To Date `form:"to" json:"to"`
+}
+
+// ListMealsParams defines parameters for ListMeals.
+type ListMealsParams struct {
+	// Q Case-insensitive match anywhere in the name.
+	Q *string `form:"q,omitempty" json:"q,omitempty"`
+}
 
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = LoginRequest
@@ -501,6 +1209,18 @@ type TransferOwnershipJSONRequestBody = TransferOwnershipRequest
 // ChangeFamilyPasswordJSONRequestBody defines body for ChangeFamilyPassword for application/json ContentType.
 type ChangeFamilyPasswordJSONRequestBody = ChangePasswordRequest
 
+// CreatePlanEntryJSONRequestBody defines body for CreatePlanEntry for application/json ContentType.
+type CreatePlanEntryJSONRequestBody = CreatePlanEntryRequest
+
+// UpdatePlanEntryJSONRequestBody defines body for UpdatePlanEntry for application/json ContentType.
+type UpdatePlanEntryJSONRequestBody = UpdatePlanEntryRequest
+
+// CreateMealJSONRequestBody defines body for CreateMeal for application/json ContentType.
+type CreateMealJSONRequestBody = SaveMealRequest
+
+// UpdateMealJSONRequestBody defines body for UpdateMeal for application/json ContentType.
+type UpdateMealJSONRequestBody = SaveMealRequest
+
 // SetModuleEnabledJSONRequestBody defines body for SetModuleEnabled for application/json ContentType.
 type SetModuleEnabledJSONRequestBody = SetModuleEnabledRequest
 
@@ -515,3 +1235,12 @@ type SetProfilePinJSONRequestBody = SetPinRequest
 
 // ChangeProfileRoleJSONRequestBody defines body for ChangeProfileRole for application/json ContentType.
 type ChangeProfileRoleJSONRequestBody = ChangeRoleRequest
+
+// SetRecipeBookEnabledJSONRequestBody defines body for SetRecipeBookEnabled for application/json ContentType.
+type SetRecipeBookEnabledJSONRequestBody = SetRecipeBookEnabledRequest
+
+// UpdateShoppingItemJSONRequestBody defines body for UpdateShoppingItem for application/json ContentType.
+type UpdateShoppingItemJSONRequestBody = UpdateShoppingItemRequest
+
+// CreateShoppingItemJSONRequestBody defines body for CreateShoppingItem for application/json ContentType.
+type CreateShoppingItemJSONRequestBody = CreateShoppingItemRequest

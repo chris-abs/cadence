@@ -423,6 +423,264 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/meals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The family's meals, sorted by name */
+        get: operations["listMeals"];
+        put?: never;
+        /** Add a meal, with its ingredients, micros and optional recipe (PARENT) */
+        post: operations["createMeal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/meals/{mealId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mealId: components["parameters"]["MealId"];
+            };
+            cookie?: never;
+        };
+        /** One meal in full, with its recipe if it has one */
+        get: operations["getMeal"];
+        /**
+         * Replace a meal and everything in it (PARENT)
+         * @description Replaces every field, the ingredients, the micros and the recipe. Anything left out is cleared; leaving `recipe` out removes the recipe. A copy of a book meal becomes `edited`.
+         */
+        put: operations["updateMeal"];
+        post?: never;
+        /** Delete a meal and its recipe (PARENT) */
+        delete: operations["deleteMeal"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ingredient-names": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ingredient names the family has already used, for typing them the same way */
+        get: operations["listIngredientNames"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recipe-book": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Whether the book is on, and every book meal with where the family stands on it */
+        get: operations["getRecipeBook"];
+        /**
+         * Turn the recipe book on or off for the family (PARENT)
+         * @description Off: unedited copies of book meals leave the meal list. Nothing is deleted and plan entries keep their meals. On: they return unchanged.
+         */
+        put: operations["setRecipeBookEnabled"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recipe-book/meals/{bookMealId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bookMealId: components["parameters"]["BookMealId"];
+            };
+            cookie?: never;
+        };
+        /** One book meal in full, as Cadence ships it */
+        get: operations["getBookMeal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recipe-book/meals/{bookMealId}/adopt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bookMealId: components["parameters"]["BookMealId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Take the book's current version of a meal (PARENT)
+         * @description Adds the meal if the family has no copy. If it has one, edited or not, its content is overwritten with the book's and it keeps its id.
+         */
+        post: operations["adoptBookMeal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/meal-plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Plan entries between two dates */
+        get: operations["getMealPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/meal-plan/entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Put a meal or free text on a day (PARENT) */
+        post: operations["createPlanEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/meal-plan/entries/{entryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryId: components["parameters"]["PlanEntryId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove a plan entry (PARENT) */
+        delete: operations["deletePlanEntry"];
+        options?: never;
+        head?: never;
+        /** Move or change a plan entry (PARENT) */
+        patch: operations["updatePlanEntry"];
+        trace?: never;
+    };
+    "/shopping-lists/{weekStart}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Monday the week starts on; any other weekday is refused (422). */
+                weekStart: components["parameters"]["WeekStart"];
+            };
+            cookie?: never;
+        };
+        /** A week's shopping list with its items */
+        get: operations["getShoppingList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shopping-lists/{weekStart}/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Monday the week starts on; any other weekday is refused (422). */
+                weekStart: components["parameters"]["WeekStart"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create or regenerate the week's list from the plan (PARENT)
+         * @description Merges the ingredients of the week's meal entries. Manual items are untouched; a line still needed keeps its tick unless its quantity went up.
+         */
+        post: operations["generateShoppingList"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shopping-lists/{weekStart}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Monday the week starts on; any other weekday is refused (422). */
+                weekStart: components["parameters"]["WeekStart"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a manual item; creates the week's list if there is none (PARENT) */
+        post: operations["createShoppingItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shopping-items/{itemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["ShoppingItemId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a manual item (PARENT) */
+        delete: operations["deleteShoppingItem"];
+        options?: never;
+        head?: never;
+        /** Tick or untick an item (anyone); edit a manual item (PARENT) */
+        patch: operations["updateShoppingItem"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -674,6 +932,317 @@ export interface components {
         DeviceSessionList: {
             sessions: components["schemas"]["DeviceSession"][];
         };
+        /**
+         * Format: date
+         * @description A calendar date, `YYYY-MM-DD`, with no time zone.
+         * @example 2026-11-16
+         */
+        Date: string;
+        /** @enum {string} */
+        Unit: "g" | "kg" | "oz" | "lb" | "ml" | "l" | "tsp" | "tbsp" | "cup" | "clove" | "slice" | "tin" | "pack" | "bunch" | "pinch";
+        /**
+         * @description The part of the shop an ingredient is found in.
+         * @enum {string}
+         */
+        IngredientCategory: "produce" | "meat" | "fish" | "dairy" | "bakery" | "tins" | "dry_goods" | "frozen" | "drinks" | "household" | "other";
+        /** @enum {string} */
+        Allergen: "celery" | "cereals_gluten" | "crustaceans" | "eggs" | "fish" | "lupin" | "milk" | "molluscs" | "mustard" | "peanuts" | "sesame" | "soya" | "sulphites" | "tree_nuts";
+        /** @enum {string} */
+        DietaryTag: "vegetarian" | "vegan" | "pescatarian" | "gluten_free" | "dairy_free" | "nut_free" | "halal" | "kosher";
+        /**
+         * @description A micronutrient. Amounts are in µg for `vitamin_a`, `vitamin_d`, `vitamin_k`, `vitamin_b12` and `folate`, and in mg for the rest.
+         * @enum {string}
+         */
+        Nutrient: "vitamin_a" | "vitamin_c" | "vitamin_d" | "vitamin_e" | "vitamin_k" | "vitamin_b6" | "vitamin_b12" | "folate" | "calcium" | "iron" | "magnesium" | "potassium" | "zinc";
+        /** @enum {string} */
+        MealSlot: "breakfast" | "lunch" | "dinner" | "snack";
+        /**
+         * @description Where the family stands on a book meal. `not_added`: no copy. `current`: an unedited copy that matches the book. `update_available`: an unedited copy and the book has changed since. `edited`: the family has changed its copy.
+         * @enum {string}
+         */
+        BookStatus: "not_added" | "current" | "update_available" | "edited";
+        /** @description Per serving, typed in, never calculated. Responses always carry every field; a value not given is null. */
+        Macros: {
+            /** @description kcal. */
+            calories?: number | null;
+            /** Format: double */
+            proteinG?: number | null;
+            /** Format: double */
+            carbsG?: number | null;
+            /** Format: double */
+            sugarG?: number | null;
+            /** Format: double */
+            fatG?: number | null;
+            /** Format: double */
+            saturatedFatG?: number | null;
+            /** Format: double */
+            fibreG?: number | null;
+            /** Format: double */
+            saltG?: number | null;
+        };
+        Micro: {
+            nutrient: components["schemas"]["Nutrient"];
+            /**
+             * Format: double
+             * @description Per serving, in the nutrient's unit.
+             */
+            amount: number;
+        };
+        Ingredient: {
+            /** Format: double */
+            quantity: number | null;
+            /** @description Null with a quantity is a count ("2 onions"). */
+            unit: components["schemas"]["Unit"] | null;
+            name: string;
+            /** @description Preparation, e.g. "finely chopped". Empty when none. */
+            note: string;
+            category: components["schemas"]["IngredientCategory"] | null;
+        };
+        IngredientInput: {
+            /** Format: double */
+            quantity?: number | null;
+            /** @description A unit without a quantity is refused. */
+            unit?: components["schemas"]["Unit"] | null;
+            name: string;
+            note?: string;
+            category?: components["schemas"]["IngredientCategory"] | null;
+        };
+        /** @description How to cook a meal. */
+        Recipe: {
+            /** @description Plain text, one step per line. */
+            instructions: string;
+            prepMinutes: number | null;
+            cookMinutes: number | null;
+            sourceUrl: string | null;
+        };
+        RecipeInput: {
+            instructions?: string;
+            prepMinutes?: number | null;
+            cookMinutes?: number | null;
+            /** @description An http or https link. */
+            sourceUrl?: string | null;
+        };
+        MealSummary: {
+            id: components["schemas"]["Id"];
+            name: string;
+            servings: number | null;
+            cuisine: string | null;
+            allergens: components["schemas"]["Allergen"][];
+            dietaryTags: components["schemas"]["DietaryTag"][];
+            /** @description kcal per serving. */
+            calories: number | null;
+            /** @description Per serving. */
+            costPence: number | null;
+            hasRecipe: boolean;
+            prepMinutes: number | null;
+            cookMinutes: number | null;
+            /**
+             * Format: uuid
+             * @description The book meal this was copied from; null for the family's own.
+             */
+            bookMealId: string | null;
+            /** @description A copy of a book meal that the family has changed. */
+            edited: boolean;
+        };
+        MealList: {
+            meals: components["schemas"]["MealSummary"][];
+        };
+        Meal: {
+            id: components["schemas"]["Id"];
+            name: string;
+            description: string;
+            /** @description What the numbers and ingredient amounts are based on. */
+            servings: number | null;
+            cuisine: string | null;
+            allergens: components["schemas"]["Allergen"][];
+            dietaryTags: components["schemas"]["DietaryTag"][];
+            macros: components["schemas"]["Macros"];
+            micros: components["schemas"]["Micro"][];
+            /** @description Estimated cost per serving, in pence. */
+            costPence: number | null;
+            /** @description In the order entered. */
+            ingredients: components["schemas"]["Ingredient"][];
+            /** @description Null for a meal with nothing to cook. */
+            recipe: components["schemas"]["Recipe"] | null;
+            /**
+             * Format: uuid
+             * @description The book meal this was copied from; null for the family's own.
+             */
+            bookMealId: string | null;
+            /** @description A copy of a book meal that the family has changed. */
+            edited: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        /** @description The whole meal. On an update anything left out is cleared, and leaving `recipe` out removes the recipe. */
+        SaveMealRequest: {
+            name: string;
+            description?: string;
+            servings?: number | null;
+            cuisine?: string | null;
+            allergens?: components["schemas"]["Allergen"][];
+            dietaryTags?: components["schemas"]["DietaryTag"][];
+            macros?: components["schemas"]["Macros"];
+            /** @description At most one entry per nutrient. */
+            micros?: components["schemas"]["Micro"][];
+            costPence?: number | null;
+            ingredients?: components["schemas"]["IngredientInput"][];
+            recipe?: components["schemas"]["RecipeInput"] | null;
+        };
+        IngredientNameList: {
+            names: string[];
+        };
+        BookMealSummary: {
+            id: components["schemas"]["Id"];
+            name: string;
+            servings: number | null;
+            cuisine: string | null;
+            allergens: components["schemas"]["Allergen"][];
+            dietaryTags: components["schemas"]["DietaryTag"][];
+            calories: number | null;
+            costPence: number | null;
+            hasRecipe: boolean;
+            prepMinutes: number | null;
+            cookMinutes: number | null;
+            status: components["schemas"]["BookStatus"];
+            /**
+             * Format: uuid
+             * @description The family's copy; null when `status` is `not_added`.
+             */
+            mealId: string | null;
+        };
+        RecipeBook: {
+            enabled: boolean;
+            meals: components["schemas"]["BookMealSummary"][];
+        };
+        SetRecipeBookEnabledRequest: {
+            enabled: boolean;
+        };
+        BookMeal: {
+            id: components["schemas"]["Id"];
+            name: string;
+            description: string;
+            servings: number | null;
+            cuisine: string | null;
+            allergens: components["schemas"]["Allergen"][];
+            dietaryTags: components["schemas"]["DietaryTag"][];
+            macros: components["schemas"]["Macros"];
+            micros: components["schemas"]["Micro"][];
+            costPence: number | null;
+            ingredients: components["schemas"]["Ingredient"][];
+            recipe: components["schemas"]["Recipe"] | null;
+            status: components["schemas"]["BookStatus"];
+            /**
+             * Format: uuid
+             * @description The family's copy; null when `status` is `not_added`.
+             */
+            mealId: string | null;
+        };
+        /** @description Enough of a planned meal to show the entry and add up a week. */
+        PlanMeal: {
+            id: components["schemas"]["Id"];
+            name: string;
+            servings: number | null;
+            /** @description kcal per serving. */
+            calories: number | null;
+            /** @description Per serving. */
+            costPence: number | null;
+        };
+        PlanEntry: {
+            id: components["schemas"]["Id"];
+            date: components["schemas"]["Date"];
+            slot: components["schemas"]["MealSlot"];
+            /** @description Order within the slot. */
+            position: number;
+            /** @description The meal's current name, or the free text. */
+            title: string;
+            /** @description Null for a free-text entry. */
+            meal: components["schemas"]["PlanMeal"] | null;
+            /** @description Servings planned; null uses the meal's own. */
+            servings: number | null;
+            note: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        MealPlan: {
+            entries: components["schemas"]["PlanEntry"][];
+        };
+        /** @description Give `mealId` for a meal entry or `title` for free text, not both. */
+        CreatePlanEntryRequest: {
+            date: components["schemas"]["Date"];
+            slot?: components["schemas"]["MealSlot"];
+            position?: number;
+            mealId?: components["schemas"]["Id"];
+            title?: string;
+            servings?: number | null;
+            note?: string;
+        };
+        /** @description Only the fields given change. `mealId` swaps the meal; `title` turns the entry into free text. */
+        UpdatePlanEntryRequest: {
+            date?: components["schemas"]["Date"];
+            slot?: components["schemas"]["MealSlot"];
+            position?: number;
+            mealId?: components["schemas"]["Id"];
+            title?: string;
+            servings?: number | null;
+            note?: string;
+        };
+        /**
+         * @description `generated` lines come from the plan and can only be ticked.
+         * @enum {string}
+         */
+        ShoppingItemOrigin: "generated" | "manual";
+        ShoppingItem: {
+            id: components["schemas"]["Id"];
+            origin: components["schemas"]["ShoppingItemOrigin"];
+            name: string;
+            /** Format: double */
+            quantity: number | null;
+            unit: components["schemas"]["Unit"] | null;
+            category: components["schemas"]["IngredientCategory"] | null;
+            /** @description Names of the meals a generated line came from. */
+            sources: string[];
+            checked: boolean;
+            /** Format: date-time */
+            checkedAt: string | null;
+            /**
+             * Format: uuid
+             * @description The profile that ticked it.
+             */
+            checkedBy: string | null;
+        };
+        ShoppingList: {
+            id: components["schemas"]["Id"];
+            weekStart: components["schemas"]["Date"];
+            /**
+             * Format: date-time
+             * @description Null while the list holds only manual items.
+             */
+            generatedAt: string | null;
+            /** @description Regenerating now would produce different lines. */
+            stale: boolean;
+            items: components["schemas"]["ShoppingItem"][];
+        };
+        CreateShoppingItemRequest: {
+            name: string;
+            /** Format: double */
+            quantity?: number | null;
+            unit?: components["schemas"]["Unit"] | null;
+            category?: components["schemas"]["IngredientCategory"] | null;
+        };
+        /** @description Only the fields given change. `checked` sets the tick (it is not a toggle) and is allowed on any item. The other fields are for manual items only; on a generated line they are refused (422). */
+        UpdateShoppingItemRequest: {
+            checked?: boolean;
+            name?: string;
+            /** Format: double */
+            quantity?: number | null;
+            unit?: components["schemas"]["Unit"] | null;
+            category?: components["schemas"]["IngredientCategory"] | null;
+        };
     };
     responses: {
         /** @description Malformed body or unknown field: `invalid_request`. */
@@ -712,7 +1281,7 @@ export interface components {
                 "application/json": components["schemas"]["Error"];
             };
         };
-        /** @description `email_taken`, `name_taken`, `owner_protected`, `self_not_allowed` or `profile_limit_reached`. */
+        /** @description `email_taken`, `name_taken`, `owner_protected`, `self_not_allowed`, `profile_limit_reached` or `recipe_book_off`. */
         Conflict: {
             headers: {
                 [name: string]: unknown;
@@ -746,6 +1315,12 @@ export interface components {
         ProfileId: components["schemas"]["Id"];
         SessionId: components["schemas"]["Id"];
         ModuleId: components["schemas"]["ModuleId"];
+        MealId: components["schemas"]["Id"];
+        BookMealId: components["schemas"]["Id"];
+        PlanEntryId: components["schemas"]["Id"];
+        ShoppingItemId: components["schemas"]["Id"];
+        /** @description The Monday the week starts on; any other weekday is refused (422). */
+        WeekStart: components["schemas"]["Date"];
     };
     requestBodies: never;
     headers: {
@@ -1446,6 +2021,519 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+        };
+    };
+    listMeals: {
+        parameters: {
+            query?: {
+                /** @description Case-insensitive match anywhere in the name. */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Matching meals. While the recipe book is off, unedited copies of book meals are left out. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MealList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    createMeal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveMealRequest"];
+            };
+        };
+        responses: {
+            /** @description Meal created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Meal"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    getMeal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mealId: components["parameters"]["MealId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The meal. Readable by id even while the recipe book is off. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Meal"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    updateMeal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mealId: components["parameters"]["MealId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveMealRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated meal. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Meal"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    deleteMeal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mealId: components["parameters"]["MealId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Meal deleted. Plan entries that used it remain as free text with its last name. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    listIngredientNames: {
+        parameters: {
+            query: {
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Up to 10 matching names. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngredientNameList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    getRecipeBook: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The recipe book, sorted by name. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeBook"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    setRecipeBookEnabled: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetRecipeBookEnabledRequest"];
+            };
+        };
+        responses: {
+            /** @description The recipe book with its new state. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeBook"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getBookMeal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bookMealId: components["parameters"]["BookMealId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The book meal. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookMeal"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    adoptBookMeal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bookMealId: components["parameters"]["BookMealId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The family's meal, now matching the book. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Meal"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+        };
+    };
+    getMealPlan: {
+        parameters: {
+            query: {
+                from: components["schemas"]["Date"];
+                /** @description Inclusive; at most 42 days from `from`. */
+                to: components["schemas"]["Date"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Entries ordered by date, slot and position. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MealPlan"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    createPlanEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePlanEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description Entry created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanEntry"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    deletePlanEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryId: components["parameters"]["PlanEntryId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Entry deleted. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    updatePlanEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryId: components["parameters"]["PlanEntryId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePlanEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated entry. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanEntry"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    getShoppingList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Monday the week starts on; any other weekday is refused (422). */
+                weekStart: components["parameters"]["WeekStart"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The list. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShoppingList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description `not_found`: no list has been made for this week yet. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    generateShoppingList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Monday the week starts on; any other weekday is refused (422). */
+                weekStart: components["parameters"]["WeekStart"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The generated list. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShoppingList"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    createShoppingItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The Monday the week starts on; any other weekday is refused (422). */
+                weekStart: components["parameters"]["WeekStart"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateShoppingItemRequest"];
+            };
+        };
+        responses: {
+            /** @description Item added. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShoppingItem"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    deleteShoppingItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["ShoppingItemId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Item deleted. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
+        };
+    };
+    updateShoppingItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itemId: components["parameters"]["ShoppingItemId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateShoppingItemRequest"];
+            };
+        };
+        responses: {
+            /** @description Updated item. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShoppingItem"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
         };
     };
 }
