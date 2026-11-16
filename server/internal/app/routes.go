@@ -13,6 +13,7 @@ import (
 	"github.com/chris-abs/cadence/server/internal/identity/auth"
 	"github.com/chris-abs/cadence/server/internal/identity/family"
 	"github.com/chris-abs/cadence/server/internal/identity/profile"
+	"github.com/chris-abs/cadence/server/internal/meals/meal"
 	"github.com/chris-abs/cadence/server/internal/middleware"
 	"github.com/chris-abs/cadence/server/internal/platform/httpx"
 	"github.com/chris-abs/cadence/server/internal/platform/passhash"
@@ -42,6 +43,7 @@ type services struct {
 	auth    *auth.Service
 	family  *family.Service
 	profile *profile.Service
+	meal    *meal.Service
 }
 
 func newServices(d Deps) (services, error) {
@@ -64,7 +66,7 @@ func newServices(d Deps) (services, error) {
 	if err != nil {
 		return services{}, err
 	}
-	return services{auth: authSvc, family: families, profile: profiles}, nil
+	return services{auth: authSvc, family: families, profile: profiles, meal: meal.NewService(d.DB)}, nil
 }
 
 func NewAuthService(d Deps) (*auth.Service, error) {
@@ -83,11 +85,15 @@ func NewHandler(d Deps) (*Handler, error) {
 	authH := auth.NewHandler(s.auth, cookies, d.TrustedProxies)
 	familyH := family.NewHandler(s.family, cookies)
 	profileH := profile.NewHandler(s.profile)
+	mealH := meal.NewHandler(s.meal)
 
 	type handlerFunc = func(http.ResponseWriter, *http.Request) error
 	public := func(fn handlerFunc) http.Handler { return httpx.Handle(log, fn) }
 	device := func(fn handlerFunc) http.Handler { return sessions.RequireFamily(httpx.Handle(log, fn)) }
 	caller := func(fn handlerFunc) http.Handler { return sessions.RequireProfile(httpx.Handle(log, fn)) }
+	meals := func(fn handlerFunc) http.Handler {
+		return sessions.RequireProfile(middleware.RequireModule("meals", log)(httpx.Handle(log, fn)))
+	}
 
 	routes := map[string]http.Handler{
 		"GET /healthz": healthz(d.DB, log),
@@ -118,6 +124,12 @@ func NewHandler(d Deps) (*Handler, error) {
 		"PUT /profiles/{profileId}/role":    caller(profileH.ChangeRole),
 		"PUT /profiles/{profileId}/pin":     caller(profileH.SetPin),
 		"POST /family/owner":                caller(profileH.TransferOwnership),
+		"GET /meals":                        meals(mealH.List),
+		"POST /meals":                       meals(mealH.Create),
+		"GET /meals/{mealId}":               meals(mealH.Get),
+		"PUT /meals/{mealId}":               meals(mealH.Update),
+		"DELETE /meals/{mealId}":            meals(mealH.Delete),
+		"GET /ingredient-names":             meals(mealH.IngredientNames),
 	}
 	mux := http.NewServeMux()
 	for pattern, h := range routes {
