@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Family struct {
@@ -20,109 +19,4 @@ type Family struct {
 	AutoLockMinutes   int16
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
-}
-
-type FamilyModule struct {
-	FamilyID  uuid.UUID
-	ModuleID  string
-	Enabled   bool
-	UpdatedAt time.Time
-}
-
-type Meal struct {
-	ID            uuid.UUID
-	FamilyID      uuid.UUID
-	Name          string
-	Description   string
-	Servings      *int16
-	Cuisine       *string
-	Allergens     []string
-	DietaryTags   []string
-	Calories      *int32
-	ProteinG      pgtype.Numeric
-	CarbsG        pgtype.Numeric
-	SugarG        pgtype.Numeric
-	FatG          pgtype.Numeric
-	SaturatedFatG pgtype.Numeric
-	FibreG        pgtype.Numeric
-	SaltG         pgtype.Numeric
-	CostPence     *int32
-	CreatedBy     *uuid.UUID
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-}
-
-type MealIngredient struct {
-	ID        uuid.UUID
-	FamilyID  uuid.UUID
-	MealID    uuid.UUID
-	Position  int16
-	Quantity  pgtype.Numeric
-	Unit      *string
-	Name      string
-	NameKey   string
-	Note      string
-	Category  *string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-type MealNutrient struct {
-	ID        uuid.UUID
-	FamilyID  uuid.UUID
-	MealID    uuid.UUID
-	Nutrient  string
-	Amount    pgtype.Numeric
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-type PinAttempt struct {
-	ProfileID    uuid.UUID
-	FailedCount  int32
-	LockedUntil  *time.Time
-	LastFailedAt time.Time
-}
-
-type Profile struct {
-	ID                     uuid.UUID
-	FamilyID               uuid.UUID
-	Name                   string
-	Role                   string
-	IsOwner                bool
-	Colour                 string
-	Avatar                 *string
-	Timezone               string
-	PinHash                *string
-	ContactEmail           *string
-	ContactEmailVerifiedAt *time.Time
-	CreatedAt              time.Time
-	UpdatedAt              time.Time
-}
-
-type Recipe struct {
-	ID           uuid.UUID
-	FamilyID     uuid.UUID
-	MealID       uuid.UUID
-	Instructions string
-	PrepMinutes  *int16
-	CookMinutes  *int16
-	SourceUrl    *string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-}
-
-type Session struct {
-	ID              uuid.UUID
-	TokenHash       []byte
-	Kind            string
-	FamilyID        uuid.UUID
-	ProfileID       *uuid.UUID
-	FamilySessionID *uuid.UUID
-	DeviceName      *string
-	UserAgent       *string
-	CreatedAt       time.Time
-	LastSeenAt      time.Time
-	IdleExpiresAt   time.Time
-	ExpiresAt       time.Time
 }
