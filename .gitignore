@@ -25,3 +25,6 @@ dist/
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# Reference docs (plan, specs, decisions): local only
+docs/

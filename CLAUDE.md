@@ -14,6 +14,7 @@ This is a from-scratch rebuild; `legacy/` holds the old code as reference only.
 | `server/` | Go API (stdlib `net/http`, pgx, sqlc, goose). Has its own `CLAUDE.md`. |
 | `client/` | React 19 + TypeScript + Vite + Tailwind 4 + TanStack Router/Query. Has its own `CLAUDE.md`. |
 | `api/openapi.yaml` | The client/server contract. Types on both sides are generated from it. |
+| `docs/` | Reference notes below. Git-ignored: local only, never committed. |
 | `docs/PLAN.md` | Reviewed build plan and milestones. |
 | `docs/decisions/` | Short decision records. Add one when a choice in the plan changes. |
 | `docs/spec/` | Product specs. |
